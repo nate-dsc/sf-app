@@ -11,7 +11,6 @@ type AddModalProps = {
     onClose: () => void,
 }
 
-
 export default function AddModal({visible, onClose}: AddModalProps) {
 
     const [selectedIndex, setSelectedIndex] = useState(0);
