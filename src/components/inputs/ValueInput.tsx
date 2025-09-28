@@ -6,15 +6,17 @@ import { Text, TextInput, TextInputProps, View } from "react-native"
 
 export default function ValueInput({...rest}: TextInputProps) {
     return(
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-            <View style={{flex: 1}}>
-                <Text style={[{marginLeft: 8}, FontStyles.mainTitleLight]}>Value</Text>
-            </View>
+        <View style={[{flexDirection: "row", alignItems: "center"}, InputStyles.smallInputField]}>
+            <Text
+                style={[{flex: 2}, FontStyles.body]}
+            >
+                Value
+            </Text>
 
             <TextInput
-                style={[InputStyles.smallInputField, FontStyles.mainNumDisplayLight]}
+                style={[{flex: 3}, FontStyles.numBody]}
                 placeholder="0.00"
-                placeholderTextColor={"black"}
+                placeholderTextColor={"gray"}
                 inputMode="decimal"
                 onChangeText={rest.onChangeText}
                 textAlign="right"

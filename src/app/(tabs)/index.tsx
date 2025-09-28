@@ -7,10 +7,14 @@ import LastTransactionTile from "@/components/home-screen-tiles/LastTransactionT
 import OutflowTile from "@/components/home-screen-tiles/OutflowTile"
 import { SStyles } from "@/components/screen-styles/styles"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
 import { useState } from "react"
 import { ScrollView, View } from "react-native"
 
 export default function HomeScreen() {
+
+    const router = useRouter()
+
     const [isAddModalVisible, setAddModalVisible] = useState(false)
 
     const headerHeight = useHeaderHeight()
@@ -27,7 +31,7 @@ export default function HomeScreen() {
                     <DistributionTile style={{flex: 1}}/>
             </ScrollView>
             <View style={{position: "absolute", bottom: 8, right: 10}}>
-                <AddButton size={50} onPress={() => {setAddModalVisible(true)}}/>
+                <AddButton size={50} onPress={() => {router.push("../addmodal")}}/>
             </View>
 
             <AddModal visible={isAddModalVisible} onClose={() => setAddModalVisible(false)}/>

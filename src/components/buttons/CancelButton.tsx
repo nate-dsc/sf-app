@@ -5,7 +5,7 @@ import { Text, TouchableOpacity, type TouchableOpacityProps } from "react-native
 export default function CancelButton({...rest}: TouchableOpacityProps) {
 
     return(
-        <TouchableOpacity style={ButtonStyles.cancelButton} disabled={rest.disabled}>
+        <TouchableOpacity style={ButtonStyles.cancelButton} onPress={rest.onPress}>
             <Text style={[FontStyles.mainTitle, {color: "#fff"}]}> Cancel </Text>
         </TouchableOpacity>
     )

@@ -25,6 +25,15 @@ export default function RootLayout() {
                             title: "Settings"
                         }}
                     />
+                    <Stack.Screen
+                        name="addmodal"
+                        options={{
+                            headerBackButtonDisplayMode: "minimal",
+                            headerBackButtonMenuEnabled: false,
+                            title: "New transaction",
+                            presentation: "formSheet"
+                        }}
+                    />
                 </Stack>
         </SafeAreaProvider>
     )

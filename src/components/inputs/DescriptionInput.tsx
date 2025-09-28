@@ -6,17 +6,21 @@ import { Text, TextInput, TextInputProps, View } from "react-native"
 
 export default function DescriptionInput({...rest}: TextInputProps) {
     return(
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-            <View style={{flex: 1}}>
-                <Text style={[{marginLeft: 8}, FontStyles.mainTitleLight]}>Description</Text>
-            </View>
-
+        <View style={[{flexDirection: "row", alignItems: "baseline"}, InputStyles.smallInputField]}>
+            <Text
+                style={[{flex: 2}, FontStyles.body]}
+            >
+                Description
+            </Text>
             <TextInput
-                style={[InputStyles.smallInputField, FontStyles.secondaryBody]}
+                style={[{flex: 3}, FontStyles.body]}
                 inputMode="text"
+                placeholder="None"
+                placeholderTextColor={"gray"}
                 onChangeText={rest.onChangeText}
-                textAlign="left"
+                textAlign="right"
             />
+
         </View>
     )
 }

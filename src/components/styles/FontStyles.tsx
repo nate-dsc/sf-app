@@ -30,5 +30,71 @@ export const FontStyles = StyleSheet.create({
     secondaryNumDisplay: {
         fontVariant: ["tabular-nums"],
         fontSize: 18
-    }
+    },
+    largeTitle: {
+        fontSize: 34,
+        lineHeight: 41
+    },
+    title1: {
+        fontSize: 28,
+        lineHeight: 34
+    },
+    title2: {
+        fontSize: 22,
+        lineHeight: 28
+    },
+    title3: {
+        fontSize: 20,
+        lineHeight: 25
+    },
+    headline: {
+        fontSize: 17,
+        lineHeight: 22,
+        fontWeight: "600"
+    },
+    body: {
+        fontSize: 17,
+        lineHeight: 22
+    },
+    callout: {
+        fontSize: 16,
+        lineHeight: 21
+    },
+    subhead: {
+        fontSize: 15,
+        lineHeight: 20
+    },
+    footnote: {
+        fontSize: 13,
+        lineHeight: 18
+    },
+    caption1: {
+        fontSize: 12,
+        lineHeight: 16
+    },
+    caption2: {
+        fontSize: 11,
+        lineHeight: 13
+    },
+    numTitle1: {
+        fontVariant: ["tabular-nums"],
+        fontSize: 28,
+        lineHeight: 34
+    },
+    numTitle2: {
+        fontVariant: ["tabular-nums"],
+        fontSize: 22,
+        lineHeight: 28
+    },
+    numTitle3: {
+        fontVariant: ["tabular-nums"],
+        fontSize: 20,
+        lineHeight: 25
+    },
+    numBody: {
+        fontVariant: ["tabular-nums"],
+        fontSize: 17,
+        lineHeight: 22
+    },
+
 })

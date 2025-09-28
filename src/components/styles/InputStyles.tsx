@@ -1,12 +1,13 @@
+import { Colors } from "@/components/styles/Colors"
 import { StyleSheet } from "react-native"
 
 export const InputStyles = StyleSheet.create({
     smallInputField: {
         flex: 1,
         backgroundColor: "#e0e0e0",
-        height: 34,
+        //height: 40,
         borderRadius: 8,
-        paddingHorizontal: 4
+        padding: 12
     },
     //For segmented control
     segmentContainer: {
@@ -23,11 +24,12 @@ export const InputStyles = StyleSheet.create({
         justifyContent: 'center',
     },
     activeSegment: {
-        backgroundColor: '#007AFF',
+        backgroundColor: Colors.blue,
     },
     segmentText: {
-        fontSize: 18,
-        color: '#007AFF',
+        fontSize: 17,
+        lineHeight: 22,
+        color: Colors.blue,
     },
     activeText: {
         color: '#FFFFFF',

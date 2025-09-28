@@ -1,5 +1,6 @@
+import { ButtonStyles } from "@/components/styles/ButtonStyles";
 import { Ionicons } from "@expo/vector-icons";
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 type AddButtonProps = {
     size?: number,
@@ -15,19 +16,9 @@ export default function AddButton({ size=40, onPress }: AddButtonProps) {
     }
     
     return(
-        <TouchableOpacity style={[styles.button, buttonSize]} onPress={onPress} >
+        <TouchableOpacity style={[ButtonStyles.addButton, buttonSize]} onPress={onPress} >
             <Ionicons name="add" size={size} color={"#fff"}/>
         </TouchableOpacity>
     )
 
 }
-
-const styles = StyleSheet.create({
-    button: {
-        zIndex: 1,
-        backgroundColor: "#14ea00ff",
-        overflow: "hidden",
-        justifyContent: "center",
-        alignItems: "center"
-    }
-})
