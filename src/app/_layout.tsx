@@ -26,11 +26,29 @@ export default function RootLayout() {
                         }}
                     />
                     <Stack.Screen
-                        name="addmodal"
+                        name="modalAdd"
                         options={{
                             headerBackButtonDisplayMode: "minimal",
                             headerBackButtonMenuEnabled: false,
                             title: "New transaction",
+                            presentation: "formSheet"
+                        }}
+                    />
+                    <Stack.Screen
+                        name="modalRecurring"
+                        options={{
+                            headerBackButtonDisplayMode: "minimal",
+                            headerBackButtonMenuEnabled: false,
+                            title: "Recurring",
+                            presentation: "formSheet"
+                        }}
+                    />
+                    <Stack.Screen
+                        name="modalCategoryPicker"
+                        options={{
+                            headerBackButtonDisplayMode: "minimal",
+                            headerBackButtonMenuEnabled: false,
+                            title: "Pick a category",
                             presentation: "formSheet"
                         }}
                     />

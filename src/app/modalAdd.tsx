@@ -1,5 +1,7 @@
 import CancelButton from "@/components/buttons/CancelButton";
 import ConfirmButton from "@/components/buttons/ConfirmButton";
+import CategoryInput from "@/components/inputs/CategoryInput";
+import DateInput from "@/components/inputs/DateInput";
 import DescriptionInput from "@/components/inputs/DescriptionInput";
 import ValueInput from "@/components/inputs/ValueInput";
 import SegmentedControl from "@/components/pickers/SegmentedControl";
@@ -34,9 +36,13 @@ export default function AddModal({visible, onClose}: AddModalProps) {
 
                         <DescriptionInput/>
 
+                        <DateInput />
+
+                        <CategoryInput onPress={() => {router.push("/modalCategoryPicker")}}/>
+
                         <View style={{flexDirection: "row", columnGap: 12}}>
                             <CancelButton onPress={() => {router.back()}}/>
-                            <ConfirmButton/>
+                            <ConfirmButton onPress={() => {router.push("/modalRecurring")}}/>
                         </View>
                     </ScrollView>
                     
@@ -55,7 +61,7 @@ const styles = StyleSheet.create({
         rowGap: 12
     },
     modalView: {
-        borderRadius: 20,
+        //borderRadius: 20,
         paddingHorizontal: 20,
         rowGap: 12,
         alignItems: 'center',

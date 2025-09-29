@@ -31,7 +31,7 @@ export default function HomeScreen() {
                     <DistributionTile style={{flex: 1}}/>
             </ScrollView>
             <View style={{position: "absolute", bottom: 8, right: 10}}>
-                <AddButton size={50} onPress={() => {router.push("../addmodal")}}/>
+                <AddButton size={50} onPress={() => {router.navigate("../modalAdd")}}/>
             </View>
 
             <AddModal visible={isAddModalVisible} onClose={() => setAddModalVisible(false)}/>
