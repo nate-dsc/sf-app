@@ -4,14 +4,14 @@ import { StyleSheet } from "react-native"
 export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     addButton: {
         zIndex: 1,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.custom.green,
         overflow: "hidden",
         justifyContent: "center",
         alignItems: "center"
     },
     confirmButton: {
         flex: 1,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.custom.green,
         borderRadius: 8,
         height: 40,
         justifyContent: "center",
@@ -20,7 +20,7 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     },
     cancelButton: {
         flex: 1,
-        backgroundColor: Colors.gray,
+        backgroundColor: Colors.custom.gray,
         borderRadius: 8,
         height: 40,
         justifyContent: "center",

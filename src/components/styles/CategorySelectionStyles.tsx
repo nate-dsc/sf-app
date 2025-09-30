@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native"
 export const CategorySelectionStyles = (Colors: typeof light) => StyleSheet.create({
     container: {
         width: "60%",
-        backgroundColor: Colors.background,
+        backgroundColor: Colors.custom.background,
         borderRadius:8,
         overflow: "hidden",
         gap: 1
@@ -12,7 +12,7 @@ export const CategorySelectionStyles = (Colors: typeof light) => StyleSheet.crea
     categoryOption: {
         flexDirection: "row",
         columnGap: 16,
-        backgroundColor: Colors.menuItemBackground,
+        backgroundColor: Colors.custom.menuItemBackground,
         padding: 8,
     }
 })

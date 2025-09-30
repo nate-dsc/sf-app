@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native"
 
 export const TileStyles = (Colors: typeof light) => StyleSheet.create({
     container: {
-        backgroundColor: Colors.tileBackground,
+        backgroundColor: Colors.custom.tileBackground,
         padding: 12,
         paddingTop: 8,
         borderRadius: 12,
