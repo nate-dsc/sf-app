@@ -1,6 +1,7 @@
+import { CategorySelectionStyles } from "@/components/styles/CategorySelectionStyles"
+import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import { Colors } from "../styles/Colors"
+import { Text, TouchableOpacity, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 
 type CategorySelectionProps = {
@@ -9,6 +10,9 @@ type CategorySelectionProps = {
 }
 
 export default function CategorySelection({options, onSelection}: CategorySelectionProps) {
+
+    const theme = useTheme()
+    const styles = CategorySelectionStyles(theme)
 
     const options2 = ["Home", "Food", "Groceries", "Transport", "Services", "Leisure", "Education", "Shopping", "Games", "Gambling",
         "Travel", "Pet", "Investment", "Health", "Emergency", "Other"]
@@ -29,19 +33,3 @@ export default function CategorySelection({options, onSelection}: CategorySelect
     )
 
 }
-
-const styles = StyleSheet.create({
-    container: {
-        width: "60%",
-        backgroundColor: Colors.gray,
-        borderRadius:8,
-        overflow: "hidden",
-        gap: 1
-    },
-    categoryOption: {
-        flexDirection: "row",
-        columnGap: 16,
-        backgroundColor: Colors.lightGray,
-        padding: 8,
-    }
-})

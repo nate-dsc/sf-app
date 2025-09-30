@@ -1,13 +1,18 @@
 import { FontStyles } from "@/components/styles/FontStyles";
 import { InputStyles } from "@/components/styles/InputStyles";
+import { useTheme } from "@/context/ThemeContext";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Text, View } from "react-native";
 
 
 
 export default function DateInput() {
+
+    const theme = useTheme()
+    const inputStyles = InputStyles(theme)
+
     return(
-        <View style={[{flexDirection: "row", alignItems: "center"}, InputStyles.datePickerField]}>
+        <View style={[{flexDirection: "row", alignItems: "center"}, inputStyles.datePickerField]}>
             <Text
                 style={[{flex: 2}, FontStyles.body]}
             >

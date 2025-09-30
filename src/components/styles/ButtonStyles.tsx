@@ -1,7 +1,7 @@
-import { Colors } from "@/components/styles/Colors"
+import { light } from "@/constants/Colors"
 import { StyleSheet } from "react-native"
 
-export const ButtonStyles = StyleSheet.create({
+export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     addButton: {
         zIndex: 1,
         backgroundColor: Colors.green,

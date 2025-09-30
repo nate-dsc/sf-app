@@ -1,8 +1,9 @@
+import { light } from "@/constants/Colors"
 import { StyleSheet } from "react-native"
 
-export const TileStyles = StyleSheet.create({
+export const TileStyles = (Colors: typeof light) => StyleSheet.create({
     container: {
-        backgroundColor: "#FFF",
+        backgroundColor: Colors.tileBackground,
         padding: 12,
         paddingTop: 8,
         borderRadius: 12,

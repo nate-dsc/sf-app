@@ -1,3 +1,4 @@
+import { useTheme } from "@/context/ThemeContext"
 import { Text, View, ViewStyle } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "../styles/TileStyles"
@@ -12,8 +13,11 @@ type DistributionProps = {
 
 export default function DistributionTile({value, description, isOutflow, style}: DistributionProps) {
 
+    const theme = useTheme()
+    const tileStyles = TileStyles(theme)
+
     return(
-        <View style={[TileStyles.container, style]}>
+        <View style={[tileStyles.container, style]}>
             <Text style={FontStyles.mainTitle}>Distribution</Text>
         </View>
     )

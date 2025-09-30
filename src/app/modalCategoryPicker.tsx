@@ -1,4 +1,4 @@
-import CategorySelection from "@/components/inputs/CategorySelection";
+import CategorySelection from "@/components/pickers/CategorySelection";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from "react-native";

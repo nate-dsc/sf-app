@@ -1,3 +1,4 @@
+import { FontStyles } from "@/components/styles/FontStyles";
 import { Ionicons } from "@expo/vector-icons";
 import { Tabs, useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
@@ -10,9 +11,7 @@ export default function TabBar() {
         <Tabs screenOptions={({route}) => ({
             headerShadowVisible: false,
             headerTransparent: true,
-            headerTitleStyle: {
-                fontWeight: "bold"
-            },
+            headerTitleStyle: FontStyles.title2,
             headerRight: () =>
              (
                 <TouchableOpacity

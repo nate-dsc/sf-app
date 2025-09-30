@@ -1,24 +1,23 @@
-import { Colors } from "@/components/styles/Colors"
+import { light } from "@/constants/Colors"
 import { StyleSheet } from "react-native"
 
-export const InputStyles = StyleSheet.create({
+export const InputStyles = (Colors: typeof light) => StyleSheet.create({
     smallInputField: {
         flex: 1,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.menuItemBackground,
         borderRadius: 8,
         padding: 12
     },
     datePickerField: {
         flex: 1,
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.menuItemBackground,
         borderRadius: 8,
         padding: 12,
         paddingVertical: 6
     },
-    //For segmented control
     segmentContainer: {
         flexDirection: 'row',
-        backgroundColor: Colors.lightGray,
+        backgroundColor: Colors.menuItemBackground,
         borderRadius: 8,
         height: 34,
         overflow: 'hidden',
