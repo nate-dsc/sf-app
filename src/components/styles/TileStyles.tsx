@@ -9,5 +9,8 @@ export const TileStyles = (Colors: typeof light) => StyleSheet.create({
         borderRadius: 12,
         shadowOpacity: 0.15,
         shadowOffset: {width: 2, height: 2}
+    },
+    text: {
+        color: Colors.custom.text
     }
 })

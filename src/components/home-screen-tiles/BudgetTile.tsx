@@ -21,19 +21,19 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
     if(budgetPreference) {
         return(
             <View style={[tileStyles.container, style]}>
-                <Text style={FontStyles.mainTitle}>Budget</Text>
-                <Text style={FontStyles.mainNumDisplay}>{budgetStr}</Text>
-                <Text style={FontStyles.secondaryTitle}>Balance</Text>
-                <Text style={FontStyles.secondaryNumDisplay}>{balanceStr}</Text>
+                <Text style={[tileStyles.text, FontStyles.mainTitle]}>Budget</Text>
+                <Text style={[tileStyles.text, FontStyles.mainNumDisplay]}>{budgetStr}</Text>
+                <Text style={[tileStyles.text, FontStyles.secondaryTitle]}>Balance</Text>
+                <Text style={[tileStyles.text, FontStyles.secondaryNumDisplay]}>{balanceStr}</Text>
             </View>
         )
     } else {
         return(
-            <View style={tileStyles.container}>
-                <Text style={FontStyles.mainTitle}>Balance</Text>
-                <Text style={FontStyles.mainNumDisplay}>{balanceStr}</Text>
-                <Text style={FontStyles.secondaryTitle}>Budget</Text>
-                <Text style={FontStyles.secondaryNumDisplay}>{budgetStr}</Text>
+            <View style={[tileStyles.container, style]}>
+                <Text style={[tileStyles.text, FontStyles.mainTitle]}>Balance</Text>
+                <Text style={[tileStyles.text, FontStyles.mainNumDisplay]}>{balanceStr}</Text>
+                <Text style={[tileStyles.text, FontStyles.secondaryTitle]}>Budget</Text>
+                <Text style={[tileStyles.text, FontStyles.secondaryNumDisplay]}>{budgetStr}</Text>
             </View>
         )
     }

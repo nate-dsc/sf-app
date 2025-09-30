@@ -5,14 +5,25 @@ type CustomTheme = {
   custom: {
     background: string,
     tileBackground: string,
+
+    text: string,
     textUnfocused: string,
-    menuItemBackground: string,
+
     gray: string,
     lightGray: string,
     grayerGray: string,
+
     red: string,
     green: string,
     blue: string,
+  },
+  menuItem: {
+    background: string,
+    border: string,
+    text: string,
+    unfocusedText: string,
+    icons: string,
+    tint: string
   }
 }
 
@@ -58,16 +69,27 @@ export const light: CustomTheme = {
   custom: {
     background: "#F2F2F2",
     tileBackground: "#FFF",
+
+    text: "#000",
     textUnfocused: "#808080",
-    menuItemBackground: "#E0E0E0",
+
     gray: "#C7C7CC",
     lightGray: "#E0E0E0",
     grayerGray: "#D3D3D4",
+
     red: "#FF3B30",
     green: "#34C759",
     blue: "#007AFF",
   },
-};
+  menuItem: {
+    background: "#E0E0E0",
+    border: "#E0E0E0",
+    text: "#000",
+    unfocusedText: "#808080",
+    icons: "#000",
+    tint: "#007AFF"
+  }
+}
 
 export const dark: CustomTheme = {
   navigationTheme: {
@@ -85,44 +107,25 @@ export const dark: CustomTheme = {
   custom: {
     background: "#F2F2F2",
     tileBackground: "#202020",
+
+    text: "#F5F5F5",
     textUnfocused: "#E0E0E0",
-    menuItemBackground: "#808080",
+
     gray: "#C7C7CC",
     lightGray: "#E0E0E0",
     grayerGray: "#D3D3D4",
+
     red: "#FF3B30",
     green: "#34C759",
     blue: "#007AFF",
   },
-};
 
-
-/* export const light = {
-    background: "#F2F2F2",
-    tileBackground: "#FFF",
-    text: "#000",
-    textUnfocused: "#808080",
-    menuItemBackground: "#E0E0E0",
-
-    red: "#FF3B30",
-    green: "#34C759",
-    blue: "#007AFF",
-    gray: "#C7C7CC",
-    lightGray: "#E0E0E0",
-    grayerGray: "#D3D3D4"
+  menuItem: {
+    background: "#181818",
+    border: "#2E2E2E",
+    text: "#F5F5F5",
+    unfocusedText: "#C7C7C7",
+    icons: "#F5F5F5",
+    tint: "#007AFF"
+  }
 }
-
-export const dark = {
-    background: "#000",
-    tileBackground: "#202020",
-    text: "#FFF",
-    textUnfocused: "#E0E0E0",
-    menuItemBackground: "#808080",
-
-    red: "#FF3B30",
-    green: "#34C759",
-    blue: "#007AFF",
-    gray: "#C7C7CC",
-    lightGray: "#E0E0E0",
-    grayerGray: "#D3D3D4"
-} */

@@ -1,4 +1,4 @@
-import { SStyles } from "@/components/screen-styles/styles"
+import { SStyles } from "@/components/styles/ScreenStyles"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { ScrollView, Text, View } from "react-native"
 

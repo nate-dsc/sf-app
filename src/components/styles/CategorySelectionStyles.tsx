@@ -12,7 +12,7 @@ export const CategorySelectionStyles = (Colors: typeof light) => StyleSheet.crea
     categoryOption: {
         flexDirection: "row",
         columnGap: 16,
-        backgroundColor: Colors.custom.menuItemBackground,
+        backgroundColor: Colors.menuItem.background,
         padding: 8,
     }
 })

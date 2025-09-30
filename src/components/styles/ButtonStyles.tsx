@@ -26,5 +26,15 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         overflow: "hidden"
+    },
+    rButton: {
+        backgroundColor: Colors.menuItem.background,
+        borderWidth: 1,
+        borderColor: Colors.menuItem.border,
+        borderRadius: 8,
+        padding: 12
+    },
+    text: {
+        color: Colors.custom.text
     }
 })

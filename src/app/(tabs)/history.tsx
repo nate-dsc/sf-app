@@ -1,5 +1,5 @@
 import DistributionTile from "@/components/home-screen-tiles/DistributionTile"
-import { SStyles } from "@/components/screen-styles/styles"
+import { SStyles } from "@/components/styles/ScreenStyles"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { Text, View } from "react-native"
 
