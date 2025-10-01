@@ -1,7 +1,7 @@
 import { useTheme } from "@/context/ThemeContext"
 import { Text, View, ViewStyle } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
-import { TileStyles } from "../styles/TileStyles"
+import { TileStyles } from "./TileStyles"
 
 
 type LastTransactionTileProps = {

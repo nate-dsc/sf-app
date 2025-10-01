@@ -36,9 +36,9 @@ export default function SRedir({text, selected, onPress}: SRedirProps) {
                 ) : (
                     <View style={{flexDirection: "row"}}>
                         <Text
-                            style={[menuStyles.unfocusedText, FontStyles.body]}
+                            style={[menuStyles.textUnfocused, FontStyles.body]}
                         >Select</Text>
-                        <Ionicons name="chevron-expand" size={20} color={menuStyles.unfocusedIcon.color}/>
+                        <Ionicons name="chevron-expand" size={20} color={menuStyles.iconUnfocused.color}/>
                     </View>
                 )}
             </View>

@@ -19,7 +19,8 @@ export const FontStyles = StyleSheet.create({
     },
     mainNumDisplay: {
         fontVariant: ["tabular-nums"],
-        fontSize: 22,
+        fontSize: 34,
+        lineHeight: 41,
         fontWeight: "bold"
     },
     mainNumDisplayLight: {

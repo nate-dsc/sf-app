@@ -22,13 +22,13 @@ export default function HomeScreen() {
     return(
         <View style={{flex: 1, paddingTop: headerHeight}}>
             <ScrollView contentContainerStyle={SStyles.mainContainer}>
-                    <BudgetTile style={{flex: 1}} monthlyBudget={123456} monthlyBalance={123456} budgetPreference={true} />
-                <View style={{flex: 1, flexDirection: "row", justifyContent: "center", columnGap: 12}}>
+                    <BudgetTile style={{}} monthlyBudget={123456} monthlyBalance={123456} budgetPreference={true} />
+                <View style={{ flexDirection: "row", justifyContent: "center", columnGap: 12}}>
                     <InflowTile style={{flex: 1}} monthlyInflow={123456} last30daysInflow={123456} monthlyPreference={true} />     
                     <OutflowTile style={{flex: 1}} monthlyOutflow={123456} last30daysOutflow={123456} monthlyPreference={true} />
                 </View>
-                    <LastTransactionTile style={{flex: 1}} value={123456} description="groceries" isOutflow={true}/>
-                    <DistributionTile style={{flex: 1}}/>
+                    <LastTransactionTile style={{}} value={123456} description="groceries" isOutflow={true}/>
+                    <DistributionTile style={{}}/>
             </ScrollView>
             <View style={{position: "absolute", bottom: 8, right: 10}}>
                 <AddButton size={50} onPress={() => {router.navigate("../modalAdd")}}/>

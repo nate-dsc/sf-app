@@ -4,7 +4,6 @@ import { StyleSheet } from "react-native"
 export const MIStyles = (Colors: typeof light) => StyleSheet.create({
     redir: {
         flexDirection: "row",
-        //justifyContent: "space-between", 
         alignItems: "center",
         backgroundColor: Colors.menuItem.background,
         borderWidth: 1,
@@ -38,19 +37,20 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         borderColor: Colors.menuItem.border,
         borderRadius: 24,
     },
+    //Text and icon colors
     text: {
         color: Colors.menuItem.text
     },
-    unfocusedText: {
-        color: Colors.menuItem.unfocusedText
+    textUnfocused: {
+        color: Colors.menuItem.textUnfocused
     },
     icon: {
         color: Colors.menuItem.icons,
     },
-    unfocusedIcon: {
-        color: Colors.menuItem.unfocusedText
+    iconUnfocused: {
+        color: Colors.menuItem.textUnfocused
     },
-
+    //Containers
     leftContainer: {
         paddingLeft: 8,
         justifyContent: "center",

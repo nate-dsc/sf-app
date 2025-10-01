@@ -24,7 +24,7 @@ export default function DescriptionInput({leftText, ...rest}: DescriptionInputPr
                         style={[menuStyles.text, FontStyles.body]}
                         inputMode="text"
                         placeholder="None"
-                        placeholderTextColor={menuStyles.unfocusedText.color}
+                        placeholderTextColor={menuStyles.textUnfocused.color}
                         onChangeText={rest.onChangeText}
                         textAlign="right"
                     />

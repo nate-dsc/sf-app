@@ -1,7 +1,7 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Text, View, ViewStyle } from "react-native"
-import { TileStyles } from "../styles/TileStyles"
+import { TileStyles } from "./TileStyles"
 
 type BudgetTileProps = {
     monthlyBudget: number,
@@ -18,23 +18,16 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
     const budgetStr = monthlyBudget.toString()
     const balanceStr = monthlyBalance.toString()
 
-    if(budgetPreference) {
-        return(
-            <View style={[tileStyles.container, style]}>
-                <Text style={[tileStyles.text, FontStyles.mainTitle]}>Budget</Text>
-                <Text style={[tileStyles.text, FontStyles.mainNumDisplay]}>{budgetStr}</Text>
-                <Text style={[tileStyles.text, FontStyles.secondaryTitle]}>Balance</Text>
-                <Text style={[tileStyles.text, FontStyles.secondaryNumDisplay]}>{balanceStr}</Text>
+    return(
+        <View style={tileStyles.container}>
+
+            <Text style={[tileStyles.text, FontStyles.title2, {fontWeight: "bold"}]}>Budget</Text>
+            <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.mainNumDisplay]}>R$ {balanceStr}</Text>
+            <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>of </Text>
+                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.secondaryNumDisplay]}>R$ {budgetStr}</Text>
             </View>
-        )
-    } else {
-        return(
-            <View style={[tileStyles.container, style]}>
-                <Text style={[tileStyles.text, FontStyles.mainTitle]}>Balance</Text>
-                <Text style={[tileStyles.text, FontStyles.mainNumDisplay]}>{balanceStr}</Text>
-                <Text style={[tileStyles.text, FontStyles.secondaryTitle]}>Budget</Text>
-                <Text style={[tileStyles.text, FontStyles.secondaryNumDisplay]}>{budgetStr}</Text>
-            </View>
-        )
-    }
+
+        </View>
+    )
 }

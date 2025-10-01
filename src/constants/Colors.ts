@@ -17,41 +17,25 @@ type CustomTheme = {
     green: string,
     blue: string,
   },
+  tile: {
+    background: string,
+    border: string,
+    text: string,
+    textUnfocused: string,
+    icons: string,
+    tint: string,
+    positiveTint: string,
+    negativeTint: string,
+  },
   menuItem: {
     background: string,
     border: string,
     text: string,
-    unfocusedText: string,
+    textUnfocused: string,
     icons: string,
     tint: string
   }
   themeName: string
-}
-
-type NavigationColors = {
-    dark: boolean,
-    colors: {
-        primary: string,                   
-        background: string,                
-        card: string,                         
-        text: string,                         
-        border: string,                    
-        notification: string
-    }
-
-}
-
-type CustomColors = {
-    background: string,
-    tileBackground: string,
-    textUnfocused: string,
-    menuItemBackground: string,
-    gray: string,
-    lightGray: string,
-    grayerGray: string,
-    red: string,
-    green: string,
-    blue: string,
 }
 
 export const light: CustomTheme = {
@@ -82,11 +66,21 @@ export const light: CustomTheme = {
     green: "#34C759",
     blue: "#007AFF",
   },
+  tile: {
+    background: "#f8f8f8",
+    border: "#FFFFFF",
+    text: "#000",
+    textUnfocused: "#808080",
+    icons: "#000",
+    tint: "#007AFF",
+    positiveTint: "#34C759",
+    negativeTint: "#FF3B30"
+  },
   menuItem: {
     background: "#E0E0E0",
     border: "#E0E0E0",
     text: "#000",
-    unfocusedText: "#808080",
+    textUnfocused: "#808080",
     icons: "#000",
     tint: "#007AFF"
   },
@@ -121,13 +115,23 @@ export const dark: CustomTheme = {
     green: "#34C759",
     blue: "#007AFF",
   },
+  tile: {
+    background: "#181818",
+    border: "#2E2E2E",
+    text: "#F5F5F5",
+    textUnfocused: "#6E6E6E",
+    icons: "#F5F5F5",
+    tint: "#007AFF",
+    positiveTint: "#34C759",
+    negativeTint: "#FF3B30"
+  },
   menuItem: {
     background: "#181818",
     border: "#2E2E2E",
     text: "#F5F5F5",
-    unfocusedText: "#6E6E6E",
+    textUnfocused: "#6E6E6E",
     icons: "#F5F5F5",
-    tint: "#007AFF"
+    tint: "#007AFF",
   },
   themeName: "dark"
 }

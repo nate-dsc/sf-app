@@ -23,7 +23,7 @@ export default function ValueInput({leftText, ...rest}: ValueInputProps) {
                 <TextInput
                     style={[menuStyles.text, FontStyles.numBody]}
                     placeholder="0.00"
-                    placeholderTextColor={menuStyles.unfocusedText.color}
+                    placeholderTextColor={menuStyles.textUnfocused.color}
                     inputMode="decimal"
                     onChangeText={rest.onChangeText}
                     textAlign="right"
