@@ -1,9 +1,8 @@
 import CancelButton from "@/components/buttons/CancelButton";
 import ConfirmButton from "@/components/buttons/ConfirmButton";
-import CategoryInput from "@/components/inputs/CategoryInput";
-import DateInput from "@/components/inputs/DateInput";
-import DescriptionInput from "@/components/inputs/DescriptionInput";
-import ValueInput from "@/components/inputs/ValueInput";
+import DatePicker from "@/components/menu-items/DatePicker";
+import DescriptionInput from "@/components/menu-items/DescriptionInput";
+import SRedir from "@/components/menu-items/RedirSelect";
 import SegmentedControl from "@/components/pickers/SegmentedControl";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -32,13 +31,11 @@ export default function AddModal({visible, onClose}: AddModalProps) {
                             onChange={setSelectedIndex}
                         />
 
-                        <ValueInput/>
+                        <DescriptionInput leftText="description"/>
 
-                        <DescriptionInput/>
+                        <DatePicker text="Date" />
 
-                        <DateInput />
-
-                        <CategoryInput onPress={() => {router.push("/modalCategoryPicker")}}/>
+                        <SRedir text={"Category"} onPress={() => {router.push("/modalCategoryPicker")}}/>
 
                         <View style={{flexDirection: "row", columnGap: 12}}>
                             <CancelButton onPress={() => {router.back()}}/>

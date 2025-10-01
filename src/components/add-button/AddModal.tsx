@@ -4,8 +4,8 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Modal, StyleSheet, Text, View } from "react-native";
 import CancelButton from "../buttons/CancelButton";
 import ConfirmButton from "../buttons/ConfirmButton";
-import DescriptionInput from "../inputs/DescriptionInput";
-import ValueInput from "../inputs/ValueInput";
+import DescriptionInput from "../menu-items/DescriptionInput";
+import ValueInput from "../menu-items/ValueInput";
 
 type AddModalProps = {
     visible: boolean,
@@ -38,9 +38,9 @@ export default function AddModal({visible, onClose}: AddModalProps) {
                             onChange={setSelectedIndex}
                         />
 
-                        <ValueInput/>
+                        <ValueInput leftText="Value"/>
 
-                        <DescriptionInput/>
+                        <DescriptionInput leftText="description"/>
 
 
                         <View style={{flexDirection: "row", columnGap: 12}}>

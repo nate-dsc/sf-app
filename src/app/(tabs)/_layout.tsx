@@ -20,10 +20,10 @@ export default function TabBar() {
                 headerRight: () =>
                 (
                     <TouchableOpacity
-                    style={{ marginRight: 15 }}
+                    style={{ marginRight: 25 }}
                     onPress={() => router.push("/settings")}
                     >
-                    <Ionicons name="settings-outline" size={24} color={theme.navigationTheme.colors.text} />
+                    <Ionicons name="settings-outline" size={27} color={theme.navigationTheme.colors.text} />
                     </TouchableOpacity>
                 )
             })}>

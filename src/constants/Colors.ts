@@ -25,6 +25,7 @@ type CustomTheme = {
     icons: string,
     tint: string
   }
+  themeName: string
 }
 
 type NavigationColors = {
@@ -88,7 +89,8 @@ export const light: CustomTheme = {
     unfocusedText: "#808080",
     icons: "#000",
     tint: "#007AFF"
-  }
+  },
+  themeName: "light"
 }
 
 export const dark: CustomTheme = {
@@ -119,13 +121,13 @@ export const dark: CustomTheme = {
     green: "#34C759",
     blue: "#007AFF",
   },
-
   menuItem: {
     background: "#181818",
     border: "#2E2E2E",
     text: "#F5F5F5",
-    unfocusedText: "#C7C7C7",
+    unfocusedText: "#6E6E6E",
     icons: "#F5F5F5",
     tint: "#007AFF"
-  }
+  },
+  themeName: "dark"
 }

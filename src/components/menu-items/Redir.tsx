@@ -8,7 +8,7 @@ type iconName = React.ComponentProps<typeof Ionicons>["name"]
 
 type RedirProps = {
     text: string,
-    iconName: iconName,
+    iconName?: iconName,
     onPress: () => void,
 }
 
@@ -23,7 +23,10 @@ export default function Redir({text, iconName, onPress}: RedirProps) {
             style={menuStyles.redir}
         >
             <View style={menuStyles.leftContainer}>
-                <Ionicons name={iconName} size={35} color={menuStyles.icon.color}/>
+                { iconName ?
+                    (<Ionicons name={iconName} size={35} color={menuStyles.icon.color}/>)
+                    : (<View style={{width: 35, height: 35}}/>)
+                }
             </View>
             <View style={menuStyles.textChevronContainer}>
                 <View style={{flex: 1}}>
