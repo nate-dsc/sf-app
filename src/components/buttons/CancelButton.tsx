@@ -10,7 +10,7 @@ export default function CancelButton({...rest}: TouchableOpacityProps) {
 
     return(
         <TouchableOpacity style={buttonStyles.cancelButton} onPress={rest.onPress}>
-            <Text style={[FontStyles.mainTitle, {color: "#fff"}]}> Cancel </Text>
+            <Text style={[FontStyles.title1, {fontWeight: "bold", color: "#F5F5F5"}]}> Cancel </Text>
         </TouchableOpacity>
     )
 }

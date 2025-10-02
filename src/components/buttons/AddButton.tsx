@@ -12,6 +12,7 @@ export default function AddButton({ size=40, onPress }: AddButtonProps) {
 
     const theme = useTheme()
     const buttonStyles = ButtonStyles(theme)
+    const iconSize = size - 2
 
     const buttonSize = {
         width: size,
@@ -21,7 +22,7 @@ export default function AddButton({ size=40, onPress }: AddButtonProps) {
     
     return(
         <TouchableOpacity style={[buttonSize, buttonStyles.addButton]} onPress={onPress} >
-            <Ionicons name="add" size={size} color={"#F5F5F5"}/>
+            <Ionicons name="add" size={iconSize} color={"#F5F5F5"}/>
         </TouchableOpacity>
     )
 

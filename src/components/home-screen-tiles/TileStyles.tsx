@@ -3,11 +3,11 @@ import { StyleSheet } from "react-native"
 
 export const TileStyles = (Colors: typeof light) => StyleSheet.create({
     container: {
+        flexShrink: 1,
         backgroundColor: Colors.tile.background,
         borderWidth: 1,
         borderColor: Colors.tile.border,
         padding: 12,
-        //paddingTop: 8,
         borderRadius: 24,
         shadowColor: "#000",
         shadowOpacity: 0.15,

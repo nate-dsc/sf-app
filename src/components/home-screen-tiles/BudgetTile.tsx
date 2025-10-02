@@ -15,17 +15,17 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
     const theme = useTheme()
     const tileStyles = TileStyles(theme)
 
-    const budgetStr = monthlyBudget.toString()
-    const balanceStr = monthlyBalance.toString()
+    const budgetStr = monthlyBudget.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
+    const balanceStr = monthlyBalance.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
         <View style={tileStyles.container}>
 
-            <Text style={[tileStyles.text, FontStyles.title2, {fontWeight: "bold"}]}>Budget</Text>
-            <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.mainNumDisplay]}>R$ {balanceStr}</Text>
+            <Text style={[tileStyles.text, FontStyles.title2]}>Budget</Text>
+            <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numLargeTitle]}>{balanceStr}</Text>
             <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>of </Text>
-                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.secondaryNumDisplay]}>R$ {budgetStr}</Text>
+                <Text style={[tileStyles.textUnfocused, FontStyles.title3]}>of </Text>
+                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numTitle3]}>{budgetStr}</Text>
             </View>
 
         </View>

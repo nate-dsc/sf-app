@@ -1,27 +1,27 @@
 import { useTheme } from "@/context/ThemeContext"
-import { Text, View, ViewStyle } from "react-native"
+import { outflow } from "@/types/TilesTypes"
+import { Text, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
 
 type OutflowTileProps = {
-    monthlyOutflow: number,
-    last30daysOutflow: number,
-    monthlyPreference: boolean,
-    style?: ViewStyle
+    outflow: outflow
 }
 
-export default function OutflowTile({ monthlyOutflow, last30daysOutflow, monthlyPreference, style}: OutflowTileProps) {
+export default function OutflowTile({outflow}: OutflowTileProps) {
 
     const theme = useTheme()
     const tileStyles = TileStyles(theme)
 
-    const outflowStr = monthlyPreference ? monthlyOutflow.toString() : last30daysOutflow.toString()
+    const outflowStr = outflow.monthlyPreference ? 
+        outflow.monthlyOutflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
+         : outflow.last30daysOutflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
-        <View style={[tileStyles.container, style]}>
-            <Text style={FontStyles.mainTitle}>Outflow</Text>
-            <Text style={FontStyles.mainNumDisplay}>{outflowStr}</Text>
+        <View style={[tileStyles.container]}>
+            <Text style={[tileStyles.text, FontStyles.title2]}>Outflow</Text>
+            <Text style={[tileStyles.text, FontStyles.numTitle1]}>{outflowStr}</Text>
         </View>
     )
 }

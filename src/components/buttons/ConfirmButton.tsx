@@ -10,7 +10,7 @@ export default function ConfirmButton({...rest}: TouchableOpacityProps) {
 
     return(
         <TouchableOpacity style={buttonStyles.confirmButton} onPress={rest.onPress} disabled={rest.disabled}>
-            <Text style={[FontStyles.mainTitle, {color: "#f5f5f5"}]}> Save </Text>
+            <Text style={[FontStyles.title1, {fontWeight: "bold", color: "#F5F5F5"}]}> Save </Text>
         </TouchableOpacity>
     )
 }
