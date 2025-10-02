@@ -3,21 +3,28 @@ import DatePicker from "@/components/menu-items/DatePicker"
 import DescriptionInput from "@/components/menu-items/DescriptionInput"
 import Redir from "@/components/menu-items/Redir"
 import SRedir from "@/components/menu-items/RedirSelect"
+import SegmentedControl from "@/components/menu-items/SegmentedControl"
 import ValueInput from "@/components/menu-items/ValueInput"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
 import { useState } from "react"
 import { ScrollView } from "react-native"
 
 export default function SettingsScreen() {
 
+    const router = useRouter()
+
     const [category, setCategory] = useState("")
+
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const segmentOptions = ["Escolha1", "Escolha2","Escolha3"];
     
     const headerHeight = useHeaderHeight()
 
     return(
         <ScrollView contentContainerStyle={[{paddingTop: headerHeight, marginTop: 4}, SStyles.mainContainer]}>
-            <Redir iconName="cog-outline" text="Test setting" onPress={() => {}} />
+            <Redir iconName="hammer" text="Tests" onPress={() => {router.push("/experiment")}} />
 
             <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
 
@@ -30,6 +37,12 @@ export default function SettingsScreen() {
             <ValueInput leftText="TESTE" />
 
             <DescriptionInput leftText="teste"/>
+
+            <SegmentedControl
+                options={segmentOptions}
+                selectedValue={selectedIndex}
+                onChange={setSelectedIndex}
+            />
 
         </ScrollView>
     )

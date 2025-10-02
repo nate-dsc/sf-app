@@ -3,7 +3,8 @@ import ConfirmButton from "@/components/buttons/ConfirmButton";
 import DatePicker from "@/components/menu-items/DatePicker";
 import DescriptionInput from "@/components/menu-items/DescriptionInput";
 import SRedir from "@/components/menu-items/RedirSelect";
-import SegmentedControl from "@/components/pickers/SegmentedControl";
+import SegmentedControl from "@/components/menu-items/SegmentedControl";
+import ValueInput from "@/components/menu-items/ValueInput";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -31,15 +32,19 @@ export default function AddModal({visible, onClose}: AddModalProps) {
                             onChange={setSelectedIndex}
                         />
 
-                        <DescriptionInput leftText="description"/>
+                        <ValueInput leftText="Value" />
+
+                        <DescriptionInput leftText="Description"/>
 
                         <DatePicker text="Date" />
 
-                        <SRedir text={"Category"} onPress={() => {router.push("/modalCategoryPicker")}}/>
+                        <SRedir text="Category" onPress={() => {router.push("/modalCategoryPicker")}}/>
+
+                        <SRedir text="Recurring" onPress={() => {router.push("/modalRecurring")}}/>
 
                         <View style={{flexDirection: "row", columnGap: 12}}>
                             <CancelButton onPress={() => {router.back()}}/>
-                            <ConfirmButton onPress={() => {router.push("/modalRecurring")}}/>
+                            <ConfirmButton onPress={() => {router.back()}}/>
                         </View>
                     </ScrollView>
                     

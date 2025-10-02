@@ -1,4 +1,4 @@
-import { ButtonStyles } from "@/components/styles/ButtonStyles"
+import { ButtonStyles } from "@/components/buttons/ButtonStyles"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Text, TouchableOpacity, type TouchableOpacityProps } from "react-native"

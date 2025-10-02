@@ -26,6 +26,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                 name="settings"
                                 options={{
                                     headerBackButtonDisplayMode: "minimal",
+                                    headerBackButtonMenuEnabled: false,
                                     title: "Settings"
                                 }}
                             />
@@ -33,7 +34,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                 name="modalAdd"
                                 options={{
                                     headerBackButtonDisplayMode: "minimal",
-                                    headerBackButtonMenuEnabled: false,
                                     title: "New transaction",
                                     presentation: "formSheet"
                                 }}
@@ -54,6 +54,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                     headerBackButtonMenuEnabled: false,
                                     title: "Pick a category",
                                     presentation: "formSheet"
+                                }}
+                            />
+                            <Stack.Screen
+                                name="experiment"
+                                options={{
+                                    headerBackButtonDisplayMode: "minimal",
+                                    headerBackButtonMenuEnabled: false,
+                                    title: "Experimentation"
                                 }}
                             />
                         </Stack>

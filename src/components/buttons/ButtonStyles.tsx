@@ -5,6 +5,8 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     addButton: {
         zIndex: 1,
         backgroundColor: Colors.custom.green,
+        borderWidth: 1,
+        borderColor: "#3ADD63",
         overflow: "hidden",
         justifyContent: "center",
         alignItems: "center"
@@ -12,7 +14,9 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     confirmButton: {
         flex: 1,
         backgroundColor: Colors.custom.green,
-        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#3ADD63",
+        borderRadius: 24,
         height: 40,
         justifyContent: "center",
         alignItems: "center",
@@ -20,8 +24,10 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
     },
     cancelButton: {
         flex: 1,
-        backgroundColor: Colors.custom.gray,
-        borderRadius: 8,
+        backgroundColor: "darkgray",
+        borderWidth: 1,
+        borderColor: Colors.custom.gray,
+        borderRadius: 24,
         height: 40,
         justifyContent: "center",
         alignItems: "center",
