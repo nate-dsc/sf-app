@@ -16,11 +16,11 @@ export default function HomeScreen() {
 
     const [isAddModalVisible, setAddModalVisible] = useState(false)
 
-    const headerHeight = useHeaderHeight()
+    const paddingTop = useHeaderHeight() + 10
 
     return(
-        <View style={{flex: 1, paddingTop: headerHeight}}>
-            <ScrollView contentContainerStyle={SStyles.mainContainer}>
+        <View style={{flex: 1, paddingTop: paddingTop}}>
+            <ScrollView contentContainerStyle={[SStyles.mainContainer]}>
                     <BudgetTile style={{}} monthlyBudget={-999999.99} monthlyBalance={999999.99} budgetPreference={true} />
                 <View style={{ flexDirection: "row", justifyContent: "center", columnGap: 12}}>
                     <InflowTile inflow={{

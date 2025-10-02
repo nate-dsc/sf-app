@@ -8,7 +8,7 @@ import ValueInput from "@/components/menu-items/ValueInput";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 type AddModalProps = {
     visible: boolean,
@@ -17,39 +17,34 @@ type AddModalProps = {
 
 export default function AddModal({visible, onClose}: AddModalProps) {
 
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const segmentOptions = ["Inflow", "Outflow"];
-    const headerHeight = useHeaderHeight()
+    const [selectedIndex, setSelectedIndex] = useState(0)
+    const segmentOptions = ["Inflow", "Outflow"]
+    const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
     
     return(
-            <View style={[{paddingTop: headerHeight}]}>
-                <KeyboardAvoidingView behavior="padding" contentContainerStyle={{flex: 1}}>
-                    <ScrollView contentContainerStyle={styles.modalView}>
-                        <SegmentedControl
-                            options={segmentOptions}
-                            selectedValue={selectedIndex}
-                            onChange={setSelectedIndex}
-                        />
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
+            <SegmentedControl
+                options={segmentOptions}
+                selectedValue={selectedIndex}
+                onChange={setSelectedIndex}
+            />
 
-                        <ValueInput leftText="Value" />
+            <ValueInput leftText="Value" />
 
-                        <DescriptionInput leftText="Description"/>
+            <DescriptionInput leftText="Description"/>
 
-                        <DatePicker text="Date" />
+            <DatePicker text="Date" />
 
-                        <SRedir text="Category" onPress={() => {router.push("/modalCategoryPicker")}}/>
+            <SRedir text="Category" onPress={() => {router.push("/modalCategoryPicker")}}/>
 
-                        <SRedir text="Recurring" onPress={() => {router.push("/modalRecurring")}}/>
+            <SRedir text="Recurring" onPress={() => {router.push("/modalRecurring")}}/>
 
-                        <View style={{flexDirection: "row", columnGap: 12}}>
-                            <CancelButton onPress={() => {router.back()}}/>
-                            <ConfirmButton onPress={() => {router.back()}}/>
-                        </View>
-                    </ScrollView>
-                    
-                </KeyboardAvoidingView>
+            <View style={{flexDirection: "row", columnGap: 12}}>
+                <CancelButton onPress={() => {router.back()}}/>
+                <ConfirmButton onPress={() => {router.back()}}/>
             </View>
+        </ScrollView>
     )
 }
 

@@ -53,6 +53,9 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         borderRadius: 24,
         backgroundColor: Colors.menuItem.tint
     },
+    listItemCheckmark: {
+       color: Colors.menuItem.tint
+    },
 
 
 
@@ -85,9 +88,11 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
 
     //Containers
     leftContainer: {
-        paddingLeft: 8,
+        //paddingLeft: 8,
+        marginLeft:8,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "teal"
     },
     textChevronContainer: {
         flex: 1,
@@ -135,6 +140,14 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         padding: 6,
         paddingHorizontal: 6,
         gap: 12
+    },
+    listPickerContainer: {
+        flexGrow: 0,
+        backgroundColor: Colors.menuItem.background,
+        borderWidth: 1,
+        borderColor: Colors.menuItem.border,
+        borderRadius: 24,
+        overflow: "hidden"
     }
     
 })

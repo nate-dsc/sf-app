@@ -20,10 +20,10 @@ export default function SettingsScreen() {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const segmentOptions = ["Escolha1", "Escolha2","Escolha3"];
     
-    const headerHeight = useHeaderHeight()
+    const paddingTop = useHeaderHeight() + 10
 
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: headerHeight, marginTop: 4}, SStyles.mainContainer]}>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
             <Redir iconName="hammer" text="Tests" onPress={() => {router.push("/experiment")}} />
 
             <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
