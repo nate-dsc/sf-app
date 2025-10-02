@@ -18,7 +18,7 @@ export default function DistributionTile({value, description, isOutflow, style}:
 
     return(
         <View style={[tileStyles.container, style]}>
-            <Text style={FontStyles.mainTitle}>Distribution</Text>
+            <Text style={FontStyles.title2}>Distribution</Text>
         </View>
     )
 

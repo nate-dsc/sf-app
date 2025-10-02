@@ -19,7 +19,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                             <Stack.Screen
                                 name="(tabs)"
                                 options={{
-                                    headerShown: false 
+                                    headerShown: false,
                                 }}
                             />
                             <Stack.Screen
@@ -27,6 +27,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                 options={{
                                     headerBackButtonDisplayMode: "minimal",
                                     headerBackButtonMenuEnabled: false,
+                                    headerBackTitle: "Start",
                                     title: "Settings"
                                 }}
                             />
