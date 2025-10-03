@@ -11,7 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
     return(
         <NavigationThemeProvider value={theme.theme.navigationTheme}>
                 <SafeAreaProvider>
-                        <StatusBar style={"auto"}/>
+                        <StatusBar style={theme.preference === 'dark' ? 'light' : theme.preference === 'light' ? 'dark' : 'auto'}/>
                         <Stack screenOptions={{
                             headerShadowVisible: false,
                             headerTransparent: true,

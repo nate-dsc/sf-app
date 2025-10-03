@@ -43,7 +43,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   */
 
   return (
-    <ThemeContext.Provider value={{theme, preference, setPreference}}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider value={{theme, preference, setPreference: setPreferenceState}}>{children}</ThemeContext.Provider>
   );
 };
 
