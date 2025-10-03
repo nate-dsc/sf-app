@@ -9,7 +9,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
     const theme = useTheme()
 
     return(
-        <NavigationThemeProvider value={theme.navigationTheme}>
+        <NavigationThemeProvider value={theme.theme.navigationTheme}>
                 <SafeAreaProvider>
                         <StatusBar style={"auto"}/>
                         <Stack screenOptions={{

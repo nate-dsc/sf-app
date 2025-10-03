@@ -35,7 +35,7 @@ export default function CategoryList({categories, selectedId = null, onSelect}: 
   const checkmarkSize = 30
 
   const theme = useTheme()
-  const menuStyles = MIStyles(theme)
+  const menuStyles = MIStyles(theme.theme)
 
   const renderItem = ({ item }: ListRenderItemInfo<Category>) => {
     const selected = item.id === selectedId;

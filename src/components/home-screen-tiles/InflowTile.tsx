@@ -11,7 +11,7 @@ type InflowProps = {
 export default function InflowTile({inflow}: InflowProps) {
 
     const theme = useTheme()
-    const tileStyles = TileStyles(theme)
+    const tileStyles = TileStyles(theme.theme)
 
     const inflowStr = inflow.monthlyPreference ? inflow.monthlyInflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"}) : inflow.last30daysInflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 

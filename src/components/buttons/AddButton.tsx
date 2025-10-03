@@ -11,7 +11,7 @@ type AddButtonProps = {
 export default function AddButton({ size=40, onPress }: AddButtonProps) {
 
     const theme = useTheme()
-    const buttonStyles = ButtonStyles(theme)
+    const buttonStyles = ButtonStyles(theme.theme)
     const iconSize = size - 2
 
     const buttonSize = {

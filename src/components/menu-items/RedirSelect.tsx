@@ -13,7 +13,7 @@ type SRedirProps = {
 export default function SRedir({text, selected, onPress}: SRedirProps) {
 
     const theme = useTheme()
-    const menuStyles = MIStyles(theme)
+    const menuStyles = MIStyles(theme.theme)
 
     return(
         <TouchableOpacity

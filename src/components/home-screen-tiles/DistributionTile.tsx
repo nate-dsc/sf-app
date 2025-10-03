@@ -14,7 +14,7 @@ type DistributionProps = {
 export default function DistributionTile({value, description, isOutflow, style}: DistributionProps) {
 
     const theme = useTheme()
-    const tileStyles = TileStyles(theme)
+    const tileStyles = TileStyles(theme.theme)
 
     return(
         <View style={[tileStyles.container, style]}>

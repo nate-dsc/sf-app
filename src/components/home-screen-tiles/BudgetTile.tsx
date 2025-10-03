@@ -13,7 +13,7 @@ type BudgetTileProps = {
 export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPreference, style}: BudgetTileProps) {
 
     const theme = useTheme()
-    const tileStyles = TileStyles(theme)
+    const tileStyles = TileStyles(theme.theme)
 
     const budgetStr = monthlyBudget.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const balanceStr = monthlyBalance.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})

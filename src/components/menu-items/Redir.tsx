@@ -15,7 +15,7 @@ type RedirProps = {
 export default function Redir({text, iconName, onPress}: RedirProps) {
 
     const theme = useTheme()
-    const menuStyles = MIStyles(theme)
+    const menuStyles = MIStyles(theme.theme)
 
     return(
         <TouchableOpacity

@@ -10,7 +10,7 @@ type ValueInputProps = TextInputProps & {
 export default function ValueInput({leftText, ...rest}: ValueInputProps) {
 
     const theme = useTheme()
-    const menuStyles = MIStyles(theme)
+    const menuStyles = MIStyles(theme.theme)
 
     return(
         <View style={menuStyles.input}>

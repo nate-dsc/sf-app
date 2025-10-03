@@ -14,7 +14,7 @@ type LastTransactionTileProps = {
 export default function LastTransactionTile({value, description, isOutflow, style}: LastTransactionTileProps) {
 
     const theme = useTheme()
-    const tileStyles = TileStyles(theme)
+    const tileStyles = TileStyles(theme.theme)
 
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 

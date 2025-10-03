@@ -12,7 +12,7 @@ type CategorySelectionProps = {
 export default function CategorySelection({options, onSelection}: CategorySelectionProps) {
 
     const theme = useTheme()
-    const styles = CategorySelectionStyles(theme)
+    const styles = CategorySelectionStyles(theme.theme)
 
     const options2 = ["Home", "Food", "Groceries", "Transport", "Services", "Leisure", "Education", "Shopping", "Games", "Gambling",
         "Travel", "Pet", "Investment", "Health", "Emergency", "Other"]

@@ -14,7 +14,7 @@ type SegmentedControlProps = {
 export default function SegmentedControl({ options, selectedValue, onChange}: SegmentedControlProps) {
 
   const theme = useTheme()
-  const menuStyles = MIStyles(theme)
+  const menuStyles = MIStyles(theme.theme)
 
   return (
     <View style={[menuStyles.segmentContainer]}>

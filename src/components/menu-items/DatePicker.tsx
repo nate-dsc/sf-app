@@ -11,7 +11,7 @@ type DatePickerProps = {
 export default function DatePicker({text}: DatePickerProps) {
 
     const theme = useTheme()
-    const menuStyles = MIStyles(theme)
+    const menuStyles = MIStyles(theme.theme)
 
     return(
         <View style={menuStyles.datePicker}>

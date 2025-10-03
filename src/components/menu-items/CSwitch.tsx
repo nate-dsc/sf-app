@@ -10,7 +10,7 @@ type CSwitchProps = SwitchProps & {
 export default function CSwitch({text, ...rest}: CSwitchProps) {
 
     const theme = useTheme()
-    const menuStyles = MIStyles(theme)
+    const menuStyles = MIStyles(theme.theme)
 
     return(
         <View style={menuStyles.switch}>

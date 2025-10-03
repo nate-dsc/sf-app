@@ -12,7 +12,7 @@ export default function TabBar() {
     const router = useRouter()
 
     return(
-        <NavigationThemeProvider value={theme.navigationTheme}>
+        <NavigationThemeProvider value={theme.theme.navigationTheme}>
             <Tabs screenOptions={({route}) => ({
                 headerShadowVisible: false,
                 headerTransparent: true,
@@ -23,7 +23,7 @@ export default function TabBar() {
                     style={{ marginRight: 25 }}
                     onPress={() => router.push("/settings")}
                     >
-                    <Ionicons name="settings-outline" size={27} color={theme.navigationTheme.colors.text} />
+                    <Ionicons name="settings-outline" size={27} color={theme.theme.navigationTheme.colors.text} />
                     </TouchableOpacity>
                 )
             })}>

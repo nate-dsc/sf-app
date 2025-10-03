@@ -12,7 +12,7 @@ type OutflowTileProps = {
 export default function OutflowTile({outflow}: OutflowTileProps) {
 
     const theme = useTheme()
-    const tileStyles = TileStyles(theme)
+    const tileStyles = TileStyles(theme.theme)
 
     const outflowStr = outflow.monthlyPreference ? 
         outflow.monthlyOutflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
