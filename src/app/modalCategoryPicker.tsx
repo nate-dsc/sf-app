@@ -22,7 +22,7 @@ export default function CategoryPicker() {
         { id: "3", title: t("categories.expenses.groceries"), iconName: "cart" },
         { id: "4", title: t("categories.expenses.transport"), iconName: "car" },
         { id: "5", title: t("categories.expenses.services"), iconName: "construct" },
-        { id: "6", title: t("categories.expenses.leisure"), iconName: "musical-notes" },
+        { id: "6", title: t("categories.expenses.leisure"), iconName: "ticket" },
         { id: "7", title: t("categories.expenses.education"), iconName: "school" },
         { id: "8", title: t("categories.expenses.shopping"), iconName: "bag-handle" },
         { id: "9", title: t("categories.expenses.investment"), iconName: "trending-up" },
