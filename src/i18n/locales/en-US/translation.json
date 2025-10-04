@@ -57,5 +57,15 @@
             "dark": "Dark"
         },
         "langDescription": "Language"
+    },
+    "addModal": {
+        "inflow": "Income",
+        "outflow": "Expense",
+        "value": "Value",
+        "description": "Description",
+        "date": "Date",
+        "category": "Category",
+        "select": "Select",
+        "recurring": "Recurring"
     }
 }

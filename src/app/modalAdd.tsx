@@ -5,45 +5,63 @@ import DescriptionInput from "@/components/menu-items/DescriptionInput";
 import SRedir from "@/components/menu-items/RedirSelect";
 import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl";
 import ValueInput from "@/components/menu-items/ValueInput";
+import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, View } from "react-native";
 
-type AddModalProps = {
-    visible: boolean,
-    onClose: () => void,
-}
 
-export default function AddModal({visible, onClose}: AddModalProps) {
 
-    const [selectedFlow, setSelectedFlow] = useState("outflow")
-    const segmentOptions = ["Inflow", "Outflow"]
+export default function AddModal() {
+
     const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
+    const {t} = useTranslation()
+    const {newTransaction, updateNewTransaction, setNewTransaction} = useNewTransaction()
+
+    const [selectedFlow, setSelectedFlow] = useState("outflow")
 
     const flowOptions: SCOption[] = [
-        {key: "inflow", value: "Inflow"},
-        {key: "outflow", value: "Outflow"}
+        {key: "inflow", value: t("modalAdd.inflow")},
+        {key: "outflow", value: t("modalAdd.outflow")}
     ]
+
+    useEffect(() => {
+      // Limpa para garantir que não estamos editando uma transação antiga
+      setNewTransaction({ flowType: "outflow" }); // Define um valor inicial
+
+      return () => {
+        // Limpa ao sair da tela para não sujar a próxima abertura do modal
+        setNewTransaction({});
+      }
+    }, []);
     
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
             <SegmentedControl
                 options={flowOptions}
-                selectedValue={selectedFlow}
-                onChange={setSelectedFlow}
+                selectedValue={newTransaction.flowType || "outflow"}
+                onChange={(newFlowType) => updateNewTransaction({
+                    flowType: newFlowType as "inflow" | "outflow",
+                    category: undefined
+                })}
             />
 
-            <ValueInput leftText="Value" />
+            <ValueInput leftText={t("modalAdd.value")} />
 
-            <DescriptionInput leftText="Description"/>
+            <DescriptionInput leftText={t("modalAdd.description")}/>
 
-            <DatePicker text="Date" />
+            <DatePicker text={t("modalAdd.date")} />
 
-            <SRedir text="Category" onPress={() => {router.push("/modalCategoryPicker")}}/>
+            <SRedir
+                text={t("modalAdd.category")} 
+                selectText={newTransaction.category?.title}
+                onPress={() => {router.push("/modalCategoryPicker")}}
+            />
 
-            <SRedir text="Recurring" onPress={() => {router.push("/modalRecurring")}}/>
+            <SRedir text={t("modalAdd.recurring")} onPress={() => {router.push("/modalRecurring")}}/>
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <CancelButton onPress={() => {router.back()}}/>

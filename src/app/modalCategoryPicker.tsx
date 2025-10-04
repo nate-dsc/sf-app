@@ -1,4 +1,5 @@
 import CategoryList, { Category } from "@/components/menu-items/ListPicker"
+import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useState } from "react"
@@ -8,13 +9,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function CategoryPicker() {
 
-    const { t } = useTranslation()
-
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
     const router = useRouter()
+    const { t } = useTranslation()
+    const { newTransaction, updateNewTransaction } = useNewTransaction()
+    
+    const type = newTransaction.flowType
+    const selectedCategory = newTransaction.category?.id
 
-    const [selected, setSelected] = useState<string | null>(null);
+    const [selected, setSelected] = useState<string | undefined>(selectedCategory);
     
     const expenseList: Category[] = [
         { id: "1", title: t("categories.expenses.home"), iconName: "home" },
@@ -34,14 +38,29 @@ export default function CategoryPicker() {
         { id: "15", title: t("categories.expenses.gambling"), iconName: "dice" },
         { id: "16", title: t("categories.expenses.other"), iconName: "ellipsis-horizontal" }
     ];
+
+    const incomeList: Category[] = [
+        { id: "21", title: t("categories.income.salary"), iconName: "cash" },
+        { id: "22", title: t("categories.income.freelance"), iconName: "hammer" },
+        { id: "23", title: t("categories.income.oncall"), iconName: "id-card" },
+        { id: "24", title: t("categories.income.overtime"), iconName: "time" },
+        { id: "25", title: t("categories.income.perdiem"), iconName: "today" },
+        { id: "26", title: t("categories.income.sales"), iconName: "pricetag" },
+        { id: "27", title: t("categories.income.roi"), iconName: "trending-up" },
+        { id: "28", title: t("categories.income.gambling"), iconName: "dice" },
+        { id: "29", title: t("categories.income.other"), iconName: "ellipsis-horizontal" }
+    ];
     
     return(
-            <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}]}>
-                    <CategoryList
-                        categories={expenseList}
-                        selectedId={selected}
-                        onSelect={(id) => setSelected(id)}
-                    />
-            </ScrollView>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}]}>
+            <CategoryList
+                categories={type === "inflow" ? incomeList : expenseList}
+                selectedId={selected}
+                onSelect={(id, title) => {
+                    updateNewTransaction({category: {id, title}})
+                    router.back()
+                }}
+            />
+        </ScrollView>
     )
 }

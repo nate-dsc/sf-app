@@ -25,7 +25,7 @@ export type Category = {
 type Props = {
   categories: Category[],
   selectedId?: string | null,
-  onSelect: (id: string) => void,
+  onSelect: (id: string, title: string) => void,
 };
 
 export default function CategoryList({categories, selectedId = null, onSelect}: Props) {
@@ -40,7 +40,7 @@ export default function CategoryList({categories, selectedId = null, onSelect}: 
     const selected = item.id === selectedId;
 
     const handlePress = (e: GestureResponderEvent) => {
-      onSelect(item.id);
+      onSelect(item.id, item.title);
     };
 
     return (

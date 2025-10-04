@@ -1,16 +1,20 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
+import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, View } from "react-native"
 import { MIStyles } from "./MenuItemStyles"
 
 type SRedirProps = {
     text: string,
+    selectText?: string,
     selected?: string,
     onPress: () => void
 }
 
-export default function SRedir({text, selected, onPress}: SRedirProps) {
+export default function SRedir({text, selectText, selected, onPress}: SRedirProps) {
+
+    const {t} = useTranslation()
 
     const theme = useTheme()
     const menuStyles = MIStyles(theme.theme)
@@ -37,7 +41,7 @@ export default function SRedir({text, selected, onPress}: SRedirProps) {
                     <View style={{flexDirection: "row"}}>
                         <Text
                             style={[menuStyles.textUnfocused, FontStyles.body]}
-                        >Select</Text>
+                        >{selectText ? selectText : t("modalAdd.select")}</Text>
                         <Ionicons name="chevron-expand" size={20} color={menuStyles.iconUnfocused.color}/>
                     </View>
                 )}

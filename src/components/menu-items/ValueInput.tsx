@@ -31,23 +31,4 @@ export default function ValueInput({leftText, ...rest}: ValueInputProps) {
             </View>
         </View>
     )
-
-    /* return(
-        <View style={[{flexDirection: "row", alignItems: "center"}, inputStyles.smallInputField]}>
-            <Text
-                style={[{flex: 2}, FontStyles.body]}
-            >
-                Value
-            </Text>
-
-            <TextInput
-                style={[{flex: 3}, FontStyles.numBody]}
-                placeholder="0.00"
-                placeholderTextColor={"gray"}
-                inputMode="decimal"
-                onChangeText={rest.onChangeText}
-                textAlign="right"
-            />
-        </View>
-    ) */
 }
