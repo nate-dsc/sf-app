@@ -30,7 +30,7 @@ type Props = {
 
 export default function CategoryList({categories, selectedId = null, onSelect}: Props) {
 
-  const iconSize = 35
+  const iconSize = 30
   const checkmarkSize = 30
 
   const theme = useTheme()

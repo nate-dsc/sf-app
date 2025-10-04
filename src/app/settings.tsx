@@ -1,10 +1,6 @@
-import DatePicker from "@/components/menu-items/DatePicker"
-import DescriptionInput from "@/components/menu-items/DescriptionInput"
 import { MIStyles } from "@/components/menu-items/MenuItemStyles"
 import Redir from "@/components/menu-items/Redir"
-import SRedir from "@/components/menu-items/RedirSelect"
 import SegmentedControl, { type SCOption } from "@/components/menu-items/SegmentedControl"
-import ValueInput from "@/components/menu-items/ValueInput"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { useTheme } from "@/context/ThemeContext"
@@ -54,7 +50,7 @@ export default function SettingsScreen() {
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
             <Redir iconName="hammer" text="Tests" onPress={() => {router.push("/experiment")}} />
 
-            <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
+            {/* <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
 
             <SRedir text="Selecionar!!" selected={category} onPress={() => {}}/>
 
@@ -62,7 +58,7 @@ export default function SettingsScreen() {
 
             <ValueInput leftText="TESTE" />
 
-            <DescriptionInput leftText="teste"/>
+            <DescriptionInput leftText="teste"/> */}
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.title2]}> Debug </Text>
 

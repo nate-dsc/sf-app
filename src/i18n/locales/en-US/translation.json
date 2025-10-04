@@ -1,8 +1,13 @@
 {
-    "tabs": {
+    "nav": {
         "home": "Home",
         "history": "History",
-        "planning": "Planning"
+        "planning": "Planning",
+        "settings": "Settings",
+        "newTransaction": "New transaction",
+        "categories": "Select a category",
+        "recurring": "Set recurrence",
+        "back": "Return"
     },
     "tiles": {
         "budget": "Budget",

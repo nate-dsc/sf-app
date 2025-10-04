@@ -3,9 +3,12 @@ import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 import { Tabs, useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 
 export default function TabBar() {
+
+    const { t } = useTranslation()
 
     const theme = useTheme()
 
@@ -23,26 +26,26 @@ export default function TabBar() {
                     style={{ marginRight: 25 }}
                     onPress={() => router.push("/settings")}
                     >
-                    <Ionicons name="settings-outline" size={27} color={theme.theme.navigationTheme.colors.text} />
+                    <Ionicons name="settings" size={27} color={theme.theme.navigationTheme.colors.text} />
                     </TouchableOpacity>
                 )
             })}>
                 <Tabs.Screen
                     name="index"
                     options={{
-                        title: "Home",
+                        title: t("nav.home"),
                     }}
                 />
                 <Tabs.Screen
                     name="history"
                     options={{
-                        title: "History",
+                        title: t("nav.history"),
                     }}
                 />
                 <Tabs.Screen
                     name="planning"
                     options={{
-                        title: "Planning",
+                        title: t("nav.planning"),
                     }}
                 />
                 

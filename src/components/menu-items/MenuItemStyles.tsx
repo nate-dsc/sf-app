@@ -92,7 +92,7 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         marginLeft:8,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "teal"
+        //backgroundColor: "teal"
     },
     textChevronContainer: {
         flex: 1,

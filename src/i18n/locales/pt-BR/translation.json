@@ -1,8 +1,13 @@
 {
-    "tabs": {
+    "nav": {
         "home": "Início",
         "history": "Histórico",
-        "planning": "Planejar"
+        "planning": "Planejar",
+        "settings": "Configurações",
+        "newTransaction": "Nova transação",
+        "categories": "Selecione uma categoria",
+        "recurring": "Configure a recorrência",
+        "back": "Voltar"
     },
     "tiles": {
         "budget": "Orçamento",
