@@ -1,5 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
+import i18n from "@/i18n"
 import { Text, TextInput, TextInputProps, View } from "react-native"
 import { MIStyles } from "./MenuItemStyles"
 
@@ -22,9 +23,10 @@ export default function ValueInput({leftText, ...rest}: ValueInputProps) {
             <View style={menuStyles.inputContainer}>
                 <TextInput
                     style={[menuStyles.text, FontStyles.numBody]}
-                    placeholder="0.00"
+                    placeholder={0.00.toLocaleString(i18n.language)}
                     placeholderTextColor={menuStyles.textUnfocused.color}
-                    inputMode="decimal"
+                    keyboardType="number-pad"
+                    inputMode="numeric"
                     onChangeText={rest.onChangeText}
                     textAlign="right"
                 />

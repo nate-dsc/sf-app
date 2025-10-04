@@ -58,7 +58,7 @@
         },
         "langDescription": "Language"
     },
-    "addModal": {
+    "modalAdd": {
         "inflow": "Income",
         "outflow": "Expense",
         "value": "Value",

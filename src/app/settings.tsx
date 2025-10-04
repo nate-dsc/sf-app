@@ -48,7 +48,12 @@ export default function SettingsScreen() {
 
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
+
+            <Text style={[{color: menuStyles.text.color}, FontStyles.title2]}> Debug </Text>
+
             <Redir iconName="hammer" text="Tests" onPress={() => {router.push("/experiment")}} />
+
+                <Redir iconName="hammer" text="Tests 2" onPress={() => {router.push("/experiment2")}} />
 
             {/* <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
 
@@ -59,8 +64,6 @@ export default function SettingsScreen() {
             <ValueInput leftText="TESTE" />
 
             <DescriptionInput leftText="teste"/> */}
-
-            <Text style={[{color: menuStyles.text.color}, FontStyles.title2]}> Debug </Text>
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> {t("settings.theme.description")} </Text>
 

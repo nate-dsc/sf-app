@@ -70,6 +70,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                 title: "Experimentation"
                             }}
                         />
+                        <Stack.Screen
+                            name="experiment2"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                title: "Experimentation"
+                            }}
+                        />
                     </Stack>
                 </SafeAreaProvider>
             </NavigationThemeProvider>
