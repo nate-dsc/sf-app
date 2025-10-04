@@ -21,7 +21,8 @@ export default function CSwitch({text, ...rest}: CSwitchProps) {
             </View>
             <View style={menuStyles.switchContainer}>
                 <Switch
-                    
+                    value={false}
+                    onValueChange={rest.onValueChange}
                 />
             </View>
         </View>

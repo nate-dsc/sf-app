@@ -4,12 +4,17 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { FontStyles } from "../styles/FontStyles";
 import { MIStyles } from "./MenuItemStyles";
 
-// Type definition for the component's props
+
+export type SCOption = {
+  key: string,
+  value: string
+}
+
 type SegmentedControlProps = {
-  options: string[];
-  selectedValue: number;
-  onChange: (selectedIndex: number) => void;
-};
+  options: SCOption[];
+  selectedValue: string;
+  onChange: (selectedIndex: string) => void;
+}
 
 export default function SegmentedControl({ options, selectedValue, onChange}: SegmentedControlProps) {
 
@@ -18,25 +23,25 @@ export default function SegmentedControl({ options, selectedValue, onChange}: Se
 
   return (
     <View style={[menuStyles.segmentContainer]}>
-      {options.map((option, index) => (
+      {options.map((option) => (
         <TouchableOpacity
-          key={option}
+          key={option.key}
           style={[
             menuStyles.segment,
-            // Compare the selectedValue (index) with the current item's index
-            selectedValue === index && menuStyles.activeSegment,
+            // Se o valor selecionado for a key da opção atual
+            selectedValue === option.key && menuStyles.activeSegment,
           ]}
-          // Pass the index of the pressed item to the onChange handler
-          onPress={() => onChange(index)}
+          // Passa a chave da opção pro handler onChange
+          onPress={() => onChange(option.key)}
         >
           <Text
             style={[
               FontStyles.body,
               menuStyles.textUnfocused,
-              selectedValue === index && menuStyles.textOverTint,
+              selectedValue === option.key && menuStyles.textOverTint,
             ]}
           >
-            {option}
+            {option.value}
           </Text>
         </TouchableOpacity>
       ))}

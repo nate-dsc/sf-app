@@ -1,0 +1,56 @@
+{
+    "tabs": {
+        "home": "Home",
+        "history": "History",
+        "planning": "Planning"
+    },
+    "tiles": {
+        "budget": "Budget",
+        "inflow": "Inflow",
+        "income": "Income",
+        "outflow": "Outflow",
+        "expenses": "Expenses",
+        "lastTransaction": "Last transaction",
+        "distribution": "Distribution"
+    },
+    "categories": {
+        "income": {
+            "salary": "Salary",
+            "freelance" : "Freelance",
+            "oncall": "On-call pay",
+            "overtime": "Overtime",
+            "perdiem": "Per diem",
+            "sales": "Sales",
+            "roi": "Return on Investment",
+            "gambling": "Gambling",
+            "other": "Other"
+        },
+        "expenses": {
+            "home": "Home",
+            "eating": "Eating out",
+            "groceries": "Groceries",
+            "transport": "Transportation",
+            "services": "Services",
+            "leisure": "Leisure",
+            "education": "Education",
+            "shopping": "Shopping",
+            "investment": "Investment",
+            "health": "Health",
+            "emergency": "Emergencies",
+            "traveling": "Traveling",
+            "pet": "Pet",
+            "gaming": "Gaming",
+            "gambling": "Gambling",
+            "other": "Other"
+        }
+    },
+    "settings": {
+        "theme": {
+            "description": "App Theme",
+            "system": "System",
+            "light": "Light",
+            "dark": "Dark"
+        },
+        "langDescription": "Language"
+    }
+}

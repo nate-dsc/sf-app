@@ -3,7 +3,7 @@ import ConfirmButton from "@/components/buttons/ConfirmButton";
 import DatePicker from "@/components/menu-items/DatePicker";
 import DescriptionInput from "@/components/menu-items/DescriptionInput";
 import SRedir from "@/components/menu-items/RedirSelect";
-import SegmentedControl from "@/components/menu-items/SegmentedControl";
+import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl";
 import ValueInput from "@/components/menu-items/ValueInput";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -17,17 +17,22 @@ type AddModalProps = {
 
 export default function AddModal({visible, onClose}: AddModalProps) {
 
-    const [selectedIndex, setSelectedIndex] = useState(0)
+    const [selectedFlow, setSelectedFlow] = useState("outflow")
     const segmentOptions = ["Inflow", "Outflow"]
     const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
+
+    const flowOptions: SCOption[] = [
+        {key: "inflow", value: "Inflow"},
+        {key: "outflow", value: "Outflow"}
+    ]
     
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
             <SegmentedControl
-                options={segmentOptions}
-                selectedValue={selectedIndex}
-                onChange={setSelectedIndex}
+                options={flowOptions}
+                selectedValue={selectedFlow}
+                onChange={setSelectedFlow}
             />
 
             <ValueInput leftText="Value" />

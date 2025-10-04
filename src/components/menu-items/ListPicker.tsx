@@ -13,14 +13,13 @@ import {
 } from "react-native";
 import { FontStyles } from "../styles/FontStyles";
 import { MIStyles } from "./MenuItemStyles";
-// Se preferir outro pacote de ícones, adapte a importação.
 
 type iconName = React.ComponentProps<typeof Ionicons>["name"]
 
 export type Category = {
   id: string;
   title: string;
-  iconName?: iconName; // nome do MaterialIcons (ex: "local-cafe", "fitness-center")
+  iconName?: iconName;
 };
 
 type Props = {

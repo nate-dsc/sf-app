@@ -1,5 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { ThemeProvider, useTheme } from "@/context/ThemeContext"
+import "@/i18n"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
 import { Stack } from "expo-router"
 import { StatusBar } from "expo-status-bar"
@@ -25,10 +26,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                             <Stack.Screen
                                 name="settings"
                                 options={{
+                                    title: "Settings",
                                     headerBackButtonDisplayMode: "minimal",
                                     headerBackButtonMenuEnabled: false,
                                     headerBackTitle: "Start",
-                                    title: "Settings"
                                 }}
                             />
                             <Stack.Screen

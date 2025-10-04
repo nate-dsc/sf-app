@@ -1,0 +1,56 @@
+{
+    "tabs": {
+        "home": "Início",
+        "history": "Histórico",
+        "planning": "Planejar"
+    },
+    "tiles": {
+        "budget": "Orçamento",
+        "inflow": "Entradas",
+        "income": "Renda",
+        "outflow": "Saídas",
+        "expenses": "Gastos",
+        "lastTransaction": "Última transação",
+        "distribution": "Distribuição"
+    },
+    "categories": {
+        "income": {
+            "salary": "Salário",
+            "freelance" : "Ganho autônomo",
+            "oncall": "Plantão",
+            "overtime": "Hora extra",
+            "perdiem": "Diária",
+            "sales": "Vendas",
+            "roi": "Retorno de Investimento",
+            "gambling": "Apostas",
+            "other": "Outro"
+        },
+        "expenses": {
+            "home": "Casa",
+            "eating": "Alimentação fora",
+            "groceries": "Supermercado",
+            "transport": "Transporte",
+            "services": "Serviços",
+            "leisure": "Lazer",
+            "education": "Educação",
+            "shopping": "Compras",
+            "investment": "Investimento",
+            "health": "Saúde",
+            "emergency": "Emergências",
+            "traveling": "Viagens",
+            "pet": "Pet",
+            "gaming": "Jogos",
+            "gambling": "Apostas",
+            "other": "Outro"
+        }
+    },
+    "settings": {
+        "theme": {
+            "description": "Tema do App",
+            "system": "Sistema",
+            "light": "Claro",
+            "dark": "Escuro"
+        },
+        "langDescription": "Idioma"
+    }
+}

@@ -17,3 +17,12 @@ export const indexToPreference = (index: number): ThemePreference => {
         default: return "system"
     }
 }
+
+export const strToPreference = (str: string): ThemePreference => {
+    switch(str) {
+        case "system": return "system"
+        case "light": return "light"
+        case "dark": return "dark"
+        default: return "system"
+    }
+}
