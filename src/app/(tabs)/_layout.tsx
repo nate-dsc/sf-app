@@ -26,7 +26,7 @@ export default function TabBar() {
                     style={{ marginRight: 25 }}
                     onPress={() => router.push("/settings")}
                     >
-                    <Ionicons name="settings" size={27} color={theme.theme.navigationTheme.colors.text} />
+                    <Ionicons name="cog" size={30} color={theme.theme.navigationTheme.colors.text} />
                     </TouchableOpacity>
                 )
             })}>

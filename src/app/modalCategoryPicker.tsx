@@ -52,7 +52,7 @@ export default function CategoryPicker() {
     ];
     
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}]}>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}, {width: 320}]}>
             <CategoryList
                 categories={type === "inflow" ? incomeList : expenseList}
                 selectedId={selected}

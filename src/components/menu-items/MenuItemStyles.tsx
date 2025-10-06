@@ -37,20 +37,30 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         borderColor: Colors.menuItem.border,
         borderRadius: 24,
     },
+    stepper: {
+        justifyContent: "center", 
+        alignItems: "flex-start",
+        backgroundColor: Colors.menuItem.background,
+        borderWidth: 1,
+        borderColor: Colors.menuItem.border,
+        borderRadius: 24,
+    },
     segment: {
         flex: 1,
+        flexWrap: "nowrap",
         padding: 6,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 24,
+        borderRadius: 18,
         backgroundColor: Colors.menuItem.background
     },
     activeSegment: {
         flex: 1,
+        flexWrap: "nowrap",
         padding: 6,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 24,
+        borderRadius: 18,
         backgroundColor: Colors.menuItem.tint
     },
     listItemCheckmark: {
@@ -87,6 +97,19 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
 
 
     //Containers
+    stepperTextContainer: {
+        flexGrow: 1,
+        flexDirection: "row",
+        justifyContent: "flex-start", 
+        alignItems: "center",
+        padding: 12
+    },
+    stepperContainer: {
+        flexGrow: 1,
+        flexDirection: "row",
+        justifyContent: "center", 
+        alignItems: "center",
+    },
     leftContainer: {
         //paddingLeft: 8,
         marginLeft:8,

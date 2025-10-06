@@ -78,6 +78,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
                                 title: "Experimentation"
                             }}
                         />
+                        <Stack.Screen
+                            name="measures"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                title: "Medidas"
+                            }}
+                        />
                     </Stack>
                 </SafeAreaProvider>
             </NavigationThemeProvider>

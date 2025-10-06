@@ -5,18 +5,18 @@ import { FontStyles } from "../styles/FontStyles";
 import { MIStyles } from "./MenuItemStyles";
 
 
-export type SCOption = {
-  key: string,
-  value: string
+export type SCOption<T> = {
+  label: string,
+  value: T
 }
 
-type SegmentedControlProps = {
-  options: SCOption[];
-  selectedValue: string;
-  onChange: (selectedIndex: string) => void;
+type SegmentedControlProps<T> = {
+  options: SCOption<T>[];
+  selectedValue: T;
+  onChange: (selectedValue: T) => void;
 }
 
-export default function SegmentedControl({ options, selectedValue, onChange}: SegmentedControlProps) {
+export default function SegmentedControl<T>({ options, selectedValue, onChange}: SegmentedControlProps<T>) {
 
   const theme = useTheme()
   const menuStyles = MIStyles(theme.theme)
@@ -25,23 +25,25 @@ export default function SegmentedControl({ options, selectedValue, onChange}: Se
     <View style={[menuStyles.segmentContainer]}>
       {options.map((option) => (
         <TouchableOpacity
-          key={option.key}
+          key={option.label}
           style={[
             menuStyles.segment,
             // Se o valor selecionado for a key da opção atual
-            selectedValue === option.key && menuStyles.activeSegment,
+            selectedValue === option.value && menuStyles.activeSegment,
           ]}
           // Passa a chave da opção pro handler onChange
-          onPress={() => onChange(option.key)}
+          onPress={() => onChange(option.value)}
         >
           <Text
             style={[
               FontStyles.body,
               menuStyles.textUnfocused,
-              selectedValue === option.key && menuStyles.textOverTint,
+              selectedValue === option.value && menuStyles.textOverTint,
             ]}
+            ellipsizeMode="clip"
+            numberOfLines={1}
           >
-            {option.value}
+            {option.label}
           </Text>
         </TouchableOpacity>
       ))}

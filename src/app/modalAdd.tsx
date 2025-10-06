@@ -16,16 +16,18 @@ import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function AddModal() {
 
+    type FlowType = "inflow" | "outflow"
+
     const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction} = useNewTransaction()
 
-    const [selectedFlow, setSelectedFlow] = useState("outflow")
+    const [selectedFlow, setSelectedFlow] = useState<FlowType>("outflow")
 
-    const flowOptions: SCOption[] = [
-        {key: "inflow", value: t("modalAdd.inflow")},
-        {key: "outflow", value: t("modalAdd.outflow")}
+    const flowOptions: SCOption<FlowType>[] = [
+        {label: t("modalAdd.inflow"), value: "inflow"},
+        {label: t("modalAdd.outflow"), value: "outflow"}
     ]
 
     useEffect(() => {
@@ -43,8 +45,8 @@ export default function AddModal() {
             <SegmentedControl
                 options={flowOptions}
                 selectedValue={newTransaction.flowType || "outflow"}
-                onChange={(newFlowType) => updateNewTransaction({
-                    flowType: newFlowType as "inflow" | "outflow",
+                onChange={(optionValue) => updateNewTransaction({
+                    flowType: optionValue,
                     category: undefined
                 })}
             />

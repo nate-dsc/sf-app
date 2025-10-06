@@ -218,7 +218,7 @@ const RRuleGenerator: React.FC = () => {
                     onValueChange={(itemValue) => setMonthlyOrdinal(itemValue)}
                     style={{ flex: 1 }}>
                     {MONTHLY_ORDINAL.map(item => (
-                        <Picker.Item key={item.value} label={item.label} value={item.value} />
+                        <Picker.Item key={item.value} label={item.label} value={item.value} color='#000000'/>
                     ))}
                 </Picker>
                  <Picker
@@ -226,8 +226,10 @@ const RRuleGenerator: React.FC = () => {
                     onValueChange={(itemValue) => setMonthlyWeekday(itemValue)}
                     style={{ flex: 1 }}>
                     {WEEKDAYS.map(day => (
-                        <Picker.Item key={day.value.weekday} label={day.value.toString()} value={day.value} />
+                        <Picker.Item key={day.value.weekday} label={day.value.toString()} value={day.value} color='#000000'/>
                     ))}
+
+                  
                 </Picker>
             </View>
         )}
