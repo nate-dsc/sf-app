@@ -35,9 +35,9 @@ export default function ModalRecurring() {
     ]
 
     const END_CONDITIONS: SCOption<EndCondition>[] = [
-        { label: "Nunca", value: "never"},
-        { label: "No dia", value: "on_date"},
-        { label: "Após vezes", value: "after_occurrences"},
+        { label: t("modalRecurring.never"), value: "never"},
+        { label: t("modalRecurring.ondate"), value: "on_date"},
+        { label: t("modalRecurring.after"), value: "after_occurrences"},
     ]
 
     const WEEKDAYS = [
@@ -64,8 +64,8 @@ export default function ModalRecurring() {
     ]
 
     const MONTHLY_TYPE: {label: string, value: MonthlyType}[] = [
-    { label: "Dia do mês", value: "day_of_month"},
-    { label: "Dia da semana", value: "day_of_week"}
+    { label: t("modalRecurring.daysofmonth"), value: "day_of_month"},
+    { label: t("modalRecurring.daysofweek"), value: "day_of_week"}
     ]
     const MONTHLY_ORDINAL = [
         { id: "1", label: t("modalRecurring.first"), value: 1 },
@@ -253,7 +253,7 @@ export default function ModalRecurring() {
         if (freq !== RRule.WEEKLY) return null;
         return (
             <View style={{rowGap: 12}}>
-                <Text style={[FontStyles.headline, menuStyles.text]}>No(a)...</Text>
+                <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.onthe")}</Text>
                 <MSList
                 items={WEEKDAYS}
                 onSelect={(id: string, value: Weekday) => handleWeekdayToggle(id, value)}
@@ -267,6 +267,7 @@ export default function ModalRecurring() {
         if (freq !== RRule.YEARLY) return null
         return (
             <View style={{rowGap: 12}}>
+                <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.onmonths")}</Text>
                 <MonthPicker selectedMonths={bymonth} onMonthPress={handleMonthPress} />
             </View>
         )
@@ -276,17 +277,15 @@ export default function ModalRecurring() {
         if (freq !== RRule.MONTHLY && freq !== RRule.YEARLY) return <View/>;
         return (
             <View style={{rowGap: 12}}>
-                <Text style={[FontStyles.headline, menuStyles.text]}>No...</Text>
+                <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.on")}</Text>
                 <SegmentedControl options={MONTHLY_TYPE} selectedValue={monthlyType} onChange={(value) => setMonthlyType(value)} />
 
                 
                 <View style={{ display: monthlyType === 'day_of_month' ? 'flex' : 'none', gap: 12 }}>
-                    <Text style={[FontStyles.headline, menuStyles.text]}>No(s) dia(s)...</Text>
                     <DayPicker selectedDays={bymonthday} onDayPress={handleDayPress} />
                 </View>
 
                 <View style={{ display: monthlyType === 'day_of_week' ? 'flex' : 'none', gap: 12 }}>
-                    <Text style={[FontStyles.headline, menuStyles.text]}>No(a)...</Text>
                     <View style={{ flexDirection: "row", gap: 12}}>
                         <View style={{flex: 1}}>
                             <SSList
@@ -312,7 +311,7 @@ export default function ModalRecurring() {
 
     const renderEndConditionSelector = () => (
     <View style={{gap: 12}}>
-        <Text style={[FontStyles.headline, menuStyles.text]}>Termina...</Text>
+        <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.ends")}</Text>
         <SegmentedControl 
             options={END_CONDITIONS} 
             selectedValue={endCondition} 
@@ -320,11 +319,11 @@ export default function ModalRecurring() {
         />
 
         <View style={{ display: endCondition === 'on_date' ? 'flex' : 'none' }}>
-            <DatePicker text={"No dia"} value={until} onDateChange={onDateChange} />
+            <DatePicker text={t("modalRecurring.enddate")} value={until} onDateChange={onDateChange} />
         </View>
 
         <View style={{ display: endCondition === 'after_occurrences' ? 'flex' : 'none' }}>
-            <Stepper singular={"ocorrência"} plural={"ocorrências"} min={1} max={720} value={count} onValueChange={(value) => setCount(value)} />
+            <Stepper singular={t("modalRecurring.occurrence")} plural={t("modalRecurring.occurrences")} min={1} max={720} value={count} onValueChange={(value) => setCount(value)} />
         </View>
 
         </View>
@@ -335,13 +334,13 @@ export default function ModalRecurring() {
             contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom, rowGap: 12}]}
             ref={scrollRef} onScroll={handleScroll} scrollEventThrottle={16}
         >
-            <Text style={[FontStyles.headline, menuStyles.text]}>Frequência</Text>
+            <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.frequency")}</Text>
             <SegmentedControl
                 options={FREQUENCIES}
                 selectedValue={freq}
                 onChange={(optionValue) => setFreq(optionValue)}
             />
-            <Text style={[FontStyles.headline, menuStyles.text]}>A cada...</Text>
+            <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.every")}</Text>
             {renderIntervalSelector()}
             {renderWeeklySelector()}
             {renderMonthSelector()}
