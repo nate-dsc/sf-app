@@ -3,6 +3,7 @@ import DayPicker from '@/components/menu-items/DayPicker';
 import MSList from '@/components/menu-items/ListMultipleSelection';
 import SSList from '@/components/menu-items/ListSingleSelection';
 import { MIStyles } from '@/components/menu-items/MenuItemStyles';
+import MonthPicker from '@/components/menu-items/MonthPicker';
 import SegmentedControl, { SCOption } from '@/components/menu-items/SegmentedControl';
 import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
@@ -10,6 +11,7 @@ import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Frequency, Options, RRule, Weekday } from 'rrule';
@@ -18,58 +20,62 @@ import { Frequency, Options, RRule, Weekday } from 'rrule';
 type EndCondition = "never" | "on_date" | "after_occurrences"
 type MonthlyType = "day_of_month" | "day_of_week"
 
-// Constantes para as opções da UI
-const FREQUENCIES = [
-    { label: 'Diário', value: RRule.DAILY },
-    { label: 'Semanal', value: RRule.WEEKLY },
-    { label: 'Mensal', value: RRule.MONTHLY },
-    { label: 'Anual', value: RRule.YEARLY },
-]
 
-const END_CONDITIONS: SCOption<EndCondition>[] = [
-    { label: "Nunca", value: "never"},
-    { label: "No dia", value: "on_date"},
-    { label: "Após vezes", value: "after_occurrences"},
-]
-
-const WEEKDAYS = [
-    { id: "1", label: 'Domingo', value: RRule.SU },
-    { id: "2", label: 'Segunda-feira', value: RRule.MO },
-    { id: "3", label: 'Terça-feira', value: RRule.TU },
-    { id: "4", label: 'Quarta-feira', value: RRule.WE },
-    { id: "5", label: 'Quinta-feira', value: RRule.TH },
-    { id: "6", label: 'Sexta-feira', value: RRule.FR },
-    { id: "7", label: 'Sábado', value: RRule.SA },
-]
-
-const WEEKDAYS_FOR_MONTHLY_FREQUENCY = [
-    { id: "1", label: 'Domingo', value: [RRule.SU] },
-    { id: "2", label: 'Segunda-feira', value: [RRule.MO] },
-    { id: "3", label: 'Terça-feira', value: [RRule.TU] },
-    { id: "4", label: 'Quarta-feira', value: [RRule.WE] },
-    { id: "5", label: 'Quinta-feira', value: [RRule.TH] },
-    { id: "6", label: 'Sexta-feira', value: [RRule.FR] },
-    { id: "7", label: 'Sábado', value: [RRule.SA] },
-    { id: "8", label: 'Dia de semana', value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR] },
-    { id: "9", label: 'Sáb./Dom.', value: [RRule.SA, RRule.SU] }
-]
-
-const MONTHLY_TYPE: {label: string, value: MonthlyType}[] = [
-    { label: "Dia do mês", value: "day_of_month"},
-    { label: "Dia da semana", value: "day_of_week"}
-]
-
-const MONTHLY_ORDINAL = [
-    { id: "1", label: 'Primeira', value: 1 },
-    { id: "2", label: 'Segunda', value: 2 },
-    { id: "3", label: 'Terceira', value: 3 },
-    { id: "4", label: 'Quarta', value: 4 },
-    { id: "5", label: 'Quinta', value: 5 },
-    { id: "-2", label: 'Penúltima', value: -2 },
-    { id: "-1", label: 'Última', value: -1 },
-]
 
 export default function ModalRecurring() {
+
+    const {t} = useTranslation()
+
+    // Constantes para as opções da UI
+    const FREQUENCIES = [
+        { label: t("modalRecurring.daily"), value: RRule.DAILY },
+        { label: t("modalRecurring.weekly"), value: RRule.WEEKLY },
+        { label: t("modalRecurring.monthly"), value: RRule.MONTHLY },
+        { label: t("modalRecurring.yearly"), value: RRule.YEARLY },
+    ]
+
+    const END_CONDITIONS: SCOption<EndCondition>[] = [
+        { label: "Nunca", value: "never"},
+        { label: "No dia", value: "on_date"},
+        { label: "Após vezes", value: "after_occurrences"},
+    ]
+
+    const WEEKDAYS = [
+        { id: "1", label: t("modalRecurring.w1"), value: RRule.SU },
+        { id: "2", label: t("modalRecurring.w2"), value: RRule.MO },
+        { id: "3", label: t("modalRecurring.w3"), value: RRule.TU },
+        { id: "4", label: t("modalRecurring.w4"), value: RRule.WE },
+        { id: "5", label: t("modalRecurring.w5"), value: RRule.TH },
+        { id: "6", label: t("modalRecurring.w5"), value: RRule.FR },
+        { id: "7", label: t("modalRecurring.w7"), value: RRule.SA },
+    ]
+
+    const WEEKDAYS_FOR_MONTHLY_FREQUENCY = [
+        { id: "1", label: t("modalRecurring.w1"), value: [RRule.SU] },
+        { id: "2", label: t("modalRecurring.w2"), value: [RRule.MO] },
+        { id: "3", label: t("modalRecurring.w3"), value: [RRule.TU] },
+        { id: "4", label: t("modalRecurring.w4"), value: [RRule.WE] },
+        { id: "5", label: t("modalRecurring.w5"), value: [RRule.TH] },
+        { id: "6", label: t("modalRecurring.w5"), value: [RRule.FR] },
+        { id: "7", label: t("modalRecurring.w7"), value: [RRule.SA] },
+        { id: "8", label: t("modalRecurring.Day"), value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA, RRule.SU] },
+        { id: "9", label: t("modalRecurring.weekday"), value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR] },
+        { id: "10", label: t("modalRecurring.weekendDay"), value: [RRule.SA, RRule.SU] }
+    ]
+
+    const MONTHLY_TYPE: {label: string, value: MonthlyType}[] = [
+    { label: "Dia do mês", value: "day_of_month"},
+    { label: "Dia da semana", value: "day_of_week"}
+    ]
+    const MONTHLY_ORDINAL = [
+        { id: "1", label: t("modalRecurring.first"), value: 1 },
+        { id: "2", label: t("modalRecurring.second"), value: 2 },
+        { id: "3", label: t("modalRecurring.third"), value: 3 },
+        { id: "4", label: t("modalRecurring.fourth"), value: 4 },
+        { id: "5", label: t("modalRecurring.fifth"), value: 5 },
+        { id: "-2", label: t("modalRecurring.penultimate"), value: -2 },
+        { id: "-1", label: t("modalRecurring.last"), value: -1 },
+    ]
 
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
@@ -96,6 +102,9 @@ export default function ModalRecurring() {
     const [bymonthday, setBymonthday] = useState<number []>([new Date().getDate()])
     const [monthlyOrdinal, setMonthlyOrdinal] = useState(1)
     const [monthlyWeekday, setMonthlyWeekday] = useState<Weekday[]>([RRule.SU])
+
+    // Estados para recorrência anual
+    const [bymonth, setBymonth] = useState<number []>([new Date().getMonth()])
 
     const scrollRef = useRef<ScrollView>(null);
     const scrollPos = useRef(0);
@@ -134,6 +143,13 @@ export default function ModalRecurring() {
             } else {
                 options.byweekday = monthlyWeekday.map((wkd) => wkd.nth(monthlyOrdinal));
             }
+        } else if (freq === RRule.YEARLY) {
+            options.bymonth = bymonth.map((month) => month + 1)
+            if (monthlyType === 'day_of_month') {
+                options.bymonthday = bymonthday.length === 1 ? bymonthday[0] : bymonthday
+            } else {
+                options.byweekday = monthlyWeekday.map((wkd) => wkd.nth(monthlyOrdinal));
+            }
         }
 
         try {
@@ -152,6 +168,7 @@ export default function ModalRecurring() {
         until,
         byweekday,
         monthlyType,
+        bymonth,
         bymonthday,
         monthlyOrdinal,
         monthlyWeekday
@@ -172,6 +189,19 @@ export default function ModalRecurring() {
             return (prevSelectedDays.filter((d) => d !== day))
         } else {
             return [...prevSelectedDays, day].sort((a,b) => a-b)
+        }
+        })
+    },[])
+
+    const handleMonthPress = useCallback((month: number) => {
+        setBymonth(prevSelectedMonths => {
+        const alreadySelected = prevSelectedMonths.includes(month)
+
+        if(alreadySelected) {
+            if(prevSelectedMonths.length === 1) {return prevSelectedMonths}
+            return (prevSelectedMonths.filter((m) => m !== month))
+        } else {
+            return [...prevSelectedMonths, month].sort((a,b) => a-b)
         }
         })
     },[])
@@ -198,10 +228,10 @@ export default function ModalRecurring() {
 
     const getFrequencyLabels = (f: Frequency) => {
         switch(f) {
-            case Frequency.DAILY: return(["dia", "dias"])
-            case Frequency.WEEKLY: return(["semana", "semanas"])
-            case Frequency.MONTHLY: return(["mês", "meses"])
-            case Frequency.YEARLY: return(["ano", "anos"])
+            case Frequency.DAILY: return([t("modalRecurring.day"), t("modalRecurring.days")])
+            case Frequency.WEEKLY: return([t("modalRecurring.week"), t("modalRecurring.weeks")])
+            case Frequency.MONTHLY: return([t("modalRecurring.month"), t("modalRecurring.months")])
+            case Frequency.YEARLY: return([t("modalRecurring.year"), t("modalRecurring.years")])
             default: return(["", ""])
         }
     }
@@ -233,8 +263,17 @@ export default function ModalRecurring() {
         )
     }
 
+    const renderMonthSelector = () => {
+        if (freq !== RRule.YEARLY) return null
+        return (
+            <View style={{rowGap: 12}}>
+                <MonthPicker selectedMonths={bymonth} onMonthPress={handleMonthPress} />
+            </View>
+        )
+    }
+
     const renderMonthlySelector = () => {
-        if (freq !== RRule.MONTHLY) return <View/>;
+        if (freq !== RRule.MONTHLY && freq !== RRule.YEARLY) return <View/>;
         return (
             <View style={{rowGap: 12}}>
                 <Text style={[FontStyles.headline, menuStyles.text]}>No...</Text>
@@ -305,6 +344,7 @@ export default function ModalRecurring() {
             <Text style={[FontStyles.headline, menuStyles.text]}>A cada...</Text>
             {renderIntervalSelector()}
             {renderWeeklySelector()}
+            {renderMonthSelector()}
             {renderMonthlySelector()}
             {renderEndConditionSelector()}
 

@@ -103,6 +103,37 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.menuItem.background
     },
+    monthPicker: {
+        aspectRatio: 8 / 3,
+        width: "100%",
+        borderRadius: 24,
+        borderWidth: 1,
+        borderColor: Colors.menuItem.border,
+        overflow: "hidden",
+        backgroundColor: Colors.menuItem.separator,
+        gap: StyleSheet.hairlineWidth
+    },
+    monthPickerRow: {
+        flex: 1,
+        flexDirection: "row", 
+        gap: StyleSheet.hairlineWidth, 
+        justifyContent: "space-evenly"
+    },
+    monthPickerItem: {
+        flex: 1,
+        //aspectRatio: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 8,
+        backgroundColor: Colors.menuItem.background,
+    },
+    monthPickerSelectedItem: {
+        backgroundColor: Colors.menuItem.tint,
+    },
+    monthPickerPaddingView: {
+        flex: 1,
+        backgroundColor: Colors.menuItem.background
+    },
 
 
 

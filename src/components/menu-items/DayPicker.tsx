@@ -13,8 +13,6 @@ export default function DayPicker({selectedDays=[], onDayPress}: DayPickerProps)
     const {theme, preference, setPreference} = useTheme()
     const menuStyles = MIStyles(theme)
 
-    
-
     const days = Array.from({ length: 31 }, (_, i) => i + 1)
     const rows = []
     for (let i = 0; i < days.length; i += 7) rows.push(days.slice(i, i + 7))
