@@ -17,7 +17,12 @@ type StepperProps = {
 export default function Stepper({singular, plural, min, max, value, onValueChange } : StepperProps) {
     const {theme, setPreference, preference} = useTheme()
 
-    const intervalRef = useRef<number | null>(null);
+    const intervalRef = useRef<number | null>(null)
+    const valueRef = useRef(value)
+
+    useEffect(() => {
+        valueRef.current = value;
+    }, [value])
 
     // 3. (IMPORTANTE) Efeito para limpar o intervalo se o componente for desmontado
     // Isso evita vazamentos de memória e erros.
@@ -31,12 +36,14 @@ export default function Stepper({singular, plural, min, max, value, onValueChang
     }, []); // O array vazio [] garante que isso rode apenas na montagem e desmontagem
 
     const handleIncrease = () => {
-        const newValue = value < max ? value + 1 : max
+        const currentValue = valueRef.current
+        const newValue = currentValue < max ? currentValue + 1 : max
         onValueChange(newValue)
     }
     
     const handleDecrease = () => {
-        const newValue = value > min ? value - 1 : min
+        const currentValue = valueRef.current
+        const newValue = currentValue > min ? currentValue - 1 : min
         onValueChange(newValue)
     }
 
@@ -88,7 +95,7 @@ export default function Stepper({singular, plural, min, max, value, onValueChang
                     marginVertical: 6,
                     width: 46,
                     height: 34,
-                    backgroundColor: "blue",
+                    backgroundColor: theme.menuItem.tint,
                     borderRadius: 17
                 }}
                 onPressIn={startDecreasing}
@@ -111,7 +118,7 @@ export default function Stepper({singular, plural, min, max, value, onValueChang
                     marginVertical: 6,
                     width: 46,
                     height: 34,
-                    backgroundColor: "blue",
+                    backgroundColor: theme.menuItem.tint,
                     borderRadius: 17
                 }}
                 onPressIn={startIncreasing}

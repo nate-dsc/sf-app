@@ -24,6 +24,7 @@ export default function AddModal() {
     const {newTransaction, updateNewTransaction, setNewTransaction} = useNewTransaction()
 
     const [selectedFlow, setSelectedFlow] = useState<FlowType>("outflow")
+    const [newDate, setNewDate] = useState<Date>(new Date())
 
     const flowOptions: SCOption<FlowType>[] = [
         {label: t("modalAdd.inflow"), value: "inflow"},
@@ -55,11 +56,11 @@ export default function AddModal() {
 
             <DescriptionInput leftText={t("modalAdd.description")}/>
 
-            <DatePicker text={t("modalAdd.date")} />
+            <DatePicker text={t("modalAdd.date")} value={newDate} onDateChange={(date) => updateNewTransaction({ date: date })} />
 
             <SRedir
                 text={t("modalAdd.category")} 
-                selectText={newTransaction.category?.title}
+                selectText={newTransaction.category?.label}
                 onPress={() => {router.push("/modalCategoryPicker")}}
             />
 

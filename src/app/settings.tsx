@@ -11,7 +11,6 @@ import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ScrollView, Text } from "react-native"
-import { Frequency, RRule } from "rrule"
 
 export default function SettingsScreen() {
 
@@ -23,7 +22,6 @@ export default function SettingsScreen() {
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)
     const [selectedLang, setSelectedLang] = useState(i18n.language)
-    const [selectedFreq, setSelectedFreq] = useState<Frequency>(RRule.DAILY)
     
     const menuStyles = MIStyles(theme)
     
@@ -33,13 +31,6 @@ export default function SettingsScreen() {
         {label: t("settings.theme.system"), value: "system"},
         {label: t("settings.theme.light"), value: "light"},
         {label: t("settings.theme.dark"), value: "dark"}
-    ]
-
-    const freqOptions: SCOption<Frequency>[] = [
-        {label: t("modalRecurring.daily"), value: RRule.DAILY},
-        {label: t("modalRecurring.weekly"), value: RRule.WEEKLY},
-        {label: t("modalRecurring.monthly"), value: RRule.MONTHLY},
-        {label: t("modalRecurring.yearly"), value: RRule.YEARLY}
     ]
 
     const langOptions: SCOption<string>[] = [
@@ -55,35 +46,23 @@ export default function SettingsScreen() {
     }
 
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {width: 375}]}>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <Text style={[menuStyles.text, FontStyles.title2]}> Debug </Text>
 
-            <Redir iconName="hammer" text="Tests" onPress={() => {router.push("/experiment")}} />
+            <Redir iconName="hammer" text="Teste 1" onPress={() => {router.push("/experiment")}} />
 
-            <Redir iconName="hammer" text="Tests 2" onPress={() => {router.push("/experiment2")}} />
+            <Redir iconName="hammer" text="Teste 2" onPress={() => {router.push("/experiment2")}} />
 
-            <Redir iconName="move-outline" text="Medidas" onPress={() => {router.push("/measures")}} />
+            <Redir iconName="move-outline" text="MEDIR COMPONENTES" onPress={() => {router.push("/measures")}} />
 
+            <Redir iconName="add-outline" text="MODAL ADICIONAR" onPress={() => {router.push("/modalAdd")}} />
+
+            <Redir iconName="sync-outline" text="MODAL RECORRENCIA" onPress={() => {router.push("/modalRecurring")}} />
             
+            <Redir iconName="list-outline" text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
 
-            {/* 
-            
-            <Stepper label={"Quantos dias"} singular={"dia"} plural={"dias"} min={1} max={366}/>
-            
-            <Redir text="No icon!" onPress={() => {setCategory("casa")}} />
-
-            <SRedir text="Selecionar!!" selected={category} onPress={() => {}}/>
-
-            <DatePicker text="Data!!"/>
-
-            <ValueInput leftText="TESTE" />
-
-            <DescriptionInput leftText="teste"/> 
-            
-            */}
-
-            <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> {t("settings.theme.description")} </Text>
+            <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
 
             <SegmentedControl
                 options={themeOptions}
@@ -94,22 +73,12 @@ export default function SettingsScreen() {
                 }}
             />
 
-            <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> {t("settings.langDescription")} </Text>
-
             <SegmentedControl
                 options={langOptions}
                 selectedValue={selectedLang}
                 onChange={(optionLang) => {
                     setSelectedLang(optionLang)
                     changeLanguage(optionLang)
-                }}
-            />
-
-            <SegmentedControl
-                options={freqOptions}
-                selectedValue={selectedFreq}
-                onChange={(optionFreq) => {
-                    setSelectedFreq(optionFreq)
                 }}
             />
 

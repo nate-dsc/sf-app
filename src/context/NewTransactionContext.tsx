@@ -7,7 +7,7 @@ type NewTransaction = {
     date?: Date,
     category?: {
         id: string,
-        title: string
+        label: string
     }
 }
 

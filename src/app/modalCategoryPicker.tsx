@@ -1,4 +1,4 @@
-import CategoryList, { Category } from "@/components/menu-items/ListPicker"
+import CategoryList, { SSListItem } from "@/components/menu-items/ListSingleSelection"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
@@ -20,44 +20,44 @@ export default function CategoryPicker() {
 
     const [selected, setSelected] = useState<string | undefined>(selectedCategory);
     
-    const expenseList: Category[] = [
-        { id: "1", title: t("categories.expenses.home"), iconName: "home" },
-        { id: "2", title: t("categories.expenses.eating"), iconName: "restaurant" },
-        { id: "3", title: t("categories.expenses.groceries"), iconName: "cart" },
-        { id: "4", title: t("categories.expenses.transport"), iconName: "car" },
-        { id: "5", title: t("categories.expenses.services"), iconName: "construct" },
-        { id: "6", title: t("categories.expenses.leisure"), iconName: "ticket" },
-        { id: "7", title: t("categories.expenses.education"), iconName: "school" },
-        { id: "8", title: t("categories.expenses.shopping"), iconName: "bag-handle" },
-        { id: "9", title: t("categories.expenses.investment"), iconName: "trending-up" },
-        { id: "10", title: t("categories.expenses.health"), iconName: "fitness" },
-        { id: "11", title: t("categories.expenses.emergency"), iconName: "medical" },
-        { id: "12", title: t("categories.expenses.traveling"), iconName: "airplane" },
-        { id: "13", title: t("categories.expenses.pet"), iconName: "paw" },
-        { id: "14", title: t("categories.expenses.gaming"), iconName: "game-controller" },
-        { id: "15", title: t("categories.expenses.gambling"), iconName: "dice" },
-        { id: "16", title: t("categories.expenses.other"), iconName: "ellipsis-horizontal" }
+    const expenseList: SSListItem<number>[] = [
+        { id: "1", label: t("categories.expenses.home"), value: 1, iconName: "home" },
+        { id: "2", label: t("categories.expenses.eating"), value: 2, iconName: "restaurant" },
+        { id: "3", label: t("categories.expenses.groceries"), value: 3, iconName: "cart" },
+        { id: "4", label: t("categories.expenses.transport"), value: 4, iconName: "car" },
+        { id: "5", label: t("categories.expenses.services"), value: 5, iconName: "construct" },
+        { id: "6", label: t("categories.expenses.leisure"), value: 6, iconName: "ticket" },
+        { id: "7", label: t("categories.expenses.education"), value: 7, iconName: "school" },
+        { id: "8", label: t("categories.expenses.shopping"), value: 8, iconName: "bag-handle" },
+        { id: "9", label: t("categories.expenses.investment"), value: 9, iconName: "trending-up" },
+        { id: "10", label: t("categories.expenses.health"), value: 10, iconName: "fitness" },
+        { id: "11", label: t("categories.expenses.emergency"), value: 11, iconName: "medical" },
+        { id: "12", label: t("categories.expenses.traveling"), value: 12, iconName: "airplane" },
+        { id: "13", label: t("categories.expenses.pet"), value: 13, iconName: "paw" },
+        { id: "14", label: t("categories.expenses.gaming"), value: 14, iconName: "game-controller" },
+        { id: "15", label: t("categories.expenses.gambling"), value: 16, iconName: "dice" },
+        { id: "16", label: t("categories.expenses.other"), value: 17, iconName: "ellipsis-horizontal" }
     ];
 
-    const incomeList: Category[] = [
-        { id: "21", title: t("categories.income.salary"), iconName: "cash" },
-        { id: "22", title: t("categories.income.freelance"), iconName: "hammer" },
-        { id: "23", title: t("categories.income.oncall"), iconName: "id-card" },
-        { id: "24", title: t("categories.income.overtime"), iconName: "time" },
-        { id: "25", title: t("categories.income.perdiem"), iconName: "today" },
-        { id: "26", title: t("categories.income.sales"), iconName: "pricetag" },
-        { id: "27", title: t("categories.income.roi"), iconName: "trending-up" },
-        { id: "28", title: t("categories.income.gambling"), iconName: "dice" },
-        { id: "29", title: t("categories.income.other"), iconName: "ellipsis-horizontal" }
+    const incomeList: SSListItem<number>[] = [
+        { id: "21", label: t("categories.income.salary"), value: 0, iconName: "cash" },
+        { id: "22", label: t("categories.income.freelance"), value: 0, iconName: "hammer" },
+        { id: "23", label: t("categories.income.oncall"), value: 0, iconName: "id-card" },
+        { id: "24", label: t("categories.income.overtime"), value: 0, iconName: "time" },
+        { id: "25", label: t("categories.income.perdiem"), value: 0, iconName: "today" },
+        { id: "26", label: t("categories.income.sales"), value: 0, iconName: "pricetag" },
+        { id: "27", label: t("categories.income.roi"), value: 0, iconName: "trending-up" },
+        { id: "28", label: t("categories.income.gambling"), value: 0, iconName: "dice" },
+        { id: "29", label: t("categories.income.other"), value: 0, iconName: "ellipsis-horizontal" }
     ];
     
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}, {width: 320}]}>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}]}>
             <CategoryList
-                categories={type === "inflow" ? incomeList : expenseList}
+                items={type === "inflow" ? incomeList : expenseList}
                 selectedId={selected}
-                onSelect={(id, title) => {
-                    updateNewTransaction({category: {id, title}})
+                onSelect={(id, label) => {
+                    updateNewTransaction({category: {id, label}})
                     router.back()
                 }}
             />

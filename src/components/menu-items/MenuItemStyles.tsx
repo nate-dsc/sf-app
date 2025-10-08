@@ -66,6 +66,43 @@ export const MIStyles = (Colors: typeof light) => StyleSheet.create({
     listItemCheckmark: {
        color: Colors.menuItem.tint
     },
+    listPickerSeparator: {
+        height: StyleSheet.hairlineWidth,
+        //marginLeft: 50,
+        //marginRight: 50,
+        backgroundColor: Colors.menuItem.separator 
+    },
+    dayPicker: {
+        aspectRatio: 7 / 5,
+        width: "100%",
+        borderRadius: 24,
+        borderWidth: 1,
+        borderColor: Colors.menuItem.border,
+        overflow: "hidden",
+        backgroundColor: Colors.menuItem.separator,
+        gap: StyleSheet.hairlineWidth
+    },
+    dayPickerRow: {
+        flex: 1,
+        flexDirection: "row", 
+        gap: StyleSheet.hairlineWidth, 
+        justifyContent: "space-evenly"
+    },
+    dayPickerItem: {
+        flex: 1,
+        aspectRatio: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingVertical: 12,
+        backgroundColor: Colors.menuItem.background,
+    },
+    dayPickerSelectedItem: {
+        backgroundColor: Colors.menuItem.tint,
+    },
+    dayPickerPaddingView: {
+        flex: 1,
+        backgroundColor: Colors.menuItem.background
+    },
 
 
 

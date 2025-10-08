@@ -1,458 +1,340 @@
+import DatePicker from '@/components/menu-items/DatePicker';
+import DayPicker from '@/components/menu-items/DayPicker';
+import MSList from '@/components/menu-items/ListMultipleSelection';
+import SSList from '@/components/menu-items/ListSingleSelection';
 import { MIStyles } from '@/components/menu-items/MenuItemStyles';
-import SegmentedControl from '@/components/menu-items/SegmentedControl';
+import SegmentedControl, { SCOption } from '@/components/menu-items/SegmentedControl';
 import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
+import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useTheme } from '@/context/ThemeContext';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Picker } from '@react-native-picker/picker';
 import { useHeaderHeight } from "@react-navigation/elements";
-import React, { useEffect, useState } from 'react';
-import { Button, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Frequency, Options, RRule, Weekday } from 'rrule';
 
 // Tipos para clareza
-type EndCondition = 'never' | 'on_date' | 'after_occurrences';
-type MonthlyType = 'day_of_month' | 'day_of_week';
+type EndCondition = "never" | "on_date" | "after_occurrences"
+type MonthlyType = "day_of_month" | "day_of_week"
 
 // Constantes para as opções da UI
 const FREQUENCIES = [
-  { label: 'Diário', value: RRule.DAILY },
-  { label: 'Semanal', value: RRule.WEEKLY },
-  { label: 'Mensal', value: RRule.MONTHLY },
-  { label: 'Anual', value: RRule.YEARLY },
-];
+    { label: 'Diário', value: RRule.DAILY },
+    { label: 'Semanal', value: RRule.WEEKLY },
+    { label: 'Mensal', value: RRule.MONTHLY },
+    { label: 'Anual', value: RRule.YEARLY },
+]
+
+const END_CONDITIONS: SCOption<EndCondition>[] = [
+    { label: "Nunca", value: "never"},
+    { label: "No dia", value: "on_date"},
+    { label: "Após vezes", value: "after_occurrences"},
+]
 
 const WEEKDAYS = [
-  { label: 'D', value: RRule.SU },
-  { label: 'S', value: RRule.MO },
-  { label: 'T', value: RRule.TU },
-  { label: 'Q', value: RRule.WE },
-  { label: 'Q', value: RRule.TH },
-  { label: 'S', value: RRule.FR },
-  { label: 'S', value: RRule.SA },
-];
+    { id: "1", label: 'Domingo', value: RRule.SU },
+    { id: "2", label: 'Segunda-feira', value: RRule.MO },
+    { id: "3", label: 'Terça-feira', value: RRule.TU },
+    { id: "4", label: 'Quarta-feira', value: RRule.WE },
+    { id: "5", label: 'Quinta-feira', value: RRule.TH },
+    { id: "6", label: 'Sexta-feira', value: RRule.FR },
+    { id: "7", label: 'Sábado', value: RRule.SA },
+]
+
+const WEEKDAYS_FOR_MONTHLY_FREQUENCY = [
+    { id: "1", label: 'Domingo', value: [RRule.SU] },
+    { id: "2", label: 'Segunda-feira', value: [RRule.MO] },
+    { id: "3", label: 'Terça-feira', value: [RRule.TU] },
+    { id: "4", label: 'Quarta-feira', value: [RRule.WE] },
+    { id: "5", label: 'Quinta-feira', value: [RRule.TH] },
+    { id: "6", label: 'Sexta-feira', value: [RRule.FR] },
+    { id: "7", label: 'Sábado', value: [RRule.SA] },
+    { id: "8", label: 'Dia de semana', value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR] },
+    { id: "9", label: 'Sáb./Dom.', value: [RRule.SA, RRule.SU] }
+]
+
+const MONTHLY_TYPE: {label: string, value: MonthlyType}[] = [
+    { label: "Dia do mês", value: "day_of_month"},
+    { label: "Dia da semana", value: "day_of_week"}
+]
 
 const MONTHLY_ORDINAL = [
-  { label: 'Primeira', value: 1 },
-  { label: 'Segunda', value: 2 },
-  { label: 'Terceira', value: 3 },
-  { label: 'Quarta', value: 4 },
-  { label: 'Penúltima', value: -2 },
-  { label: 'Última', value: -1 },
-];
+    { id: "1", label: 'Primeira', value: 1 },
+    { id: "2", label: 'Segunda', value: 2 },
+    { id: "3", label: 'Terceira', value: 3 },
+    { id: "4", label: 'Quarta', value: 4 },
+    { id: "5", label: 'Quinta', value: 5 },
+    { id: "-2", label: 'Penúltima', value: -2 },
+    { id: "-1", label: 'Última', value: -1 },
+]
 
-const RRuleGenerator: React.FC = () => {
+export default function ModalRecurring() {
 
-    const {theme, preference, setPreference} = useTheme()
     const paddingTop = useHeaderHeight() + 10
+    const insets = useSafeAreaInsets()
+    const {theme, preference, setPreference} = useTheme()
     const menuStyles = MIStyles(theme)
-  // --- Estados da UI ---
-  const [freq, setFreq] = useState<Frequency>(RRule.DAILY);
-  const [interval, setInterval] = useState(1);
-  const [endCondition, setEndCondition] = useState<EndCondition>('never');
-  const [count, setCount] = useState(5);
-  const [until, setUntil] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  
-  // Estado para recorrência semanal
-  const [byweekday, setByweekday] = useState<Weekday[]>([new Weekday(new Date().getDay())]);
+    const {newTransaction, updateNewTransaction} = useNewTransaction()
 
-  // Estados para recorrência mensal
-  const [monthlyType, setMonthlyType] = useState<MonthlyType>('day_of_month');
-  const [bymonthday, setBymonthday] = useState(new Date().getDate());
-  const [monthlyOrdinal, setMonthlyOrdinal] = useState(1);
-  const [monthlyWeekday, setMonthlyWeekday] = useState(RRule.MO);
+    // --- Estados da UI ---
+    const [freq, setFreq] = useState<Frequency>(RRule.DAILY)
+    const [interval, setInterval] = useState(1)
+    const [endCondition, setEndCondition] = useState<EndCondition>('never')
+    const [count, setCount] = useState(5)
+    const [until, setUntil] = useState(new Date())
+    const [showDatePicker, setShowDatePicker] = useState(false)
 
-  // --- Estado Final ---
-  const [rruleString, setRruleString] = useState('');
+    // Estado para recorrência semanal
+    const [byweekday, setByweekday] = useState<Weekday[]>(() => {
+        const todayItem = WEEKDAYS[new Date().getDay()]
+        return [todayItem.value];
+    })
 
-  // Hook para gerar a string RRULE sempre que uma opção mudar
-  useEffect(() => {
-    const options: Partial<Options> = {
-      freq,
-      interval,
-      dtstart: new Date(), // Importante para o contexto da regra
+    // Estados para recorrência mensal
+    const [monthlyType, setMonthlyType] = useState<MonthlyType>('day_of_month')
+    const [bymonthday, setBymonthday] = useState<number []>([new Date().getDate()])
+    const [monthlyOrdinal, setMonthlyOrdinal] = useState(1)
+    const [monthlyWeekday, setMonthlyWeekday] = useState<Weekday[]>([RRule.SU])
+
+    const scrollRef = useRef<ScrollView>(null);
+    const scrollPos = useRef(0);
+
+    const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => scrollPos.current = e.nativeEvent.contentOffset.y;
+
+    useEffect(() => {
+        scrollRef.current?.scrollTo({ y: scrollPos.current, animated: false });
+    }, [endCondition,monthlyType]);
+
+    // --- Estado Final ---
+
+    // Hook para gerar a string RRULE sempre que uma opção mudar
+    const rruleString = useMemo(() => {
+        const options: Partial<Options> = {
+            freq,
+            interval,
+            dtstart: newTransaction.date, // Importante para o contexto da regra
+        };
+
+        // Lógica de Término
+        if (endCondition === 'on_date') {
+            options.until = until;
+        } else if (endCondition === 'after_occurrences') {
+            options.count = count;
+        }
+
+        // Lógica Específica da Frequência
+        if (freq === RRule.WEEKLY) {
+            if (byweekday.length > 0) {
+                options.byweekday = byweekday;
+            }
+        } else if (freq === RRule.MONTHLY) {
+            if (monthlyType === 'day_of_month') {
+                options.bymonthday = bymonthday.length === 1 ? bymonthday[0] : bymonthday
+            } else {
+                options.byweekday = monthlyWeekday.map((wkd) => wkd.nth(monthlyOrdinal));
+            }
+        }
+
+        try {
+            const rule = new RRule(options);
+            return rule.toString()
+        } catch (e) {
+            console.error("Erro ao gerar RRULE:", e);
+            return("Regra inválida");
+        }
+
+    }, [
+        freq,
+        interval,
+        endCondition,
+        count,
+        until,
+        byweekday,
+        monthlyType,
+        bymonthday,
+        monthlyOrdinal,
+        monthlyWeekday
+    ]);
+
+    const selectedIds = byweekday.map(day => {
+        const foundItem = WEEKDAYS.find(item => item.value.weekday === day.weekday)
+        return foundItem!.id; // O '!' é seguro aqui, pois sabemos que o item sempre existirá
+    })
+
+    // --- Handlers de Interação ---
+    const handleDayPress = useCallback((day: number) => {
+        setBymonthday(prevSelectedDays => {
+        const alreadySelected = prevSelectedDays.includes(day)
+
+        if(alreadySelected) {
+            if(prevSelectedDays.length === 1) {return prevSelectedDays}
+            return (prevSelectedDays.filter((d) => d !== day))
+        } else {
+            return [...prevSelectedDays, day].sort((a,b) => a-b)
+        }
+        })
+    },[])
+
+    const handleWeekdayToggle = (id: string, day: Weekday) => {
+        setByweekday(prev => {
+            //O novo elemento está na array?
+            const isSelected = prev.some(d => d.weekday === day.weekday);
+            //Se sim
+            if (isSelected) {
+                // Não permite desmarcar o último dia
+                if (prev.length === 1) return prev;
+                return prev.filter(d => d.weekday !== day.weekday);
+            } else {
+                return [...prev, day].sort((a,b) => a.weekday - b.weekday);
+            }
+        })
+    }
+
+    const onDateChange = (selectedDate?: Date) => {
+        const currentDate = selectedDate || until;
+        setUntil(currentDate);
+    }
+
+    const getFrequencyLabels = (f: Frequency) => {
+        switch(f) {
+            case Frequency.DAILY: return(["dia", "dias"])
+            case Frequency.WEEKLY: return(["semana", "semanas"])
+            case Frequency.MONTHLY: return(["mês", "meses"])
+            case Frequency.YEARLY: return(["ano", "anos"])
+            default: return(["", ""])
+        }
+    }
+
+    // --- Componentes de Renderização ---
+
+    const renderIntervalSelector = () => (
+        <Stepper
+            singular={getFrequencyLabels(freq)[0]} 
+            plural={getFrequencyLabels(freq)[1]} 
+            min={1} 
+            max={365} 
+            value={interval} 
+            onValueChange={(newValue) => setInterval(newValue)}
+        />
+    )
+
+    const renderWeeklySelector = () => {
+        if (freq !== RRule.WEEKLY) return null;
+        return (
+            <View style={{rowGap: 12}}>
+                <Text style={[FontStyles.headline, menuStyles.text]}>No(a)...</Text>
+                <MSList
+                items={WEEKDAYS}
+                onSelect={(id: string, value: Weekday) => handleWeekdayToggle(id, value)}
+                selectedIds={selectedIds}
+                />
+            </View>
+        )
+    }
+
+    const renderMonthlySelector = () => {
+        if (freq !== RRule.MONTHLY) return <View/>;
+        return (
+            <View style={{rowGap: 12}}>
+                <Text style={[FontStyles.headline, menuStyles.text]}>No...</Text>
+                <SegmentedControl options={MONTHLY_TYPE} selectedValue={monthlyType} onChange={(value) => setMonthlyType(value)} />
+
+                
+                <View style={{ display: monthlyType === 'day_of_month' ? 'flex' : 'none', gap: 12 }}>
+                    <Text style={[FontStyles.headline, menuStyles.text]}>No(s) dia(s)...</Text>
+                    <DayPicker selectedDays={bymonthday} onDayPress={handleDayPress} />
+                </View>
+
+                <View style={{ display: monthlyType === 'day_of_week' ? 'flex' : 'none', gap: 12 }}>
+                    <Text style={[FontStyles.headline, menuStyles.text]}>No(a)...</Text>
+                    <View style={{ flexDirection: "row", gap: 12}}>
+                        <View style={{flex: 1}}>
+                            <SSList
+                                items={MONTHLY_ORDINAL}
+                                selectedId={MONTHLY_ORDINAL.find(item => item.value === monthlyOrdinal)?.id}
+                                onSelect={(id: string, label: string, value: number) => setMonthlyOrdinal(value)}
+                                compact={true}
+                            />
+                        </View>
+                        <View style={{flex: 1}}>
+                            <SSList
+                                items={WEEKDAYS_FOR_MONTHLY_FREQUENCY}
+                                selectedId={WEEKDAYS_FOR_MONTHLY_FREQUENCY.find(item => item.value === monthlyWeekday)?.id || "1"}
+                                onSelect={(id, label, value) => setMonthlyWeekday(value)}
+                                compact={true}
+                            />
+                        </View>
+                    </View>
+                </View>
+            </View>
+        );
     };
 
-    // Lógica de Término
-    if (endCondition === 'on_date') {
-      options.until = until;
-    } else if (endCondition === 'after_occurrences') {
-      options.count = count;
-    }
-
-    // Lógica Específica da Frequência
-    if (freq === RRule.WEEKLY) {
-      if (byweekday.length > 0) {
-        options.byweekday = byweekday;
-      }
-    } else if (freq === RRule.MONTHLY) {
-      if (monthlyType === 'day_of_month') {
-        options.bymonthday = bymonthday;
-      } else {
-        options.byweekday = [monthlyWeekday.nth(monthlyOrdinal)];
-      }
-    }
-
-    try {
-        const rule = new RRule(options);
-        setRruleString(rule.toString());
-    } catch (e) {
-        console.error("Erro ao gerar RRULE:", e);
-        setRruleString("Regra inválida");
-    }
-
-  }, [
-    freq,
-    interval,
-    endCondition,
-    count,
-    until,
-    byweekday,
-    monthlyType,
-    bymonthday,
-    monthlyOrdinal,
-    monthlyWeekday
-  ]);
-  
-  // --- Handlers de Interação ---
-  const handleWeekdayToggle = (day: Weekday) => {
-    setByweekday(prev => {
-      const isSelected = prev.some(d => d.weekday === day.weekday);
-      if (isSelected) {
-        // Não permite desmarcar o último dia
-        if (prev.length === 1) return prev;
-        return prev.filter(d => d.weekday !== day.weekday);
-      } else {
-        return [...prev, day].sort((a,b) => a.weekday - b.weekday);
-      }
-    });
-  };
-
-  const onDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
-    const currentDate = selectedDate || until;
-    setShowDatePicker(Platform.OS === 'ios');
-    setUntil(currentDate);
-  };
-
-  const getFrequencyLabels = (f: Frequency) => {
-    switch(f) {
-      case Frequency.DAILY: return(["dia", "dias"])
-      case Frequency.WEEKLY: return(["semana", "semanas"])
-      case Frequency.MONTHLY: return(["mês", "meses"])
-      case Frequency.YEARLY: return(["ano", "anos"])
-      default: return(["", ""])
-    }
-  }
-
-  // --- Componentes de Renderização ---
-
-  const renderIntervalSelector = () => (
-    <Stepper
-      singular={getFrequencyLabels(freq)[0]} 
-      plural={getFrequencyLabels(freq)[1]} 
-      min={1} 
-      max={365} 
-      value={interval} 
-      onValueChange={(newValue) => setInterval(newValue)}
-    />
-  );
-
-  const renderWeeklySelector = () => {
-    if (freq !== RRule.WEEKLY) return null;
-    return (
-      <View style={styles.section}>
-        <Text style={styles.label}>Repetir em</Text>
-        <View style={styles.weekdayContainer}>
-          {WEEKDAYS.map(day => (
-            <TouchableOpacity
-              key={day.value.weekday}
-              style={[
-                styles.weekdayButton,
-                byweekday.some(d => d.weekday === day.value.weekday) && styles.weekdayButtonActive,
-              ]}
-              onPress={() => handleWeekdayToggle(day.value)}
-            >
-              <Text style={byweekday.some(d => d.weekday === day.value.weekday) ? styles.weekdayTextActive : styles.weekdayText}>
-                  {day.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-    );
-  };
-  
-  const renderMonthlySelector = () => {
-    if (freq !== RRule.MONTHLY) return null;
-    return (
-      <View style={styles.section}>
-        <Text style={styles.label}>Repetir</Text>
-        {/* Seletor de tipo: "No dia" vs "Na" */}
-        <View style={styles.toggleContainer}>
-            <TouchableOpacity onPress={() => setMonthlyType('day_of_month')} style={[styles.toggleButton, monthlyType === 'day_of_month' && styles.toggleButtonActive]}>
-                <Text style={styles.toggleText}>No dia do mês</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setMonthlyType('day_of_week')} style={[styles.toggleButton, monthlyType === 'day_of_week' && styles.toggleButtonActive]}>
-                <Text style={styles.toggleText}>No dia da semana</Text>
-            </TouchableOpacity>
-        </View>
-
-        {monthlyType === 'day_of_month' && (
-             <View style={styles.intervalContainer}>
-                <Text>Dia:</Text>
-                <TouchableOpacity onPress={() => setBymonthday(v => Math.max(1, v - 1))} style={styles.stepperButton}>
-                    <Text style={styles.stepperText}>-</Text>
-                </TouchableOpacity>
-                <Text style={styles.intervalValue}>{bymonthday}</Text>
-                <TouchableOpacity onPress={() => setBymonthday(v => Math.min(31, v + 1))} style={styles.stepperButton}>
-                    <Text style={styles.stepperText}>+</Text>
-                </TouchableOpacity>
-            </View>
-        )}
-        
-        {monthlyType === 'day_of_week' && (
-            <View style={styles.pickerRow}>
-                <Picker
-                    selectedValue={monthlyOrdinal}
-                    onValueChange={(itemValue) => setMonthlyOrdinal(itemValue)}
-                    style={{ flex: 1 }}>
-                    {MONTHLY_ORDINAL.map(item => (
-                        <Picker.Item key={item.value} label={item.label} value={item.value} color='#000000'/>
-                    ))}
-                </Picker>
-                 <Picker
-                    selectedValue={monthlyWeekday}
-                    onValueChange={(itemValue) => setMonthlyWeekday(itemValue)}
-                    style={{ flex: 1 }}>
-                    {WEEKDAYS.map(day => (
-                        <Picker.Item key={day.value.weekday} label={day.value.toString()} value={day.value} color='#000000'/>
-                    ))}
-
-                  
-                </Picker>
-            </View>
-        )}
-      </View>
-    );
-  };
-
-  const renderEndConditionSelector = () => (
-    <View style={styles.section}>
-      <Text style={styles.label}>Término</Text>
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity onPress={() => setEndCondition('never')} style={[styles.toggleButton, endCondition === 'never' && styles.toggleButtonActive]}>
-            <Text style={styles.toggleText}>Nunca</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setEndCondition('on_date')} style={[styles.toggleButton, endCondition === 'on_date' && styles.toggleButtonActive]}>
-            <Text style={styles.toggleText}>Em data</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setEndCondition('after_occurrences')} style={[styles.toggleButton, endCondition === 'after_occurrences' && styles.toggleButtonActive]}>
-            <Text style={styles.toggleText}>Após</Text>
-        </TouchableOpacity>
-      </View>
-      
-      {endCondition === 'on_date' && (
-          <View>
-            <Button onPress={() => setShowDatePicker(true)} title={`Até ${until.toLocaleDateString()}`}/>
-            {showDatePicker && (
-                <DateTimePicker
-                    testID="dateTimePicker"
-                    value={until}
-                    mode="date"
-                    display="default"
-                    onChange={onDateChange}
-                />
-            )}
-          </View>
-      )}
-
-      {endCondition === 'after_occurrences' && (
-        <View style={styles.intervalContainer}>
-            <TouchableOpacity onPress={() => setCount(v => Math.max(1, v - 1))} style={styles.stepperButton}>
-                <Text style={styles.stepperText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.intervalValue}>{count}</Text>
-            <TouchableOpacity onPress={() => setCount(v => v + 1)} style={styles.stepperButton}>
-                <Text style={styles.stepperText}>+</Text>
-            </TouchableOpacity>
-            <Text style={styles.intervalLabel}>ocorrências</Text>
-        </View>
-      )}
-    </View>
-  );
-
-  return (
-    <ScrollView contentContainerStyle={[styles2.modalView, { paddingTop: paddingTop, paddingBottom: 50 }]}>
-        <Text style={[FontStyles.headline, menuStyles.text]}>Frequência</Text>
-        <SegmentedControl
-            options={FREQUENCIES}
-            selectedValue={freq}
-            onChange={(optionValue) => setFreq(optionValue)}
+    const renderEndConditionSelector = () => (
+    <View style={{gap: 12}}>
+        <Text style={[FontStyles.headline, menuStyles.text]}>Termina...</Text>
+        <SegmentedControl 
+            options={END_CONDITIONS} 
+            selectedValue={endCondition} 
+            onChange={(value: EndCondition) => setEndCondition(value)} 
         />
-      
-      {renderIntervalSelector()}
-      {renderWeeklySelector()}
-      {renderMonthlySelector()}
-      {renderEndConditionSelector()}
 
-      {/* Resultado Final */}
-      <View style={styles.resultContainer}>
-          <Text style={styles.resultLabel}>String RRULE Gerada:</Text>
-          <Text style={styles.resultString} selectable>{rruleString}</Text>
-      </View>
-    </ScrollView>
-  );
+        <View style={{ display: endCondition === 'on_date' ? 'flex' : 'none' }}>
+            <DatePicker text={"No dia"} value={until} onDateChange={onDateChange} />
+        </View>
+
+        <View style={{ display: endCondition === 'after_occurrences' ? 'flex' : 'none' }}>
+            <Stepper singular={"ocorrência"} plural={"ocorrências"} min={1} max={720} value={count} onValueChange={(value) => setCount(value)} />
+        </View>
+
+        </View>
+    )
+
+    return (
+        <ScrollView 
+            contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom, rowGap: 12}]}
+            ref={scrollRef} onScroll={handleScroll} scrollEventThrottle={16}
+        >
+            <Text style={[FontStyles.headline, menuStyles.text]}>Frequência</Text>
+            <SegmentedControl
+                options={FREQUENCIES}
+                selectedValue={freq}
+                onChange={(optionValue) => setFreq(optionValue)}
+            />
+            <Text style={[FontStyles.headline, menuStyles.text]}>A cada...</Text>
+            {renderIntervalSelector()}
+            {renderWeeklySelector()}
+            {renderMonthlySelector()}
+            {renderEndConditionSelector()}
+
+            {/* Resultado Final */}
+            <View style={styles.resultContainer}>
+                <Text style={styles.resultLabel}>String RRULE Gerada:</Text>
+                <Text style={styles.resultString} selectable>{rruleString}</Text>
+            </View>
+        </ScrollView>
+    )
 };
 
-const styles2 = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        padding: 10,
-        justifyContent: 'center',
-        //alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fundo escurecido,
-        rowGap: 12
-    },
-    modalView: {
-        //borderRadius: 20,
-        paddingHorizontal: 20,
-        rowGap: 12,
-        alignItems: 'center',
-    },
-});
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-  section: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    elevation: 2,
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-    color: '#555',
-  },
-  // Intervalo e Contador
-  intervalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  stepperButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#e0e0e0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 10,
-  },
-  stepperText: {
-    fontSize: 24,
-    color: '#333',
-  },
-  intervalValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    minWidth: 40,
-    textAlign: 'center',
-  },
-  intervalLabel: {
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  // Dias da Semana
-  weekdayContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  weekdayButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#007bff',
-  },
-  weekdayButtonActive: {
-    backgroundColor: '#007bff',
-  },
-  weekdayText: {
-    color: '#007bff',
-    fontWeight: 'bold',
-  },
-  weekdayTextActive: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-   // Botões de Toggle (Mensal e Término)
-  toggleContainer: {
-    flexDirection: 'row',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#007bff',
-    overflow: 'hidden',
-  },
-  toggleButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  toggleButtonActive: {
-    backgroundColor: '#007bff',
-  },
-  toggleText: {
-    //color: '#007bff',
-    color: "#000000",
-    fontWeight: '600',
-  },
-  pickerRow: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  // Resultado
-  resultContainer: {
-    marginTop: 20,
-    padding: 16,
-    backgroundColor: '#e3f2fd',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#bbdefb',
-  },
-  resultLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1e88e5'
-  },
-  resultString: {
-    marginTop: 8,
-    fontSize: 14,
-    color: '#333',
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-});
-
-export default RRuleGenerator;
+    resultContainer: {
+        marginTop: 20,
+        padding: 16,
+        backgroundColor: '#e3f2fd',
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#bbdefb',
+    },
+    resultLabel: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#1e88e5'
+    },
+    resultString: {
+        marginTop: 8,
+        fontSize: 14,
+        color: '#333',
+        fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    },
+})

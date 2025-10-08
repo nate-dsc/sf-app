@@ -30,6 +30,7 @@ type CustomTheme = {
   },
   menuItem: {
     background: string,
+    separator: string,
     border: string,
     text: string,
     textUnfocused: string,
@@ -82,6 +83,7 @@ export const light: CustomTheme = {
   },
   menuItem: {
     background: "#E0E0E0",
+    separator: "#bbbabaff",
     border: "#E0E0E0",
     text: "#000",
     textUnfocused: "#808080",
@@ -134,6 +136,7 @@ export const dark: CustomTheme = {
   },
   menuItem: {
     background: "#181818",
+    separator: "#3C3C3C",
     border: "#2E2E2E",
     text: "#F5F5F5",
     textUnfocused: "#6E6E6E",

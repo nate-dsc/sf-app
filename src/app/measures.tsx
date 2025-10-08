@@ -1,7 +1,7 @@
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useState } from "react";
-import { LayoutChangeEvent, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 
 export default function MeasuresScreen() {
     
@@ -14,17 +14,25 @@ export default function MeasuresScreen() {
         setComponentHeight(height);
     };
 
+    const [pickedDays, setPickedDays] = useState<number | number[]>(7);
+
+    // The handler function's parameter is typed to match the child's output
+    const handleSelectionChange = useCallback((days: number | number[]) => {
+      console.log('Selection changed:', days);
+      setPickedDays(days);
+    },[]);
+
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
+        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                
+                 
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels
             </Text>
 
-        </ScrollView>
+        </View>
     )
 }
 
@@ -35,7 +43,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   measuredComponent: {
-    backgroundColor: 'red',
+    backgroundColor: 'yellow',
     borderRadius: 8,
   },
   text: {
