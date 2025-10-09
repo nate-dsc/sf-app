@@ -37,8 +37,8 @@ export default function HomeScreen() {
                     <LastTransactionTile style={{}} value={999999.99} description="groceries" isOutflow={true}/>
                     <DistributionTile style={{}}/>
             </ScrollView>
-            <View style={{position: "absolute", bottom: 8, right: 10}}>
-                <AddButton size={50} onPress={() => {router.navigate("../modalAdd")}}/>
+            <View style={{position: "absolute", bottom: 30, right: 20}}>
+                <AddButton size={70} onPress={() => {router.navigate("../modalAdd")}}/>
             </View>
         </View>
     )
