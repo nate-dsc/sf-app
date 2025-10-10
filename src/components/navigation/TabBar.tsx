@@ -1,33 +1,23 @@
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { TabBarStyles } from "./TabBarStyles";
 
-export default function CustomTabBar({
-  state,
-  descriptors,
-  navigation,
-}: BottomTabBarProps) {
-  const { theme, preference, setPreference } = useTheme();
+export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+    const { theme, preference, setPreference } = useTheme();
+    const styles = TabBarStyles(theme)
 
   return (
     <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        height: 80,
-        backgroundColor: theme.menuItem.background,
-        borderRadius: 40,
-        borderWidth: 1,
-        borderColor: theme.menuItem.border,
+      style={[styles.tabBar, {
+        gap: 10,
+        padding: 5,
         marginLeft: 20,
-        marginRight: 20,
+        marginRight: 100,
         position: "absolute",
-        bottom: 20,
-        padding: 10,
-        gap: 20
-      }}
+        bottom: 25,
+      }]}
     >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
@@ -62,64 +52,67 @@ export default function CustomTabBar({
         };
 
         // Aqui você pode definir ícones diferentes pra cada rota
-        let iconName: keyof typeof Ionicons.glyphMap = "ellipse";
+        let iconName: keyof typeof Ionicons.glyphMap = "help";
         if (route.name === "index") iconName = "home";
         else if (route.name === "settings") iconName = "settings";
 
         return (
-          <TouchableOpacity
-            key={route.key}
-            accessibilityRole="button"
-            accessibilityState={isFocused ? { selected: true } : {}}
-            accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarButtonTestID}
-            onPress={onPress}
-            onLongPress={onLongPress}
-            style={{
-
-                backgroundColor: "red",
-                width: "30%",
-                aspectRatio : 1, 
-              flex: 1,
-              padding: 10,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {/* Fundo circular ativo */}
-            <View
-              style={{
-                height: 60,
-                width: 60,
-                backgroundColor: isFocused
-                  ? theme.menuItem.tint
-                  : "transparent",
-                paddingHorizontal: 0,
-                paddingVertical: 0,
-                borderRadius: 35,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Ionicons
-                name={iconName}
-                size={24}
-                color={isFocused ? "#fff" : theme.menuItem.textUnfocused}
-              />
-              <Text
+        <View 
+            key={route.key} style={{flex: 1}}>
+            <Pressable
+                accessibilityRole="button"
+                accessibilityState={isFocused ? { selected: true } : {}}
+                accessibilityLabel={options.tabBarAccessibilityLabel}
+                testID={options.tabBarButtonTestID}
+                onPress={onPress}
+                onLongPress={onLongPress}
                 style={{
-                  color: isFocused ? "#fff" : theme.menuItem.textUnfocused,
-                  fontSize: 12,
-                  //marginTop: 3,
-                  fontWeight: isFocused ? "600" : "400",
+                    flex: 1,
+                    backgroundColor: "red",
+                    //height: 80,
+                    //width: 80,
+                    //flex: 1,
+                    //padding: 10,
+                    alignItems: "center",
+                    justifyContent: "center",
                 }}
-              >
-                {tablabel as string}
-              </Text>
+            >
+                {/* Fundo circular ativo */}
+                <View
+                style={{
+                    flex: 1,
+                    //aspectRatio: 1,
+                    padding: 10,
+                    backgroundColor: isFocused
+                    ? theme.menuItem.tint
+                    : theme.menuItem.background,
+                    borderRadius: 35,
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+                >
+                <Ionicons
+                    name={iconName}
+                    size={28}
+                    color={isFocused ? "#fff" : theme.menuItem.textUnfocused}
+                />
+                <Text
+                    style={{
+                    color: isFocused ? "#fff" : theme.menuItem.textUnfocused,
+                    fontSize: 12,
+                    lineHeight: 22,
+                    //marginTop: 3,
+                    fontWeight: isFocused ? "600" : "400",
+                    }}
+                >
+                    {tablabel as string}
+                </Text>
+                </View>
+            </Pressable>
             </View>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
+            );
+        })}
+        </View>
+    
   );
 }
