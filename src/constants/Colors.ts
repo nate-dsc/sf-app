@@ -21,6 +21,8 @@ type CustomTheme = {
         tabBarIconBackgroundUnfocused: string,
         tabBarIconUnfocused: string,
         tabBarLabelUnfocused: string,
+
+        tabBarGradientStart: string,
     },
     custom: {
         background: string,
@@ -67,12 +69,13 @@ export const light: CustomTheme = {
         ...DefaultTheme,
         dark: false,
         colors: {
-        primary: "#007AFF",                   
-        background: "#F2F2F2",                
-        card: "#FFF",                         
-        text: "#000",                         
-        border: "#E0E0E0",                    
-        notification: "#FF3B30",              
+        primary: "#007AFF",
+        //background: "#F2F2F2",
+        background: "#ebebebff",
+        card: "#FFFFFF",
+        text: "#000",
+        border: "#E0E0E0",
+        notification: "#FF3B30",
         },
     },
     navigation: {
@@ -86,6 +89,8 @@ export const light: CustomTheme = {
         tabBarIconBackgroundUnfocused: defaultLightBackground,
         tabBarIconUnfocused: "#808080",
         tabBarLabelUnfocused: "#808080",
+
+        tabBarGradientStart: "#FFFFFF00"
     },
     custom: {
         background: "#F2F2F2",
@@ -151,6 +156,8 @@ export const dark: CustomTheme = {
         tabBarIconBackgroundUnfocused: defaultDarkBackground,
         tabBarIconUnfocused: "#6E6E6E",
         tabBarLabelUnfocused: "#6E6E6E",
+
+        tabBarGradientStart: "#00000000"
     },
     custom: {
         background: "#F2F2F2",

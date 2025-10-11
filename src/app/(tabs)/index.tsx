@@ -1,4 +1,3 @@
-import AddButton from "@/components/buttons/AddButton"
 import BudgetTile from "@/components/home-screen-tiles/BudgetTile"
 import DistributionTile from "@/components/home-screen-tiles/DistributionTile"
 import InflowTile from "@/components/home-screen-tiles/InflowTile"
@@ -37,9 +36,6 @@ export default function HomeScreen() {
                     <LastTransactionTile style={{}} value={999999.99} description="groceries" isOutflow={true}/>
                     <DistributionTile style={{}}/>
             </ScrollView>
-            <View style={{position: "absolute", bottom: 30, right: 20}}>
-                <AddButton size={70} onPress={() => {router.navigate("../modalAdd")}}/>
-            </View>
         </View>
     )
 }

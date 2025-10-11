@@ -1,5 +1,4 @@
 import { MIStyles } from "@/components/menu-items/MenuItemStyles"
-import MonthPicker from "@/components/menu-items/MonthPicker"
 import { type SCOption } from "@/components/menu-items/SegmentedControl"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { ThemePreference, useTheme } from "@/context/ThemeContext"
@@ -9,7 +8,7 @@ import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView } from "react-native"
+import { ScrollView, View } from "react-native"
 
 export default function SettingsScreen() {
 
@@ -45,10 +44,19 @@ export default function SettingsScreen() {
     }
 
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
-            <MonthPicker selectedMonths={[]} onMonthPress={() => {}} />
-  
-        </ScrollView>
+        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {height: "60%"}]}>
+            <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {height: "60%"}]}>
+                <View style={{
+                    flex: 1,
+                    backgroundColor: "darkolivegreen",
+                    borderWidth: 1,
+                    borderRadius: 24,
+                    borderColor: "lawngreen",
+                }} />
+
+            </ScrollView>
+
+        </View>
     )
 
 

@@ -43,7 +43,7 @@ export default function TabBar() {
                 <Tabs.Screen
                     name="history"
                     options={{
-                        title: t("nav.history"),
+                        title: t("nav.history")
                     }}
                 />
                 <Tabs.Screen

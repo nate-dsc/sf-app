@@ -9,7 +9,12 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
         borderColor: "#3ADD63",
         overflow: "hidden",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+
+        shadowColor: "#3ADD63",
+        shadowRadius: 10,
+        shadowOffset: {width: 0, height: 10},
+        shadowOpacity: 0.35,
     },
     confirmButton: {
         flex: 1,
