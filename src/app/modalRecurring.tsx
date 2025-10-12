@@ -374,7 +374,7 @@ export default function ModalRecurring() {
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
-                <ConfirmButton onPress={handleConfirm} />
+                <ConfirmButton buttonText={t("buttons.save")} onPress={handleConfirm} />
             </View>
         </ScrollView>
     )

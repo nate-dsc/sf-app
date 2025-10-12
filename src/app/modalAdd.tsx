@@ -100,7 +100,7 @@ export default function AddModal() {
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
-                <ConfirmButton style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />
+                <ConfirmButton buttonText={t("buttons.save")} style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />
             </View>
         </ScrollView>
     )
