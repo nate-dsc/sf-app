@@ -6,7 +6,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id INTEGER NOT NULL PRIMARY KEY,
             value INTEGER NOT NULL,
             description TEXT,
-            type INTEGER NOT NULL,
             category INTEGER NOT NULL,
             date_start TEXT NOT NULL,
             RRULE TEXT NOT NULL
@@ -18,7 +17,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id INTEGER NOT NULL PRIMARY KEY,
             value INTEGER NOT NULL,
             description TEXT,
-            type INTEGER NOT NULL,
             category INTEGER NOT NULL,
             date INTEGER,
             id_recurring INTEGER,

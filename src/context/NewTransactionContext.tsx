@@ -46,9 +46,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
         return {
             id: 0,
-            value: newTransaction.value!,
+            value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
-            type: newTransaction.flowType!,
             category: newTransaction.category?.id!,
             date: newTransaction.date?.toISOString()!,
         }
@@ -60,9 +59,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
         return {
             id: 0,
-            value: newTransaction.value!,
+            value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
-            type: newTransaction.flowType!,
             category: newTransaction.category?.id!,
             date_start: newTransaction.date?.toISOString()!,
             rrule: newTransaction.rrule!
