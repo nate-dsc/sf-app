@@ -1,4 +1,4 @@
-import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { Transaction, TransactionRecurring, useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
 
 type NewTransaction = {
@@ -54,18 +54,49 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
     }
 
-    const saveTransaction = async () => {
-        try {
-            const transactionData = getTransactionForDB();
-            await database.create(transactionData);
-            console.log("Transação salva com sucesso!");
-            // Opcional: você pode limpar o formulário aqui
-            // setNewTransaction({});
-        } catch (error) {
-            console.error("Erro ao salvar transação:", error);
-            // Aqui você pode mostrar um alerta para o usuário
-            throw error; // Re-lança o erro para o chamador, se necessário
+    const getTransactionRecurringForDB = (): TransactionRecurring => {
+        if (!isValid) {
+            throw new Error("Tentativa de criar transação recorrente com dados inválidos.");
         }
+        return {
+            id: 0,
+            value: newTransaction.value!,
+            description: newTransaction.description || "",
+            type: newTransaction.flowType!,
+            category: newTransaction.category?.id!,
+            date_start: newTransaction.date?.toISOString()!,
+            rrule: newTransaction.rrule!
+        }
+    }
+
+    const saveTransaction = async () => {
+        if(newTransaction.rrule) {
+            try {
+                const transactionData = getTransactionRecurringForDB();
+                await database.createTransactionRecurring(transactionData);
+                console.log("Transação recorrente salva com sucesso!");
+                // Opcional: você pode limpar o formulário aqui
+                // setNewTransaction({});
+            } catch (error) {
+                console.error("Erro ao salvar transação recorrente:", error);
+                // Aqui você pode mostrar um alerta para o usuário
+                throw error; // Re-lança o erro para o chamador, se necessário
+            }
+        } else {
+            try {
+                const transactionData = getTransactionForDB();
+                await database.createTransaction(transactionData);
+                console.log("Transação única salva com sucesso!");
+                // Opcional: você pode limpar o formulário aqui
+                // setNewTransaction({});
+            } catch (error) {
+                console.error("Erro ao salvar transação única:", error);
+                // Aqui você pode mostrar um alerta para o usuário
+                throw error; // Re-lança o erro para o chamador, se necessário
+            }
+        }
+
+        
     }
 
     return(
