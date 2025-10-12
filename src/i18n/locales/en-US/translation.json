@@ -9,6 +9,10 @@
         "recurring": "Set recurrence",
         "back": "Return"
     },
+    "buttons": {
+        "cancel": "Cancel",
+        "save": "Save"
+    }, 
     "tiles": {
         "budget": "Budget",
         "inflow": "Inflow",

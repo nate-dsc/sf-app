@@ -9,6 +9,10 @@
         "recurring": "Configure a recorrência",
         "back": "Voltar"
     },
+    "buttons": {
+        "cancel": "Cancelar",
+        "save": "Salvar"
+    }, 
     "tiles": {
         "budget": "Orçamento",
         "inflow": "Entradas",
