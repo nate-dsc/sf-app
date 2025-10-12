@@ -9,6 +9,7 @@ import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,8 +65,8 @@ export default function ModalRecurring() {
     ]
 
     const MONTHLY_TYPE: {label: string, value: MonthlyType}[] = [
-    { label: t("modalRecurring.daysofmonth"), value: "day_of_month"},
-    { label: t("modalRecurring.daysofweek"), value: "day_of_week"}
+        { label: t("modalRecurring.daysofmonth"), value: "day_of_month"},
+        { label: t("modalRecurring.daysofweek"), value: "day_of_week"}
     ]
     const MONTHLY_ORDINAL = [
         { id: "1", label: t("modalRecurring.first"), value: 1 },
@@ -113,7 +114,7 @@ export default function ModalRecurring() {
 
     useEffect(() => {
         scrollRef.current?.scrollTo({ y: scrollPos.current, animated: false });
-    }, [endCondition,monthlyType]);
+    }, [endCondition, monthlyType, monthlyOrdinal, monthlyWeekday]);
 
     // --- Estado Final ---
 
@@ -206,7 +207,7 @@ export default function ModalRecurring() {
         })
     },[])
 
-    const handleWeekdayToggle = (id: string, day: Weekday) => {
+    const handleWeekdayToggle = useCallback((id: string, day: Weekday) => {
         setByweekday(prev => {
             //O novo elemento está na array?
             const isSelected = prev.some(d => d.weekday === day.weekday);
@@ -219,7 +220,7 @@ export default function ModalRecurring() {
                 return [...prev, day].sort((a,b) => a.weekday - b.weekday);
             }
         })
-    }
+    },[])
 
     const onDateChange = (selectedDate?: Date) => {
         const currentDate = selectedDate || until;
@@ -298,7 +299,11 @@ export default function ModalRecurring() {
                         <View style={{flex: 1}}>
                             <SSList
                                 items={WEEKDAYS_FOR_MONTHLY_FREQUENCY}
-                                selectedId={WEEKDAYS_FOR_MONTHLY_FREQUENCY.find(item => item.value === monthlyWeekday)?.id || "1"}
+                                selectedId={WEEKDAYS_FOR_MONTHLY_FREQUENCY.find(
+                                    item =>
+                                    item.value.length === monthlyWeekday.length &&
+                                    item.value.every((v, i) => v.weekday === monthlyWeekday[i].weekday)
+                                )?.id}
                                 onSelect={(id, label, value) => setMonthlyWeekday(value)}
                                 compact={true}
                             />
@@ -329,6 +334,10 @@ export default function ModalRecurring() {
         </View>
     )
 
+    const onConfirmation = () => {
+        
+    }
+
     return (
         <ScrollView 
             contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom, rowGap: 12}]}
@@ -351,6 +360,7 @@ export default function ModalRecurring() {
             <View style={styles.resultContainer}>
                 <Text style={styles.resultLabel}>String RRULE Gerada:</Text>
                 <Text style={styles.resultString} selectable>{rruleString}</Text>
+                <Text style={styles.resultString} selectable>{describeRRule(rruleString)}</Text>
             </View>
         </ScrollView>
     )

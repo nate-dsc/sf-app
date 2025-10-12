@@ -4,10 +4,12 @@ import SegmentedControl, { type SCOption } from "@/components/menu-items/Segment
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { ThemePreference, useTheme } from "@/context/ThemeContext"
+import { resetDatabase } from "@/database/ResetDatabase"
 import i18n from "@/i18n"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
+import { useSQLiteContext } from "expo-sqlite"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ScrollView, Text } from "react-native"
@@ -45,6 +47,8 @@ export default function SettingsScreen() {
         i18n.changeLanguage(lang);
     }
 
+    const database = useSQLiteContext()
+
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
@@ -61,6 +65,8 @@ export default function SettingsScreen() {
             <Redir iconName="sync-outline" text="MODAL RECORRENCIA" onPress={() => {router.push("/modalRecurring")}} />
             
             <Redir iconName="list-outline" text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
+
+            <Redir iconName="trash-outline" text="RESETAR BANCO DE DADOS" onPress={() => {resetDatabase(database)}} />
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
 

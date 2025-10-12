@@ -1,3 +1,4 @@
+import { ButtonStyles } from "@/components/buttons/ButtonStyles";
 import CancelButton from "@/components/buttons/CancelButton";
 import ConfirmButton from "@/components/buttons/ConfirmButton";
 import DatePicker from "@/components/menu-items/DatePicker";
@@ -6,6 +7,7 @@ import SRedir from "@/components/menu-items/RedirSelect";
 import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl";
 import ValueInput from "@/components/menu-items/ValueInput";
 import { useNewTransaction } from "@/context/NewTransactionContext";
+import { useTheme } from "@/context/ThemeContext";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -21,10 +23,16 @@ export default function AddModal() {
     const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
     const {t} = useTranslation()
-    const {newTransaction, updateNewTransaction, setNewTransaction} = useNewTransaction()
+    const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
 
     const [selectedFlow, setSelectedFlow] = useState<FlowType>("outflow")
     const [newDate, setNewDate] = useState<Date>(new Date())
+    
+    const [numValue, setNumValue] = useState("")
+    const [newDescription, setNewDescription] = useState("")
+
+    const {theme, preference, setPreference} = useTheme()
+    const buttonStyles = ButtonStyles(theme)
 
     const flowOptions: SCOption<FlowType>[] = [
         {label: t("modalAdd.inflow"), value: "inflow"},
@@ -33,13 +41,24 @@ export default function AddModal() {
 
     useEffect(() => {
       // Limpa para garantir que não estamos editando uma transação antiga
-      setNewTransaction({ flowType: "outflow" }); // Define um valor inicial
+      setNewTransaction({ flowType: "outflow", date: newDate }); // Define um valor inicial
 
       return () => {
         // Limpa ao sair da tela para não sujar a próxima abertura do modal
         setNewTransaction({});
       }
     }, []);
+
+    const handleConfirm = async () => {
+        try {
+            await saveTransaction();
+            router.back(); // Só volta se salvar com sucesso
+        } catch (error) {
+            // O erro já foi logado no contexto, mas aqui você pode
+            // mostrar uma mensagem para o usuário (ex: um Toast ou Alert)
+            console.log("Falha ao salvar. Tente novamente.");
+        }
+    }
     
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
@@ -52,11 +71,20 @@ export default function AddModal() {
                 })}
             />
 
-            <ValueInput leftText={t("modalAdd.value")} />
+            <ValueInput leftText={t("modalAdd.value")} value={numValue}
+                onChangeText={(value: string) => {
+                    Number(value) === 0 ? setNumValue(""): setNumValue(value)
+                    updateNewTransaction({value: Number(value)})
+                }}
+            />
 
-            <DescriptionInput leftText={t("modalAdd.description")}/>
+            <DescriptionInput leftText={t("modalAdd.description")} value={newDescription}
+                onChangeText={(description: string) => {
+                    setNewDescription(description)
+                    updateNewTransaction({description: description})
+                }}/>
 
-            <DatePicker text={t("modalAdd.date")} value={newDate} onDateChange={(date) => updateNewTransaction({ date: date })} />
+            <DatePicker text={t("modalAdd.date")} onDateChange={(date) => updateNewTransaction({ date: date })} value={newDate} />
 
             <SRedir
                 text={t("modalAdd.category")} 
@@ -68,7 +96,7 @@ export default function AddModal() {
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <CancelButton onPress={() => {router.back()}}/>
-                <ConfirmButton onPress={() => {router.back()}}/>
+                <ConfirmButton style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />
             </View>
         </ScrollView>
     )

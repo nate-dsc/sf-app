@@ -68,6 +68,11 @@
         "select": "Select",
         "recurring": "Recurring"
     },
+    "RRULEtoText": {
+        "EverySingular": "Every ",
+        "EveryPlural": "Every ",
+        "On month": "On month"
+    },
     "modalRecurring":
     {
         "frequency": "Frequency",

@@ -27,11 +27,16 @@ export const ButtonStyles = (Colors: typeof light) => StyleSheet.create({
         alignItems: "center",
         overflow: "hidden"
     },
+    confirmButtonDisabled: {
+        backgroundColor: Colors.menuItem.background,
+        borderColor: Colors.menuItem.border,
+    },
     cancelButton: {
+        opacity: 0.7,
         flex: 1,
-        backgroundColor: "darkgray",
+        backgroundColor: Colors.custom.red,
         borderWidth: 1,
-        borderColor: Colors.custom.gray,
+        borderColor: Colors.tile.negativeTint,
         borderRadius: 24,
         height: 40,
         justifyContent: "center",

@@ -11,7 +11,7 @@ type AddButtonProps = {
     onPress?: () => void
 }
 
-export default function AddButton({ size=40, onPress=()=>router.navigate("./modalAdd") }: AddButtonProps) {
+export default function AddButton({ size=40, onPress=()=>router.navigate("/modalAdd") }: AddButtonProps) {
 
     const theme = useTheme()
     const buttonStyles = ButtonStyles(theme.theme)

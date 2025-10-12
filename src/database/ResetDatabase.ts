@@ -1,8 +1,17 @@
-import { SQLiteDatabase } from "expo-sqlite"
+import { SQLiteDatabase } from "expo-sqlite";
 
-export async function initializeDatabase(database: SQLiteDatabase) {
+export async function resetDatabase(database: SQLiteDatabase) {
+
     await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS "transactions_recurring" (
+        DROP TABLE IF EXISTS transactions; 
+    `)
+
+    await database.execAsync(`
+        DROP TABLE IF EXISTS transactions_recurring; 
+    `)
+
+    await database.execAsync(`
+        CREATE TABLE IF NOT EXISTS transactions_recurring (
             id INTEGER NOT NULL PRIMARY KEY,
             value INTEGER NOT NULL,
             description TEXT,
@@ -25,4 +34,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL
         );   
     `)
+
+    console.log("Banco de dados resetado")
 }

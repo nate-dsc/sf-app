@@ -1,9 +1,11 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { ThemeProvider, useTheme } from "@/context/ThemeContext"
+import { initializeDatabase } from "@/database/InitializeDatabase"
 import "@/i18n"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
 import { Stack } from "expo-router"
+import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 import { useTranslation } from "react-i18next"
 import { SafeAreaProvider } from "react-native-safe-area-context"
@@ -96,8 +98,10 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 export default function RootLayout()
 {
     return(
-        <ThemeProvider>
-            <RootLayoutNav />
-        </ThemeProvider>
+        <SQLiteProvider databaseName={"sf-app.db"} onInit={initializeDatabase}>
+            <ThemeProvider>
+                <RootLayoutNav />
+            </ThemeProvider>
+        </SQLiteProvider>
     )
 }
