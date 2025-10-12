@@ -15,7 +15,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Frequency, Options, RRule, Weekday } from 'rrule';
 
@@ -372,13 +372,6 @@ export default function ModalRecurring() {
             {renderMonthlySelector()}
             {renderEndConditionSelector()}
 
-            {/* Resultado Final */}
-            {/* <View style={styles.resultContainer}>
-                <Text style={styles.resultLabel}>String RRULE Gerada:</Text>
-                <Text style={styles.resultString} selectable>{rruleString}</Text>
-                <Text style={styles.resultString} selectable>{describeRRule(rruleString.split("\n")[1])}</Text>
-            </View> */}
-
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
                 <ConfirmButton onPress={handleConfirm} />
@@ -386,25 +379,3 @@ export default function ModalRecurring() {
         </ScrollView>
     )
 };
-
-const styles = StyleSheet.create({
-    resultContainer: {
-        marginTop: 20,
-        padding: 16,
-        backgroundColor: '#e3f2fd',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#bbdefb',
-    },
-    resultLabel: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#1e88e5'
-    },
-    resultString: {
-        marginTop: 8,
-        fontSize: 14,
-        color: '#333',
-        fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-    },
-})
