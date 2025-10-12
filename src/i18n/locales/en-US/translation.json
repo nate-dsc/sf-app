@@ -70,7 +70,9 @@
         "date": "Date",
         "category": "Category",
         "select": "Select",
-        "recurring": "Recurring"
+        "recurring": "Recurring",
+        "Yes": "Yes",
+        "No": "No"
     },
     "RRULEtoText": {
         "EverySingular": "Every ",
@@ -153,6 +155,7 @@
         "sm9": "Sep",
         "sm10": "Oct",
         "sm11": "Nov",
-        "sm12": "Dec"
+        "sm12": "Dec",
+        "disable": "Disable recurrence"
     }
 }

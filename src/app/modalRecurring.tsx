@@ -1,3 +1,5 @@
+import CancelButton from '@/components/buttons/CancelButton';
+import ConfirmButton from '@/components/buttons/ConfirmButton';
 import DatePicker from '@/components/menu-items/DatePicker';
 import DayPicker from '@/components/menu-items/DayPicker';
 import MSList from '@/components/menu-items/ListMultipleSelection';
@@ -9,8 +11,8 @@ import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useTheme } from '@/context/ThemeContext';
-import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NativeScrollEvent, NativeSyntheticEvent, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -26,6 +28,12 @@ type MonthlyType = "day_of_month" | "day_of_week"
 export default function ModalRecurring() {
 
     const {t} = useTranslation()
+    const router = useRouter()
+    const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
+    const paddingTop = useHeaderHeight() + 10
+    const insets = useSafeAreaInsets()
+    const {theme, preference, setPreference} = useTheme()
+    const menuStyles = MIStyles(theme)
 
     // Constantes para as opções da UI
     const FREQUENCIES = [
@@ -78,11 +86,7 @@ export default function ModalRecurring() {
         { id: "-1", label: t("modalRecurring.last"), value: -1 },
     ]
 
-    const paddingTop = useHeaderHeight() + 10
-    const insets = useSafeAreaInsets()
-    const {theme, preference, setPreference} = useTheme()
-    const menuStyles = MIStyles(theme)
-    const {newTransaction, updateNewTransaction} = useNewTransaction()
+    
 
     // --- Estados da UI ---
     const [freq, setFreq] = useState<Frequency>(RRule.DAILY)
@@ -239,6 +243,16 @@ export default function ModalRecurring() {
 
     // --- Componentes de Renderização ---
 
+    const renderResetButton = () => {
+        if (!newTransaction.rrule) return null
+        return(
+            <CancelButton buttonText={t("modalRecurring.disable")} onPress={() => {
+                updateNewTransaction({rrule: undefined})
+                router.back()
+            }}/>
+        )
+    }
+
     const renderIntervalSelector = () => (
         <Stepper
             singular={getFrequencyLabels(freq)[0]} 
@@ -334,8 +348,9 @@ export default function ModalRecurring() {
         </View>
     )
 
-    const onConfirmation = () => {
-        
+    const handleConfirm = () => {
+        updateNewTransaction({rrule: rruleString.split("\n")[1]})
+        router.back()
     }
 
     return (
@@ -343,6 +358,7 @@ export default function ModalRecurring() {
             contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom, rowGap: 12}]}
             ref={scrollRef} onScroll={handleScroll} scrollEventThrottle={16}
         >
+            {renderResetButton()}
             <Text style={[FontStyles.headline, menuStyles.text]}>{t("modalRecurring.frequency")}</Text>
             <SegmentedControl
                 options={FREQUENCIES}
@@ -357,10 +373,15 @@ export default function ModalRecurring() {
             {renderEndConditionSelector()}
 
             {/* Resultado Final */}
-            <View style={styles.resultContainer}>
+            {/* <View style={styles.resultContainer}>
                 <Text style={styles.resultLabel}>String RRULE Gerada:</Text>
                 <Text style={styles.resultString} selectable>{rruleString}</Text>
-                <Text style={styles.resultString} selectable>{describeRRule(rruleString)}</Text>
+                <Text style={styles.resultString} selectable>{describeRRule(rruleString.split("\n")[1])}</Text>
+            </View> */}
+
+            <View style={{flexDirection: "row", columnGap: 12}}>
+                <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
+                <ConfirmButton onPress={handleConfirm} />
             </View>
         </ScrollView>
     )

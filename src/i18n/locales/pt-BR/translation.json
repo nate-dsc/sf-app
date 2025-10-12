@@ -70,7 +70,9 @@
         "date": "Data",
         "category": "Categoria",
         "select": "Escolher",
-        "recurring": "Repete"
+        "recurring": "Repete",
+        "Yes": "Sim",
+        "No": "Não"
     },
     "RRULEtoText": {
         "EverySingular": "Todo ",
@@ -170,7 +172,8 @@
         "sm9": "set.",
         "sm10": "out.",
         "sm11": "nov.",
-        "sm12": "dez."
+        "sm12": "dez.",
+        "disable": "Desativa recorrência"
     }
     
 }

@@ -4,7 +4,11 @@ import { useTheme } from "@/context/ThemeContext"
 import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, type TouchableOpacityProps } from "react-native"
 
-export default function CancelButton({...rest}: TouchableOpacityProps) {
+type CancelButtonProps = TouchableOpacityProps & {
+    buttonText?: string
+}
+
+export default function CancelButton({buttonText, ...rest}: CancelButtonProps) {
 
     const {theme, preference, setPreference} = useTheme()
     const {t} = useTranslation()
@@ -12,7 +16,7 @@ export default function CancelButton({...rest}: TouchableOpacityProps) {
 
     return(
         <TouchableOpacity style={buttonStyles.cancelButton} onPress={rest.onPress}>
-            <Text style={[FontStyles.title2, {color: theme.menuItem.textOverTint}]}>{t("buttons.cancel")}</Text>
+            <Text style={[FontStyles.title2, {color: theme.menuItem.textOverTint}]}>{buttonText}</Text>
         </TouchableOpacity>
     )
 }

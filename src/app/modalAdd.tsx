@@ -92,10 +92,14 @@ export default function AddModal() {
                 onPress={() => {router.push("/modalCategoryPicker")}}
             />
 
-            <SRedir text={t("modalAdd.recurring")} onPress={() => {router.push("/modalRecurring")}}/>
+            <SRedir 
+                text={t("modalAdd.recurring")}
+                selectText={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
+                onPress={() => {router.push("/modalRecurring")}}
+            />
 
             <View style={{flexDirection: "row", columnGap: 12}}>
-                <CancelButton onPress={() => {router.back()}}/>
+                <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
                 <ConfirmButton style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />
             </View>
         </ScrollView>
