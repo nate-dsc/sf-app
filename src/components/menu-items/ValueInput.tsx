@@ -9,9 +9,10 @@ type ValueInputProps = Omit<TextInputProps, 'value' | 'onChangeText'> & {
     leftText: string
     value: string; 
     onChangeText: (value: string) => void; 
+    flowType: "inflow" | "outflow"
 }
 
-export default function ValueInput({leftText, value, onChangeText, ...rest}: ValueInputProps) {
+export default function ValueInput({leftText, value, onChangeText, flowType, ...rest}: ValueInputProps) {
 
     const placeholder = 0.0
     const theme = useTheme()
@@ -23,19 +24,27 @@ export default function ValueInput({leftText, value, onChangeText, ...rest}: Val
         // Se o valor estiver vazio, retornamos uma string vazia para mostrar o placeholder
         if (!rawText) return "";
 
-        const numericValue = parseFloat(rawText) / 100;
+        let numericValue = parseFloat(rawText.replace(',', '.'));
+
+        // Se não for um número válido (ex: se o usuário digitar apenas "."), retorna vazio
+        if (isNaN(numericValue)) return "";
+
+        const valueToFormat = flowType === "inflow" ? numericValue : -numericValue;
+
         return new Intl.NumberFormat(i18n.language, {
             style: "currency",
             currency: i18n.language === "pt-BR" ? "BRL" : "USD",
-        }).format(numericValue);
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(valueToFormat)
     };
 
     // ALTERAÇÃO 2: Simplificamos o 'handleTextChange'.
     // Ele agora apenas limpa o texto e envia os dígitos puros para o pai.
     // A formatação não acontece aqui.
     const handleTextChange = (text: string) => {
-        const cleanedText = text.replace(/\D/g, "");
-        onChangeText(cleanedText);
+        
+        onChangeText(text);
     };
     
     // ALTERAÇÃO 3: Funções para lidar com o foco e a perda de foco.
@@ -44,6 +53,27 @@ export default function ValueInput({leftText, value, onChangeText, ...rest}: Val
     };
 
     const handleBlur = () => {
+        let cleaned = value.trim();
+
+        // Troca vírgula por ponto
+        cleaned = cleaned.replace(",", ".");
+
+        // Remove caracteres inválidos
+        cleaned = cleaned.replace(/[^0-9.]/g, "");
+
+        // Se tiver mais de um ponto, mantém só o primeiro
+        const parts = cleaned.split(".");
+        if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("");
+
+        // Converte para número
+        const num = parseFloat(cleaned);
+        if (isNaN(num) || num === 0) {
+            // Zera o campo
+            onChangeText("");
+        } else {
+            // Formata com duas casas decimais para garantir consistência
+            onChangeText(num.toFixed(2));
+        }
         setIsFocused(false);
     };
 
@@ -66,10 +96,10 @@ export default function ValueInput({leftText, value, onChangeText, ...rest}: Val
                     // O placeholder agora pode refletir o formato final
                     placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
                     placeholderTextColor={menuStyles.textUnfocused.color}
-                    keyboardType="number-pad"
-                    inputMode="numeric"
+                    keyboardType="decimal-pad"
+                    inputMode="decimal"
                     textAlign="right"
-                    maxLength={8}
+                    maxLength={11}
                     {...rest}
 
                     value={displayedValue}

@@ -26,6 +26,7 @@ export default function AddModal() {
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
 
     const [newDate, setNewDate] = useState<Date>(new Date())
+    const [numValue, setNumValue] = useState("")
 
     const {theme} = useTheme()
     const buttonStyles = ButtonStyles(theme)
@@ -55,6 +56,24 @@ export default function AddModal() {
             console.log("Falha ao salvar. Tente novamente.");
         }
     }
+
+    const handleDecimalString = (decimalString: string) => {
+        const cleanString = decimalString.replace(',', '.')
+        console.log(isNaN(parseFloat(cleanString)))
+
+        if(isNaN(parseFloat(cleanString))) {
+            updateNewTransaction({value: undefined})
+            setNumValue("")
+            console.log(`updateNewTransaction({value: ${undefined}})`)
+        } else {
+            const floatValue = 100*parseFloat(cleanString) 
+            const centValue = Math.floor(floatValue)
+            if(centValue != 0) {
+                updateNewTransaction({value: centValue})
+                console.log(`updateNewTransaction({value: ${centValue}})`)
+            }
+        }
+    }
     
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
@@ -69,10 +88,10 @@ export default function AddModal() {
 
             <ValueInput
                 leftText={t("modalAdd.value")}
-                value={newTransaction.value || 0}
-                onChangeText={(value) => {
-                    updateNewTransaction({value: value})
-                    console.log(`newtransaction value: ${value}`)
+                value={numValue}
+                onChangeText={(value: string) => {
+                    setNumValue(value)
+                    handleDecimalString(value)
                 }}
                 flowType={newTransaction.flowType || "outflow"}
             />
