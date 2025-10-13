@@ -72,7 +72,11 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
             onChangeText("");
         } else {
             // Formata com duas casas decimais para garantir consistência
-            onChangeText(num.toFixed(2));
+            onChangeText(
+                new Intl.NumberFormat(i18n.language, {
+                    style: "decimal",
+                }).format(num)
+            )
         }
         setIsFocused(false);
     };
