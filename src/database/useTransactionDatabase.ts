@@ -34,7 +34,7 @@ export function useTransactionDatabase() {
                 $date: data.date
             })
 
-            console.log(result)
+            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}`)
             
         } catch (error) {
             throw error
@@ -55,7 +55,7 @@ export function useTransactionDatabase() {
                 $RRULE: data.rrule
             })
 
-            console.log(result)
+            console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}`)
             
         } catch (error) {
             throw error
