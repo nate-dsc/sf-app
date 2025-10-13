@@ -49,7 +49,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
             category: newTransaction.category?.id!,
-            date: newTransaction.date?.toISOString()!,
+            date: newTransaction.date?.toISOString().slice(0, 16)!,
         }
     }
 
@@ -62,7 +62,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
             category: newTransaction.category?.id!,
-            date_start: newTransaction.date?.toISOString()!,
+            date_start: newTransaction.date?.toISOString().slice(0, 16)!,
             rrule: newTransaction.rrule!
         }
     }
