@@ -25,13 +25,9 @@ export default function AddModal() {
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
 
-    const [selectedFlow, setSelectedFlow] = useState<FlowType>("outflow")
     const [newDate, setNewDate] = useState<Date>(new Date())
-    
-    const [numValue, setNumValue] = useState("")
-    const [newDescription, setNewDescription] = useState("")
 
-    const {theme, preference, setPreference} = useTheme()
+    const {theme} = useTheme()
     const buttonStyles = ButtonStyles(theme)
 
     const flowOptions: SCOption<FlowType>[] = [
@@ -71,18 +67,21 @@ export default function AddModal() {
                 })}
             />
 
-            <ValueInput leftText={t("modalAdd.value")} value={numValue}
-                onChangeText={(value: string) => {
-                    Number(value) === 0 ? setNumValue(""): setNumValue(value)
-                    updateNewTransaction({value: Number(value)})
+            <ValueInput
+                leftText={t("modalAdd.value")}
+                value={newTransaction.value || 0}
+                onChangeText={(value) => {
+                    updateNewTransaction({value: value})
+                    console.log(`newtransaction value: ${value}`)
                 }}
+                flowType={newTransaction.flowType || "outflow"}
             />
 
-            <DescriptionInput leftText={t("modalAdd.description")} value={newDescription}
-                onChangeText={(description: string) => {
-                    setNewDescription(description)
-                    updateNewTransaction({description: description})
-                }}/>
+            <DescriptionInput 
+                leftText={t("modalAdd.description")}
+                value={newTransaction.description || ""}
+                onChangeText={(description: string) => {updateNewTransaction({description: description})}}
+            />
 
             <DatePicker text={t("modalAdd.date")} onDateChange={(date) => updateNewTransaction({ date: date })} value={newDate} />
 
