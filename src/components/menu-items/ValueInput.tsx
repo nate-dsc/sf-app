@@ -39,15 +39,11 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
         }).format(valueToFormat)
     };
 
-    // ALTERAÇÃO 2: Simplificamos o 'handleTextChange'.
-    // Ele agora apenas limpa o texto e envia os dígitos puros para o pai.
-    // A formatação não acontece aqui.
     const handleTextChange = (text: string) => {
         
         onChangeText(text);
     };
     
-    // ALTERAÇÃO 3: Funções para lidar com o foco e a perda de foco.
     const handleFocus = () => {
         setIsFocused(true);
     };
@@ -81,9 +77,6 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
         setIsFocused(false);
     };
 
-    // O valor exibido depende se o campo está focado ou não.
-    // Se focado: mostra o valor puro (ex: "12345").
-    // Se não focado (blur): mostra o valor formatado (ex: "R$ 123,45").
     const displayedValue = isFocused ? value : formatCurrency(value);
 
     return(
@@ -97,7 +90,7 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
             <View style={menuStyles.inputContainer}>
                 <TextInput
                     style={[menuStyles.text, FontStyles.numBody, {fontSize: 18}]}
-                    // O placeholder agora pode refletir o formato final
+                    // Placeholder ignora o sinal!
                     placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
                     placeholderTextColor={menuStyles.textUnfocused.color}
                     keyboardType="decimal-pad"
