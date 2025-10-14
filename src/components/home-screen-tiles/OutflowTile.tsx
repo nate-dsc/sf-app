@@ -22,12 +22,12 @@ export default function OutflowTile() {
         return <Text>{error}</Text>;
     }
 
-    const outflow = (data?.outflowCurrentMonth ?? 0)/100
+    const outflow = -(data?.outflowCurrentMonth ?? 0)/100
     const outflowStr = outflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
         <View style={[tileStyles.container]}>
-            <Text style={[tileStyles.text, FontStyles.title2]}>Outflow</Text>
+            <Text style={[tileStyles.text, FontStyles.title2]}>{t("tiles.expenses")}</Text>
             <Text style={[tileStyles.text, FontStyles.numTitle1]}>{outflowStr}</Text>
         </View>
     )
