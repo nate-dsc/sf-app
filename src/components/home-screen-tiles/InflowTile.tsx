@@ -25,7 +25,7 @@ export default function InflowTile() {
 
     return(
         <View style={[tileStyles.container]}>
-            <Text style={[tileStyles.text, FontStyles.title2]}>{t("tiles.income")}</Text>
+            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.income")}</Text>
             <Text style={[tileStyles.text, FontStyles.numTitle1]}>{inflowStr}</Text>
         </View>
     )

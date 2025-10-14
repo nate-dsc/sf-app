@@ -25,11 +25,11 @@ export default function BudgetTile() {
     return(
         <View style={tileStyles.container}>
 
-            <Text style={[tileStyles.text, FontStyles.title2]}>{t("tiles.balanceThisMonth")}</Text>
+            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.balanceThisMonth")}</Text>
             <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numLargeTitle]}>{balanceStr}</Text>
             <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-                <Text style={[tileStyles.textUnfocused, FontStyles.title3]}>of </Text>
-                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numTitle3]}>{balanceStr}</Text>
+                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>of </Text>
+                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numBody]}>{balanceStr}</Text>
             </View>
 
         </View>

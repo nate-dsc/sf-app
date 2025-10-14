@@ -24,7 +24,7 @@ export default function OutflowTile() {
 
     return(
         <View style={[tileStyles.container]}>
-            <Text style={[tileStyles.text, FontStyles.title2]}>{t("tiles.expenses")}</Text>
+            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.expenses")}</Text>
             <Text style={[tileStyles.text, FontStyles.numTitle1]}>{outflowStr}</Text>
         </View>
     )
