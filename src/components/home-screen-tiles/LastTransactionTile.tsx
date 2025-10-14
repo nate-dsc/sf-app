@@ -1,26 +1,36 @@
 import { useTheme } from "@/context/ThemeContext"
-import { Text, View, ViewStyle } from "react-native"
+import { useSummaryStore } from "@/stores/useSummaryStore"
+import { useTranslation } from "react-i18next"
+import { ActivityIndicator, Text, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
 
-type LastTransactionTileProps = {
-    value: number,
-    description: string,
-    isOutflow: boolean,
-    style?: ViewStyle
-}
+export default function LastTransactionTile() {
 
-export default function LastTransactionTile({value, description, isOutflow, style}: LastTransactionTileProps) {
+    const { data, loading, error } = useSummaryStore()
+    const { theme } = useTheme()
+    const { t } = useTranslation()
+    const tileStyles = TileStyles(theme)
 
-    const theme = useTheme()
-    const tileStyles = TileStyles(theme.theme)
+    if (loading && !data) {
+        return <ActivityIndicator size="large" />;
+    }
+
+    if (error) {
+        return <Text>{error}</Text>;
+    }
+
+    const transaction = data?.lastTransaction ?? {value: 0, description: null, date: new Date().toISOString, category: 0}
+
+    const value = (transaction.value)/100
 
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
-        <View style={[tileStyles.container, style]}>
-            <Text style={FontStyles.title2}>Last transaction</Text>
+        <View style={[tileStyles.container]}>
+            <Text style={FontStyles.title2}>{t("tiles.lastTransaction")}</Text>
+            <Text style={FontStyles.body}>{transaction.description || ""}</Text>
             <Text style={[{textAlign: "right"}, FontStyles.numTitle1]}>{valueStr}</Text>
         </View>
     )
