@@ -23,7 +23,7 @@ export default function InflowTile() {
     }
 
 
-    const inflow = data?.inflowCurrentMonth ?? 0
+    const inflow = (data?.inflowCurrentMonth ?? 0)/100
     const inflowStr = inflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
