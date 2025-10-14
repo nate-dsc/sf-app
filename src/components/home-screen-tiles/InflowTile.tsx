@@ -1,23 +1,34 @@
 import { useTheme } from "@/context/ThemeContext"
-import { type inflow } from "@/types/TilesTypes"
-import { Text, View } from "react-native"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useSummaryStore } from "@/stores/useSummaryStore"
+import { useTranslation } from "react-i18next"
+import { ActivityIndicator, Text, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
-type InflowProps = {
-    inflow: inflow
-}
+export default function InflowTile() {
 
-export default function InflowTile({inflow}: InflowProps) {
+    const { getSummaryFromDB } = useTransactionDatabase()
+    const { data, loading, error } = useSummaryStore()
+    const { theme } = useTheme()
+    const { t } = useTranslation()
+    const tileStyles = TileStyles(theme)
 
-    const theme = useTheme()
-    const tileStyles = TileStyles(theme.theme)
+    if (loading && !data) {
+        return <ActivityIndicator size="large" />;
+    }
 
-    const inflowStr = inflow.monthlyPreference ? inflow.monthlyInflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"}) : inflow.last30daysInflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
+    if (error) {
+        return <Text>{error}</Text>;
+    }
+
+
+    const inflow = data?.inflowCurrentMonth ?? 0
+    const inflowStr = inflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
         <View style={[tileStyles.container]}>
-            <Text style={[tileStyles.text, FontStyles.title2]}>Inflow</Text>
+            <Text style={[tileStyles.text, FontStyles.title2]}>{t("tiles.income")}</Text>
             <Text style={[tileStyles.text, FontStyles.numTitle1]}>{inflowStr}</Text>
         </View>
     )
