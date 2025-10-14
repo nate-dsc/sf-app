@@ -62,6 +62,7 @@ export default function TransactionList({filters={type: "all", category: undefin
             keyExtractor={(item: Transaction) => item.id.toString()}
             renderItem={renderItem}
             onEndReached={() => loadData()} // Load more on scroll
+            showsVerticalScrollIndicator={false}
             onEndReachedThreshold={0.5}
             ListFooterComponent={loading ? <ActivityIndicator style={{ margin: 20 }}/> : null}
             contentContainerStyle={{paddingBottom: tabBarHeight + 16}}

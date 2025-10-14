@@ -28,7 +28,7 @@ export default function TransactionHistoryScreen() {
                     selectedValue={typeFilter}
                     onChange={(typeOption) => setTypeFilter(typeOption)}
                 />
-                <View>
+                <View style={{flex: 1}}>
                     <TransactionList filters={{
                         category: undefined,
                         type: typeFilter
