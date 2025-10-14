@@ -19,6 +19,13 @@ export type TransactionRecurring = {
     rrule: string
 }
 
+export type TransactionTypeFilter = "inflow" | "outflow" | "all"
+
+export type TransactionFilterOptions = {
+    category?: string,
+    type?: TransactionTypeFilter
+}
+
 export function useTransactionDatabase() {
     const database = useSQLiteContext()
 
@@ -124,7 +131,39 @@ export function useTransactionDatabase() {
         }
     }
 
+    async function getPaginatedFilteredTransactions(page: number, pageSize: number, filterOptions: TransactionFilterOptions = {}) {
+        const offset = page*pageSize
 
+        let whereClauses: string[] = []
+        let params: (string|number)[] = []
 
-    return { createTransaction, createTransactionRecurring, getTransactionsFromMonth, getSummaryFromDB }
+        if(filterOptions.category) {
+            whereClauses.push("category = ?")
+            params.push(filterOptions.category)
+        }
+
+        if(filterOptions.type === "inflow") {
+            whereClauses.push("value > 0")
+        } else if (filterOptions.type === "outflow") {
+            whereClauses.push("value < 0")
+        }
+
+        let query = "SELECT * FROM transactions"
+        if (whereClauses.length > 0) {
+            query += " WHERE " + whereClauses.join(" AND ")
+        }
+
+        query += " ORDER BY date DESC, id DESC LIMIT ? OFFSET ?"
+        params.push(pageSize, offset)
+
+        try {
+            const response = await database.getAllAsync<Transaction>(query, params)
+            return response
+        } catch (error) {
+            console.error("Could not fetch paginated transactions", error)
+            throw error
+        }
+    }
+
+    return { createTransaction, createTransactionRecurring, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions }
 }
