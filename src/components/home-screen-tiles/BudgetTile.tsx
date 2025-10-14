@@ -2,7 +2,6 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View, ViewStyle } from "react-native"
 import { TileStyles } from "./TileStyles"
@@ -17,15 +16,10 @@ type BudgetTileProps = {
 export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPreference, style}: BudgetTileProps) {
 
     const { getSummaryFromDB } = useTransactionDatabase()
-    const { data, loading, error, loadData } = useSummaryStore()
+    const { data, loading, error } = useSummaryStore()
     const { theme } = useTheme()
     const { t } = useTranslation()
     const tileStyles = TileStyles(theme)
-
-    useEffect(() => {
-        // Passa a função do banco para o store
-        loadData({ getSummaryFromDB });
-    }, [])
 
     if (loading && !data) {
         return <ActivityIndicator size="large" />;
@@ -35,8 +29,7 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
         return <Text>{error}</Text>;
     }
 
-    const balance = (data?.inflowCurrentMonth! - data?.outflowCurrentMonth!)/100
-    
+    const balance = ((data?.inflowCurrentMonth ?? 0) - (data?.outflowCurrentMonth! ?? 0))/100
 
     const budgetStr = monthlyBudget.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const balanceStr = balance.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
