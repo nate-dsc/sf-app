@@ -51,6 +51,9 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
     const handleBlur = () => {
         let cleaned = value.trim();
 
+        cleaned = i18n.language === "en-US" ? cleaned.replace(/,/g, '') 
+        : cleaned.replace(/\./g, '').replace(',', '.')
+
         // Troca vírgula por ponto
         cleaned = cleaned.replace(",", ".");
 
@@ -67,12 +70,8 @@ export default function ValueInput({leftText, value, onChangeText, flowType, ...
             // Zera o campo
             onChangeText("");
         } else {
-            // Formata com duas casas decimais para garantir consistência
-            onChangeText(
-                new Intl.NumberFormat(i18n.language, {
-                    style: "decimal",
-                }).format(num)
-            )
+            const numText = i18n.language === "en-US" ? num.toFixed(2) : num.toFixed(2).replace(".", ",")
+            onChangeText(numText)
         }
         setIsFocused(false);
     };

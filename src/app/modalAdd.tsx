@@ -8,6 +8,7 @@ import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedCon
 import ValueInput from "@/components/menu-items/ValueInput";
 import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useTheme } from "@/context/ThemeContext";
+import i18n from "@/i18n";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -58,15 +59,23 @@ export default function AddModal() {
     }
 
     const handleDecimalString = (decimalString: string) => {
-        const cleanString = decimalString.replace(',', '.')
-        console.log(isNaN(parseFloat(cleanString)))
+        if (!decimalString) {
+            updateNewTransaction({ value: undefined });
+            return;
+        }
 
-        if(isNaN(parseFloat(cleanString))) {
+        const cleanString = i18n.language === "en-US" ? decimalString.replace(/,/g, '') 
+        : decimalString.replace(/\./g, '').replace(',', '.')
+
+        const parsedValue = parseFloat(cleanString)
+        console.log(isNaN(parsedValue))
+
+        if(isNaN(parsedValue)) {
             updateNewTransaction({value: undefined})
             setNumValue("")
             console.log(`updateNewTransaction({value: ${undefined}})`)
         } else {
-            const floatValue = 100*parseFloat(cleanString) 
+            const floatValue = 100*parsedValue
             const centValue = Math.floor(floatValue)
             if(centValue != 0) {
                 updateNewTransaction({value: centValue})
