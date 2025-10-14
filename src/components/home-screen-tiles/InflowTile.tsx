@@ -1,5 +1,4 @@
 import { useTheme } from "@/context/ThemeContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
@@ -7,8 +6,6 @@ import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
 export default function InflowTile() {
-
-    const { getSummaryFromDB } = useTransactionDatabase()
     const { data, loading, error } = useSummaryStore()
     const { theme } = useTheme()
     const { t } = useTranslation()

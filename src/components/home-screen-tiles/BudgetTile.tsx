@@ -1,21 +1,11 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, Text, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Text, View } from "react-native"
 import { TileStyles } from "./TileStyles"
 
-type BudgetTileProps = {
-    monthlyBudget: number,
-    monthlyBalance: number,
-    budgetPreference: boolean,
-    style?: ViewStyle
-}
-
-export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPreference, style}: BudgetTileProps) {
-
-    const { getSummaryFromDB } = useTransactionDatabase()
+export default function BudgetTile() {
     const { data, loading, error } = useSummaryStore()
     const { theme } = useTheme()
     const { t } = useTranslation()
@@ -30,8 +20,6 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
     }
 
     const balance = ((data?.inflowCurrentMonth ?? 0) - (data?.outflowCurrentMonth! ?? 0))/100
-
-    const budgetStr = monthlyBudget.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const balanceStr = balance.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
@@ -41,7 +29,7 @@ export default function BudgetTile({ monthlyBudget, monthlyBalance, budgetPrefer
             <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numLargeTitle]}>{balanceStr}</Text>
             <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
                 <Text style={[tileStyles.textUnfocused, FontStyles.title3]}>of </Text>
-                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numTitle3]}>{budgetStr}</Text>
+                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numTitle3]}>{balanceStr}</Text>
             </View>
 
         </View>

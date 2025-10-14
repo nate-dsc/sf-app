@@ -20,18 +20,10 @@ export default function HomeScreen() {
     return(
         <View style={{flex: 1, paddingTop: paddingTop}}>
             <ScrollView contentContainerStyle={[SStyles.mainContainer]}>
-                    <BudgetTile style={{}} monthlyBudget={-999999.99} monthlyBalance={999999.99} budgetPreference={true} />
+                    <BudgetTile/>
                 <View style={{ flexDirection: "row", justifyContent: "center", columnGap: 12}}>
-                    <InflowTile inflow={{
-                        monthlyInflow: 999999.99,
-                        last30daysInflow: 999999.99,
-                        monthlyPreference: true
-                    }}  />     
-                    <OutflowTile outflow={{
-                        monthlyOutflow: 999999.99,
-                        last30daysOutflow: 999999.99,
-                        monthlyPreference: true
-                    }} />
+                    <InflowTile/>     
+                    <OutflowTile/>
                 </View>
                     <LastTransactionTile style={{}} value={999999.99} description="groceries" isOutflow={true}/>
                     <DistributionTile style={{}}/>
