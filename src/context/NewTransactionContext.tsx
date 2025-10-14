@@ -1,4 +1,5 @@
 import { Transaction, TransactionRecurring, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useSummaryStore } from "@/stores/useSummaryStore"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
 
 type NewTransaction = {
@@ -26,7 +27,10 @@ const NewTransactionContext = createContext<NewTransactionContextType | undefine
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
 
-    const database = useTransactionDatabase()
+    const { createTransaction, createTransactionRecurring, getSummaryFromDB } = useTransactionDatabase();
+
+    // 2. Acesso à ação de recarregar dados do store do sumário
+    const loadSummaryData = useSummaryStore((state) => state.loadData);
 
     const updateNewTransaction = (updates: Partial<NewTransaction>) => {
         setNewTransaction(prevTransaction => ({
@@ -71,7 +75,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         if(newTransaction.rrule) {
             try {
                 const transactionData = getTransactionRecurringForDB();
-                await database.createTransactionRecurring(transactionData);
+                await createTransactionRecurring(transactionData);
                 console.log("Transação recorrente salva com sucesso!");
                 // Opcional: você pode limpar o formulário aqui
                 // setNewTransaction({});
@@ -83,7 +87,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         } else {
             try {
                 const transactionData = getTransactionForDB();
-                await database.createTransaction(transactionData);
+                await createTransaction(transactionData);
+                await loadSummaryData({ getSummaryFromDB })
                 console.log("Transação única salva com sucesso!");
                 // Opcional: você pode limpar o formulário aqui
                 // setNewTransaction({});
