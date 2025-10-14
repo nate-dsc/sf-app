@@ -1,9 +1,10 @@
 import TransactionList from "@/components/history-screen-items/TransactionList"
-import DistributionTile from "@/components/home-screen-items/DistributionTile"
+import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl"
 import { SStyles } from "@/components/styles/ScreenStyles"
-import { Transaction } from "@/database/useTransactionDatabase"
+import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useState } from "react"
 import { View } from "react-native"
 
 export default function TransactionHistoryScreen() {
@@ -11,14 +12,26 @@ export default function TransactionHistoryScreen() {
     const headerHeight = useHeaderHeight()
     const tabBarHeight = useBottomTabBarHeight()
 
+    const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>("all")
+
+    const typeOptions: SCOption<TransactionTypeFilter>[] = [
+        {label: "Todas", value: "all"},
+        {label: "Entradas", value: "inflow"},
+        {label: "Saídas", value: "outflow"}
+    ] 
+
     return(
         <View style={{flex: 1, paddingTop: headerHeight}}>
             <View style={SStyles.mainContainer}>
-                <DistributionTile style={{flex: 1}}/>
-                <View style={{flex: 5}}>
+                <SegmentedControl 
+                    options={typeOptions}
+                    selectedValue={typeFilter}
+                    onChange={(typeOption) => setTypeFilter(typeOption)}
+                />
+                <View>
                     <TransactionList filters={{
                         category: undefined,
-                        type: "all"
+                        type: typeFilter
                     }} onItemPress={function (item: Transaction): void {
                         throw new Error("Function not implemented.")
                     } }/>

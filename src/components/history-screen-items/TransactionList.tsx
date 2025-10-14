@@ -29,7 +29,7 @@ export default function TransactionList({filters={type: "all", category: undefin
         const currentPage = isInitialLoad ? 0 : page
 
         try {
-            const newTransactions = await getPaginatedFilteredTransactions(page, PAGE_SIZE, filters)
+            const newTransactions = await getPaginatedFilteredTransactions(currentPage, PAGE_SIZE, filters)
 
             if(isInitialLoad) {
                 setData(newTransactions)
