@@ -1,22 +1,29 @@
 import { useTheme } from "@/context/ThemeContext"
-import { outflow } from "@/types/TilesTypes"
-import { Text, View } from "react-native"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useSummaryStore } from "@/stores/useSummaryStore"
+import { useTranslation } from "react-i18next"
+import { ActivityIndicator, Text, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
+export default function OutflowTile() {
 
-type OutflowTileProps = {
-    outflow: outflow
-}
+    const { getSummaryFromDB } = useTransactionDatabase()
+    const { data, loading, error } = useSummaryStore()
+    const { theme } = useTheme()
+    const { t } = useTranslation()
+    const tileStyles = TileStyles(theme)
 
-export default function OutflowTile({outflow}: OutflowTileProps) {
+    if (loading && !data) {
+        return <ActivityIndicator size="large" />;
+    }
 
-    const theme = useTheme()
-    const tileStyles = TileStyles(theme.theme)
+    if (error) {
+        return <Text>{error}</Text>;
+    }
 
-    const outflowStr = outflow.monthlyPreference ? 
-        outflow.monthlyOutflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
-         : outflow.last30daysOutflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
+    const outflow = (data?.outflowCurrentMonth ?? 0)/100
+    const outflowStr = outflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
         <View style={[tileStyles.container]}>
