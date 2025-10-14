@@ -38,6 +38,8 @@ export function useTransactionDatabase() {
             
         } catch (error) {
             throw error
+        } finally {
+            statement.finalizeAsync()
         }
     }
 
@@ -59,10 +61,27 @@ export function useTransactionDatabase() {
             
         } catch (error) {
             throw error
+        } finally {
+            statement.finalizeAsync()
+        }
+    }
+
+    async function getTransactionsFromMonth(YMString: string, orderBy: "day" | "id") {
+        const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
+        
+        try {
+            const query = `SELECT * FROM transactions WHERE strftime('%Y-%m', date) = ${YMString} ORDER BY ${orderStr}`
+            
+            const response = await database.getAllAsync<Transaction>(query)
+
+            return response
+        } catch (error) {
+            console.log("Could not find transactions by month")
+            throw error
         }
     }
 
 
 
-    return { createTransaction, createTransactionRecurring }
+    return { createTransaction, createTransactionRecurring, getTransactionsFromMonth }
 }
