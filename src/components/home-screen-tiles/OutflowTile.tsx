@@ -2,6 +2,7 @@ import { useTheme } from "@/context/ThemeContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
+import TextTicker from "react-native-text-ticker"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
@@ -25,7 +26,14 @@ export default function OutflowTile() {
     return(
         <View style={[tileStyles.container]}>
             <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.expenses")}</Text>
-            <Text style={[tileStyles.text, FontStyles.numTitle1]}>{outflowStr}</Text>
+            <TextTicker 
+                style={[tileStyles.text, FontStyles.numTitle1]}
+                duration={4000}
+                animationType="bounce"
+                loop={true}
+                scroll={true}
+                bounceDelay={6000}
+            >{outflowStr}</TextTicker>
         </View>
     )
 }
