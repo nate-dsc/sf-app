@@ -2,17 +2,30 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { ThemeProvider, useTheme } from "@/context/ThemeContext"
 import { initializeDatabase } from "@/database/InitializeDatabase"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import "@/i18n"
+import { useSummaryStore } from "@/stores/useSummaryStore"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
 import { Stack } from "expo-router"
 import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
+import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 
- function RootLayoutNav() {
+
+function RootLayoutNav() {
     const {t} = useTranslation()
     const theme = useTheme()
+
+    const { getSummaryFromDB } = useTransactionDatabase();
+    const loadSummaryData = useSummaryStore((state) => state.loadData);
+
+    useEffect(() => {
+        // Dispara o carregamento dos dados do sumário assim que o app é montado
+        console.log("Layout: Carregando sumário na inicialização...");
+        loadSummaryData({ getSummaryFromDB });
+    }, [])
 
     return(
         <NewTransactionProvider>
