@@ -29,9 +29,15 @@ export default function LastTransactionTile() {
 
     return(
         <View style={[tileStyles.container]}>
-            <Text style={FontStyles.title3}>{t("tiles.lastTransaction")}</Text>
-            <Text style={[{textAlign: "right"}, FontStyles.numTitle1]}>{valueStr}</Text>
-            <Text style={[{textAlign: "right", fontStyle: "italic"}, tileStyles.textUnfocused, FontStyles.body]}>{transaction.description || ""}</Text>
+            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.lastTransaction")}</Text>
+            <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numTitle1]}>{valueStr}</Text>
+            <Text 
+                style={[
+                    {textAlign: "right", fontStyle: "italic"},
+                    tileStyles.textUnfocused,
+                    FontStyles.body
+                ]}
+            >{transaction.description || ""}</Text>
         </View>
     )
 
