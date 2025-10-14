@@ -1,4 +1,5 @@
 import { Transaction, TransactionFilterOptions, useTransactionDatabase } from "@/database/useTransactionDatabase";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import TransactionListItem from "./TransactionListItem";
@@ -11,6 +12,8 @@ type TransactionListProps = {
 const PAGE_SIZE = 15
 
 export default function TransactionList({filters={type: "all", category: undefined}, onItemPress}: TransactionListProps) {
+    const tabBarHeight = useBottomTabBarHeight()
+
     const {getPaginatedFilteredTransactions} = useTransactionDatabase()
 
     const [data, setData] = useState<Transaction[]>([])
@@ -61,6 +64,7 @@ export default function TransactionList({filters={type: "all", category: undefin
             onEndReached={() => loadData()} // Load more on scroll
             onEndReachedThreshold={0.5}
             ListFooterComponent={loading ? <ActivityIndicator style={{ margin: 20 }}/> : null}
+            contentContainerStyle={{paddingBottom: tabBarHeight + 16}}
         />
     )
 

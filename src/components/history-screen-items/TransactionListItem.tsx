@@ -15,7 +15,7 @@ export default function TransactionListItem(item: Transaction) {
 
 
     return(
-        <View>
+        <View style={[tileStyles.container, {borderColor: value > 0 ? "#3ADD6341" : "#F5191941", marginBottom: 12}]}>
             <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numTitle3]}>{valueStr}</Text>
             <Text 
                 style={[
