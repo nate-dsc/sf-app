@@ -22,8 +22,12 @@ export default function HomeScreen() {
             <ScrollView contentContainerStyle={[SStyles.mainContainer]}>
                     <BudgetTile/>
                 <View style={{ flexDirection: "row", justifyContent: "center", columnGap: 12}}>
-                    <InflowTile/>     
-                    <OutflowTile/>
+                    <View style={{flex: 1}}>
+                        <InflowTile/>
+                    </View>
+                    <View style={{flex: 1}}>
+                        <OutflowTile/>
+                    </View>
                 </View>
                     <LastTransactionTile style={{}} value={999999.99} description="groceries" isOutflow={true}/>
                     <DistributionTile style={{}}/>
