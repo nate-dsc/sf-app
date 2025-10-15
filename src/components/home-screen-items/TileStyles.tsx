@@ -11,6 +11,7 @@ export const TileStyles = (Colors: typeof light) => StyleSheet.create({
         paddingBottom: 12,
         paddingHorizontal: 12,
         borderRadius: 24,
+        borderCurve: "continuous",
         shadowColor: "#000",
         shadowOpacity: 0.15,
         shadowRadius: 2 ,
