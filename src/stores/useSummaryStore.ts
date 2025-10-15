@@ -15,6 +15,8 @@ type SummaryState = {
     data: Summary | null,
     error: string | null,
     loading: boolean,
+    refreshKey: boolean,
+    triggerRefresh: () => void,
     loadData: (dbFunctions: { getSummaryFromDB: () => Promise<Summary> }) => Promise<void>
 }
 
@@ -24,6 +26,9 @@ export const useSummaryStore = create<SummaryState>()(
             data: null,
             error: null,
             loading: false,
+
+            refreshKey: false,
+            triggerRefresh: () => set((state) => ({ refreshKey: !state.refreshKey })),
             
             loadData: async (dbFunctions) => {
                 // CORREÇÃO: get() é uma função que retorna o estado

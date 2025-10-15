@@ -29,7 +29,7 @@ export default function HomeScreen() {
                         <OutflowTile/>
                     </View>
                 </View>
-                    <LastTransactionTile style={{}} value={999999.99} description="groceries" isOutflow={true}/>
+                    <LastTransactionTile/>
                     <DistributionTile style={{}}/>
             </ScrollView>
         </View>

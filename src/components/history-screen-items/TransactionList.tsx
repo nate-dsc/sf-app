@@ -1,4 +1,5 @@
 import { Transaction, TransactionFilterOptions, useTransactionDatabase } from "@/database/useTransactionDatabase";
+import { useSummaryStore } from "@/stores/useSummaryStore";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
@@ -20,6 +21,8 @@ export default function TransactionList({filters={type: "all", category: undefin
     const [page, setPage] = useState(0)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
+
+    const refreshKey = useSummaryStore((state) => state.refreshKey)
 
     const loadData = useCallback(async (isInitialLoad = false) => {
         if(loading || (!isInitialLoad && !hasMore)) return
@@ -50,7 +53,7 @@ export default function TransactionList({filters={type: "all", category: undefin
     useEffect(() => {
         // When filters change, reset the list and load from page 1
         loadData(true);
-    }, [filters]);
+    }, [filters, refreshKey]);
 
     const renderItem = ({item}: {item: Transaction}) => (
         <TransactionListItem {...item} />
@@ -58,6 +61,7 @@ export default function TransactionList({filters={type: "all", category: undefin
 
     return(
         <FlatList
+            style={{paddingHorizontal: 12}}
             data={data}
             keyExtractor={(item: Transaction) => item.id.toString()}
             renderItem={renderItem}
@@ -70,4 +74,8 @@ export default function TransactionList({filters={type: "all", category: undefin
     )
 
 
+}
+
+function useTransactionStore(arg0: (state: any) => any) {
+    throw new Error("Function not implemented.");
 }

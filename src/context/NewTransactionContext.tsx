@@ -31,6 +31,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
     // 2. Acesso à ação de recarregar dados do store do sumário
     const loadSummaryData = useSummaryStore((state) => state.loadData);
+    const triggerRefresh = useSummaryStore.getState().triggerRefresh
 
     const updateNewTransaction = (updates: Partial<NewTransaction>) => {
         setNewTransaction(prevTransaction => ({
@@ -89,6 +90,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
                 const transactionData = getTransactionForDB();
                 await createTransaction(transactionData);
                 await loadSummaryData({ getSummaryFromDB })
+                triggerRefresh()
                 console.log("Transação única salva com sucesso!");
                 // Opcional: você pode limpar o formulário aqui
                 // setNewTransaction({});

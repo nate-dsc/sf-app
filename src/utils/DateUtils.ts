@@ -1,7 +1,12 @@
+import i18n from "@/i18n"
 
-export function dateToLocalYMD (date: Date) {
-    const y = date.getFullYear()
-    const m = String(date.getMonth() + 1).padStart(2, "0")
-    const d = String(date.getDate()).padStart(2, "0")
-    return (`${y}-${m}-${d}`)
+export function timestampedYMDtoLocaleDate (timestampedYMD: string) {
+    const UTCstring = timestampedYMD + "Z"
+    const date = new Date(UTCstring)
+    const options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    } as const
+    return date.toLocaleString(i18n.language, options)
 }
