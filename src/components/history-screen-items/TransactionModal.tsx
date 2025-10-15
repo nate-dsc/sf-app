@@ -5,7 +5,7 @@ import { TileStyles } from "../home-screen-items/TileStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
 import { FontStyles } from "../styles/FontStyles"
-import { categoryIDtoIconName } from "@/utils/CategoryUtils";
+import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils";
 
 type TransactionModalProps = {
@@ -44,7 +44,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                 shadowOffset: {width: 0, height: 1}}}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-                    <Ionicons size={25} name={categoryIDtoIconName(transaction.category)} color={value > 0 ? "#3ADD63" : "#FF3B30"}/>
+                    <Ionicons size={25} name={findCategoryByID(transaction.category).iconName} color={value > 0 ? "#3ADD63" : "#FF3B30"}/>
                     <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numTitle2]}>{valueStr}</Text>
                 </View>
 
