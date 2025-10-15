@@ -23,13 +23,15 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
     const value = transaction.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
+    const category = findCategoryByID(transaction.category)
+
     return(
         <Pressable
             style={{flex: 1, justifyContent: "center", alignItems: "stretch", backgroundColor: "rgba(0,0,0,0.7)", paddingHorizontal: 12}}
             onPress={onBackgroundPress}
         >
             <View style={{
-
+                rowGap: 12,
                 backgroundColor: theme.tile.background,
                 borderWidth: 1,
                 borderColor: theme.tile.border,
@@ -44,26 +46,48 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                 shadowOffset: {width: 0, height: 1}}}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-                    <Ionicons size={25} name={findCategoryByID(transaction.category).iconName} color={value > 0 ? "#3ADD63" : "#FF3B30"}/>
-                    <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numTitle2]}>{valueStr}</Text>
-                </View>
-
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 20}}>
+                    <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
+                        <Ionicons size={25} name={category.iconName} color={value > 0 ? "#3ADD63" : "#FF3B30"}/>
+                        <Text
+                            style={[
+                                tileStyles.textUnfocused,
+                                FontStyles.subhead,
+                                {paddingHorizontal: 12, lineHeight: 25}
+                            ]}
+                        >{category.label}</Text>
+                    </View>
                     <Text 
                         style={[
-                            {textAlign: "right"},
                             tileStyles.textUnfocused,
-                            FontStyles.numSubhead
+                            FontStyles.subhead,
+                            {lineHeight: 25}
                         ]}
                     >{timestampedYMDtoLocaleDate(transaction.date) || ""}</Text>
+                </View>
+                <Text 
+                    style={[
+                        {textAlign: "right"},
+                        tileStyles.text,
+                        FontStyles.numLargeTitle
+                    ]}
+                >{valueStr}</Text>
+                <View>
+                    <Text
+                        style={[
+                            {textAlign: "left"},
+                            tileStyles.textUnfocused,
+                            FontStyles.subhead
+                        ]}
+                    >Sobre essa transação:</Text>
                     <Text 
                         style={[
-                            {textAlign: "right", fontStyle: "italic"},
+                            {textAlign: "justify"},
                             tileStyles.textUnfocused,
                             FontStyles.subhead
                         ]}
                     >{transaction.description || ""}</Text>
                 </View>
+                
             </View>
 
         </Pressable>
