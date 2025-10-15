@@ -15,7 +15,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
             <LinearGradient
                 colors={[theme.navigation.tabBarGradientStart, theme.navigationTheme.colors.background]}
                 start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
+                end={{ x: 0, y: 0.8 }}
                 style={StyleSheet.absoluteFill}
             />
             <View
