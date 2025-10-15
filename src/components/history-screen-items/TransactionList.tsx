@@ -56,7 +56,7 @@ export default function TransactionList({filters={type: "all", category: undefin
     }, [filters, refreshKey]);
 
     const renderItem = ({item}: {item: Transaction}) => (
-        <TransactionListItem {...item} />
+        <TransactionListItem item={item} onItemPress={onItemPress} {...item} />
     )
 
     return(

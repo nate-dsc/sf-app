@@ -1,10 +1,11 @@
 import TransactionList from "@/components/history-screen-items/TransactionList"
+import TransactionModal from "@/components/history-screen-items/TransactionModal"
 import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl"
 import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useState } from "react"
-import { View } from "react-native"
+import { Modal, View } from "react-native"
 
 export default function TransactionHistoryScreen() {
 
@@ -12,12 +13,24 @@ export default function TransactionHistoryScreen() {
     const tabBarHeight = useBottomTabBarHeight()
 
     const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>("all")
+    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
+    const [modalVisible, setModalVisible] = useState(false)
+
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
         {label: "Todas", value: "all"},
         {label: "Entradas", value: "inflow"},
         {label: "Saídas", value: "outflow"}
     ] 
+
+    const handleItemPress = (item: Transaction) => {
+        setSelectedTransaction(item)
+        setModalVisible(true)
+    }
+
+    const handleModalClose = () => {
+        setModalVisible(false)
+    }
 
     return(
         <View style={{flex: 1, paddingTop: headerHeight + 10}}>
@@ -32,10 +45,17 @@ export default function TransactionHistoryScreen() {
                 <TransactionList filters={{
                     category: undefined,
                     type: typeFilter
-                }} onItemPress={function (item: Transaction): void {
-                    throw new Error("Function not implemented.")
-                } }/>
+                }} onItemPress={handleItemPress}/>
             </View>
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={handleModalClose}
+            >
+                <TransactionModal transaction={selectedTransaction} onBackgroundPress={handleModalClose} />
+            </Modal>
         </View>
+        
     )
 }
