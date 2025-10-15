@@ -61,7 +61,7 @@ export default function TransactionList({filters={type: "all", category: undefin
 
     return(
         <FlatList
-            style={{paddingHorizontal: 12}}
+            style={{paddingHorizontal: 16}}
             data={data}
             keyExtractor={(item: Transaction) => item.id.toString()}
             renderItem={renderItem}
