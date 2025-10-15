@@ -21,7 +21,7 @@ export default function TransactionHistoryScreen() {
 
     return(
         <View style={{flex: 1, paddingTop: headerHeight + 10}}>
-            <View style={{paddingHorizontal: 12}}>
+            <View style={{paddingHorizontal: 16}}>
                 <SegmentedControl 
                     options={typeOptions}
                     selectedValue={typeFilter}
