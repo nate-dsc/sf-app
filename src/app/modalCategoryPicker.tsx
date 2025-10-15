@@ -40,15 +40,15 @@ export default function CategoryPicker() {
     ];
 
     const incomeList: SSListItem<number>[] = [
-        { id: "21", label: t("categories.income.salary"), value: 0, iconName: "cash" },
-        { id: "22", label: t("categories.income.freelance"), value: 0, iconName: "hammer" },
-        { id: "23", label: t("categories.income.oncall"), value: 0, iconName: "id-card" },
-        { id: "24", label: t("categories.income.overtime"), value: 0, iconName: "time" },
-        { id: "25", label: t("categories.income.perdiem"), value: 0, iconName: "today" },
-        { id: "26", label: t("categories.income.sales"), value: 0, iconName: "pricetag" },
-        { id: "27", label: t("categories.income.roi"), value: 0, iconName: "trending-up" },
-        { id: "28", label: t("categories.income.gambling"), value: 0, iconName: "dice" },
-        { id: "29", label: t("categories.income.other"), value: 0, iconName: "ellipsis-horizontal" }
+        { id: "21", label: t("categories.income.salary"), value: 21, iconName: "cash" },
+        { id: "22", label: t("categories.income.freelance"), value: 22, iconName: "hammer" },
+        { id: "23", label: t("categories.income.oncall"), value: 23, iconName: "id-card" },
+        { id: "24", label: t("categories.income.overtime"), value: 24, iconName: "time" },
+        { id: "25", label: t("categories.income.perdiem"), value: 25, iconName: "today" },
+        { id: "26", label: t("categories.income.sales"), value: 26, iconName: "pricetag" },
+        { id: "27", label: t("categories.income.roi"), value: 27, iconName: "trending-up" },
+        { id: "28", label: t("categories.income.gambling"), value: 28, iconName: "dice" },
+        { id: "29", label: t("categories.income.other"), value: 29, iconName: "ellipsis-horizontal" }
     ];
     
     return(
