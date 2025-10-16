@@ -8,6 +8,7 @@ import { FontStyles } from "../styles/FontStyles"
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils";
 import DeleteButton from "../buttons/DeleteButton"
+import ReturnButton from "../buttons/ReturnButton"
 
 type TransactionModalProps = {
     transaction: Transaction | null,
@@ -48,7 +49,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
                     <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
-                        <Ionicons size={25} name={category.iconName} color={value > 0 ? "#3ADD63" : "#FF3B30"}/>
+                        <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
                         <Text
                             style={[
                                 tileStyles.textUnfocused,
@@ -89,10 +90,13 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                     >{transaction.description || ""}</Text>
                 </View>
             </View>
-            <View 
-                style={{flexDirection: "row"}}
-            >
-                <DeleteButton/>
+            <View style={{flexDirection: "row", columnGap: 12}}>
+                <View style={{flex: 1}}>
+                    <DeleteButton/>
+                </View>
+                <View style={{flex: 1}}>
+                    <ReturnButton onPress={onBackgroundPress} bgPriority={2}/>
+                </View>
             </View>
 
         </Pressable>

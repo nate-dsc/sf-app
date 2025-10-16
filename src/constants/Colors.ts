@@ -202,7 +202,8 @@ export const light: CustomTheme = {
         colors: {
         primary: "#007AFF",
         //background: "#F2F2F2",
-        background: "#ebebebff",
+        //background: "#ebebebff",
+        background: groupBackground,
         card: "#FFFFFF",
         text: "#000",
         border: "#E0E0E0",
@@ -342,7 +343,7 @@ export const dark: CustomTheme = {
         gray6: gray6Dark,
     },
     background: {
-        bg: background,
+        bg: backgroundDark,
         secondaryBg: secondaryBackgroundDark,
         tertiaryBg: tertiaryBackgroundDark,
         groupBg: groupBackgroundDark,
