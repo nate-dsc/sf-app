@@ -10,3 +10,13 @@ export function timestampedYMDtoLocaleDate (timestampedYMD: string) {
     } as const
     return date.toLocaleString(i18n.language, options)
 }
+
+export function timestampedYMDtoLocaleDateWithoutYear (timestampedYMD: string) {
+    const UTCstring = timestampedYMD + "Z"
+    const date = new Date(UTCstring)
+    const options = {
+        day: '2-digit',
+        month: '2-digit'
+    } as const
+    return date.toLocaleString(i18n.language, options)
+}

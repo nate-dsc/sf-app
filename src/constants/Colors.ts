@@ -1,5 +1,91 @@
 import { DarkTheme, DefaultTheme } from "@react-navigation/native"
 
+const red = "rgb(255,56,60)"
+const redDark = "rgb(255,66,69)"
+
+const orange = "rgb(255,141,40)"
+const orangeDark = "rgb(255,146,48)"
+
+const yellow = "rgb(255,204,0)"
+const yellowDark = "rgb(255,214,0)"
+
+const green = "rgb(52,199,89)"
+const greenDark = "rgb(48,209,88)"
+
+const mint = "rgb(0,200,179)"
+const mintDark = "rgb(0,218,195)"
+
+const teal = "rgb(0,195,208)"
+const tealDark = "rgb(0,210,224)"
+
+const cyan = "rgb(0,192,232)"
+const cyanDark = "rgb(60,211,254)"
+
+const blue = "rgb(0,136,255)"
+const blueDark = "rgb(0,145,255)"
+
+const indigo = "rgb(255,141,40)"
+const indigoDark = "rgb(255,146,48)"
+
+const purple = "rgb(203,48,224)"
+const purpleDark = "rgb(219,52,242)"
+
+const pink = "rgb(255,45,85)"
+const pinkDark = "rgb(255,55,95)"
+
+const brown = "rgb(172,127,94)"
+const brownDark = "rgb(183,138,102)"
+
+const gray1 = "rgb(142,142,147)"
+const gray1Dark = "rgb(142,142,147)"
+
+const gray2 = "rgb(174,174,178)"
+const gray2Dark = "rgb(99,99,102)"
+
+const gray3 = "rgb(199,199,204)"
+const gray3Dark = "rgb(72,72,74)"
+
+const gray4 = "rgb(209,209,214)"
+const gray4Dark = "rgb(58,58,60)"
+
+const gray5 = "rgb(229,229,234)"
+const gray5Dark = "rgb(44,44,46)"
+
+const gray6 = "rgb(242,242,247)"
+const gray6Dark = "rgb(28,28,30)"
+
+const background = "#FFFFFFFF"
+const secondaryBackground = "#F2F2F7FF"
+const tertiaryBackground = "#FFFFFFFF"
+const groupBackground = "#F2F2F7FF"
+const groupSecondaryBackground = "#FFFFFFFF"
+const groupTertiaryBackground = "#F2F2F7FF"
+
+const backgroundDark = "#000000FF"
+const secondaryBackgroundDark = "#1C1C1EFF"
+const tertiaryBackgroundDark = "#2C2C2EFF"
+const groupBackgroundDark = "#000000FF"
+const groupSecondaryBackgroundDark = "#1C1C1EFF"
+const groupTertiaryBackgroundDark = "#2C2C2EFF"
+
+const label = "#000000FF"
+const secondaryLabel = "#3C3C4399"
+const tertiaryLabel = "#3C3C434D"
+const quaternaryLabel = "#3C3C432E"
+const labelDark = "#FFFFFFFF"
+const secondaryLabelDark = "#EBEBF599"
+const tertiaryLabelDark = "#EBEBF54D"
+const quaternaryLabelDark = "#EBEBF52E"
+
+const placeholderText = "#3C3C434D"
+const placeholderTextDark = "#EBEBF54D"
+
+const separator = "#3C3C434A"
+const separatorDark = "#54545899"
+
+const opaqueSeparator = "#C6C6C8FF"
+const opaqueSeparatorDark = "#38383AFF"
+
 const defaultTint = "#007AFF"
 
 const defaultLightBackground = "#F8F8F8"
@@ -9,7 +95,51 @@ const defaultDarkBackground = "#181818"
 const defaultDarkBorder = "#2E2E2E"
 
 type CustomTheme = {
+    themeName: string,
     navigationTheme: typeof DefaultTheme,
+
+    colors: {
+        white: string,
+        black: string,
+        red: string,
+        orange: string,
+        yellow: string,
+        green: string,
+        mint: string,
+        teal: string,
+        cyan: string,
+        blue: string,
+        indigo: string,
+        purple: string,
+        pink: string,
+        brown: string,
+        gray1: string,
+        gray2: string,
+        gray3: string,
+        gray4: string,
+        gray5: string,
+        gray6: string,
+    },
+    background: {
+        bg: string,
+        secondaryBg: string,
+        tertiaryBg: string,
+        groupBg: string,
+        groupSecondaryBg: string,
+        groupTertiaryBg: string,
+    },
+    text: {
+        label: string,
+        secondaryLabel: string,
+        tertiaryLabel: string,
+        quaternaryLabel: string,
+        placeholder: string,
+    },
+    separator: {
+        translucent: string,
+        opaque: string,
+    },
+
     navigation: {
         tabBarBackground: string,
         tabBarBorder: string,
@@ -61,11 +191,12 @@ type CustomTheme = {
         icons: string,
         tint: string
     }
-    themeName: string
+    
 }
 
 export const light: CustomTheme = {
-  navigationTheme: {
+    themeName: "light",
+    navigationTheme: {
         ...DefaultTheme,
         dark: false,
         colors: {
@@ -78,6 +209,49 @@ export const light: CustomTheme = {
         notification: "#FF3B30",
         },
     },
+
+    colors: {
+        white: "#FFFFFF",
+        black: "#000000",
+        red: red,
+        orange: orange,
+        yellow: yellow,
+        green: green,
+        mint: mint,
+        teal: teal,
+        cyan: cyan,
+        blue: blue,
+        indigo: indigo,
+        purple: purple,
+        pink: pink,
+        brown: brown,
+        gray1: gray1,
+        gray2: gray2,
+        gray3: gray3,
+        gray4: gray4,
+        gray5: gray5,
+        gray6: gray6,
+    },
+    background: {
+        bg: background,
+        secondaryBg: secondaryBackground,
+        tertiaryBg: tertiaryBackground,
+        groupBg: groupBackground,
+        groupSecondaryBg: groupSecondaryBackground,
+        groupTertiaryBg: groupTertiaryBackground,
+    },
+    text: {
+        label: label,
+        secondaryLabel: secondaryLabel,
+        tertiaryLabel: tertiaryLabel,
+        quaternaryLabel: quaternaryLabel,
+        placeholder: placeholderText,
+    },
+    separator: {
+        translucent: separator,
+        opaque: opaqueSeparator,
+    },
+
     navigation: {
         tabBarBackground: defaultLightBackground,
         tabBarBorder: defaultLightBorder,
@@ -129,7 +303,6 @@ export const light: CustomTheme = {
         icons: "#000",
         tint: "#007AFF"
     },
-    themeName: "light"
 }
 
 export const dark: CustomTheme = {
@@ -145,6 +318,49 @@ export const dark: CustomTheme = {
         notification: "#FF3B30",
         },
     },
+
+    colors: {
+        white: "#FFFFFF",
+        black: "#000000",
+        red: redDark,
+        orange: orangeDark,
+        yellow: yellowDark,
+        green: greenDark,
+        mint: mintDark,
+        teal: tealDark,
+        cyan: cyanDark,
+        blue: blueDark,
+        indigo: indigoDark,
+        purple: purpleDark,
+        pink: pinkDark,
+        brown: brownDark,
+        gray1: gray1Dark,
+        gray2: gray2Dark,
+        gray3: gray3Dark,
+        gray4: gray4Dark,
+        gray5: gray5Dark,
+        gray6: gray6Dark,
+    },
+    background: {
+        bg: background,
+        secondaryBg: secondaryBackgroundDark,
+        tertiaryBg: tertiaryBackgroundDark,
+        groupBg: groupBackgroundDark,
+        groupSecondaryBg: groupSecondaryBackgroundDark,
+        groupTertiaryBg: groupTertiaryBackgroundDark,
+    },
+    text: {
+        label: labelDark,
+        secondaryLabel: secondaryLabelDark,
+        tertiaryLabel: tertiaryLabelDark,
+        quaternaryLabel: quaternaryLabelDark,
+        placeholder: placeholderTextDark,
+    },
+    separator: {
+        translucent: separatorDark,
+        opaque: opaqueSeparatorDark,
+    },
+
     navigation: {
         tabBarBackground: defaultDarkBackground,
         tabBarBorder: defaultDarkBorder,

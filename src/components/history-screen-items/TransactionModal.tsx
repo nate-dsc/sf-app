@@ -7,6 +7,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { FontStyles } from "../styles/FontStyles"
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils";
+import DeleteButton from "../buttons/DeleteButton"
 
 type TransactionModalProps = {
     transaction: Transaction | null,
@@ -27,7 +28,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     return(
         <Pressable
-            style={{flex: 1, justifyContent: "center", alignItems: "stretch", backgroundColor: "rgba(0,0,0,0.7)", paddingHorizontal: 12}}
+            style={{flex: 1, justifyContent: "center", alignItems: "stretch", backgroundColor: "rgba(0,0,0,0.7)", paddingHorizontal: 12, gap: 12}}
             onPress={onBackgroundPress}
         >
             <View style={{
@@ -87,7 +88,11 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         ]}
                     >{transaction.description || ""}</Text>
                 </View>
-                
+            </View>
+            <View 
+                style={{flexDirection: "row"}}
+            >
+                <DeleteButton/>
             </View>
 
         </Pressable>
