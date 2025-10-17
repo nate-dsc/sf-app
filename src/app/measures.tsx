@@ -1,7 +1,7 @@
-import ReturnButton from "@/components/buttons/ReturnButton";
-import Redir from "@/components/menu-items/Redir";
+import SRedir from "@/components/menu-items/RedirSelect";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 
@@ -10,6 +10,8 @@ export default function MeasuresScreen() {
     const paddingTop = useHeaderHeight() + 10
 
     const [componentHeight, setComponentHeight] = useState(0);
+
+    const router = useRouter()
 
     const onLayout = (event: LayoutChangeEvent) => {
         const { height } = event.nativeEvent.layout;
@@ -28,7 +30,7 @@ export default function MeasuresScreen() {
         <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                 <ReturnButton bgPriority={2} />
+                 <SRedir  text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels

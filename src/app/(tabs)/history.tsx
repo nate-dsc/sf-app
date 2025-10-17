@@ -1,6 +1,7 @@
 import TransactionList from "@/components/history-screen-items/TransactionList"
 import TransactionModal from "@/components/history-screen-items/TransactionModal"
-import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl"
+import { SCOption } from "@/components/menu-items/SegmentedControl"
+import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
 import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -35,7 +36,7 @@ export default function TransactionHistoryScreen() {
     return(
         <View style={{flex: 1, paddingTop: headerHeight + 10}}>
             <View style={{paddingHorizontal: 16, paddingBottom: 12}}>
-                <SegmentedControl 
+                <SegmentedControlCompact 
                     options={typeOptions}
                     selectedValue={typeFilter}
                     onChange={(typeOption) => setTypeFilter(typeOption)}

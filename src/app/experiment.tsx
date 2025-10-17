@@ -1,14 +1,16 @@
 import { MIStyles } from "@/components/menu-items/MenuItemStyles"
 import { type SCOption } from "@/components/menu-items/SegmentedControl"
+import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { ThemePreference, useTheme } from "@/context/ThemeContext"
 import i18n from "@/i18n"
+import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView, View } from "react-native"
+import { Text, View } from "react-native"
 
 export default function SettingsScreen() {
 
@@ -44,17 +46,59 @@ export default function SettingsScreen() {
     }
 
     return(
-        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {height: "60%"}]}>
-            <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {height: "60%"}]}>
-                <View style={{
-                    flex: 1,
-                    backgroundColor: "darkolivegreen",
-                    borderWidth: 1,
-                    borderRadius: 24,
-                    borderColor: "lawngreen",
-                }} />
-
-            </ScrollView>
+        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
+            <View style={{flexDirection: "row", gap: 6}}>
+                <View style={[{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 10,
+                        backgroundColor: theme.background.groupSecondaryBg,
+                        borderRadius: 24,
+                        borderWidth: 1,
+                        borderColor: theme.background.groupTertiaryBg,
+                        borderCurve: "continuous",
+                        paddingRight: 22,
+                        paddingLeft: 18,
+                    }
+                ]}>
+                    <Ionicons size={20} name="trash-outline" color={theme.colors.red}/>
+                    <Text
+                        style={[
+                            FontStyles.title3,
+                            {paddingVertical: 10, color: theme.colors.red}
+                        ]}
+                    >
+                        Delete
+                    </Text>
+                </View>
+                <View style={[{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 10,
+                        backgroundColor: theme.background.groupSecondaryBg,
+                        borderRadius: 24,
+                        borderWidth: 1,
+                        borderColor: theme.background.groupTertiaryBg,
+                        borderCurve: "continuous",
+                        paddingRight: 22,
+                        paddingLeft: 18,
+                    }
+                ]}>
+                    <Ionicons size={20} name="arrow-back" color={theme.text.label}/>
+                    <Text
+                        style={[
+                            FontStyles.title3,
+                            {paddingVertical: 10, color: theme.text.label}
+                        ]}
+                    >
+                        Return
+                    </Text>
+                </View>
+            </View>
+            
+            
 
         </View>
     )

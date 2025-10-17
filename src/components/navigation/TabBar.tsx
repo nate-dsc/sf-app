@@ -72,7 +72,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                             >
                                 {/* Fundo circular ativo */}
                                 <View
-                                style={[styles.tabBarHighlight, {backgroundColor: isFocused ? theme.menuItem.tint : theme.menuItem.background }]}
+                                style={[styles.tabBarHighlight, {backgroundColor: isFocused ? theme.colors.blue : theme.colors.gray5 }]}
                                 >
                                     <Ionicons
                                         name={iconName}

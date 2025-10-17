@@ -1,6 +1,6 @@
 import { MIStyles } from "@/components/menu-items/MenuItemStyles"
 import Redir from "@/components/menu-items/Redir"
-import SegmentedControl, { type SCOption } from "@/components/menu-items/SegmentedControl"
+import SegmentedControlCompact, { type SCOption } from "@/components/menu-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { ThemePreference, useTheme } from "@/context/ThemeContext"
@@ -50,7 +50,7 @@ export default function SettingsScreen() {
     const database = useSQLiteContext()
 
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
+        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {gap: 10}]}>
 
             <Text style={[menuStyles.text, FontStyles.title2]}> Debug </Text>
 
@@ -70,7 +70,7 @@ export default function SettingsScreen() {
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
 
-            <SegmentedControl
+            <SegmentedControlCompact
                 options={themeOptions}
                 selectedValue={selectedTheme}
                 onChange={(optionTheme) => {
@@ -79,7 +79,7 @@ export default function SettingsScreen() {
                 }}
             />
 
-            <SegmentedControl
+            <SegmentedControlCompact
                 options={langOptions}
                 selectedValue={selectedLang}
                 onChange={(optionLang) => {

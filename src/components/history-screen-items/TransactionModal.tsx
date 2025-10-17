@@ -1,14 +1,15 @@
-import { Transaction } from "@/database/useTransactionDatabase"
-import { useTranslation } from "react-i18next"
-import { Pressable, Text, View } from "react-native"
-import { TileStyles } from "../home-screen-items/TileStyles"
 import { useTheme } from "@/context/ThemeContext"
+import { Transaction } from "@/database/useTransactionDatabase"
+import { findCategoryByID } from "@/utils/CategoryUtils"
+import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
 import { Ionicons } from "@expo/vector-icons"
-import { FontStyles } from "../styles/FontStyles"
-import { findCategoryByID } from "@/utils/CategoryUtils";
-import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils";
+import { BlurView } from "expo-blur"
+import { useTranslation } from "react-i18next"
+import { Pressable, StyleSheet, Text, View } from "react-native"
 import DeleteButton from "../buttons/DeleteButton"
 import ReturnButton from "../buttons/ReturnButton"
+import { TileStyles } from "../home-screen-items/TileStyles"
+import { FontStyles } from "../styles/FontStyles"
 
 type TransactionModalProps = {
     transaction: Transaction | null,
@@ -29,23 +30,26 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     return(
         <Pressable
-            style={{flex: 1, justifyContent: "center", alignItems: "stretch", backgroundColor: "rgba(0,0,0,0.7)", paddingHorizontal: 12, gap: 12}}
+            style={{flex: 1, justifyContent: "center", alignItems: "stretch", paddingHorizontal: 12, gap: 12}}
             onPress={onBackgroundPress}
         >
+            <BlurView
+                style={StyleSheet.absoluteFill}
+                intensity={10}
+                tint="default"
+            />
             <View style={{
                 rowGap: 12,
                 backgroundColor: theme.tile.background,
                 borderWidth: 1,
                 borderColor: theme.tile.border,
-                paddingTop: 8,
-                paddingBottom: 12,
-                paddingHorizontal: 12,
-                borderRadius: 24,
+                padding: 15,
+                borderRadius: 30,
                 borderCurve: "continuous",
                 shadowColor: "#000",
-                shadowOpacity: 0.15,
-                shadowRadius: 2 ,
-                shadowOffset: {width: 0, height: 1}}}
+                shadowOpacity: 0.2,
+                shadowRadius: 32 ,
+                shadowOffset: {width: 0, height: 0}}}
             >
                 <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
                     <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
@@ -89,15 +93,16 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         ]}
                     >{transaction.description || ""}</Text>
                 </View>
-            </View>
-            <View style={{flexDirection: "row", columnGap: 12}}>
-                <View style={{flex: 1}}>
-                    <DeleteButton/>
+                <View style={{flexDirection: "row", columnGap: 12}}>
+                    <View style={{flex: 1}}>
+                        <DeleteButton styles={{borderRadius: 18}}/>
+                    </View>
+                    <View style={{flex: 1}}>
+                        <ReturnButton styles={{borderRadius: 18}} onPress={onBackgroundPress} bgPriority={2}/>
+                    </View>
                 </View>
-                <View style={{flex: 1}}>
-                    <ReturnButton onPress={onBackgroundPress} bgPriority={2}/>
-                </View>
             </View>
+            
 
         </Pressable>
     )    

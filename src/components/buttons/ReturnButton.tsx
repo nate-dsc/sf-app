@@ -1,13 +1,14 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, TouchableOpacityProps, View } from "react-native";
-import { FontStyles } from "../styles/FontStyles";
 import { useTheme } from "@/context/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { Text, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
+import { FontStyles } from "../styles/FontStyles";
 
 type ReturnButtonProps = TouchableOpacityProps & {
-    bgPriority: 1 | 2 | 3
+    bgPriority: 1 | 2 | 3,
+    styles?: ViewStyle
 }
 
-export default function ReturnButton({bgPriority, ...rest}: ReturnButtonProps) {
+export default function ReturnButton({bgPriority, styles, ...rest}: ReturnButtonProps) {
 
     const {theme} = useTheme()
     //const background = [theme.background.groupBg, theme.background.groupSecondaryBg, theme.background.groupTertiaryBg][bgPriority -1]
@@ -17,20 +18,21 @@ export default function ReturnButton({bgPriority, ...rest}: ReturnButtonProps) {
 
     return(
         <TouchableOpacity {...rest}>
-            <View style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 6,
-                backgroundColor: background,
-                alignSelf: "stretch",
-                borderRadius: 24,
-                borderWidth: 1,
-                borderColor: border,
-                borderCurve: "continuous",
-                paddingHorizontal: 12,
-                
-            }}>
+            <View style={[{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 6,
+                    backgroundColor: background,
+                    alignSelf: "stretch",
+                    borderRadius: 24,
+                    borderWidth: 1,
+                    borderColor: border,
+                    borderCurve: "continuous",
+                    paddingHorizontal: 12,
+                },
+                styles
+            ]}>
                 <Ionicons size={22} name="arrow-back" color={theme.text.secondaryLabel}/>
                 <Text
                     style={[

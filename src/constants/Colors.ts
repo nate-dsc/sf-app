@@ -86,6 +86,12 @@ const separatorDark = "#54545899"
 const opaqueSeparator = "#C6C6C8FF"
 const opaqueSeparatorDark = "#38383AFF"
 
+const tertiaryFill = "rgba(118,118,128,0.12)"
+const tertiaryFillDark = "rgba(118,118,128,0.24)"
+
+const scSelected = "#FFFFFF"
+const scSelectedDark = "#6C6C71"
+
 const defaultTint = "#007AFF"
 
 const defaultLightBackground = "#F8F8F8"
@@ -139,6 +145,13 @@ type CustomTheme = {
         translucent: string,
         opaque: string,
     },
+    fill: {
+        tertiary: string,
+    },
+    
+    segmentedControl: {
+        selected: string,
+    }
 
     navigation: {
         tabBarBackground: string,
@@ -200,14 +213,15 @@ export const light: CustomTheme = {
         ...DefaultTheme,
         dark: false,
         colors: {
-        primary: "#007AFF",
+        primary: blue,
         //background: "#F2F2F2",
         //background: "#ebebebff",
         background: groupBackground,
-        card: "#FFFFFF",
+        //card: "#FFFFFF",
+        card: groupSecondaryBackground,
         text: "#000",
-        border: "#E0E0E0",
-        notification: "#FF3B30",
+        border: "#000",
+        notification: red,
         },
     },
 
@@ -251,6 +265,13 @@ export const light: CustomTheme = {
     separator: {
         translucent: separator,
         opaque: opaqueSeparator,
+    },
+    fill: {
+        tertiary: tertiaryFill,
+    },
+
+    segmentedControl: {
+        selected: scSelected
     },
 
     navigation: {
@@ -311,12 +332,15 @@ export const dark: CustomTheme = {
         ...DarkTheme,
         dark: true,
         colors: {
-        primary: "#007AFF",
-        background: "#000",
-        card: "#202020",
-        text: "#FFF",
-        border: "#808080",
-        notification: "#FF3B30",
+        primary: blueDark,
+        //background: "#000",
+        background: groupBackgroundDark,
+        //card: "#202020",
+        card: groupSecondaryBackgroundDark,
+        text: "#FFFFFF",
+        //border: "#808080",
+        border: "#FFF",
+        notification: redDark,
         },
     },
 
@@ -360,6 +384,13 @@ export const dark: CustomTheme = {
     separator: {
         translucent: separatorDark,
         opaque: opaqueSeparatorDark,
+    },
+    fill: {
+        tertiary: tertiaryFillDark,
+    },
+    
+    segmentedControl: {
+        selected: scSelectedDark
     },
 
     navigation: {

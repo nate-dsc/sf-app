@@ -18,8 +18,8 @@ type SegmentedControlProps<T> = {
 
 export default function SegmentedControl<T>({ options, selectedValue, onChange}: SegmentedControlProps<T>) {
 
-  const theme = useTheme()
-  const menuStyles = MIStyles(theme.theme)
+  const {theme} = useTheme()
+  const menuStyles = MIStyles(theme)
 
   return (
     <View style={[menuStyles.segmentContainer]}>
@@ -29,15 +29,14 @@ export default function SegmentedControl<T>({ options, selectedValue, onChange}:
           style={[
             menuStyles.segment,
             // Se o valor selecionado for a key da opção atual
-            selectedValue === option.value && menuStyles.activeSegment,
-          ]}
+            selectedValue === option.value && menuStyles.activeSegment]}
           // Passa a chave da opção pro handler onChange
           onPress={() => onChange(option.value)}
         >
           <Text
             style={[
               FontStyles.body,
-              menuStyles.textUnfocused,
+              {color: theme.text.tertiaryLabel},
               selectedValue === option.value && menuStyles.textOverTint,
             ]}
             ellipsizeMode="clip"

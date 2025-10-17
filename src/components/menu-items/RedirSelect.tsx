@@ -3,49 +3,57 @@ import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, View } from "react-native"
-import { MIStyles } from "./MenuItemStyles"
 
 type SRedirProps = {
     text: string,
     selectText?: string,
-    selected?: string,
     onPress: () => void
 }
 
-export default function SRedir({text, selectText, selected, onPress}: SRedirProps) {
+export default function SRedir({text, selectText, onPress}: SRedirProps) {
 
     const {t} = useTranslation()
 
-    const theme = useTheme()
-    const menuStyles = MIStyles(theme.theme)
+    const {theme} = useTheme()
 
     return(
         <TouchableOpacity
             onPress={onPress}
-            style={menuStyles.redir}
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                backgroundColor: theme.background.groupSecondaryBg,
+                borderColor: theme.background.groupSecondaryBg,
+                borderWidth: 1,
+                borderCurve: "continuous",
+                paddingHorizontal: 16,
+                borderRadius: 26
+            }}
         >
-            <View style={menuStyles.textChevronContainer}>
-                <View style={{flex: 1}}>
-                    <Text
-                        style={[menuStyles.text, FontStyles.body]}
-                    >{text}</Text>
-                </View>
-                {selected ? (
-                    <View style={{flexDirection: "row"}}>
-                    <Text
-                        style={[menuStyles.text, FontStyles.body]}
-                    >{selected}</Text>
-                    <Ionicons name="chevron-expand" size={20} color={menuStyles.icon.color}/>
-                    </View>
-                ) : (
-                    <View style={{flexDirection: "row"}}>
-                        <Text
-                            style={[menuStyles.textUnfocused, FontStyles.body]}
-                        >{selectText ? selectText : t("modalAdd.select")}</Text>
-                        <Ionicons name="chevron-expand" size={20} color={menuStyles.iconUnfocused.color}/>
-                    </View>
-                )}
+            <View style={{paddingVertical: 14, flex: 1}}>
+                <Text
+                    numberOfLines={1} ellipsizeMode="tail"
+                    style={[{color: theme.text.label, textAlign: "left"}, FontStyles.body]}
+                >
+                    {text}
+                </Text>
             </View>
+            {selectText ? (
+                <View style={{flexDirection: "row", gap: 10, alignItems: "center"}}>
+                    <Text style={[{color: theme.text.label}, FontStyles.body]}>
+                        {selectText}
+                    </Text>
+                    <Ionicons name="chevron-expand" size={18} color={theme.text.label}/>
+                </View>
+            ) : (
+                <View style={{flexDirection: "row", gap: 10, alignItems: "center"}}>
+                    <Text style={[{color: theme.text.secondaryLabel}, FontStyles.body]}>
+                        {selectText || t("modalAdd.select")}
+                    </Text>
+                    <Ionicons name="chevron-expand" size={18} color={theme.text.secondaryLabel}/>
+                </View>
+            )}
         </TouchableOpacity>
     )
 

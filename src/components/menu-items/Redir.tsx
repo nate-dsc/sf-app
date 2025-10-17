@@ -2,7 +2,6 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
 import { Text, TouchableOpacity, View } from "react-native"
-import { MIStyles } from "./MenuItemStyles"
 
 type iconName = React.ComponentProps<typeof Ionicons>["name"]
 
@@ -14,27 +13,42 @@ type RedirProps = {
 
 export default function Redir({text, iconName, onPress}: RedirProps) {
 
-    const theme = useTheme()
-    const menuStyles = MIStyles(theme.theme)
+    const {theme} = useTheme()
 
     return(
         <TouchableOpacity
             onPress={onPress}
-            style={menuStyles.redir}
+            style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                backgroundColor: theme.background.groupSecondaryBg,
+                borderColor: theme.background.groupSecondaryBg,
+                borderWidth: 1,
+                borderCurve: "continuous",
+                paddingHorizontal: 16,
+                borderRadius: 26
+            }}
         >
-            <View style={menuStyles.leftContainer}>
-                { iconName ?
-                    (<Ionicons name={iconName} size={35} color={menuStyles.icon.color}/>)
-                    : (<View style={{width: 35, height: 35}}/>)
-                }
+            <View style={{
+                justifyContent: "center",
+                alignItems: "center",
+                width: 50,
+                height: 50,
+                paddingRight: 8
+            }}>
+                { iconName ? (<Ionicons name={iconName} size={30} color={theme.text.label}/>) : (null)}
             </View>
-            <View style={menuStyles.textChevronContainer}>
-                <View style={{flex: 1}}>
-                    <Text
-                        style={[menuStyles.text, FontStyles.body]}
-                    >{text}</Text>
-                </View>
-                <Ionicons name="chevron-forward" size={20} color={menuStyles.icon.color}/>
+            <View style={{paddingVertical: 14, flex: 1}}>
+                <Text
+                    numberOfLines={1} ellipsizeMode="tail"
+                    style={[{color: theme.text.label, textAlign: "left"}, FontStyles.body]}
+                >
+                    {text}
+                </Text>
+            </View>
+            <View>
+                <Ionicons name="chevron-forward" size={18} color={theme.text.secondaryLabel}/>
             </View>
         </TouchableOpacity>
     )
