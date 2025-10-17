@@ -16,7 +16,8 @@ export type TransactionRecurring = {
     description: string,
     category: string,
     date_start: string,
-    rrule: string
+    rrule: string,
+    date_last_processed: string
 }
 
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"

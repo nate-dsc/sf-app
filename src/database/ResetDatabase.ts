@@ -17,7 +17,8 @@ export async function resetDatabase(database: SQLiteDatabase) {
             description TEXT,
             category INTEGER NOT NULL,
             date_start TEXT NOT NULL,
-            RRULE TEXT NOT NULL
+            RRULE TEXT NOT NULL,
+            date_last_processed TEXT
         );   
     `)
 
