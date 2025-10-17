@@ -1,5 +1,6 @@
 import { useTheme } from "@/context/ThemeContext"
 import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useSummaryStore } from "@/stores/useSummaryStore"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
 import { Ionicons } from "@expo/vector-icons"
@@ -26,6 +27,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
     const tileStyles = TileStyles(theme)
     const value = transaction.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
+    const {triggerRefresh} = useSummaryStore()
 
     const category = findCategoryByID(transaction.category)
 
@@ -35,6 +37,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
         try {
             await deleteTransaction(transaction.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
+            triggerRefresh()
         } catch (error) {
             console.log("Falha ao deletar. Tente novamente.");
         }

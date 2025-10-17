@@ -19,13 +19,13 @@ function RootLayoutNav() {
     const theme = useTheme()
 
     const { getSummaryFromDB } = useTransactionDatabase();
-    const loadSummaryData = useSummaryStore((state) => state.loadData);
+    const {loadData, refreshKey} = useSummaryStore();
 
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado
         console.log("Layout: Carregando sumário na inicialização...");
-        loadSummaryData({ getSummaryFromDB });
-    }, [])
+        loadData({ getSummaryFromDB });
+    }, [refreshKey])
 
     return(
         <NewTransactionProvider>
