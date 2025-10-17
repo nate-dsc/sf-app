@@ -74,6 +74,16 @@ export function useTransactionDatabase() {
         }
     }
 
+    async function deleteTransaction(id: number) {
+        try {
+            await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
+        } catch (error) {
+            console.error("Could not delete transaction", error)
+            throw error
+        }
+
+    }
+
     async function getTransactionsFromMonth(YMString: string, orderBy: "day" | "id") {
         const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
         
@@ -165,5 +175,5 @@ export function useTransactionDatabase() {
         }
     }
 
-    return { createTransaction, createTransactionRecurring, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions }
+    return { createTransaction, createTransactionRecurring, deleteTransaction, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions }
 }

@@ -1,5 +1,5 @@
 import { useTheme } from "@/context/ThemeContext"
-import { Transaction } from "@/database/useTransactionDatabase"
+import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
 import { Ionicons } from "@expo/vector-icons"
@@ -28,6 +28,17 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     const category = findCategoryByID(transaction.category)
+
+    const { deleteTransaction } = useTransactionDatabase()
+
+    const handleDeletion = async (id: number) => {
+        try {
+            await deleteTransaction(transaction.id);
+            onBackgroundPress(); // Só volta se salvar com sucesso
+        } catch (error) {
+            console.log("Falha ao deletar. Tente novamente.");
+        }
+    }
 
     return(
         <Pressable
@@ -98,7 +109,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             </View>
             <View style={{flexDirection: "row", flexWrap: "wrap", justifyContent: "center", columnGap: 36, marginHorizontal: 36}}>
                 <View style={{}}>
-                    <DeleteButton/>
+                    <DeleteButton onPress={() => handleDeletion(transaction.id)}/>
                 </View>
                 {transaction.id_repeating ? <RecurringLinkButton /> : null}
                 <View style={{}}>

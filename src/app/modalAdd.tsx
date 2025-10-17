@@ -1,5 +1,4 @@
 import { ButtonStyles } from "@/components/buttons/ButtonStyles";
-import CancelButton from "@/components/buttons/CancelButton";
 import ConfirmButton from "@/components/buttons/ConfirmButton";
 import ReturnButton from "@/components/buttons/ReturnButton";
 import DatePicker from "@/components/menu-items/DatePicker";
@@ -128,7 +127,7 @@ export default function AddModal() {
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <View style={{flex: 1}}>
-                    <ReturnButton onPress={() => {router.back()}} bgPriority={2}/>
+                    <ReturnButton onPress={() => {router.back()}} />
                 </View>
                 <View style={{flex: 1}}>
                     <ConfirmButton buttonText={t("buttons.save")} style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />

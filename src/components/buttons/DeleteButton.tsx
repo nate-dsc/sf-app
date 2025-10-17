@@ -12,7 +12,7 @@ export default function DeleteButton({styles, ...rest}: DeleteButtonProps) {
     const {theme} = useTheme()
 
     return(
-        <TouchableOpacity>
+        <TouchableOpacity {...rest}>
             <View style={[{
                     flexDirection: "row",
                     justifyContent: "flex-start",
