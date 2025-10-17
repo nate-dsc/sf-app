@@ -3,17 +3,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
 import { FontStyles } from "../styles/FontStyles";
 
-type ReturnButtonProps = TouchableOpacityProps & {
+type RecurringLinkButtonButtonProps = TouchableOpacityProps & {
     styles?: ViewStyle
 }
 
-export default function ReturnButton({styles, ...rest}: ReturnButtonProps) {
+export default function RecurringLinkButtonButton({styles, ...rest}: RecurringLinkButtonButtonProps) {
 
     const {theme} = useTheme()
-    //const background = [theme.background.groupBg, theme.background.groupSecondaryBg, theme.background.groupTertiaryBg][bgPriority -1]
-    const background = theme.background.groupSecondaryBg
-    //const border = [theme.background.groupTertiaryBg, theme.background.groupBg, theme.background.groupSecondaryBg][bgPriority-1]
-    const border = theme.background.groupTertiaryBg
+
 
     return(
         <TouchableOpacity {...rest}>
@@ -42,7 +39,7 @@ export default function ReturnButton({styles, ...rest}: ReturnButtonProps) {
                         {paddingVertical: 10, color: theme.text.label}
                     ]}
                 >
-                    Return
+                    Show recurrence
                 </Text>
             </View>
         </TouchableOpacity>

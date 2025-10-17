@@ -7,6 +7,7 @@ import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import DeleteButton from "../buttons/DeleteButton"
+import RecurringLinkButton from "../buttons/RecurringLinkButton"
 import ReturnButton from "../buttons/ReturnButton"
 import { TileStyles } from "../home-screen-items/TileStyles"
 import { FontStyles } from "../styles/FontStyles"
@@ -30,7 +31,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     return(
         <Pressable
-            style={{flex: 1, justifyContent: "center", alignItems: "stretch", paddingHorizontal: 12, gap: 12}}
+            style={{flex: 1, justifyContent: "center", alignItems: "stretch", paddingHorizontal: 12, gap: 10}}
             onPress={onBackgroundPress}
         >
             <BlurView
@@ -40,9 +41,9 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             />
             <View style={{
                 rowGap: 12,
-                backgroundColor: theme.tile.background,
+                backgroundColor: theme.background.groupSecondaryBg,
                 borderWidth: 1,
-                borderColor: theme.tile.border,
+                borderColor: theme.background.tertiaryBg,
                 padding: 15,
                 borderRadius: 30,
                 borderCurve: "continuous",
@@ -93,13 +94,15 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         ]}
                     >{transaction.description || ""}</Text>
                 </View>
-                <View style={{flexDirection: "row", columnGap: 12}}>
-                    <View style={{flex: 1}}>
-                        <DeleteButton styles={{borderRadius: 18}}/>
-                    </View>
-                    <View style={{flex: 1}}>
-                        <ReturnButton styles={{borderRadius: 18}} onPress={onBackgroundPress} bgPriority={2}/>
-                    </View>
+                
+            </View>
+            <View style={{flexDirection: "row", flexWrap: "wrap", justifyContent: "center", columnGap: 36, marginHorizontal: 36}}>
+                <View style={{}}>
+                    <DeleteButton/>
+                </View>
+                {transaction.id_repeating ? <RecurringLinkButton /> : null}
+                <View style={{}}>
+                    <ReturnButton styles={{borderRadius: 100}} onPress={onBackgroundPress}/>
                 </View>
             </View>
             

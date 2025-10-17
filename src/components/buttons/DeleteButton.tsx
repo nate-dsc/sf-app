@@ -15,24 +15,27 @@ export default function DeleteButton({styles, ...rest}: DeleteButtonProps) {
         <TouchableOpacity>
             <View style={[{
                     flexDirection: "row",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     alignItems: "center",
-                    gap: 6,
+                    gap: 8,
                     backgroundColor: theme.background.groupSecondaryBg,
-                    alignSelf: "stretch",
-                    borderRadius: 24,
+                    borderRadius: 100,
                     borderWidth: 1,
-                    borderColor: theme.background.groupTertiaryBg,
+                    borderColor: theme.background.tertiaryBg,
                     borderCurve: "continuous",
-                    paddingHorizontal: 12,
+                    paddingHorizontal: 15,
+                    shadowColor: "#000",
+                    shadowOpacity: 0.2,
+                    shadowRadius: 32 ,
+                    shadowOffset: {width: 0, height: 0}
                 },
                 styles
             ]}>
-                <Ionicons size={22} name="trash-outline" color={theme.colors.red}/>
+                <Ionicons size={20} name="trash-outline" color={theme.colors.red}/>
                 <Text
                     style={[
-                        FontStyles.title2,
-                        {paddingVertical: 9, color: theme.colors.red}
+                        FontStyles.body,
+                        {paddingVertical: 10, color: theme.colors.red}
                     ]}
                 >
                     Delete
