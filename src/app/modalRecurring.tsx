@@ -126,7 +126,6 @@ export default function ModalRecurring() {
         const options: Partial<Options> = {
             freq,
             interval,
-            wkst: RRule.SU,
             dtstart: newTransaction.date, // Importante para o contexto da regra
         };
 
@@ -139,6 +138,7 @@ export default function ModalRecurring() {
 
         // Lógica Específica da Frequência
         if (freq === RRule.WEEKLY) {
+            options.wkst = RRule.SU
             if (byweekday.length > 0) {
                 options.byweekday = byweekday;
             }
