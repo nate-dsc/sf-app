@@ -108,13 +108,29 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         ]}
                     >{transaction.description || ""}</Text>
                 </View>
+                <View>
+                    <Text
+                        style={[
+                            {textAlign: "left"},
+                            tileStyles.textUnfocused,
+                            FontStyles.subhead
+                        ]}
+                    >ID recorrencia:</Text>
+                    <Text 
+                        style={[
+                            {textAlign: "justify"},
+                            tileStyles.textUnfocused,
+                            FontStyles.subhead
+                        ]}
+                    >{transaction.id_recurring || ""}</Text>
+                </View>
                 
             </View>
             <View style={{flexDirection: "row", flexWrap: "wrap", justifyContent: "center", columnGap: 36, marginHorizontal: 36}}>
                 <View style={{}}>
                     <DeleteButton onPress={() => handleDeletion(transaction.id)}/>
                 </View>
-                {transaction.id_repeating ? <RecurringLinkButton /> : null}
+                {transaction.id_recurring ? <RecurringLinkButton /> : null}
                 <View style={{}}>
                     <ReturnButton styles={{borderRadius: 100}} onPress={onBackgroundPress}/>
                 </View>

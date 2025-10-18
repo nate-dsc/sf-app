@@ -18,8 +18,14 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const theme = useTheme()
 
-    const { getSummaryFromDB } = useTransactionDatabase();
+    const { getSummaryFromDB, createAndSyncRecurringTransactions } = useTransactionDatabase();
     const {loadData, refreshKey} = useSummaryStore();
+
+    useEffect(() => {
+        // Dispara o carregamento dos dados do sumário assim que o app é montado
+        console.log("Atualizando transações pendentes")
+        createAndSyncRecurringTransactions()
+    }, [])
 
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado

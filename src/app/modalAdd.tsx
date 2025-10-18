@@ -38,12 +38,12 @@ export default function AddModal() {
     ]
 
     useEffect(() => {
-      // Limpa para garantir que não estamos editando uma transação antiga
-      setNewTransaction({ flowType: "outflow", date: newDate }); // Define um valor inicial
+        // Limpa para garantir que não estamos editando uma transação antiga
+        setNewTransaction({ flowType: "outflow", date: newDate }); // Define um valor inicial
 
-      return () => {
-        // Limpa ao sair da tela para não sujar a próxima abertura do modal
-        setNewTransaction({});
+        return () => {
+            // Limpa ao sair da tela para não sujar a próxima abertura do modal
+            setNewTransaction({});
       }
     }, []);
 
@@ -111,7 +111,14 @@ export default function AddModal() {
                 onChangeText={(description: string) => {updateNewTransaction({description: description})}}
             />
 
-            <DatePicker text={t("modalAdd.date")} onDateChange={(date) => updateNewTransaction({ date: date })} value={newDate} />
+            <DatePicker
+                text={t("modalAdd.date")} 
+                onDateChange={(date) => {
+                    updateNewTransaction({ date: date })
+                    setNewDate(date)
+                }}
+                value={newDate}
+            />
 
             <SRedir
                 text={t("modalAdd.category")} 

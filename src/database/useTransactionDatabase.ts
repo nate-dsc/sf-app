@@ -1,5 +1,6 @@
-import { Summary } from "@/stores/useSummaryStore"
+import { Summary, useSummaryStore } from "@/stores/useSummaryStore"
 import { useSQLiteContext } from "expo-sqlite"
+import { RRule } from "rrule"
 
 export type Transaction = {
     id: number,
@@ -7,7 +8,7 @@ export type Transaction = {
     description: string,
     category: string,
     date: string,
-    id_repeating?: number
+    id_recurring?: number
 }
 
 export type TransactionRecurring = {
@@ -17,7 +18,7 @@ export type TransactionRecurring = {
     category: string,
     date_start: string,
     rrule: string,
-    date_last_processed: string
+    date_last_processed: string | null
 }
 
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"
@@ -28,6 +29,7 @@ export type TransactionFilterOptions = {
 }
 
 export function useTransactionDatabase() {
+    const {triggerRefresh} = useSummaryStore()
     const database = useSQLiteContext()
 
     async function createTransaction(data: Transaction) {
@@ -54,7 +56,7 @@ export function useTransactionDatabase() {
 
     async function createTransactionRecurring(data: TransactionRecurring) {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, RRULE) VALUES ($value, $description, $category, $date_start, $RRULE)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed)"
         )
         
         try {
@@ -63,7 +65,8 @@ export function useTransactionDatabase() {
                 $description: data.description,
                 $category: data.category,
                 $date_start: data.date_start,
-                $RRULE: data.rrule
+                $rrule: data.rrule,
+                $date_last_processed: null
             })
 
             console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}`)
@@ -176,5 +179,55 @@ export function useTransactionDatabase() {
         }
     }
 
-    return { createTransaction, createTransactionRecurring, deleteTransaction, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions }
+    async function createAndSyncRecurringTransactions() {
+        console.log("Iniciando criação e sincronização de transações recorrentes")
+        const now = new Date()
+        const nowStr = now.toISOString().slice(0, 16)
+
+        try {
+            const allRecurringTransactions = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring")
+
+            if(allRecurringTransactions.length === 0) {
+                console.log("Não há transações recorrentes")
+                return
+            }
+
+            for(const blueprint of allRecurringTransactions) {
+                //console.log(`RRULE: ${blueprint.rrule}`)
+                const rruleOptions = RRule.parseString(blueprint.rrule)
+                rruleOptions.dtstart = new Date(`${blueprint.date_start}Z`)
+                const rrule = new RRule(rruleOptions)
+
+                const startDateForCheck = blueprint.date_last_processed ? new Date(`${blueprint.date_last_processed}Z`) : new Date(`${blueprint.date_start}Z`)
+                //console.log("startDateForCheck: " + startDateForCheck.toISOString())
+
+                const pendingOccurrences = rrule.between(startDateForCheck, now)
+
+                if(pendingOccurrences.length > 0) {
+                    console.log(`${pendingOccurrences.length} ocorrências pendentes`)
+
+                    await database.withTransactionAsync(async () => {
+                        for(const occurrence of pendingOccurrences) {
+                            await database.runAsync("INSERT INTO transactions (value, description, category, date, id_recurring) VALUES (?, ?, ?, ?, ?)",
+                                [blueprint.value, blueprint.description, blueprint.category, occurrence.toISOString().slice(0, 16), blueprint.id]
+                            )
+                            console.log(`Criada transação da transação recorrente ${blueprint.id} no dia ${occurrence.toISOString().slice(0, 16)}`)
+                        }
+                        await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
+                            [nowStr, blueprint.id]
+                        )
+                    })
+                }
+
+
+            }
+
+            console.log("Sincronização concluída.")
+        } catch(error) {
+            console.error("Erro fatal durante a sincronização de transações recorrentes:", error)
+            throw error
+        }
+    }
+
+    return { createTransaction, createTransactionRecurring, deleteTransaction, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions, createAndSyncRecurringTransactions }
 }

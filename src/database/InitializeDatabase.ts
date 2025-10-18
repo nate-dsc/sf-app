@@ -8,7 +8,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             description TEXT,
             category INTEGER NOT NULL,
             date_start TEXT NOT NULL,
-            RRULE TEXT NOT NULL,
+            rrule TEXT NOT NULL,
             date_last_processed TEXT
         );   
     `)

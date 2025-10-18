@@ -59,7 +59,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }
 
     const getTransactionRecurringForDB = (): TransactionRecurring => {
-        if (!isValid) {
+        if (!isValid && !newTransaction.rrule) {
             throw new Error("Tentativa de criar transação recorrente com dados inválidos.");
         }
         return {
@@ -68,32 +68,32 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             description: newTransaction.description || "",
             category: newTransaction.category?.id!,
             date_start: newTransaction.date?.toISOString().slice(0, 16)!,
-            rrule: newTransaction.rrule!
+            rrule: newTransaction.rrule!,
+            date_last_processed: null
         }
     }
 
     const saveTransaction = async () => {
         if(newTransaction.rrule) {
             try {
-                const transactionData = getTransactionRecurringForDB();
-                await createTransactionRecurring(transactionData);
-                console.log("Transação recorrente salva com sucesso!");
-                // Opcional: você pode limpar o formulário aqui
-                // setNewTransaction({});
+                const transactionData = getTransactionRecurringForDB()
+                await createTransactionRecurring(transactionData)
+                await loadSummaryData({ getSummaryFromDB })
+                triggerRefresh()
+                console.log("Transação recorrente salva com sucesso!")
+                setNewTransaction({})
             } catch (error) {
-                console.error("Erro ao salvar transação recorrente:", error);
-                // Aqui você pode mostrar um alerta para o usuário
-                throw error; // Re-lança o erro para o chamador, se necessário
+                console.error("Erro ao salvar transação recorrente:", error)
+                throw error
             }
         } else {
             try {
                 const transactionData = getTransactionForDB();
-                await createTransaction(transactionData);
+                await createTransaction(transactionData)
                 await loadSummaryData({ getSummaryFromDB })
                 triggerRefresh()
-                console.log("Transação única salva com sucesso!");
-                // Opcional: você pode limpar o formulário aqui
-                // setNewTransaction({});
+                console.log("Transação única salva com sucesso!")
+                setNewTransaction({})
             } catch (error) {
                 console.error("Erro ao salvar transação única:", error);
                 // Aqui você pode mostrar um alerta para o usuário

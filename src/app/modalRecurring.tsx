@@ -146,14 +146,16 @@ export default function ModalRecurring() {
             if (monthlyType === 'day_of_month') {
                 options.bymonthday = bymonthday.length === 1 ? bymonthday[0] : bymonthday
             } else {
-                options.byweekday = monthlyWeekday.map((wkd) => wkd.nth(monthlyOrdinal));
+                options.byweekday = monthlyWeekday
+                options.bysetpos = monthlyOrdinal
             }
         } else if (freq === RRule.YEARLY) {
             options.bymonth = bymonth.map((month) => month + 1)
             if (monthlyType === 'day_of_month') {
                 options.bymonthday = bymonthday.length === 1 ? bymonthday[0] : bymonthday
             } else {
-                options.byweekday = monthlyWeekday.map((wkd) => wkd.nth(monthlyOrdinal));
+                options.byweekday = monthlyWeekday
+                options.bysetpos = monthlyOrdinal
             }
         }
 
@@ -349,7 +351,11 @@ export default function ModalRecurring() {
     )
 
     const handleConfirm = () => {
-        updateNewTransaction({rrule: rruleString.split("\n")[1]})
+        const splitStr = rruleString.split("\n")[1]
+        console.log(`splitStr: ${splitStr}`)
+        const finalStr = splitStr.replace("RRULE:", "")
+        console.log(`finalStr: ${finalStr}`)
+        updateNewTransaction({rrule: finalStr})
         router.back()
     }
 
