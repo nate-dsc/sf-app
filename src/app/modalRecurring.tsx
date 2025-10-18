@@ -126,6 +126,7 @@ export default function ModalRecurring() {
         const options: Partial<Options> = {
             freq,
             interval,
+            wkst: RRule.SU,
             dtstart: newTransaction.date, // Importante para o contexto da regra
         };
 
