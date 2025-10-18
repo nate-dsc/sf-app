@@ -11,6 +11,7 @@ import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useTheme } from '@/context/ThemeContext';
+import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -65,7 +66,7 @@ export default function ModalRecurring() {
         { id: "3", label: t("modalRecurring.w3"), value: [RRule.TU] },
         { id: "4", label: t("modalRecurring.w4"), value: [RRule.WE] },
         { id: "5", label: t("modalRecurring.w5"), value: [RRule.TH] },
-        { id: "6", label: t("modalRecurring.w5"), value: [RRule.FR] },
+        { id: "6", label: t("modalRecurring.w6"), value: [RRule.FR] },
         { id: "7", label: t("modalRecurring.w7"), value: [RRule.SA] },
         { id: "8", label: t("modalRecurring.Day"), value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR, RRule.SA, RRule.SU] },
         { id: "9", label: t("modalRecurring.weekday"), value: [RRule.MO, RRule.TU, RRule.WE, RRule.TH, RRule.FR] },
@@ -85,8 +86,6 @@ export default function ModalRecurring() {
         { id: "-2", label: t("modalRecurring.penultimate"), value: -2 },
         { id: "-1", label: t("modalRecurring.last"), value: -1 },
     ]
-
-    
 
     // --- Estados da UI ---
     const [freq, setFreq] = useState<Frequency>(RRule.DAILY)
@@ -331,7 +330,7 @@ export default function ModalRecurring() {
     };
 
     const renderEndConditionSelector = () => (
-    <View style={{gap: 12}}>
+    <View style={{gap: 10}}>
         <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.ends")}</Text>
         <SegmentedControlCompact 
             options={END_CONDITIONS} 
@@ -352,16 +351,15 @@ export default function ModalRecurring() {
 
     const handleConfirm = () => {
         const splitStr = rruleString.split("\n")[1]
-        console.log(`splitStr: ${splitStr}`)
         const finalStr = splitStr.replace("RRULE:", "")
-        console.log(`finalStr: ${finalStr}`)
-        updateNewTransaction({rrule: finalStr})
+        const rruleDescription = describeRRule(rruleString, t)
+        updateNewTransaction({rrule: finalStr, rruleDescription: rruleDescription})
         router.back()
     }
 
     return (
         <ScrollView 
-            contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom, rowGap: 10}]}
+            contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom+30, rowGap: 10}]}
             ref={scrollRef} onScroll={handleScroll} scrollEventThrottle={16}
         >
             {renderResetButton()}

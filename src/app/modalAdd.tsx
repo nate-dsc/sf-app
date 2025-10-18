@@ -13,7 +13,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 
 
@@ -131,6 +131,7 @@ export default function AddModal() {
                 selectText={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
                 onPress={() => {router.push("/modalRecurring")}}
             />
+            {newTransaction.rruleDescription ? <Text>{newTransaction.rruleDescription?.replace("\n", " ")}</Text> : null}
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <View style={{flex: 1}}>

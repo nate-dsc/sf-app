@@ -1,120 +1,150 @@
-import { rrulestr } from 'rrule';
+import { RRule, Weekday } from "rrule"
+import { monthShortDate } from "./DateUtils"
 
-// Objeto com as traduções de termos comuns do inglês para o português.
-// A biblioteca rrule.js gera o texto em inglês, e nós o traduzimos.
-const ptBrTranslations: { [key: string]: string } = {
-  'every': 'a cada',
-  'day': 'dia',
-  'days': 'dias',
-  'week': 'semana',
-  'weeks': 'semanas',
-  'month': 'mês',
-  'months': 'meses',
-  'year': 'ano',
-  'years': 'anos',
-  'on': 'em',
-  'in': 'em',
-  'until': 'até',
-  'for': 'por',
-  'times': 'vezes',
-  'time': 'vez',
-  'at': 'às', // para horários
-  // Dias da semana
-  'Monday': 'segunda-feira',
-  'Tuesday': 'terça-feira',
-  'Wednesday': 'quarta-feira',
-  'Thursday': 'quinta-feira',
-  'Friday': 'sexta-feira',
-  'Saturday': 'sábado',
-  'Sunday': 'domingo',
-  // Formatos de "no dia X"
-  'on the': 'no dia',
-  'st': 'º',
-  'nd': 'º',
-  'rd': 'º',
-  'th': 'º',
-  // Meses
-  'January': 'janeiro',
-  'February': 'fevereiro',
-  'March': 'março',
-  'April': 'abril',
-  'May': 'maio',
-  'June': 'junho',
-  'July': 'julho',
-  'August': 'agosto',
-  'September': 'setembro',
-  'October': 'outubro',
-  'November': 'novembro',
-  'December': 'dezembro',
-  // Posições
-  'last': 'último(a)',
-  'first': 'primeiro(a)',
-  'second': 'segundo(a)',
-  'third': 'terceiro(a)',
-  'fourth': 'quarto(a)',
-};
-
-/**
- * Função de tradução que substitui as palavras em inglês pelas em português.
- * @param text O texto em inglês gerado pela biblioteca rrule.
- * @returns O texto traduzido para o português.
- */
-function gettext(text: string): string {
-    // Regex para encontrar palavras ou datas (como 1st, 2nd, 23rd)
-    const words = text.split(/(\s+|\,)/); // Divide por espaços ou vírgulas, mantendo os delimitadores
-    const translatedWords = words.map(word => {
-        // Remove pontuação final para encontrar a palavra no dicionário
-        const cleanWord = word.replace(/[.,]$/, '');
-        
-        // Para casos como "1st", "2nd", "23rd", etc.
-        if (/\d+(st|nd|rd|th)/.test(cleanWord)) {
-            return cleanWord.replace(/(st|nd|rd|th)/, 'º');
-        }
-
-        return ptBrTranslations[cleanWord] || word;
-    });
-
-    let translatedText = translatedWords.join('');
-    
-    // Ajustes finos para melhorar a fluidez da frase
-    translatedText = translatedText
-      .replace(/em (segunda-feira|terça-feira|quarta-feira|quinta-feira|sexta-feira|sábado|domingo)/g, 'às $1s')
-      .replace(/às sábados/g, 'aos sábados') // exceção para sábado
-      .replace(/às domingos/g, 'aos domingos'); // exceção para domingo
-
-    return translatedText;
+function ordinalToLabel(ordinal: number,  t: (key: string) => string) {
+    const map: Record<number, string> = {
+        1: t("describeRRULE.first"),
+        2: t("describeRRULE.second"),
+        3: t("describeRRULE.third"),
+        4: t("describeRRULE.fourth"),
+        5: t("describeRRULE.fifth"),
+        [-2]: t("describeRRULE.penultimate"),
+        [-1]: t("describeRRULE.last"),
+    }
+    return map[ordinal] || `${ordinal}`
 }
 
+export function describeRRule(rruleStr: string, t: (key: string) => string): string {
+    const brokenString = rruleStr.split("\n")
+    const cleanString = brokenString.length > 1 ? brokenString[1].replace("RRULE:", "") : rruleStr.replace("RRULE:", "")
+    const rrule = new RRule(RRule.parseString(cleanString))
+    const options = rrule.options
+    const parts: string[] = []
 
-/**
- * Recebe uma string de RRULE e a descreve em português.
- * @param rruleString A string completa da regra, ex: "RRULE:FREQ=WEEKLY;BYDAY=MO,FR;COUNT=5"
- * @returns Uma descrição humanamente legível da regra em português.
- */
-export function describeRRule(rruleString: string): string {
-  if (!rruleString || !rruleString.toUpperCase().startsWith('RRULE:')) {
-    return 'Formato de RRULE inválido. A string deve começar com "RRULE:".';
-  }
+    // Frequência
+    const freqNames: Record<number, string[]> = {
+        [RRule.YEARLY]: [t("describeRRULE.year"), t("describeRRULE.years")],
+        [RRule.MONTHLY]: [t("describeRRULE.month"), t("describeRRULE.months")],
+        [RRule.WEEKLY]: [t("describeRRULE.week"), t("describeRRULE.weeks")],
+        [RRule.DAILY]: [t("describeRRULE.day"), t("describeRRULE.days")],
+    }
 
-  // Remove o prefixo "RRULE:" para a biblioteca poder processar
-  const ruleContent = rruleString.substring(6);
+    const weekdaysLabel = [
+        t("describeRRULE.w2"),
+        t("describeRRULE.w3"),
+        t("describeRRULE.w4"),
+        t("describeRRULE.w5"),
+        t("describeRRULE.w6"),
+        t("describeRRULE.w7"),
+        t("describeRRULE.w1"),
+        t("describeRRULE.day"),
+        t("describeRRULE.weekday"),
+        t("describeRRULE.weekendDay"),
+    ]
 
-  try {
-    const rule = rrulestr(ruleContent, {
-        // DTSTART é útil para regras como "a cada dois meses",
-        // pois a data de início define o ciclo.
-        // Se não houver DTSTART na string, a biblioteca usa a data atual.
-    });
+    const monthsLabel = [
+        t("describeRRULE.m1"), t("describeRRULE.m2"), t("describeRRULE.m3"),
+        t("describeRRULE.m4"), t("describeRRULE.m5"), t("describeRRULE.m6"),
+        t("describeRRULE.m7"), t("describeRRULE.m8"), t("describeRRULE.m9"),
+        t("describeRRULE.m10"), t("describeRRULE.m11"), t("describeRRULE.m12")
+    ]
 
-    // Gera o texto em inglês e passa pela nossa função de tradução
-    const textoEmIngles = rule.toText();
-    const textoTraduzido = gettext(textoEmIngles);
+    const freq = freqNames[options.freq] || ""
+    parts.push(`${t("describeRRULE.every")} ${options.interval} ${options.interval > 1 ? freq[1] : freq[0]}`)
 
-    // Capitaliza a primeira letra para um resultado mais elegante
-    return textoTraduzido.charAt(0).toUpperCase() + textoTraduzido.slice(1);
+    if(options.freq === RRule.WEEKLY) {
+        if (options.byweekday) {
+            if(options.byweekday.length > 0) {
+                const weekdayDescs = (options.byweekday as (number | Weekday)[]).map((wd) => {
+                    if (typeof wd === "number") {
+                    return weekdaysLabel[wd]
+                    } else if (wd.n) {
+                    // exemplo: RRule.SU.nth(1)
+                    return `${ordinalToLabel(wd.n, t)} ${weekdaysLabel[wd.weekday]}`
+                    } else {
+                    return weekdaysLabel[wd.weekday]
+                    }
+                })
+                parts.push(`${t("describeRRULE.onNo")} ${weekdayDescs.join(", ")}`)
+            } 
+        }
+    }
 
-  } catch (error) {
-    console.error("Erro ao processar a RRULE:", error);
-    return 'Regra de recorrência inválida ou não suportada.';
-  }
+    if(options.freq === RRule.MONTHLY) {
+        if (options.byweekday) {
+            switch(options.byweekday.length) {
+                case 7: 
+                    parts.push(`${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[7]}`)
+                    break
+                case 5: 
+                    parts.push(`${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[8]}`)
+                    break
+                case 2: 
+                    parts.push(`${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[9]}`)
+                    break
+                case 1: 
+                    parts.push(`${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[options.byweekday[0]]}`)
+                    break
+            }
+        } else if (options.bymonthday) {
+            if(options.bymonthday.length > 0) {
+                parts.push(`${t("describeRRULE.ondays")} ${options.bymonthday.join(", ")}`)
+            }
+        }
+    }
+
+    if(options.freq === RRule.YEARLY) {
+
+        let yearlyStr = ""
+
+        if (options.bymonth) {
+            if(options.bymonth.length > 0) {
+                const monthsDescs = (options.bymonth as (number)[]).map((mt) => {
+                    if (typeof mt === "number") {
+                        return monthsLabel[mt-1]
+                    }
+                })
+                yearlyStr += `${t("describeRRULE.on")} ${monthsDescs.join(", ")},\n`
+            } 
+        }
+
+        if (options.byweekday) {
+            switch(options.byweekday.length) {
+                case 7: 
+                    yearlyStr += `${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[7]}`
+                    break
+                case 5: 
+                    yearlyStr += `${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[8]}`
+                    break
+                case 2: 
+                    yearlyStr += `${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[9]}`
+                    break
+                case 1: 
+                    yearlyStr += `${t("describeRRULE.onthe")} ${ordinalToLabel(options.bysetpos[0], t)} ${weekdaysLabel[options.byweekday[0]]}`
+                    break
+            }
+        } else if (options.bymonthday) {
+            if(options.bymonthday.length > 0) {
+                yearlyStr += `${t("describeRRULE.ondays")} ${options.bymonthday.join(", ")}`
+            }
+        }
+
+        parts.push(yearlyStr)
+    }
+
+
+
+    // Limite
+    if (options.until) {
+        const d = options.until
+        parts.push(
+            `${t("describeRRULE.until")} ${monthShortDate(d)}`
+        )
+    } else if (options.count) {
+        parts.push(`${t("describeRRULE.untilRepeats")} ${options.count} ${options.count > 1 ? t("describeRRULE.times") : t("describeRRULE.time")}.`)
+    } else {
+        parts.push(`${t("describeRRULE.indefinitely")}.`)
+    }
+
+    return parts.join(",\n")
 }

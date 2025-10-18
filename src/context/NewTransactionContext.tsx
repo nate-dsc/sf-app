@@ -11,7 +11,8 @@ type NewTransaction = {
         id: string,
         label: string
     },
-    rrule?: string
+    rrule?: string,
+    rruleDescription?: string
 }
 
 type NewTransactionContextType = {

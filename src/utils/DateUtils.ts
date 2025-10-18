@@ -11,6 +11,15 @@ export function timestampedYMDtoLocaleDate (timestampedYMD: string) {
     return date.toLocaleString(i18n.language, options)
 }
 
+export function monthShortDate (date: Date) {
+    const options = {
+        day: 'numeric',
+        month: 'short', 
+        year: 'numeric'
+    } as const
+    return date.toLocaleString(i18n.language, options)
+}
+
 export function timestampedYMDtoLocaleDateWithoutYear (timestampedYMD: string) {
     const UTCstring = timestampedYMD + "Z"
     const date = new Date(UTCstring)
