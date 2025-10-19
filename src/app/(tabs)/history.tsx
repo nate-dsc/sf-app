@@ -1,7 +1,11 @@
+import FilterButton from "@/components/history-screen-items/FilterButton"
+import FilterModal from "@/components/history-screen-items/FilterModal"
+import SearchBar from "@/components/history-screen-items/SearchBar"
 import TransactionList from "@/components/history-screen-items/TransactionList"
 import TransactionModal from "@/components/history-screen-items/TransactionModal"
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
+import { useTheme } from "@/context/ThemeContext"
 import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -16,6 +20,7 @@ export default function TransactionHistoryScreen() {
     const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>("all")
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
     const [modalVisible, setModalVisible] = useState(false)
+    const [filterModalVisible, setFilterModalVisible] = useState(false)
 
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
@@ -33,15 +38,52 @@ export default function TransactionHistoryScreen() {
         setModalVisible(false)
     }
 
+    const handleFilterModalClose = () => {
+        setFilterModalVisible(false)
+    }
+
+    const {theme} = useTheme()
+
     return(
         <View style={{flex: 1, paddingTop: headerHeight + 10}}>
-            <View style={{paddingHorizontal: 16, paddingBottom: 12}}>
-                <SegmentedControlCompact 
-                    options={typeOptions}
-                    selectedValue={typeFilter}
-                    onChange={(typeOption) => setTypeFilter(typeOption)}
-                />
+            <View style={{
+                //flex: 1,
+                //position: "absolute",
+                //top: headerHeight + 10,
+                //left: 0,
+                //right: 0,
+                marginHorizontal: 16,
+                marginBottom: 10,
+                padding: 6,
+                borderRadius: 30,
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                borderCurve: "continuous",
+                backgroundColor: theme.background.group.secondaryBg,
+                zIndex: 1
+            }}>
+                <View style={{
+                    paddingBottom: 12,
+                    //paddingTop: 6
+                }}>
+                        <SegmentedControlCompact 
+                            options={typeOptions}
+                            selectedValue={typeFilter}
+                            onChange={(typeOption) => setTypeFilter(typeOption)}
+                        />
+                    </View>
+
+                <View style={{flexDirection: "row", gap: 6}}>
+                    <View style={{flex: 1}}>
+                        <SearchBar />
+                    </View>
+                    
+                    <FilterButton onPress={() => setFilterModalVisible(true)}/>
+                </View>
+                
             </View>
+            
+           
             <View style={{flex: 1}}>
                 <TransactionList filters={{
                     category: undefined,
@@ -55,6 +97,15 @@ export default function TransactionHistoryScreen() {
                 onRequestClose={handleModalClose}
             >
                 <TransactionModal transaction={selectedTransaction} onBackgroundPress={handleModalClose} />
+            </Modal>
+
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={filterModalVisible}
+                onRequestClose={handleFilterModalClose}
+            >
+                <FilterModal onBackgroundPress={handleFilterModalClose} />
             </Modal>
         </View>
         

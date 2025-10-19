@@ -10,10 +10,6 @@ type ReturnButtonProps = TouchableOpacityProps & {
 export default function ReturnButton({styles, ...rest}: ReturnButtonProps) {
 
     const {theme} = useTheme()
-    //const background = [theme.background.groupBg, theme.background.groupSecondaryBg, theme.background.groupTertiaryBg][bgPriority -1]
-    const background = theme.background.groupSecondaryBg
-    //const border = [theme.background.groupTertiaryBg, theme.background.groupBg, theme.background.groupSecondaryBg][bgPriority-1]
-    const border = theme.background.groupTertiaryBg
 
     return(
         <TouchableOpacity {...rest}>
@@ -22,7 +18,7 @@ export default function ReturnButton({styles, ...rest}: ReturnButtonProps) {
                     justifyContent: "flex-start",
                     alignItems: "center",
                     gap: 8,
-                    backgroundColor: theme.background.groupSecondaryBg,
+                    backgroundColor: theme.background.group.secondaryBg,
                     borderRadius: 100,
                     borderWidth: 1,
                     borderColor: theme.background.tertiaryBg,

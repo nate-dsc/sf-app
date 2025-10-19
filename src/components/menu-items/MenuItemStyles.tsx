@@ -53,7 +53,7 @@ export const MIStyles = (Theme: typeof light) => StyleSheet.create({
         alignItems: "center",
         borderRadius: 18,
         //backgroundColor: Theme.menuItem.background
-        backgroundColor: Theme.background.groupSecondaryBg
+        backgroundColor: Theme.background.group.secondaryBg
     },
     activeSegment: {
         flex: 1,
@@ -231,10 +231,10 @@ export const MIStyles = (Theme: typeof light) => StyleSheet.create({
         alignItems: "center",
         borderWidth: 1,
         //borderColor: Theme.menuItem.border,
-        borderColor: Theme.background.groupTertiaryBg,
+        borderColor: Theme.background.group.tertiaryBg,
         borderRadius: 24,
         //backgroundColor: Theme.menuItem.background,
-        backgroundColor: Theme.background.groupSecondaryBg,
+        backgroundColor: Theme.background.group.secondaryBg,
         padding: 6,
         paddingHorizontal: 6,
         gap: 12

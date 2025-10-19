@@ -1,4 +1,4 @@
-import SRedir from "@/components/menu-items/RedirSelect";
+import SearchBar from "@/components/history-screen-items/SearchBar";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -30,7 +30,7 @@ export default function MeasuresScreen() {
         <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                 <SRedir  text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
+                 <SearchBar/>
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels

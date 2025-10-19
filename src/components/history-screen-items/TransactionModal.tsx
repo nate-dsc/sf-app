@@ -10,7 +10,6 @@ import { Pressable, StyleSheet, Text, View } from "react-native"
 import DeleteButton from "../buttons/DeleteButton"
 import RecurringLinkButton from "../buttons/RecurringLinkButton"
 import ReturnButton from "../buttons/ReturnButton"
-import { TileStyles } from "../home-screen-items/TileStyles"
 import { FontStyles } from "../styles/FontStyles"
 
 type TransactionModalProps = {
@@ -24,7 +23,6 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     const {t} = useTranslation()
     const {theme} = useTheme()
-    const tileStyles = TileStyles(theme)
     const value = transaction.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
@@ -55,7 +53,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             />
             <View style={{
                 rowGap: 12,
-                backgroundColor: theme.background.groupSecondaryBg,
+                backgroundColor: theme.background.group.secondaryBg,
                 borderWidth: 1,
                 borderColor: theme.background.tertiaryBg,
                 padding: 15,
@@ -71,39 +69,34 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
                         <Text
                             style={[
-                                tileStyles.textUnfocused,
                                 FontStyles.subhead,
-                                {paddingHorizontal: 12, lineHeight: 25}
+                                {paddingHorizontal: 12, lineHeight: 25, color: theme.text.secondaryLabel}
                             ]}
                         >{category.label}</Text>
                     </View>
                     <Text 
                         style={[
-                            tileStyles.textUnfocused,
                             FontStyles.subhead,
-                            {lineHeight: 25}
+                            {lineHeight: 25, color: theme.text.secondaryLabel}
                         ]}
                     >{timestampedYMDtoLocaleDate(transaction.date) || ""}</Text>
                 </View>
                 <Text 
                     style={[
-                        {textAlign: "right"},
-                        tileStyles.text,
+                        {textAlign: "right", color: theme.text.label},
                         FontStyles.numLargeTitle
                     ]}
                 >{valueStr}</Text>
                 <View>
                     <Text
                         style={[
-                            {textAlign: "left"},
-                            tileStyles.textUnfocused,
+                            {textAlign: "left", color: theme.text.secondaryLabel},
                             FontStyles.subhead
                         ]}
                     >Sobre essa transação:</Text>
                     <Text 
                         style={[
-                            {textAlign: "justify"},
-                            tileStyles.textUnfocused,
+                            {textAlign: "justify", color: theme.text.secondaryLabel},
                             FontStyles.subhead
                         ]}
                     >{transaction.description || ""}</Text>
@@ -111,15 +104,13 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                 <View>
                     <Text
                         style={[
-                            {textAlign: "left"},
-                            tileStyles.textUnfocused,
+                            {textAlign: "left", color: theme.text.secondaryLabel},
                             FontStyles.subhead
                         ]}
                     >ID recorrencia:</Text>
                     <Text 
                         style={[
-                            {textAlign: "justify"},
-                            tileStyles.textUnfocused,
+                            {textAlign: "justify", color: theme.text.secondaryLabel},
                             FontStyles.subhead
                         ]}
                     >{transaction.id_recurring || ""}</Text>

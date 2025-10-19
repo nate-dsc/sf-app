@@ -131,7 +131,7 @@ export default function AddModal() {
                 selectText={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
                 onPress={() => {router.push("/modalRecurring")}}
             />
-            {newTransaction.rruleDescription ? <Text>{newTransaction.rruleDescription?.replace("\n", " ")}</Text> : null}
+            {newTransaction.rruleDescription ? <Text style={{alignSelf: "stretch"}} numberOfLines={1}>{newTransaction.rruleDescription?.replace("\n", " ")}</Text> : null}
 
             <View style={{flexDirection: "row", columnGap: 12}}>
                 <View style={{flex: 1}}>

@@ -55,26 +55,51 @@ const gray6 = "rgb(242,242,247)"
 const gray6Dark = "rgb(28,28,30)"
 
 const background = "#FFFFFFFF"
-const secondaryBackground = "#F2F2F7FF"
-const tertiaryBackground = "#FFFFFFFF"
-const groupBackground = "#F2F2F7FF"
-const groupSecondaryBackground = "#FFFFFFFF"
-const groupTertiaryBackground = "#F2F2F7FF"
-
 const backgroundDark = "#000000FF"
+
+const secondaryBackground = "#F2F2F7FF"
 const secondaryBackgroundDark = "#1C1C1EFF"
+
+const tertiaryBackground = "#FFFFFFFF"
 const tertiaryBackgroundDark = "#2C2C2EFF"
+
+const backgroundElevated = "#FFFFFFFF"
+const backgroundElevatedDark = "#1C1C1EFF"
+
+const secondaryBackgroundElevated = "#F2F2F7FF"
+const secondaryBackgroundElevatedDark = "#2C2C2EFF"
+
+const tertiaryBackgroundElevated = "#FFFFFFFF"
+const tertiaryBackgroundElevatedDark = "#3A3A3CFF"
+
+const groupBackground = "#F2F2F7FF"
 const groupBackgroundDark = "#000000FF"
-const groupSecondaryBackgroundDark = "#1C1C1EFF"
-const groupTertiaryBackgroundDark = "#2C2C2EFF"
+
+const secondaryGroupBackground = "#FFFFFFFF"
+const secondaryGroupBackgroundDark = "#1C1C1EFF"
+
+const tertiaryGroupBackground = "#F2F2F7FF"
+const tertiaryGroupBackgroundDark = "#2C2C2EFF"
+
+const groupBackgroundElevated = "#F2F2F7FF"
+const groupBackgroundElevatedDark = "#1C1C1EFF"
+
+const secondaryGroupBackgroundElevated = "#FFFFFFFF"
+const secondaryGroupBackgroundElevatedDark = "#2C2C2EFF"
+
+const tertiaryGroupBackgroundElevated = "#F2F2F7FF"
+const tertiaryGroupBackgroundElevatedDark = "#3A3A3CFF"
 
 const label = "#000000FF"
-const secondaryLabel = "#3C3C4399"
-const tertiaryLabel = "#3C3C434D"
-const quaternaryLabel = "#3C3C432E"
 const labelDark = "#FFFFFFFF"
+
+const secondaryLabel = "#3C3C4399"
 const secondaryLabelDark = "#EBEBF599"
+
+const tertiaryLabel = "#3C3C434D"
 const tertiaryLabelDark = "#EBEBF54D"
+
+const quaternaryLabel = "#3C3C432E"
 const quaternaryLabelDark = "#EBEBF52E"
 
 const placeholderText = "#3C3C434D"
@@ -86,8 +111,17 @@ const separatorDark = "#54545899"
 const opaqueSeparator = "#C6C6C8FF"
 const opaqueSeparatorDark = "#38383AFF"
 
+const primaryFill = "rgba(120,120,120,0.2)"
+const primaryFillDark =  "rgba(120,120,128,0.36)"
+
+const secondaryFill = "rgba(120,120,128,0.16)"
+const secondaryFillDark = "rgba(120,120,128,0.32)"
+
 const tertiaryFill = "rgba(118,118,128,0.12)"
 const tertiaryFillDark = "rgba(118,118,128,0.24)"
+
+const quaternaryFill = "rgba(116,116,128,0.08)"
+const quaternaryFillDark = "rgba(118,118,128,0.18)"
 
 const scSelected = "#FFFFFF"
 const scSelectedDark = "#6C6C71"
@@ -130,9 +164,21 @@ type CustomTheme = {
         bg: string,
         secondaryBg: string,
         tertiaryBg: string,
-        groupBg: string,
-        groupSecondaryBg: string,
-        groupTertiaryBg: string,
+        group: {
+            bg: string,
+            secondaryBg: string,
+            tertiaryBg: string,
+            elevated: {
+                bg: string,
+                secondaryBg: string,
+                tertiaryBg: string
+            }
+        },
+        elevated: {
+            bg: string,
+            secondaryBg: string,
+            tertiaryBg: string
+        }
     },
     text: {
         label: string,
@@ -146,7 +192,10 @@ type CustomTheme = {
         opaque: string,
     },
     fill: {
+        primary: string,
+        secondary: string,
         tertiary: string,
+        quaternary: string,
     },
     
     segmentedControl: {
@@ -218,7 +267,7 @@ export const light: CustomTheme = {
         //background: "#ebebebff",
         background: groupBackground,
         //card: "#FFFFFF",
-        card: groupSecondaryBackground,
+        card: secondaryGroupBackground,
         text: "#000",
         border: "#000",
         notification: red,
@@ -251,9 +300,21 @@ export const light: CustomTheme = {
         bg: background,
         secondaryBg: secondaryBackground,
         tertiaryBg: tertiaryBackground,
-        groupBg: groupBackground,
-        groupSecondaryBg: groupSecondaryBackground,
-        groupTertiaryBg: groupTertiaryBackground,
+        group: {
+            bg: groupBackground,
+            secondaryBg: secondaryGroupBackground,
+            tertiaryBg: tertiaryGroupBackground,
+            elevated: {
+                bg: groupBackgroundElevated,
+                secondaryBg: secondaryGroupBackgroundElevated,
+                tertiaryBg: tertiaryGroupBackgroundElevated
+            }
+        },
+        elevated: {
+            bg: backgroundElevated,
+            secondaryBg: secondaryBackgroundElevated,
+            tertiaryBg: tertiaryBackgroundElevated
+        }
     },
     text: {
         label: label,
@@ -267,7 +328,10 @@ export const light: CustomTheme = {
         opaque: opaqueSeparator,
     },
     fill: {
+        primary: primaryFill,
+        secondary: secondaryFill,
         tertiary: tertiaryFill,
+        quaternary: quaternaryFill
     },
 
     segmentedControl: {
@@ -336,7 +400,7 @@ export const dark: CustomTheme = {
         //background: "#000",
         background: groupBackgroundDark,
         //card: "#202020",
-        card: groupSecondaryBackgroundDark,
+        card: secondaryGroupBackgroundDark,
         text: "#FFFFFF",
         //border: "#808080",
         border: "#FFF",
@@ -370,9 +434,21 @@ export const dark: CustomTheme = {
         bg: backgroundDark,
         secondaryBg: secondaryBackgroundDark,
         tertiaryBg: tertiaryBackgroundDark,
-        groupBg: groupBackgroundDark,
-        groupSecondaryBg: groupSecondaryBackgroundDark,
-        groupTertiaryBg: groupTertiaryBackgroundDark,
+        group: {
+            bg: groupBackgroundDark,
+            secondaryBg: secondaryGroupBackgroundDark,
+            tertiaryBg: tertiaryGroupBackgroundDark,
+            elevated: {
+                bg: groupBackgroundElevatedDark,
+                secondaryBg: secondaryGroupBackgroundElevatedDark,
+                tertiaryBg: tertiaryGroupBackgroundElevatedDark
+            }
+        },
+        elevated: {
+            bg: backgroundElevatedDark,
+            secondaryBg: secondaryBackgroundElevatedDark,
+            tertiaryBg: tertiaryBackgroundElevatedDark
+        }
     },
     text: {
         label: labelDark,
@@ -386,7 +462,10 @@ export const dark: CustomTheme = {
         opaque: opaqueSeparatorDark,
     },
     fill: {
+        primary: primaryFillDark,
+        secondary: secondaryFillDark,
         tertiary: tertiaryFillDark,
+        quaternary: quaternaryFillDark
     },
     
     segmentedControl: {

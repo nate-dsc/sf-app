@@ -19,7 +19,7 @@ export default function RecurringLinkButtonButton({styles, ...rest}: RecurringLi
                     justifyContent: "flex-start",
                     alignItems: "center",
                     gap: 8,
-                    backgroundColor: theme.background.groupSecondaryBg,
+                    backgroundColor: theme.background.group.secondaryBg,
                     borderRadius: 100,
                     borderWidth: 1,
                     borderColor: theme.background.tertiaryBg,
