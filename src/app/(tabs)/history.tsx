@@ -77,7 +77,10 @@ export default function TransactionHistoryScreen() {
 
                 <View style={{flexDirection: "row", gap: 6}}>
                     <View style={{flex: 1}}>
-                        <SearchBar />
+                        <SearchBar 
+                            value={filters.textSearch}
+                            onChangeText={(input) => updateFilters({textSearch: input})}
+                        />
                     </View>
                     
                     <FilterButton onPress={() => setFilterModalVisible(true)} isActive={filtersActive}/>

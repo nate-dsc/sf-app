@@ -19,7 +19,18 @@ export default function SearchBar({...rest}: TextInputProps) {
             gap: 4,
         }}>
             <Ionicons size={26} name="search-outline" color={theme.text.label}/>
-            <TextInput style={{flex: 1, fontSize: 17, lineHeight: 20, fontWeight: "500", paddingVertical: 14}} placeholder="Search" placeholderTextColor={theme.text.placeholder}/>
+            <TextInput 
+                style={{
+                    flex: 1,
+                    fontSize: 17,
+                    lineHeight: 20,
+                    paddingVertical: 14,
+                    color: theme.text.label
+                }}
+                placeholder="Search"
+                placeholderTextColor={theme.text.placeholder}
+                {...rest}
+                />
         </View>
     )
 }
