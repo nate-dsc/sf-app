@@ -1,3 +1,4 @@
+import { SearchFilters } from "@/context/SearchFiltersContext"
 import { Summary, useSummaryStore } from "@/stores/useSummaryStore"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
@@ -19,13 +20,6 @@ export type TransactionRecurring = {
     date_start: string,
     rrule: string,
     date_last_processed: string | null
-}
-
-export type TransactionTypeFilter = "inflow" | "outflow" | "all"
-
-export type TransactionFilterOptions = {
-    category?: string,
-    type?: TransactionTypeFilter
 }
 
 export function useTransactionDatabase() {
@@ -145,15 +139,23 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function getPaginatedFilteredTransactions(page: number, pageSize: number, filterOptions: TransactionFilterOptions = {}) {
+    async function getPaginatedFilteredTransactions(page: number, pageSize: number, filterOptions: SearchFilters = {}) {
         const offset = page*pageSize
 
         let whereClauses: string[] = []
         let params: (string|number)[] = []
 
-        if(filterOptions.category) {
-            whereClauses.push("category = ?")
-            params.push(filterOptions.category)
+        if (filterOptions.textSearch && filterOptions.textSearch.trim() !== "") {
+            whereClauses.push("description LIKE ?");
+            params.push(`%${filterOptions.textSearch.trim()}%`);
+        }
+
+        if (filterOptions.category && filterOptions.category.length > 0) {
+            // Cria uma string com a quantidade correta de placeholders: (?, ?, ?)
+            const placeholders = filterOptions.category.map(() => "?").join(", ");
+            whereClauses.push(`category IN (${placeholders})`);
+            // Adiciona todos os IDs de categoria ao array de parâmetros
+            params.push(...filterOptions.category);
         }
 
         if(filterOptions.type === "inflow") {
@@ -162,12 +164,42 @@ export function useTransactionDatabase() {
             whereClauses.push("value < 0")
         }
 
+        if (filterOptions.minValue !== undefined) {
+            if (filterOptions.type === "inflow") {
+                whereClauses.push("value >= ?");
+                params.push(filterOptions.minValue);
+            } else if (filterOptions.type === "outflow") {
+                whereClauses.push("value <= ?");
+                params.push(-filterOptions.minValue);
+            } else { // all
+                whereClauses.push("(value >= ? OR value <= ?)");
+                params.push(filterOptions.minValue, -filterOptions.minValue);
+            }
+        }
+
+        if (filterOptions.maxValue !== undefined) {
+            if (filterOptions.type === "inflow") {
+                whereClauses.push("value <= ?");
+                params.push(filterOptions.maxValue);
+            } else if (filterOptions.type === "outflow") {
+                whereClauses.push("value >= ?");
+                params.push(-filterOptions.maxValue);
+            } else { // all
+                whereClauses.push("(value <= ? OR value >= ?)");
+                params.push(filterOptions.maxValue, -filterOptions.maxValue);
+            }
+        }
+
         let query = "SELECT * FROM transactions"
         if (whereClauses.length > 0) {
             query += " WHERE " + whereClauses.join(" AND ")
         }
 
-        query += " ORDER BY date DESC, id DESC LIMIT ? OFFSET ?"
+        const sortBy = filterOptions.sortBy === "value" ? "value" : "date"; // Whitelist
+        const orderBy = filterOptions.orderBy === "asc" ? "ASC" : "DESC";   // Whitelist
+        
+        // Adiciona a ordenação principal e uma secundária para desempate
+        query += ` ORDER BY ${sortBy} ${orderBy}, id DESC`;
         params.push(pageSize, offset)
 
         try {

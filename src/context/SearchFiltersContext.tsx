@@ -4,7 +4,7 @@ export type TransactionTypeFilter = "inflow" | "outflow" | "all"
 export type FilterSortBy = "date" | "value"
 export type FilterOrderBy = "asc" | "desc"
 
-type SearchFilters = {
+export type SearchFilters = {
     textSearch?: string,
     category?: number[],
     minValue?: number,
@@ -19,7 +19,7 @@ type SearchFiltersContextType = {
     setFilters: (filters: SearchFilters) => void,
     updateFilters: (updates: Partial<SearchFilters>) => void
     resetFilters: () => void,
-    filtersActive: boolean
+    filtersActive: boolean,
 }
 
 const SearchFiltersContext = createContext<SearchFiltersContextType | undefined>(undefined)

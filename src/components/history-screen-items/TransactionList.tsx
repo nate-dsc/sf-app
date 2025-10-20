@@ -1,4 +1,5 @@
-import { Transaction, TransactionFilterOptions, useTransactionDatabase } from "@/database/useTransactionDatabase";
+import { SearchFilters } from "@/context/SearchFiltersContext";
+import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase";
 import { useSummaryStore } from "@/stores/useSummaryStore";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useCallback, useEffect, useState } from "react";
@@ -6,13 +7,13 @@ import { ActivityIndicator, FlatList } from "react-native";
 import TransactionListItem from "./TransactionListItem";
 
 type TransactionListProps = {
-    filters: TransactionFilterOptions,
+    filters: SearchFilters,
     onItemPress: (item: Transaction) => void,
 }
 
 const PAGE_SIZE = 15
 
-export default function TransactionList({filters={type: "all", category: undefined}, onItemPress}: TransactionListProps) {
+export default function TransactionList({filters, onItemPress}: TransactionListProps) {
     const tabBarHeight = useBottomTabBarHeight()
 
     const {getPaginatedFilteredTransactions} = useTransactionDatabase()

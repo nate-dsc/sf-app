@@ -5,9 +5,9 @@ import TransactionList from "@/components/history-screen-items/TransactionList"
 import TransactionModal from "@/components/history-screen-items/TransactionModal"
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
-import { useSearchFilters } from "@/context/SearchFiltersContext"
+import { TransactionTypeFilter, useSearchFilters } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
-import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
+import { Transaction } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useState } from "react"
@@ -87,10 +87,7 @@ export default function TransactionHistoryScreen() {
             
            
             <View style={{flex: 1}}>
-                <TransactionList filters={{
-                    category: undefined,
-                    type: typeFilter
-                }} onItemPress={handleItemPress}/>
+                <TransactionList filters={filters} onItemPress={handleItemPress}/>
             </View>
             <Modal
                 animationType={"fade"}
