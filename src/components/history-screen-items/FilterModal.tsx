@@ -77,12 +77,14 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
                         <GValueInput
                             separator={"translucent"}
                             label={"Máximo"}
+                            acViewKey={"max"}
                             onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
                             flowType={"inflow"}
                         />
                         <GValueInput
                             separator="none"
                             label="Mínimo"
+                            acViewKey={"min"}
                             onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
                             flowType={"inflow"}
                         />

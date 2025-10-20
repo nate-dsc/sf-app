@@ -2,7 +2,7 @@
 import { useTheme } from "@/context/ThemeContext"
 import i18n from "@/i18n"
 import { useState } from "react"
-import { Text, TextInput, View } from "react-native"
+import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { TypographyProps } from "../styles/TextStyles"
 
 export type GroupedComponentsProps = {
@@ -11,13 +11,14 @@ export type GroupedComponentsProps = {
 
 type GValueInputProps = GroupedComponentsProps & {
     label: string,
+    acViewKey: string,
     //value: string,
     //onChangeText: (value: string) => void,
     onChangeNumValue: (numValue: number) => void,
     flowType: "inflow" | "outflow"
 }
 
-export default function GValueInput({separator, label, onChangeNumValue, flowType}: GValueInputProps) {
+export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType}: GValueInputProps) {
 
     const {theme} = useTheme()
     const text = TypographyProps(theme)
@@ -56,8 +57,23 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
     const handleTextChange = (text: string) => {
         setTextValue(text)
 
-        const clean = text.replace(",", ".").replace(/[^0-9.]/g, "")
-        const num = parseFloat(clean)
+        let cleaned = text.trim()
+
+        cleaned = i18n.language === "en-US" ? cleaned.replace(/,/g, '') 
+        : cleaned.replace(/\./g, '').replace(',', '.')
+
+        // Troca vírgula por ponto
+        cleaned = cleaned.replace(",", ".")
+
+        // Remove caracteres inválidos
+        cleaned = cleaned.replace(/[^0-9.]/g, "")
+
+        // Se tiver mais de um ponto, mantém só o primeiro
+        const parts = cleaned.split(".");
+        if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("")
+
+        // Converte para número
+        const num = parseFloat(cleaned)
         if (!isNaN(num)) {
             onChangeNumValue(Math.round(num * 100))
         } else {
@@ -91,7 +107,7 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
         const num = parseFloat(cleaned)
         if (isNaN(num) || num === 0) {
             // Zera o campo
-            onChangeNumValue(0)
+            //onChangeNumValue(0)
             setTextValue("")
         } else {
             const cents = Math.round(num * 100)
@@ -127,6 +143,7 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
                     inputMode="decimal"
                     textAlign="right"
                     maxLength={11}
+                    inputAccessoryViewID={acViewKey}
                     value={displayedValue}
                     onChangeText={handleTextChange}
                     onFocus={handleFocus}
@@ -134,6 +151,28 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
                 />
             </View>
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
+
+            {Platform.OS === 'ios' && (
+                <InputAccessoryView nativeID={acViewKey}>
+                    <View style={{
+                        width: '100%',
+                        //backgroundColor: '#F8F8F8',
+                        paddingBottom: 6,
+                        paddingHorizontal: 16,
+                        alignItems: 'flex-end',
+                        //borderTopWidth: 1,
+                        //borderTopColor: '#E8E8E8',
+                    }}>
+                        <TouchableOpacity onPress={Keyboard.dismiss}>
+                            <View style={{paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, backgroundColor: theme.colors.blue}}>
+                                <Text style={{lineHeight: 22, fontSize: 17, color: theme.colors.white}}>
+                                    Concluído
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                </InputAccessoryView>
+            )}
         </View>
     )
 }
