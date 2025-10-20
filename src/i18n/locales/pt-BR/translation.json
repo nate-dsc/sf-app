@@ -34,6 +34,7 @@
             "sales": "Vendas",
             "roi": "Retorno de Investimento",
             "gambling": "Apostas",
+            "gamblingInc": "Apostas (ganhos)",
             "other": "Outro",
             "otherInc": "Outras rendas"
         },
@@ -53,6 +54,7 @@
             "pet": "Pet",
             "gaming": "Jogos",
             "gambling": "Apostas",
+            "gamblingExp": "Apostas (perdas)",
             "other": "Outro",
             "otherExp": "Outras despesas"
         }

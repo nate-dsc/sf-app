@@ -156,12 +156,9 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
                 <InputAccessoryView nativeID={acViewKey}>
                     <View style={{
                         width: '100%',
-                        //backgroundColor: '#F8F8F8',
                         paddingBottom: 6,
                         paddingHorizontal: 16,
                         alignItems: 'flex-end',
-                        //borderTopWidth: 1,
-                        //borderTopColor: '#E8E8E8',
                     }}>
                         <TouchableOpacity onPress={Keyboard.dismiss}>
                             <View style={{paddingHorizontal: 16, paddingVertical: 10, borderRadius: 100, backgroundColor: theme.colors.blue}}>

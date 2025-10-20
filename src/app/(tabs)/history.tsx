@@ -5,6 +5,7 @@ import TransactionList from "@/components/history-screen-items/TransactionList"
 import TransactionModal from "@/components/history-screen-items/TransactionModal"
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
+import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
 import { Transaction, TransactionTypeFilter } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
@@ -21,6 +22,7 @@ export default function TransactionHistoryScreen() {
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [filterModalVisible, setFilterModalVisible] = useState(false)
+    const {filters, updateFilters} = useSearchFilters()
 
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
@@ -68,8 +70,8 @@ export default function TransactionHistoryScreen() {
                 }}>
                         <SegmentedControlCompact 
                             options={typeOptions}
-                            selectedValue={typeFilter}
-                            onChange={(typeOption) => setTypeFilter(typeOption)}
+                            selectedValue={filters.type}
+                            onChange={(typeOption) => updateFilters({type: typeOption})}
                         />
                     </View>
 
@@ -108,6 +110,5 @@ export default function TransactionHistoryScreen() {
                 <FilterModal onBackgroundPress={handleFilterModalClose} />
             </Modal>
         </View>
-        
     )
 }

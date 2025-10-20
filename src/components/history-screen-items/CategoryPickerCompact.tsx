@@ -1,3 +1,4 @@
+import { TransactionTypeFilter } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
 import { Ionicons } from "@expo/vector-icons"
 import React, { useMemo, useState } from "react"
@@ -13,7 +14,7 @@ type Category = {
 }
 
 type CategoryPickerCompactProps = {
-    type: "all" | "inflow" | "outflow",
+    type: TransactionTypeFilter,
     onChangeSelected: (selectedIds: number[]) => void,
  
     initialSelected?: number[]
@@ -39,7 +40,7 @@ export function CategoryPickerCompact({ type, onChangeSelected, initialSelected 
         { id: "12", label: t("categories.expenses.traveling"), iconName: "airplane" },
         { id: "13", label: t("categories.expenses.pet"), iconName: "paw" },
         { id: "14", label: t("categories.expenses.gaming"), iconName: "game-controller" },
-        { id: "15", label: t("categories.expenses.gambling"), iconName: "dice" },
+        { id: "15", label: t("categories.expenses.gamblingExp"), iconName: "dice" },
         { id: "16", label: t("categories.expenses.otherExp"), iconName: "ellipsis-horizontal" },
         { id: "21", label: t("categories.income.salary"), iconName: "cash" },
         { id: "22", label: t("categories.income.freelance"), iconName: "hammer" },
@@ -48,7 +49,7 @@ export function CategoryPickerCompact({ type, onChangeSelected, initialSelected 
         { id: "25", label: t("categories.income.perdiem"), iconName: "today" },
         { id: "26", label: t("categories.income.sales"), iconName: "pricetag" },
         { id: "27", label: t("categories.income.roi"), iconName: "trending-up" },
-        { id: "28", label: t("categories.income.gambling"), iconName: "dice" },
+        { id: "28", label: t("categories.income.gamblingInc"), iconName: "dice" },
         { id: "29", label: t("categories.income.otherInc"), iconName: "ellipsis-horizontal" }
     ];
 

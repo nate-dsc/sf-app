@@ -1,13 +1,15 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
 
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"
-export type FilterOrderBy = "dateasc" | "datedesc" | "valueasc" | "valuedesc"
+export type FilterSortBy = "date" | "value"
+export type FilterOrderBy = "asc" | "desc"
 
 type SearchFilters = {
     textSearch?: string,
     category?: number[],
     minValue?: number,
     maxValue?: number,
+    sortBy?: FilterSortBy,
     orderBy?: FilterOrderBy,
     type?: TransactionTypeFilter
 }
@@ -27,7 +29,8 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         category: [],
         minValue: undefined,
         maxValue: undefined,
-        orderBy: "datedesc",
+        sortBy: "date",
+        orderBy: "desc",
         type: "all"
     })
 
@@ -43,7 +46,8 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         category: [],
         minValue: undefined,
         maxValue: undefined,
-        orderBy: "datedesc",
+        sortBy: "date",
+        orderBy: "desc",
         type: "all",
     })
 
