@@ -22,7 +22,7 @@ export default function TransactionHistoryScreen() {
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [filterModalVisible, setFilterModalVisible] = useState(false)
-    const {filters, updateFilters} = useSearchFilters()
+    const {filters, updateFilters, filtersActive} = useSearchFilters()
 
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
@@ -80,7 +80,7 @@ export default function TransactionHistoryScreen() {
                         <SearchBar />
                     </View>
                     
-                    <FilterButton onPress={() => setFilterModalVisible(true)}/>
+                    <FilterButton onPress={() => setFilterModalVisible(true)} isActive={filtersActive}/>
                 </View>
                 
             </View>

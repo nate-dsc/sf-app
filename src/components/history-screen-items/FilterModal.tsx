@@ -135,14 +135,17 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
                     </TouchableOpacity>
 
                     
-                    <TouchableOpacity style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderRadius: 100,
-                        paddingVertical: 13,
-                        backgroundColor: theme.colors.blue
-                    }}>
+                    <TouchableOpacity
+                        onPress={onBackgroundPress}
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 100,
+                            paddingVertical: 13,
+                            backgroundColor: theme.colors.blue
+                        }}
+                    >
                         <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Filtrar</Text>
                     </TouchableOpacity>
 

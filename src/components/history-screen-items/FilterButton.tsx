@@ -2,7 +2,11 @@ import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 
-export default function FilterButton({...rest}: TouchableOpacityProps) {
+type FilterButtonProps = TouchableOpacityProps & {
+    isActive: boolean
+}
+
+export default function FilterButton({isActive, ...rest}: FilterButtonProps) {
 
     const {theme} = useTheme()
 
@@ -18,7 +22,7 @@ export default function FilterButton({...rest}: TouchableOpacityProps) {
         {...rest}
         >
             <View style={{position: "absolute", top: 13, left: 11, right: 12}}>
-                <Ionicons size={26} name="funnel-outline" color={theme.text.label}/>
+                <Ionicons size={26} name={isActive ? "funnel" : "funnel-outline"} color={isActive ? theme.colors.blue : theme.text.label}/>
             </View>
             
         </TouchableOpacity>
