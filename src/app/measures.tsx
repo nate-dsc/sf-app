@@ -1,5 +1,6 @@
-import SearchBar from "@/components/history-screen-items/SearchBar";
+import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
 import { SStyles } from "@/components/styles/ScreenStyles";
+import { useTheme } from "@/context/ThemeContext";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useCallback, useState } from "react";
@@ -26,11 +27,26 @@ export default function MeasuresScreen() {
       setPickedDays(days);
     },[]);
 
+    const {theme} = useTheme()
+
     return(
         <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                 <SearchBar/>
+                <View style={{paddingHorizontal: 16, borderRadius: 26, backgroundColor: theme.fill.secondary}}>
+                    <GValueInput
+                        separator={"translucent"}
+                        label={"Máximo"}
+                        onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
+                        flowType={"outflow"}
+                    />
+                    <GValueInput
+                        separator="none"
+                        label="Mínimo"
+                        onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
+                        flowType={"outflow"}
+                    />
+                </View>
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels

@@ -34,7 +34,9 @@
             "sales": "Sales",
             "roi": "Return on Investment",
             "gambling": "Gambling",
-            "other": "Other"
+            "gamblingInc": "Gambling earnings",
+            "other": "Other",
+            "otherInc": "Other income"
         },
         "expenses": {
             "home": "Home",
@@ -52,7 +54,9 @@
             "pet": "Pet",
             "gaming": "Gaming",
             "gambling": "Gambling",
-            "other": "Other"
+            "gamplingExp": "Gambling losses",
+            "other": "Other",
+            "otherExp": "Other expenses"
         }
     },
     "settings": {

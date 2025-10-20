@@ -106,8 +106,19 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
 
     return(
         <View>
-            <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 14, paddingBottom: 13, gap: 8}}>
-                <Text {...text.bodyLabel}>{label}</Text>
+            <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 15, paddingBottom: 14, gap: 8}}>
+                <Text 
+                    style={{
+                        flex: 1,
+                        lineHeight: 22,
+                        fontSize: 17,
+                        color: theme.text.label
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {label}
+                </Text>
                 <TextInput 
                     style={{flex: 3, lineHeight: 22, fontSize: 17, color: theme.text.label}}
                     placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
@@ -122,7 +133,6 @@ export default function GValueInput({separator, label, onChangeNumValue, flowTyp
                     onBlur={handleBlur}
                 />
             </View>
-            {/* Separator */}
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
         </View>
     )

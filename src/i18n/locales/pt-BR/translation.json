@@ -34,7 +34,8 @@
             "sales": "Vendas",
             "roi": "Retorno de Investimento",
             "gambling": "Apostas",
-            "other": "Outro"
+            "other": "Outro",
+            "otherInc": "Outras rendas"
         },
         "expenses": {
             "home": "Casa",
@@ -52,7 +53,8 @@
             "pet": "Pet",
             "gaming": "Jogos",
             "gambling": "Apostas",
-            "other": "Outro"
+            "other": "Outro",
+            "otherExp": "Outras despesas"
         }
     },
     "settings": {
