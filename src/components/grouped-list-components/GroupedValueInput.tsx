@@ -1,0 +1,129 @@
+
+import { useTheme } from "@/context/ThemeContext"
+import i18n from "@/i18n"
+import { useState } from "react"
+import { Text, TextInput, View } from "react-native"
+import { TypographyProps } from "../styles/TextStyles"
+
+export type GroupedComponentsProps = {
+    separator: "opaque" | "translucent" | "vibrant" | "none",
+}
+
+type GValueInputProps = GroupedComponentsProps & {
+    label: string,
+    //value: string,
+    //onChangeText: (value: string) => void,
+    onChangeNumValue: (numValue: number) => void,
+    flowType: "inflow" | "outflow"
+}
+
+export default function GValueInput({separator, label, onChangeNumValue, flowType}: GValueInputProps) {
+
+    const {theme} = useTheme()
+    const text = TypographyProps(theme)
+    const placeholder = 0.0
+
+    const [isFocused, setIsFocused] = useState(false)
+    const [textValue, setTextValue] = useState("")
+
+    const separatorTypes = [
+        {separator: "opaque", color: theme.separator.opaque},
+        {separator: "translucent", color: theme.separator.translucent},
+        {separator: "vibrant", color: theme.separator.vibrant},
+        {separator: "translucent", color: "transparent"}
+    ]
+
+    const formatCurrency = (rawText: string): string => {
+        // Se o valor estiver vazio, retornamos uma string vazia para mostrar o placeholder
+        if (!rawText) return "";
+
+        let numericValue = parseFloat(rawText.replace(',', '.'));
+
+        // Se não for um número válido (ex: se o usuário digitar apenas "."), retorna vazio
+        if (isNaN(numericValue)) return "";
+
+        const valueToFormat = flowType === "inflow" ? numericValue : -numericValue
+
+        return new Intl.NumberFormat(i18n.language, {
+            style: "currency",
+            currency: i18n.language === "pt-BR" ? "BRL" : "USD",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(valueToFormat)
+    }
+
+    // Trata o texto digitado
+    const handleTextChange = (text: string) => {
+        setTextValue(text)
+
+        const clean = text.replace(",", ".").replace(/[^0-9.]/g, "")
+        const num = parseFloat(clean)
+        if (!isNaN(num)) {
+            onChangeNumValue(Math.round(num * 100))
+        } else {
+            onChangeNumValue(0)
+        }
+    }
+
+    // Ao focar, mostra apenas o número cru (sem formatação)
+    const handleFocus = () => {
+        setIsFocused(true)
+    }
+
+    // Ao perder foco, formata como moeda
+    const handleBlur = () => {
+        let cleaned = textValue.trim()
+
+        cleaned = i18n.language === "en-US" ? cleaned.replace(/,/g, '') 
+        : cleaned.replace(/\./g, '').replace(',', '.')
+
+        // Troca vírgula por ponto
+        cleaned = cleaned.replace(",", ".")
+
+        // Remove caracteres inválidos
+        cleaned = cleaned.replace(/[^0-9.]/g, "")
+
+        // Se tiver mais de um ponto, mantém só o primeiro
+        const parts = cleaned.split(".");
+        if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("")
+
+        // Converte para número
+        const num = parseFloat(cleaned)
+        if (isNaN(num) || num === 0) {
+            // Zera o campo
+            onChangeNumValue(0)
+            setTextValue("")
+        } else {
+            const cents = Math.round(num * 100)
+            onChangeNumValue(cents)
+            const numText = i18n.language === "en-US" ? num.toFixed(2) : num.toFixed(2).replace(".", ",")
+            setTextValue(numText)
+        }
+        setIsFocused(false)
+    }
+
+    const displayedValue = isFocused ? textValue : formatCurrency(textValue)
+
+    return(
+        <View>
+            <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 14, paddingBottom: 13, gap: 8}}>
+                <Text {...text.bodyLabel}>{label}</Text>
+                <TextInput 
+                    style={{flex: 3, lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
+                    placeholderTextColor={theme.text.secondaryLabel}
+                    keyboardType="decimal-pad"
+                    inputMode="decimal"
+                    textAlign="right"
+                    maxLength={11}
+                    value={displayedValue}
+                    onChangeText={handleTextChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                />
+            </View>
+            {/* Separator */}
+            <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
+        </View>
+    )
+}

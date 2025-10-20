@@ -111,6 +111,9 @@ const separatorDark = "#54545899"
 const opaqueSeparator = "#C6C6C8FF"
 const opaqueSeparatorDark = "#38383AFF"
 
+const vibrantSeparator = "#E6E6E6"
+const vibrantSeparatorDark = "#1A1A1A"
+
 const primaryFill = "rgba(120,120,120,0.2)"
 const primaryFillDark =  "rgba(120,120,128,0.36)"
 
@@ -190,6 +193,7 @@ type CustomTheme = {
     separator: {
         translucent: string,
         opaque: string,
+        vibrant: string,
     },
     fill: {
         primary: string,
@@ -326,6 +330,7 @@ export const light: CustomTheme = {
     separator: {
         translucent: separator,
         opaque: opaqueSeparator,
+        vibrant: vibrantSeparator
     },
     fill: {
         primary: primaryFill,
@@ -460,6 +465,7 @@ export const dark: CustomTheme = {
     separator: {
         translucent: separatorDark,
         opaque: opaqueSeparatorDark,
+        vibrant: vibrantSeparatorDark
     },
     fill: {
         primary: primaryFillDark,
