@@ -9,6 +9,7 @@ export type SearchFilters = {
     category?: number[],
     minValue?: number,
     maxValue?: number,
+    dateFilterActive?: boolean,
     initialDate?: Date,
     finalDate?: Date,
     sortBy?: FilterSortBy,
@@ -27,16 +28,26 @@ type SearchFiltersContextType = {
     sortActive: boolean
 }
 
+function getLocalTodayRange() {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59)
+    const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1, 0, 0, 0)
+    return { yesterday, today }
+}
+
 const SearchFiltersContext = createContext<SearchFiltersContextType | undefined>(undefined)
 
 export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
+    const { yesterday, today } = getLocalTodayRange()
+
     const [filters, setFilters] = useState<SearchFilters>({
         textSearch: "",
         category: [],
         minValue: undefined,
         maxValue: undefined,
-        initialDate: new Date(),
-        finalDate: new Date(),
+        dateFilterActive: false,
+        initialDate: yesterday,
+        finalDate: today,
         sortBy: "date",
         orderBy: "desc",
         type: "all"
@@ -49,7 +60,7 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         }))
     }
 
-    const resetFilters = () => setFilters({
+    const resetFilters = () => updateFilters({
         textSearch: "",
         category: [],
         minValue: undefined,
@@ -57,12 +68,16 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         type: "all",
     })
 
-    const resetDates = () => setFilters({
-        initialDate: new Date(),
-        finalDate: new Date()
-    })
+    const resetDates = () => {
+        const { yesterday, today } = getLocalTodayRange()
+        updateFilters({
+            initialDate: yesterday,
+            finalDate: today,
+            dateFilterActive: false,
+        })
+    }
 
-    const resetSorting = () => setFilters({
+    const resetSorting = () => updateFilters({
         sortBy: "date",
         orderBy: "desc"
     })

@@ -108,7 +108,7 @@ export default function TransactionHistoryScreen() {
 
                     <DateButton 
                         onPress={() => setDateModalVisible(true)}
-                        isActive={false}
+                        isActive={filters.dateFilterActive ?? false}
                     />
 
                     <OrderButton 

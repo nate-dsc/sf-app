@@ -1,10 +1,9 @@
-import { FilterOrderBy, FilterSortBy, useSearchFilters } from "@/context/SearchFiltersContext"
+import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import GDateInput from "../../grouped-list-components/GroupedDateInput"
-import { SCOption } from "../../menu-items/SegmentedControl"
 import { FontStyles } from "../../styles/FontStyles"
 import { TypographyProps } from "../../styles/TextStyles"
 
@@ -18,22 +17,24 @@ export default function FilterModal({onBackgroundPress}: DateModalProps) {
     const {theme} = useTheme()
     const text = TypographyProps(theme)
 
-    const {filters, updateFilters, resetFilters} = useSearchFilters()
+    const {filters, updateFilters, resetDates} = useSearchFilters()
 
-    const sortOptions: SCOption<FilterSortBy>[] = [
-        {label: "Data", value: "date"},
-        {label: "Valor", value: "value"}
-    ]
+    const handleInitialDateChange = (initialDate: Date) => {
+        const id = new Date(initialDate.getFullYear(), initialDate.getMonth(), initialDate.getDate(), 0, 0, 0)
+        updateFilters({initialDate: id})
+    }
 
-    const orderOptions: SCOption<FilterOrderBy>[] = [
-        {label: "Descrescente", value: "desc"},
-        {label: "Crescente", value: "asc"}
-    ]
+    const handleFinalDateChange = (finalDate: Date) => {
+        const fd = new Date(finalDate.getFullYear(), finalDate.getMonth(), finalDate.getDate(), 23, 59, 59)
+        updateFilters({finalDate: fd})
+    }
 
     return(
         <Pressable
             style={{flex: 1, justifyContent: "center", alignItems: "stretch", paddingHorizontal: 12, gap: 10}}
-            onPress={onBackgroundPress}
+            onPress={() => {
+                onBackgroundPress()
+            }}
         >
             <BlurView
                 style={StyleSheet.absoluteFill}
@@ -66,14 +67,14 @@ export default function FilterModal({onBackgroundPress}: DateModalProps) {
                         <GDateInput
                             separator={"translucent"}
                             label={"Data inicial"}
-                            value={new Date()}
-                            onDateChange={()=>{}}
+                            value={filters.initialDate ?? new Date()}
+                            onDateChange={handleInitialDateChange}
                         />
                         <GDateInput
                             separator="none"
                             label="Data final"
-                            value={new Date()}
-                            onDateChange={()=>{}}
+                            value={filters.finalDate ?? new Date()}
+                            onDateChange={handleFinalDateChange}
                         />
                     </View>
                 </View>
@@ -85,7 +86,7 @@ export default function FilterModal({onBackgroundPress}: DateModalProps) {
                 }}>
                     <TouchableOpacity
                         onPress={()=> {
-                            resetFilters()
+                            resetDates()
                             onBackgroundPress()
                         }}
                         style={{
@@ -97,12 +98,15 @@ export default function FilterModal({onBackgroundPress}: DateModalProps) {
                             backgroundColor: theme.fill.secondary
                         }}
                     >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.text.label}]}>Cancelar</Text>
+                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.text.label}]}>Limpar</Text>
                     </TouchableOpacity>
 
                     
                     <TouchableOpacity
-                        onPress={onBackgroundPress}
+                        onPress={()=> {
+                            updateFilters({dateFilterActive: true})
+                            onBackgroundPress()
+                        }}
                         style={{
                             flex: 1,
                             justifyContent: "center",

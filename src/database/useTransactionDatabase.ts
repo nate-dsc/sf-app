@@ -190,6 +190,14 @@ export function useTransactionDatabase() {
             }
         }
 
+        if (filterOptions.dateFilterActive && filterOptions.initialDate && filterOptions.finalDate) {
+            whereClauses.push("date BETWEEN ? AND ?");
+            params.push(
+                filterOptions.initialDate.toISOString().slice(0, 16),
+                filterOptions.finalDate.toISOString().slice(0, 16)
+            );
+        }
+
         let query = "SELECT * FROM transactions"
         if (whereClauses.length > 0) {
             query += " WHERE " + whereClauses.join(" AND ")
