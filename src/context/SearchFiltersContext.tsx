@@ -9,6 +9,8 @@ export type SearchFilters = {
     category?: number[],
     minValue?: number,
     maxValue?: number,
+    initialDate?: Date,
+    finalDate?: Date,
     sortBy?: FilterSortBy,
     orderBy?: FilterOrderBy,
     type?: TransactionTypeFilter
@@ -19,6 +21,8 @@ type SearchFiltersContextType = {
     setFilters: (filters: SearchFilters) => void,
     updateFilters: (updates: Partial<SearchFilters>) => void
     resetFilters: () => void,
+    resetDates:  () => void,
+    resetSorting:  () => void,
     filtersActive: boolean,
     sortActive: boolean
 }
@@ -31,6 +35,8 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         category: [],
         minValue: undefined,
         maxValue: undefined,
+        initialDate: new Date(),
+        finalDate: new Date(),
         sortBy: "date",
         orderBy: "desc",
         type: "all"
@@ -48,9 +54,17 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         category: [],
         minValue: undefined,
         maxValue: undefined,
-        sortBy: "date",
-        orderBy: "desc",
         type: "all",
+    })
+
+    const resetDates = () => setFilters({
+        initialDate: new Date(),
+        finalDate: new Date()
+    })
+
+    const resetSorting = () => setFilters({
+        sortBy: "date",
+        orderBy: "desc"
     })
 
     const filtersActive = useMemo(() => {
@@ -73,6 +87,8 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         setFilters,
         updateFilters,
         resetFilters,
+        resetSorting,
+        resetDates,
         filtersActive,
         sortActive
     }), [filters]);

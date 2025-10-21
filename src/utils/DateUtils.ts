@@ -29,3 +29,13 @@ export function timestampedYMDtoLocaleDateWithoutYear (timestampedYMD: string) {
     } as const
     return date.toLocaleString(i18n.language, options)
 }
+
+export function datesToIntervalStrings(initialDate: Date, finalDate: Date): string[] {
+    const initial = initialDate
+    initial.setHours(0,0,0,0)
+    const final = finalDate
+    final.setHours(0,0,0,0)
+    const idStr = initial.toISOString().slice(0,16)
+    const fdStr = final.toISOString().slice(0,16)
+    return [idStr, fdStr]
+}
