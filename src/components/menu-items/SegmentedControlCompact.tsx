@@ -47,7 +47,7 @@ export default function SegmentedControlCompact<T>({ options, selectedValue, onC
                     selectedValue === option.value && {
                         backgroundColor: theme.segmentedControl.selected,
                         shadowColor: "#000000",
-                        shadowRadius: 20,
+                        shadowRadius: 15,
                         shadowOpacity: 0.06,
                         shadowOffset: {width: 0, height: 2}
                     }]

@@ -1,6 +1,5 @@
 import CustomTabBar from "@/components/navigation/TabBar";
 import { FontStyles } from "@/components/styles/FontStyles";
-import { SearchFiltersProvider } from "@/context/SearchFiltersContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
@@ -18,7 +17,6 @@ export default function TabBar() {
     const router = useRouter()
 
     return(
-        <SearchFiltersProvider>
         <NavigationThemeProvider value={theme.navigationTheme}>
             <Tabs screenOptions={({route}) => ({
                 headerShadowVisible: false,
@@ -57,6 +55,5 @@ export default function TabBar() {
                 
             </Tabs>
         </NavigationThemeProvider>
-        </SearchFiltersProvider>
     )
 }

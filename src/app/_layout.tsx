@@ -1,5 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
+import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { ThemeProvider, useTheme } from "@/context/ThemeContext"
 import { initializeDatabase } from "@/database/InitializeDatabase"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
@@ -16,7 +17,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 
 function RootLayoutNav() {
     const {t} = useTranslation()
-    const theme = useTheme()
+    const {theme, preference} = useTheme()
 
     const { getSummaryFromDB, createAndSyncRecurringTransactions } = useTransactionDatabase();
     const {loadData, refreshKey} = useSummaryStore();
@@ -35,9 +36,9 @@ function RootLayoutNav() {
 
     return(
         <NewTransactionProvider>
-            <NavigationThemeProvider value={theme.theme.navigationTheme}>
+            <NavigationThemeProvider value={theme.navigationTheme}>
                 <SafeAreaProvider>
-                    <StatusBar style={theme.preference === 'dark' ? 'light' : theme.preference === 'light' ? 'dark' : 'auto'}/>
+                    <StatusBar style={preference === 'dark' ? 'light' : preference === 'light' ? 'dark' : 'auto'}/>
                     <Stack screenOptions={{
                         headerShadowVisible: false,
                         headerTransparent: true,
@@ -62,7 +63,10 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.newTransaction"),
-                                presentation: "formSheet"
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg
+                                }
                             }}
                         />
                         <Stack.Screen
@@ -71,7 +75,10 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.recurring"),
-                                presentation: "formSheet"
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                }
                             }}
                         />
                         <Stack.Screen
@@ -81,6 +88,17 @@ function RootLayoutNav() {
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.categories"),
                                 presentation: "formSheet"
+                            }}
+                        />
+                        <Stack.Screen
+                            name="FilterModalSheet"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                title: "Filtros",
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg
+                                }
                             }}
                         />
                         <Stack.Screen
@@ -117,10 +135,12 @@ function RootLayoutNav() {
 export default function RootLayout()
 {
     return(
+        <SearchFiltersProvider>
         <SQLiteProvider databaseName={"sf-app.db"} onInit={initializeDatabase}>
             <ThemeProvider>
                 <RootLayoutNav />
             </ThemeProvider>
         </SQLiteProvider>
+        </SearchFiltersProvider>
     )
 }

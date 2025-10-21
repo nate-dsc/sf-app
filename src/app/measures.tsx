@@ -1,4 +1,4 @@
-import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
+import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useTheme } from "@/context/ThemeContext";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -34,17 +34,17 @@ export default function MeasuresScreen() {
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
                 <View style={{paddingHorizontal: 16, borderRadius: 26, backgroundColor: theme.fill.secondary}}>
-                    <GValueInput
+                    <GDateInput
                         separator={"translucent"}
-                        label={"Máximo"}
-                        onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
-                        flowType={"outflow"}
+                        label={"Data inicial"}
+                        value={new Date()}
+                        onDateChange={()=>{}}
                     />
-                    <GValueInput
+                    <GDateInput
                         separator="none"
-                        label="Mínimo"
-                        onChangeNumValue={(numValue: number) => console.log(`centavos: ${numValue}`)}
-                        flowType={"outflow"}
+                        label="Data final"
+                        value={new Date()}
+                        onDateChange={()=>{}}
                     />
                 </View>
             </View>

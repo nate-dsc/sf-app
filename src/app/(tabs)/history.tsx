@@ -1,3 +1,5 @@
+import DateButton from "@/components/history-screen-items/DateButton"
+import DateModal from "@/components/history-screen-items/DateModal"
 import FilterButton from "@/components/history-screen-items/FilterButton"
 import FilterModal from "@/components/history-screen-items/FilterModal"
 import SearchBar from "@/components/history-screen-items/SearchBar"
@@ -10,6 +12,7 @@ import { useTheme } from "@/context/ThemeContext"
 import { Transaction } from "@/database/useTransactionDatabase"
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
 import { useState } from "react"
 import { Modal, View } from "react-native"
 
@@ -18,10 +21,13 @@ export default function TransactionHistoryScreen() {
     const headerHeight = useHeaderHeight()
     const tabBarHeight = useBottomTabBarHeight()
 
+    const router = useRouter()
+
     const [typeFilter, setTypeFilter] = useState<TransactionTypeFilter>("all")
     const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [filterModalVisible, setFilterModalVisible] = useState(false)
+    const [dateModalVisible, setDateModalVisible] = useState(false)
     const {filters, updateFilters, filtersActive} = useSearchFilters()
 
 
@@ -42,6 +48,10 @@ export default function TransactionHistoryScreen() {
 
     const handleFilterModalClose = () => {
         setFilterModalVisible(false)
+    }
+
+    const handleDateModalClose = () => {
+        setDateModalVisible(false)
     }
 
     const {theme} = useTheme()
@@ -83,7 +93,16 @@ export default function TransactionHistoryScreen() {
                         />
                     </View>
                     
-                    <FilterButton onPress={() => setFilterModalVisible(true)} isActive={filtersActive}/>
+                    <FilterButton
+                        onPress={() => setFilterModalVisible(true)}
+                        //onPress={() => router.push("/FilterModalSheet")}
+                        isActive={filtersActive}
+                    />
+
+                    <DateButton 
+                        onPress={() => setDateModalVisible(true)}
+                        isActive={true}
+                    />
                 </View>
                 
             </View>
@@ -108,6 +127,15 @@ export default function TransactionHistoryScreen() {
                 onRequestClose={handleFilterModalClose}
             >
                 <FilterModal onBackgroundPress={handleFilterModalClose} />
+            </Modal>
+
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={dateModalVisible}
+                onRequestClose={handleDateModalClose}
+            >
+                <DateModal onBackgroundPress={handleDateModalClose} />
             </Modal>
         </View>
     )
