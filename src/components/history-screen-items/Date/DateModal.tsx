@@ -3,10 +3,10 @@ import { useTheme } from "@/context/ThemeContext"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
-import GDateInput from "../grouped-list-components/GroupedDateInput"
-import { SCOption } from "../menu-items/SegmentedControl"
-import { FontStyles } from "../styles/FontStyles"
-import { TypographyProps } from "../styles/TextStyles"
+import GDateInput from "../../grouped-list-components/GroupedDateInput"
+import { SCOption } from "../../menu-items/SegmentedControl"
+import { FontStyles } from "../../styles/FontStyles"
+import { TypographyProps } from "../../styles/TextStyles"
 
 type DateModalProps = {
     onBackgroundPress: () => void,
@@ -59,7 +59,7 @@ export default function FilterModal({onBackgroundPress}: DateModalProps) {
                 <View style={{gap: 10, paddingBottom: 14}}>
                     {/* Section title container */}
                     <View style={{paddingHorizontal: 16}}>
-                        <Text {...text.popupTitle}>Definir período</Text>
+                        <Text {...text.popupTitle}>Período</Text>
                     </View>
                     {/* Text fields container */}
                     <View style={{paddingHorizontal: 16, borderRadius: 26, backgroundColor: theme.fill.secondary}}>

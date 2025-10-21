@@ -3,11 +3,10 @@ import { useTheme } from "@/context/ThemeContext"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
-import GValueInput from "../grouped-list-components/GroupedValueInput"
-import { SCOption } from "../menu-items/SegmentedControl"
-import SegmentedControlCompact from "../menu-items/SegmentedControlCompact"
-import { FontStyles } from "../styles/FontStyles"
-import { TypographyProps } from "../styles/TextStyles"
+import GValueInput from "../../grouped-list-components/GroupedValueInput"
+import { SCOption } from "../../menu-items/SegmentedControl"
+import { FontStyles } from "../../styles/FontStyles"
+import { TypographyProps } from "../../styles/TextStyles"
 import { CategoryPickerCompact } from "./CategoryPickerCompact"
 
 type FilterModalProps = {
@@ -92,24 +91,6 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
                     </View>
 
                     <CategoryPickerCompact onChangeSelected={(selectedIds: number[]) => updateFilters({category: selectedIds})} type={filters.type || "all"} />
-                </View>
-                <View style={{gap: 10, paddingBottom: 14}}>
-                    <View style={{paddingHorizontal: 16}}>
-                        <Text {...text.popupTitle}>Ordenar</Text>
-                    </View>
-
-                    <SegmentedControlCompact
-                        options={sortOptions}
-                        selectedValue={filters.sortBy}
-                        onChange={(value) => updateFilters({sortBy: value})}
-                    />
-
-                    <SegmentedControlCompact
-                        options={orderOptions}
-                        selectedValue={filters.orderBy}
-                        onChange={(value) => updateFilters({orderBy: value})}
-                    />
-
                 </View>
 
                 <View style={{

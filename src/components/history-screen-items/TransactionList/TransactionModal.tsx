@@ -1,3 +1,7 @@
+import DeleteButton from "@/components/buttons/DeleteButton"
+import RecurringLinkButton from "@/components/buttons/RecurringLinkButton"
+import ReturnButton from "@/components/buttons/ReturnButton"
+import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
@@ -7,10 +11,6 @@ import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, View } from "react-native"
-import DeleteButton from "../buttons/DeleteButton"
-import RecurringLinkButton from "../buttons/RecurringLinkButton"
-import ReturnButton from "../buttons/ReturnButton"
-import { FontStyles } from "../styles/FontStyles"
 
 type TransactionModalProps = {
     transaction: Transaction | null,

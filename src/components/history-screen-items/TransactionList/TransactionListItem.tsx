@@ -1,3 +1,5 @@
+import { TileStyles } from "@/components/home-screen-items/TileStyles";
+import { FontStyles } from "@/components/styles/FontStyles";
 import { useTheme } from "@/context/ThemeContext";
 import { Transaction } from "@/database/useTransactionDatabase";
 import { findCategoryByID } from "@/utils/CategoryUtils";
@@ -5,8 +7,6 @@ import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
 import { Ionicons } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
-import { TileStyles } from "../home-screen-items/TileStyles";
-import { FontStyles } from "../styles/FontStyles";
 
 type TransactionListItemProps = {
     item: Transaction,

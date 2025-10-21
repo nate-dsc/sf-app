@@ -1,10 +1,12 @@
-import DateButton from "@/components/history-screen-items/DateButton"
-import DateModal from "@/components/history-screen-items/DateModal"
-import FilterButton from "@/components/history-screen-items/FilterButton"
-import FilterModal from "@/components/history-screen-items/FilterModal"
+import DateButton from "@/components/history-screen-items/Date/DateButton"
+import DateModal from "@/components/history-screen-items/Date/DateModal"
+import FilterButton from "@/components/history-screen-items/Filter/FilterButton"
+import FilterModal from "@/components/history-screen-items/Filter/FilterModal"
+import OrderButton from "@/components/history-screen-items/Order/OrderButton"
+import OrderModal from "@/components/history-screen-items/Order/OrderModal"
 import SearchBar from "@/components/history-screen-items/SearchBar"
-import TransactionList from "@/components/history-screen-items/TransactionList"
-import TransactionModal from "@/components/history-screen-items/TransactionModal"
+import TransactionList from "@/components/history-screen-items/TransactionList/TransactionList"
+import TransactionModal from "@/components/history-screen-items/TransactionList/TransactionModal"
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
 import { TransactionTypeFilter, useSearchFilters } from "@/context/SearchFiltersContext"
@@ -28,7 +30,8 @@ export default function TransactionHistoryScreen() {
     const [modalVisible, setModalVisible] = useState(false)
     const [filterModalVisible, setFilterModalVisible] = useState(false)
     const [dateModalVisible, setDateModalVisible] = useState(false)
-    const {filters, updateFilters, filtersActive} = useSearchFilters()
+    const [orderModalVisible, setOrderModalVisible] = useState(false)
+    const {filters, updateFilters, filtersActive, sortActive} = useSearchFilters()
 
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
@@ -52,6 +55,10 @@ export default function TransactionHistoryScreen() {
 
     const handleDateModalClose = () => {
         setDateModalVisible(false)
+    }
+
+    const handleOrderModalClose = () => {
+        setOrderModalVisible(false)
     }
 
     const {theme} = useTheme()
@@ -101,7 +108,12 @@ export default function TransactionHistoryScreen() {
 
                     <DateButton 
                         onPress={() => setDateModalVisible(true)}
-                        isActive={true}
+                        isActive={false}
+                    />
+
+                    <OrderButton 
+                        onPress={() => setOrderModalVisible(true)}
+                        isActive={sortActive}
                     />
                 </View>
                 
@@ -136,6 +148,15 @@ export default function TransactionHistoryScreen() {
                 onRequestClose={handleDateModalClose}
             >
                 <DateModal onBackgroundPress={handleDateModalClose} />
+            </Modal>
+
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={orderModalVisible}
+                onRequestClose={handleOrderModalClose}
+            >
+                <OrderModal onBackgroundPress={handleOrderModalClose} />
             </Modal>
         </View>
     )

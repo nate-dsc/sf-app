@@ -20,6 +20,7 @@ type SearchFiltersContextType = {
     updateFilters: (updates: Partial<SearchFilters>) => void
     resetFilters: () => void,
     filtersActive: boolean,
+    sortActive: boolean
 }
 
 const SearchFiltersContext = createContext<SearchFiltersContextType | undefined>(undefined)
@@ -56,18 +57,24 @@ export const SearchFiltersProvider = ({children}: {children: ReactNode}) => {
         return(Boolean(
             (filters.category && filters.category.length > 0) ||
             filters.maxValue !== undefined ||
-            filters.minValue !== undefined ||
+            filters.minValue !== undefined
+        ))
+    }, [filters])
+
+    const sortActive = useMemo(() => {
+        return(Boolean(
             filters.sortBy !== "date" ||
             filters.orderBy !== "desc"
         ))
-    }, [filters])
+    },[filters])
 
     const value = useMemo(() => ({
         filters,
         setFilters,
         updateFilters,
         resetFilters,
-        filtersActive
+        filtersActive,
+        sortActive
     }), [filters]);
 
     return(
