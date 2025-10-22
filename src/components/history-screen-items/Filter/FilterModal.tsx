@@ -1,10 +1,9 @@
-import { FilterOrderBy, FilterSortBy, useSearchFilters } from "@/context/SearchFiltersContext"
+import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 import GValueInput from "../../grouped-list-components/GroupedValueInput"
-import { SCOption } from "../../menu-items/SegmentedControl"
 import { FontStyles } from "../../styles/FontStyles"
 import { TypographyProps } from "../../styles/TextStyles"
 import { CategoryPickerCompact } from "./CategoryPickerCompact"
@@ -20,16 +19,6 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
     const text = TypographyProps(theme)
 
     const {filters, updateFilters, resetFilters} = useSearchFilters()
-
-    const sortOptions: SCOption<FilterSortBy>[] = [
-        {label: "Data", value: "date"},
-        {label: "Valor", value: "value"}
-    ]
-
-    const orderOptions: SCOption<FilterOrderBy>[] = [
-        {label: "Descrescente", value: "desc"},
-        {label: "Crescente", value: "asc"}
-    ]
 
     return(
         <Pressable
@@ -57,17 +46,10 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
                     shadowOffset: {width: 0, height: 0}
                 }}
             >
-                {/* Title container */}
-                {/* <View style={{padding: 8, paddingBottom: 24}}>
-                    <Text {...text.popupTitle}>Filtros</Text>
-                </View> */}
-                {/* Value input container */}
                 <View style={{gap: 10, paddingBottom: 14}}>
-                    {/* Section title container */}
                     <View style={{paddingHorizontal: 16}}>
                         <Text {...text.popupTitle}>Valor absoluto</Text>
                     </View>
-                    {/* Text fields container */}
                     <View style={{paddingHorizontal: 16, borderRadius: 26, backgroundColor: theme.fill.secondary}}>
                         <GValueInput
                             separator={"translucent"}

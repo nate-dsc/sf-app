@@ -24,7 +24,11 @@ export default function DateButton({isActive, ...rest}: OrderButtonProps) {
         {...rest}
         >
             <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                <Ionicons size={26} name={filters.orderBy === "desc" ? (filters.sortBy === "date"? "swap-vertical" : "arrow-down") : "arrow-up"} color={isActive ? theme.colors.blue : theme.text.label} />
+                <Ionicons
+                    size={26}
+                    name={filters.orderBy === "desc" ? (filters.sortBy === "date"? "swap-vertical" : "arrow-down") : "arrow-up"}
+                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+                />
             </View>
             
         </TouchableOpacity>

@@ -22,7 +22,11 @@ export default function DateButton({isActive, ...rest}: DateButtonProps) {
         {...rest}
         >
             <View style={{justifyContent: "center", alignItems: "center"}}>
-                <Ionicons size={26} name={isActive ? "calendar" : "calendar-outline"} color={isActive ? theme.colors.blue : theme.text.label}/>
+                <Ionicons
+                    size={26}
+                    name={isActive ? "calendar" : "calendar-outline"}
+                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+                />
             </View>
             
         </TouchableOpacity>

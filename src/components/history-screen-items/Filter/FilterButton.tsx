@@ -22,7 +22,11 @@ export default function FilterButton({isActive, ...rest}: FilterButtonProps) {
         {...rest}
         >
             <View style={{position: "absolute", top: 13, left: 11, right: 12}}>
-                <Ionicons size={26} name={isActive ? "funnel" : "funnel-outline"} color={isActive ? theme.colors.blue : theme.text.label}/>
+                <Ionicons
+                    size={26}
+                    name={isActive ? "funnel" : "funnel-outline"}
+                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+                />
             </View>
             
         </TouchableOpacity>

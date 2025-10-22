@@ -1,4 +1,4 @@
-import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
+import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useTheme } from "@/context/ThemeContext";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -33,20 +33,13 @@ export default function MeasuresScreen() {
         <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                <View style={{paddingHorizontal: 16, borderRadius: 26, backgroundColor: theme.fill.secondary}}>
-                    <GDateInput
-                        separator={"translucent"}
-                        label={"Data inicial"}
-                        value={new Date()}
-                        onDateChange={()=>{}}
-                    />
-                    <GDateInput
-                        separator="none"
-                        label="Data final"
-                        value={new Date()}
-                        onDateChange={()=>{}}
-                    />
-                </View>
+                <SegmentedControlCompact options={[
+        {label: "Todas", value: "all"},
+        {label: "Entradas", value: "inflow"},
+        {label: "Saídas", value: "outflow"}
+    ]} selectedValue={"all"} onChange={function (selectedValue: unknown): void {
+                    throw new Error("Function not implemented.");
+                } } />
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels

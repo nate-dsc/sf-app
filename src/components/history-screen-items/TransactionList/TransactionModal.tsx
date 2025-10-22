@@ -1,6 +1,3 @@
-import DeleteButton from "@/components/buttons/DeleteButton"
-import RecurringLinkButton from "@/components/buttons/RecurringLinkButton"
-import ReturnButton from "@/components/buttons/ReturnButton"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { Transaction, useTransactionDatabase } from "@/database/useTransactionDatabase"
@@ -10,7 +7,7 @@ import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
 import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 
 type TransactionModalProps = {
     transaction: Transaction | null,
@@ -51,83 +48,121 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                 intensity={10}
                 tint="default"
             />
-            <View style={{
-                rowGap: 12,
-                backgroundColor: theme.background.group.secondaryBg,
-                borderWidth: 1,
-                borderColor: theme.background.tertiaryBg,
-                padding: 15,
-                borderRadius: 30,
-                borderCurve: "continuous",
-                shadowColor: "#000",
-                shadowOpacity: 0.2,
-                shadowRadius: 32 ,
-                shadowOffset: {width: 0, height: 0}}}
+            <TouchableWithoutFeedback>
+            <View 
+                style={{
+                    rowGap: 10,
+                    backgroundColor: theme.background.group.secondaryBg,
+                    borderWidth: 1,
+                    borderColor: theme.background.tertiaryBg,
+                    padding: 13,
+                    borderRadius: 34,
+                    borderCurve: "continuous",
+                    shadowColor: "#000",
+                    shadowOpacity: 0.2,
+                    shadowRadius: 32,
+                    shadowOffset: {width: 0, height: 0}
+                }}
             >
-                <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
-                    <View style={{ flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
+                <View style={{paddingHorizontal: 10, paddingTop: 7}}>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
                         <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
+                        <Text 
+                            style={{fontSize: 15, lineHeight: 25, color: theme.text.secondaryLabel}}
+                        >
+                            {timestampedYMDtoLocaleDate(transaction.date) || ""}
+                        </Text>
+                    </View>
+                    
+                    <Text 
+                        style={[
+                            {textAlign: "right", color: theme.text.label},
+                            FontStyles.numLargeTitle
+                        ]}
+                    >
+                        {valueStr}
+                    </Text>
+
+                    <View>
                         <Text
                             style={[
-                                FontStyles.subhead,
-                                {paddingHorizontal: 12, lineHeight: 25, color: theme.text.secondaryLabel}
+                                {textAlign: "left", color: theme.text.secondaryLabel},
+                                FontStyles.subhead
                             ]}
-                        >{category.label}</Text>
+                        >
+                            Sobre essa transação:
+                        </Text>
+                        <Text 
+                            style={[
+                                {textAlign: "justify", color: theme.text.secondaryLabel},
+                                FontStyles.subhead
+                            ]}
+                        >
+                            {transaction.description || ""}
+                        </Text>
                     </View>
-                    <Text 
-                        style={[
-                            FontStyles.subhead,
-                            {lineHeight: 25, color: theme.text.secondaryLabel}
-                        ]}
-                    >{timestampedYMDtoLocaleDate(transaction.date) || ""}</Text>
+                    
+                    <View>
+                        <Text
+                            style={[
+                                {textAlign: "left", color: theme.text.secondaryLabel},
+                                FontStyles.subhead
+                            ]}
+                        >ID recorrencia:</Text>
+                        <Text 
+                            style={[
+                                {textAlign: "justify", color: theme.text.secondaryLabel},
+                                FontStyles.subhead
+                            ]}
+                        >{transaction.id_recurring || ""}</Text>
+                    </View>
+                    
                 </View>
-                <Text 
-                    style={[
-                        {textAlign: "right", color: theme.text.label},
-                        FontStyles.numLargeTitle
-                    ]}
-                >{valueStr}</Text>
-                <View>
-                    <Text
-                        style={[
-                            {textAlign: "left", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
-                    >Sobre essa transação:</Text>
-                    <Text 
-                        style={[
-                            {textAlign: "justify", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
-                    >{transaction.description || ""}</Text>
-                </View>
-                <View>
-                    <Text
-                        style={[
-                            {textAlign: "left", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
-                    >ID recorrencia:</Text>
-                    <Text 
-                        style={[
-                            {textAlign: "justify", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
-                    >{transaction.id_recurring || ""}</Text>
-                </View>
-                
-            </View>
-            <View style={{flexDirection: "row", flexWrap: "wrap", justifyContent: "center", columnGap: 36, marginHorizontal: 36}}>
-                <View style={{}}>
-                    <DeleteButton onPress={() => handleDeletion(transaction.id)}/>
-                </View>
-                {transaction.id_recurring ? <RecurringLinkButton /> : null}
-                <View style={{}}>
-                    <ReturnButton styles={{borderRadius: 100}} onPress={onBackgroundPress}/>
-                </View>
-            </View>
-            
 
+                <View 
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 16,
+                    }}
+                >
+                    <TouchableOpacity
+                        onPress={() => handleDeletion(transaction.id)}
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 100,
+                            paddingVertical: 13,
+                            backgroundColor: theme.fill.secondary
+                        }}
+                    >
+                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.red}]}>Apagar</Text>
+                    </TouchableOpacity>
+
+                    
+                    <TouchableOpacity
+                        onPress={onBackgroundPress}
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: 100,
+                            paddingVertical: 13,
+                            backgroundColor: theme.colors.blue
+                        }}
+                    >
+                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Filtrar</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            </TouchableWithoutFeedback>
         </Pressable>
     )    
 

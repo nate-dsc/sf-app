@@ -66,24 +66,19 @@ export default function TransactionHistoryScreen() {
     return(
         <View style={{flex: 1, paddingTop: headerHeight + 10}}>
             <View style={{
-                //flex: 1,
-                //position: "absolute",
-                //top: headerHeight + 10,
-                //left: 0,
-                //right: 0,
                 marginHorizontal: 16,
                 marginBottom: 10,
-                padding: 6,
+                padding: 5,
                 borderRadius: 30,
+                borderWidth: 1,
                 borderTopLeftRadius: 24,
                 borderTopRightRadius: 24,
                 borderCurve: "continuous",
                 backgroundColor: theme.background.group.secondaryBg,
-                zIndex: 1
+                borderColor: theme.background.group.tertiaryBg,
             }}>
                 <View style={{
                     paddingBottom: 12,
-                    //paddingTop: 6
                 }}>
                         <SegmentedControlCompact 
                             options={typeOptions}
