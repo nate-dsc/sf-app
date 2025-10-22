@@ -249,6 +249,7 @@ export function useTransactionDatabase() {
 
                     await database.withTransactionAsync(async () => {
                         for(const occurrence of pendingOccurrences) {
+                            occurrence.setHours(0,0,0)
                             await database.runAsync("INSERT INTO transactions (value, description, category, date, id_recurring) VALUES (?, ?, ?, ?, ?)",
                                 [blueprint.value, blueprint.description, blueprint.category, occurrence.toISOString().slice(0, 16), blueprint.id]
                             )
