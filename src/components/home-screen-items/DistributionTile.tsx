@@ -1,7 +1,7 @@
 import { useTheme } from "@/context/ThemeContext"
+import { useTranslation } from "react-i18next"
 import { Text, View, ViewStyle } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
-import { TileStyles } from "./TileStyles"
 
 
 type DistributionProps = {
@@ -13,12 +13,34 @@ type DistributionProps = {
 
 export default function DistributionTile({value, description, isOutflow, style}: DistributionProps) {
 
-    const theme = useTheme()
-    const tileStyles = TileStyles(theme.theme)
+    const {t} = useTranslation()
+    const {theme} = useTheme()
 
     return(
-        <View style={[tileStyles.container, style]}>
-            <Text style={FontStyles.title2}>Distribution</Text>
+        <View style={{gap: 6}}>
+            <View style={{paddingHorizontal: 16}}>
+                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                    {t("tiles.distribution")}
+                </Text>
+            </View>
+            <View 
+                style={{
+                    aspectRatio: 1,
+                    backgroundColor: theme.background.elevated.bg,
+                    borderWidth: 1,
+                    borderColor: theme.background.tertiaryBg,
+                    borderRadius: 24,
+                    padding: 15
+                }}
+            >
+                <Text
+                    style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    placeholder
+                </Text>
+            </View>
         </View>
     )
 

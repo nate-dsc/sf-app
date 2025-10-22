@@ -23,15 +23,27 @@ export default function BudgetTile() {
     const balanceStr = balance.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
-        <View style={tileStyles.container}>
-
-            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.balanceThisMonth")}</Text>
-            <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numLargeTitle]}>{balanceStr}</Text>
-            <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>of </Text>
-                <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numBody]}>{balanceStr}</Text>
+        <View style={{gap: 6}}>
+            <View style={{paddingHorizontal: 16}}>
+                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                    {t("tiles.balanceThisMonth")}
+                </Text>
             </View>
-
+            <View 
+                style={{
+                    backgroundColor: theme.background.elevated.bg,
+                    borderWidth: 1,
+                    borderColor: theme.background.tertiaryBg,
+                    borderRadius: 24,
+                    padding: 15
+                }}
+            >
+                <Text style={[{textAlign: "right"}, tileStyles.text, FontStyles.numLargeTitle]}>{balanceStr}</Text>
+                <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+                    <Text style={[tileStyles.textUnfocused, FontStyles.body]}>of </Text>
+                    <Text style={[{textAlign: "right"}, tileStyles.textUnfocused, FontStyles.numBody]}>{balanceStr}</Text>
+                </View>
+            </View>
         </View>
     )
 }

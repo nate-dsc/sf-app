@@ -2,7 +2,6 @@ import { useTheme } from "@/context/ThemeContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
-import TextTicker from "react-native-text-ticker"
 import { FontStyles } from "../styles/FontStyles"
 import { TileStyles } from "./TileStyles"
 
@@ -24,16 +23,29 @@ export default function OutflowTile() {
     const outflowStr = outflow.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
     return(
-        <View style={[tileStyles.container]}>
-            <Text style={[tileStyles.text, FontStyles.title3]}>{t("tiles.expenses")}</Text>
-            <TextTicker 
-                style={[tileStyles.text, FontStyles.numTitle1]}
-                duration={4000}
-                animationType="bounce"
-                loop={true}
-                scroll={true}
-                bounceDelay={6000}
-            >{outflowStr}</TextTicker>
+        <View style={{gap: 6}}>
+            <View style={{paddingHorizontal: 16}}>
+                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                    {t("tiles.expenses")}
+                </Text>
+            </View>
+            <View 
+                style={{
+                    backgroundColor: theme.background.elevated.bg,
+                    borderWidth: 1,
+                    borderColor: theme.background.tertiaryBg,
+                    borderRadius: 24,
+                    padding: 15
+                }}
+            >
+                <Text
+                    style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {outflowStr}
+                </Text>
+            </View>
         </View>
     )
 }
