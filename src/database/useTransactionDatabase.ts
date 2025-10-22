@@ -221,8 +221,9 @@ export function useTransactionDatabase() {
 
     async function createAndSyncRecurringTransactions() {
         console.log("Iniciando criação e sincronização de transações recorrentes")
-        const now = new Date()
-        const nowStr = now.toISOString().slice(0, 16)
+        const newEndOfDay = new Date()
+        newEndOfDay.setHours(23,59,59)
+        const newEndOfDayStr = newEndOfDay.toISOString().slice(0, 16)
 
         try {
             const allRecurringTransactions = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring")
@@ -241,7 +242,7 @@ export function useTransactionDatabase() {
                 const startDateForCheck = blueprint.date_last_processed ? new Date(`${blueprint.date_last_processed}Z`) : new Date(`${blueprint.date_start}Z`)
                 //console.log("startDateForCheck: " + startDateForCheck.toISOString())
 
-                const pendingOccurrences = rrule.between(startDateForCheck, now)
+                const pendingOccurrences = rrule.between(startDateForCheck, newEndOfDay)
 
                 if(pendingOccurrences.length > 0) {
                     console.log(`${pendingOccurrences.length} ocorrências pendentes`)
@@ -254,7 +255,7 @@ export function useTransactionDatabase() {
                             console.log(`Criada transação da transação recorrente ${blueprint.id} no dia ${occurrence.toISOString().slice(0, 16)}`)
                         }
                         await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
-                            [nowStr, blueprint.id]
+                            [newEndOfDayStr, blueprint.id]
                         )
                     })
                 }
