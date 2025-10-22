@@ -4,8 +4,10 @@ import { Transaction, useTransactionDatabase } from "@/database/useTransactionDa
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
+import { describeRRule } from "@/utils/RRULEUtils"
 import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 
@@ -24,9 +26,11 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
 
+    const [rruleDescription, setRruleDescription] = useState<string | null>(null)
+
     const category = findCategoryByID(transaction.category)
 
-    const { deleteTransaction } = useTransactionDatabase()
+    const { deleteTransaction, getRRULE } = useTransactionDatabase()
 
     const handleDeletion = async (id: number) => {
         try {
@@ -37,6 +41,24 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             console.log("Falha ao deletar. Tente novamente.");
         }
     }
+
+    useEffect(() => {
+        setRruleDescription(null)
+        if(transaction && transaction.id_recurring) {
+            const fetchRruleDescription = async () => {
+                try {
+                    const rrule = await getRRULE(transaction.id_recurring!)
+                    const description = describeRRule(rrule, t)
+                    setRruleDescription(description)
+                } catch(error) {
+                    console.error("Falha ao buscar RRULE:", error)
+                    setRruleDescription(null)
+                }
+            }
+
+            fetchRruleDescription()
+        }
+    },[])
 
     return(
         <Pressable
@@ -89,10 +111,10 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                         {valueStr}
                     </Text>
 
-                    <View>
+                    <View style={{paddingBottom: 14}}>
                         <Text
                             style={[
-                                {textAlign: "left", color: theme.text.secondaryLabel},
+                                {textAlign: "left", color: theme.text.secondaryLabel, paddingBottom: 6},
                                 FontStyles.subhead
                             ]}
                         >
@@ -107,21 +129,24 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                             {transaction.description || ""}
                         </Text>
                     </View>
-                    
-                    <View>
-                        <Text
-                            style={[
-                                {textAlign: "left", color: theme.text.secondaryLabel},
-                                FontStyles.subhead
-                            ]}
-                        >ID recorrencia:</Text>
-                        <Text 
-                            style={[
-                                {textAlign: "justify", color: theme.text.secondaryLabel},
-                                FontStyles.subhead
-                            ]}
-                        >{transaction.id_recurring || ""}</Text>
-                    </View>
+
+                    {rruleDescription ?
+                        <View style={{paddingBottom: 14}}>
+                            <Text
+                                style={[
+                                    {textAlign: "left", color: theme.text.secondaryLabel, paddingBottom: 6},
+                                    FontStyles.subhead
+                                ]}
+                            >Essa transação é recorrente com frequência:</Text>
+                            <Text 
+                                style={[
+                                    {textAlign: "justify", color: theme.text.secondaryLabel},
+                                    FontStyles.subhead
+                                ]}
+                            >{rruleDescription || ""}</Text>
+                        </View> :
+                        null
+                    }
                     
                 </View>
 
@@ -158,7 +183,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                             backgroundColor: theme.colors.blue
                         }}
                     >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Filtrar</Text>
+                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Fechar</Text>
                     </TouchableOpacity>
                 </View>
             </View>

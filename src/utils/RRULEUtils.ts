@@ -138,7 +138,7 @@ export function describeRRule(rruleStr: string, t: (key: string) => string): str
     if (options.until) {
         const d = options.until
         parts.push(
-            `${t("describeRRULE.until")} ${monthShortDate(d)}`
+            `${t("describeRRULE.until")} ${monthShortDate(d)}.`
         )
     } else if (options.count) {
         parts.push(`${t("describeRRULE.untilRepeats")} ${options.count} ${options.count > 1 ? t("describeRRULE.times") : t("describeRRULE.time")}.`)

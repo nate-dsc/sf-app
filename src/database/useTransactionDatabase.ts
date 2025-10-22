@@ -269,27 +269,26 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function getRecurrenceDescription(id: number): Promise<string> {
+    async function getRRULE(id: number): Promise<string> {
         try {
             const parentTransaction = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring WHERE id = ?",[id])
 
-            if(parentTransaction.length < 1) {
-                return("Não foi possível achar a recorrência dessa transação")
-            }
-
-            const rruleOptions = RRule.parseString(parentTransaction[0].rrule)
-            const rrule = new RRule(rruleOptions)
-
-            return ""
-
+            return parentTransaction[0].rrule
 
         } catch(error) {
             console.error("Erro na busca por transação recorrente:", error)
-            return("Não foi possível achar a recorrência dessa transação")
+            throw error
         }
-
-        
     }
 
-    return { createTransaction, createTransactionRecurring, deleteTransaction, getTransactionsFromMonth, getSummaryFromDB, getPaginatedFilteredTransactions, createAndSyncRecurringTransactions }
+    return {
+        createTransaction,
+        createTransactionRecurring,
+        deleteTransaction,
+        getTransactionsFromMonth,
+        getSummaryFromDB,
+        getPaginatedFilteredTransactions,
+        createAndSyncRecurringTransactions,
+        getRRULE
+    }
 }
