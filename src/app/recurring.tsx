@@ -11,11 +11,11 @@ export default function RecurringScreen() {
     const {theme} = useTheme()
 
     return(
-            <ScrollView contentContainerStyle={{flex: 1, paddingHorizontal: 16, paddingBottom: 120}}>
+            <ScrollView contentContainerStyle={{flex: 1, paddingTop: 10, paddingHorizontal: 16, paddingBottom: 120}}>
                 <View style={{flex: 1}}>
                     <Text> Planning screen </Text>
                         <TouchableOpacity
-                            onPress={() => router.push("/(planning)/recurring")}
+                            onPress={() => router.push("/recurring")}
                         >
                             <View 
                                 style={{

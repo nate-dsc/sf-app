@@ -1,4 +1,3 @@
-import { SStyles } from "@/components/styles/ScreenStyles"
 import { useTheme } from "@/context/ThemeContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
@@ -11,8 +10,7 @@ export default function PlanningScreen() {
     const {theme} = useTheme()
 
     return(
-        <View style={{flex: 1, paddingTop: headerHeight}}>
-            <ScrollView contentContainerStyle={SStyles.mainContainer}>
+            <ScrollView contentContainerStyle={{flex: 1, paddingTop: 10, paddingHorizontal: 16, paddingBottom: 120}}>
                 <View style={{flex: 1}}>
                     <Text> Planning screen </Text>
                         <TouchableOpacity
@@ -32,7 +30,5 @@ export default function PlanningScreen() {
                         </TouchableOpacity>
                 </View>
             </ScrollView>
-            
-        </View>
     )
 }

@@ -1,7 +1,12 @@
 {
     "nav": {
-        "home": "Home",
-        "history": "History",
+        "start": "Start",
+        "home": {
+            "index": "Home"
+        },
+        "history": {
+            "index": "History"
+        },
         "planning": {
             "index": "Planning",
             "recurring": "Recurring transactions"

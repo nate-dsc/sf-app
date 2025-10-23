@@ -46,12 +46,14 @@ function RootLayoutNav() {
                             headerTitleStyle: { fontSize: 18, fontWeight: "600", color: theme.colors.white }
                         }}
                     >
+                        {/* Tabs */}
                         <Stack.Screen
                             name="(tabs)"
                             options={{
                                 headerShown: false,
                             }}
                         />
+                        {/* Configurações */}
                         <Stack.Screen
                             name="settings"
                             options={{
@@ -62,6 +64,18 @@ function RootLayoutNav() {
                                 headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
+                        {/* Telas de planejamento */}
+                        <Stack.Screen
+                            name="recurring"
+                            options={{
+                                title: t("nav.planning.recurring"),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.blue }
+                            }}
+                        />
+                        {/* Modais */}
                         <Stack.Screen
                             name="modalAdd"
                             options={{
@@ -94,6 +108,7 @@ function RootLayoutNav() {
                                 presentation: "formSheet"
                             }}
                         />
+                        {/* Telas de teste */}
                         <Stack.Screen
                             name="experiment"
                             options={{
@@ -116,16 +131,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: "Medidas"
-                            }}
-                        />
-                        <Stack.Screen
-                            name="recurring"
-                            options={{
-                                title: t("nav.planning.recurring"),
-                                headerBackButtonDisplayMode: "minimal",
-                                headerBackButtonMenuEnabled: false,
-                                headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                     </Stack>

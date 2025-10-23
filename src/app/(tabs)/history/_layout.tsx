@@ -2,7 +2,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { Stack, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
-export default function PlanningLayout() {
+export default function HistoryLayout() {
 
     const {t} = useTranslation()
     const {theme} = useTheme()
@@ -21,7 +21,7 @@ export default function PlanningLayout() {
             <Stack.Screen
                 name="index"
                 options={{
-                    title: t("nav.planning.index")
+                    title: t("nav.history.index")
                 }}
             />
         </Stack>

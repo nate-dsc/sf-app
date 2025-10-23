@@ -1,7 +1,12 @@
 {
     "nav": {
-        "home": "Início",
-        "history": "Histórico",
+        "start": "Início",
+        "home": {
+            "index": "Início"
+        },
+        "history": {
+            "index": "Histórico"
+        },
         "planning": {
             "index": "Planejar",
             "recurring": "Transações recorrentes"

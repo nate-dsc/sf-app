@@ -55,7 +55,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
 
                     // Hardcode dos icones
                     let iconName: keyof typeof Ionicons.glyphMap = "help";
-                    if (route.name === "index") isFocused ? iconName = "home" : iconName = "home-outline";
+                    if (route.name === "(home)") isFocused ? iconName = "home" : iconName = "home-outline";
                     else if (route.name === "history") isFocused ? iconName = "list" : iconName = "list-outline";
                     else if (route.name === "planning") isFocused ? iconName = "calendar" : iconName = "calendar-outline";
 
