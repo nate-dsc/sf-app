@@ -2,7 +2,10 @@
     "nav": {
         "home": "Início",
         "history": "Histórico",
-        "planning": "Planejar",
+        "planning": {
+            "index": "Planejar",
+            "recurring": "Transações recorrentes"
+        },
         "settings": "Configurações",
         "newTransaction": "Nova transação",
         "categories": "Selecione uma categoria",

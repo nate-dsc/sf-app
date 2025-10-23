@@ -1,4 +1,3 @@
-import { FontStyles } from "@/components/styles/FontStyles"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { ThemeProvider, useTheme } from "@/context/ThemeContext"
@@ -39,10 +38,14 @@ function RootLayoutNav() {
             <NavigationThemeProvider value={theme.navigationTheme}>
                 <SafeAreaProvider>
                     <StatusBar style={preference === 'dark' ? 'light' : preference === 'light' ? 'dark' : 'auto'}/>
-                    <Stack screenOptions={{
-                        headerShadowVisible: false,
-                        headerTransparent: true,
-                        headerTitleStyle: FontStyles.title2}}>
+                    <Stack 
+                        screenOptions={{
+                            headerTitleAlign: "center",
+                            headerShadowVisible: false,
+                            headerTransparent: true,
+                            headerTitleStyle: { fontSize: 18, fontWeight: "600", color: theme.colors.white }
+                        }}
+                    >
                         <Stack.Screen
                             name="(tabs)"
                             options={{
@@ -56,6 +59,7 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: "Start",
+                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                         <Stack.Screen
@@ -91,17 +95,6 @@ function RootLayoutNav() {
                             }}
                         />
                         <Stack.Screen
-                            name="FilterModalSheet"
-                            options={{
-                                headerBackButtonDisplayMode: "minimal",
-                                title: "Filtros",
-                                presentation: "formSheet",
-                                contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg
-                                }
-                            }}
-                        />
-                        <Stack.Screen
                             name="experiment"
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
@@ -123,6 +116,16 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: "Medidas"
+                            }}
+                        />
+                        <Stack.Screen
+                            name="recurring"
+                            options={{
+                                title: t("nav.planning.recurring"),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                     </Stack>
