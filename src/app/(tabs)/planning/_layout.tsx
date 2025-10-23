@@ -13,8 +13,8 @@ export default function PlanningLayout() {
             screenOptions={{
                 headerTitleAlign: "center",
                 headerShadowVisible: false,
-                headerStyle: { backgroundColor: theme.colors.blue },
-                headerTitleStyle: { fontSize: 18, fontWeight: "600", color: theme.colors.white },
+                headerStyle: { backgroundColor: theme.navigation.headerBackground },
+                headerTitleStyle: { fontSize: 22, fontWeight: "600", color: theme.navigation.headerText },
                 
             }}
         >

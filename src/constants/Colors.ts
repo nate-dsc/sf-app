@@ -24,8 +24,8 @@ const cyanDark = "rgb(60,211,254)"
 const blue = "rgb(0,136,255)"
 const blueDark = "rgb(0,145,255)"
 
-const indigo = "rgb(255,141,40)"
-const indigoDark = "rgb(255,146,48)"
+const indigo = "rgb(97,85,245)"
+const indigoDark = "rgb(109,124,255)"
 
 const purple = "rgb(203,48,224)"
 const purpleDark = "rgb(219,52,242)"
@@ -219,6 +219,10 @@ type CustomTheme = {
         tabBarLabelUnfocused: string,
 
         tabBarGradientStart: string,
+
+        headerBackground: string,
+        headerText: string,
+        headerButton: string,
     },
     custom: {
         background: string,
@@ -355,7 +359,11 @@ export const light: CustomTheme = {
         tabBarIconUnfocused: "#808080",
         tabBarLabelUnfocused: "#808080",
 
-        tabBarGradientStart: "#FFFFFF00"
+        tabBarGradientStart: "#FFFFFF00",
+
+        headerBackground: orange,
+        headerText: labelDark,
+        headerButton: label,
     },
     custom: {
         background: "#F2F2F2",
@@ -490,7 +498,11 @@ export const dark: CustomTheme = {
         tabBarIconUnfocused: "#6E6E6E",
         tabBarLabelUnfocused: "#6E6E6E",
 
-        tabBarGradientStart: "#00000000"
+        tabBarGradientStart: "#00000000",
+
+        headerBackground: indigoDark,
+        headerText: labelDark,
+        headerButton: label,
     },
     custom: {
         background: "#F2F2F2",

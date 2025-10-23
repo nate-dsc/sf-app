@@ -13,8 +13,8 @@ export default function HomeScreen() {
     return(
         <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{}}
-            contentContainerStyle={{flex: 1, paddingHorizontal: 16, gap: 12, paddingBottom: 130, paddingTop: 10}}
+            style={{flex: 1}}
+            contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 130, paddingTop: 10}}
         >
             <BudgetTile />
         
