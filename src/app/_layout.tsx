@@ -87,6 +87,13 @@ function RootLayoutNav() {
                                 headerStyle: { backgroundColor: theme.colors.red }
                             }}
                         />
+                        {/* Telas de cartões de crédito */}
+                        <Stack.Screen
+                            name="credit"
+                            options={{
+                                headerShown: false,
+                            }}
+                        />
                         {/* Modais */}
                         <Stack.Screen
                             name="modalAdd"

@@ -62,7 +62,7 @@ export default function PlanningScreen() {
                                     label="Cartões de Crédito"
                                     icon="card"
                                     color={theme.colors.pink}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/credit")}
                                 />
                             </View>
                         </View>
