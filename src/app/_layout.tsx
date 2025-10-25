@@ -33,11 +33,13 @@ function RootLayoutNav() {
         loadData({ getSummaryFromDB });
     }, [refreshKey])
 
+    //<StatusBar style={preference === 'dark' ? 'light' : preference === 'light' ? 'dark' : 'auto'}/>
+
     return(
         <NewTransactionProvider>
             <NavigationThemeProvider value={theme.navigationTheme}>
                 <SafeAreaProvider>
-                    <StatusBar style={preference === 'dark' ? 'light' : preference === 'light' ? 'dark' : 'auto'}/>
+                    <StatusBar style={'light'}/>
                     <Stack 
                         screenOptions={{
                             headerTitleAlign: "center",
@@ -66,13 +68,23 @@ function RootLayoutNav() {
                         />
                         {/* Telas de planejamento */}
                         <Stack.Screen
-                            name="recurring"
+                            name="incomeRecurring"
                             options={{
-                                title: t("nav.planning.recurring"),
+                                title: t("nav.planning.incomeRecurring"),
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.blue }
+                                headerStyle: { backgroundColor: theme.colors.green }
+                            }}
+                        />
+                        <Stack.Screen
+                            name="expenseRecurring"
+                            options={{
+                                title: t("nav.planning.expenseRecurring"),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.red }
                             }}
                         />
                         {/* Modais */}

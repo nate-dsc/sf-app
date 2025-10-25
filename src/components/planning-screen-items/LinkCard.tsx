@@ -19,13 +19,14 @@ export default function LinkCard({label, icon, color, onPress}: LinkCardProps) {
         <TouchableOpacity onPress={onPress}>
             <View
                 style={{
-                    width: 150,
+                    flex: 1,
                     backgroundColor: color ?? theme.colors.black,
                     borderRadius: 24,
                     justifyContent: "center",
                     alignItems: "center",
                     paddingHorizontal: 16,
                 }}
+                
             >
                 <View style={{paddingTop: 16}}>
                     <Ionicons name={icon ?? "help-outline"} size={36} color={theme.colors.white}/>

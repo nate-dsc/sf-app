@@ -9,7 +9,8 @@
         },
         "planning": {
             "index": "Planejar",
-            "recurring": "Transações recorrentes"
+            "incomeRecurring": "Receita recorrente",
+            "expenseRecurring": "Despesas recorrentes"
         },
         "settings": "Configurações",
         "newTransaction": "Nova transação",

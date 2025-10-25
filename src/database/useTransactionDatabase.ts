@@ -1,5 +1,6 @@
 import { SearchFilters } from "@/context/SearchFiltersContext"
 import { Summary, useSummaryStore } from "@/stores/useSummaryStore"
+import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
 
@@ -80,6 +81,28 @@ export function useTransactionDatabase() {
             throw error
         }
 
+    }
+
+    async function deleteRecurringTransaction(id: number) {
+        try {
+            await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
+        } catch (error) {
+            console.error("Could not delete recurring transaction", error)
+            throw error
+        }
+
+    }
+
+    async function deleteRecurringTransactionCascade(id: number) {
+        try {
+            await database.withTransactionAsync(async () => {
+                await database.runAsync("DELETE FROM transactions WHERE id_recurring = ?", [id])
+                await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
+            })
+        } catch (error) {
+            console.error("Could not delete recurring transaction cascade", error)
+            throw error
+        }
     }
 
     async function getTransactionsFromMonth(YMString: string, orderBy: "day" | "id") {
@@ -283,14 +306,64 @@ export function useTransactionDatabase() {
         }
     }
 
+    async function getRecurringIncomeTransactions() {
+        try {
+            const result = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring WHERE value > 0")
+            return result
+        } catch (error) {
+            console.log("Não foi possível recuperar as transações recorrentes")
+            throw error
+        }
+    }
+
+    async function getRecurringSummaryThisMonth(flowType: "inflow" | "outflow") {
+        const now = new Date()
+
+        const startLocal = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0)
+        const endLocal = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59)
+
+        const startUTC = localToUTC(startLocal)
+        const endUTC = localToUTC(endLocal)
+
+
+        let totalRecurringIncome = 0
+
+        const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE value < 0" : "SELECT * FROM transactions_recurring WHERE value > 0"
+
+        try {
+            const recurringIncomeTransactions = await database.getAllAsync<TransactionRecurring>(query)
+
+            for(const recurringTransaction of recurringIncomeTransactions) {
+                const rruleOptions = RRule.parseString(recurringTransaction.rrule)
+                rruleOptions.dtstart = new Date(`${recurringTransaction.date_start}Z`)
+                const rrule = new RRule(rruleOptions)
+
+                const pendingOccurrences = rrule.between(startUTC, endUTC, true)
+
+                if(pendingOccurrences.length > 0) {
+                    totalRecurringIncome += recurringTransaction.value * pendingOccurrences.length
+                }
+            }
+
+            return {totalRecurringIncome, recurringIncomeTransactions}
+
+        } catch (error) {
+            console.log("Não foi possível recuperar o sumário das transações recorrentes")
+            throw error
+        }
+    }
+
     return {
         createTransaction,
         createTransactionRecurring,
         deleteTransaction,
+        deleteRecurringTransaction,
+        deleteRecurringTransactionCascade,
         getTransactionsFromMonth,
         getSummaryFromDB,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
-        getRRULE
+        getRRULE,
+        getRecurringSummaryThisMonth
     }
 }

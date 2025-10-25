@@ -9,7 +9,8 @@
         },
         "planning": {
             "index": "Planning",
-            "recurring": "Recurring transactions"
+            "incomeRecurring": "Recurring income",
+            "expenseRecurring": "Recurring expenses"
         },
         "settings": "Settings",
         "newTransaction": "New transaction",

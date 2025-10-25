@@ -30,6 +30,17 @@ export function timestampedYMDtoLocaleDateWithoutYear (timestampedYMD: string) {
     return date.toLocaleString(i18n.language, options)
 }
 
+export function timestampedYMDtoLocaleMonthShortDate (timestampedYMD: string) {
+    const UTCstring = timestampedYMD + "Z"
+    const date = new Date(UTCstring)
+    const options = {
+        day: 'numeric',
+        month: 'short', 
+        year: 'numeric'
+    } as const
+    return date.toLocaleString(i18n.language, options)
+}
+
 export function datesToIntervalStrings(initialDate: Date, finalDate: Date): string[] {
     const initial = initialDate
     initial.setHours(0,0,0,0)
@@ -38,4 +49,8 @@ export function datesToIntervalStrings(initialDate: Date, finalDate: Date): stri
     const idStr = initial.toISOString().slice(0,16)
     const fdStr = final.toISOString().slice(0,16)
     return [idStr, fdStr]
+}
+
+export function localToUTC(date: Date) {
+    return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
 }

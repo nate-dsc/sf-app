@@ -361,7 +361,7 @@ export const light: CustomTheme = {
 
         tabBarGradientStart: "#FFFFFF00",
 
-        headerBackground: orange,
+        headerBackground: indigo,
         headerText: labelDark,
         headerButton: label,
     },
