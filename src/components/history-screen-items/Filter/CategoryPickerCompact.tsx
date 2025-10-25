@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { TransactionTypeFilter } from "@/types/transaction"
 import { Ionicons } from "@expo/vector-icons"
 import React, { useMemo, useState } from "react"
@@ -22,7 +22,7 @@ type CategoryPickerCompactProps = {
 
 export function CategoryPickerCompact({ type, onChangeSelected, initialSelected = [] }: CategoryPickerCompactProps) {
     const { t } = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const [selected, setSelected] = useState<number[]>(initialSelected)
 
     const categoryList: Category[] = [

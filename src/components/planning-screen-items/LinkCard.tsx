@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Ionicons } from "@expo/vector-icons"
 import { Text, TouchableOpacity, View } from "react-native"
 
@@ -13,7 +13,7 @@ type LinkCardProps = {
 
 export default function LinkCard({label, icon, color, onPress}: LinkCardProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <TouchableOpacity onPress={onPress}>

@@ -1,5 +1,5 @@
 
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
 import { useState } from "react"
 import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
@@ -20,7 +20,7 @@ type GValueInputProps = GroupedComponentsProps & {
 
 export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType}: GValueInputProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const text = TypographyProps(theme)
     const placeholder = 0.0
 

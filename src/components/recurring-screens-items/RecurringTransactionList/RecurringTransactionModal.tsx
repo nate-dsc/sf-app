@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/transaction"
@@ -21,7 +21,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
     if(!transaction) return null
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const value = transaction.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()

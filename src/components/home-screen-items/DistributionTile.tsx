@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useTranslation } from "react-i18next"
 import { Text, View, ViewStyle } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
@@ -14,7 +14,7 @@ type DistributionProps = {
 export default function DistributionTile({value, description, isOutflow, style}: DistributionProps) {
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <View style={{gap: 6}}>

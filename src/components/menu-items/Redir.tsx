@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Ionicons } from "@expo/vector-icons"
 import { Text, TouchableOpacity, View } from "react-native"
 
@@ -13,7 +13,7 @@ type RedirProps = {
 
 export default function Redir({text, iconName, onPress}: RedirProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <TouchableOpacity

@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -16,7 +16,7 @@ type SegmentedControlProps<T> = {
 
 export default function SegmentedControlCompact<T>({ options, selectedValue, onChange}: SegmentedControlProps<T>) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return (
         <View style={{

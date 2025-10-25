@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { FontStyles } from "../styles/FontStyles";
@@ -18,7 +18,7 @@ type SegmentedControlProps<T> = {
 
 export default function SegmentedControl<T>({ options, selectedValue, onChange}: SegmentedControlProps<T>) {
 
-  const {theme} = useTheme()
+  const {theme} = useStyle()
   const menuStyles = MIStyles(theme)
 
   return (

@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Text, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 
@@ -8,7 +8,7 @@ type RecurringSummaryDisplayProps = {
 
 export default function MonthlyRecurringSummaryDisplay({monthlyTotal}: RecurringSummaryDisplayProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const realValue = monthlyTotal/100
     const totalStr = realValue.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 

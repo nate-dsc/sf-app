@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
@@ -7,7 +7,7 @@ import { TileStyles } from "./TileStyles"
 
 export default function InflowTile() {
     const { data, loading, error } = useSummaryStore()
-    const { theme } = useTheme()
+    const { theme } = useStyle()
     const { t } = useTranslation()
     const tileStyles = TileStyles(theme)
 

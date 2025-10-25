@@ -1,10 +1,10 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { TextInput, TextInputProps, View } from "react-native";
 
 export default function SearchBar({...rest}: TextInputProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <View style={{

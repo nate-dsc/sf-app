@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles";
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import i18n from "@/i18n";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Text, View } from "react-native";
@@ -13,7 +13,7 @@ type DatePickerProps = {
 
 export default function DatePicker({text, value, onDateChange}: DatePickerProps) {
 
-    const {theme, preference, setPreference}= useTheme()
+    const {theme, preference, setPreference}= useStyle()
     const menuStyles = MIStyles(theme)
 
     const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {

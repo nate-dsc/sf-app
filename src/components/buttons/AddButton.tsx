@@ -1,5 +1,5 @@
 import { ButtonStyles } from "@/components/buttons/ButtonStyles";
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
@@ -13,7 +13,7 @@ type AddButtonProps = {
 
 export default function AddButton({ size=40, onPress=()=>router.navigate("/modalAdd") }: AddButtonProps) {
 
-    const theme = useTheme()
+    const theme = useStyle()
     const buttonStyles = ButtonStyles(theme.theme)
     const iconSize = size - 2
 

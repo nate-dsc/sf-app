@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
@@ -12,7 +12,7 @@ type MonthPickerProps = {
 export default function MonthPicker({selectedMonths=[], onMonthPress}: MonthPickerProps) {
 
     const {t} = useTranslation()
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
     const menuStyles = MIStyles(theme)
 
     const monthLabels = [

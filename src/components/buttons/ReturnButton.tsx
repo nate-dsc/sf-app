@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
 import { FontStyles } from "../styles/FontStyles";
@@ -9,7 +9,7 @@ type ReturnButtonProps = TouchableOpacityProps & {
 
 export default function ReturnButton({styles, ...rest}: ReturnButtonProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <TouchableOpacity {...rest}>

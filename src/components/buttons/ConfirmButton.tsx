@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Text, TouchableOpacity, type TouchableOpacityProps } from "react-native"
 import { ButtonStyles } from "./ButtonStyles"
 
@@ -9,7 +9,7 @@ type ConfirmButtonProps = TouchableOpacityProps & {
 
 export default function ConfirmButton({buttonText, ...rest}: ConfirmButtonProps) {
 
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
     const buttonStyles = ButtonStyles(theme)
 
     return(

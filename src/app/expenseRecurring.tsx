@@ -2,7 +2,7 @@ import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
 import RecurringTransactionModal from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionModal"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -17,7 +17,7 @@ export default function ExpenseRecurringScreen() {
     const [rTModalVisible, setRTModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const headerHeight = useHeaderHeight()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     const handleItemPress = (item: RecurringTransaction) => {
         setSelectedRT(item)

@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Switch, SwitchProps, Text, View } from "react-native"
 import { MIStyles } from "./MenuItemStyles"
 
@@ -9,7 +9,7 @@ type CSwitchProps = SwitchProps & {
 
 export default function CSwitch({text, ...rest}: CSwitchProps) {
 
-    const theme = useTheme()
+    const theme = useStyle()
     const menuStyles = MIStyles(theme.theme)
 
     return(

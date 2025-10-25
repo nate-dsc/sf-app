@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import { TouchableOpacity } from "react-native";
 export default function HomeLayout() {
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const router = useRouter()
 
     return (

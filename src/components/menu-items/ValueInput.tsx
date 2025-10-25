@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
 import { useState } from "react"
 import { Text, TextInput, TextInputProps, View } from "react-native"
@@ -15,7 +15,7 @@ type ValueInputProps = Omit<TextInputProps, 'value' | 'onChangeText'> & {
 export default function ValueInput({leftText, value, onChangeText, flowType, ...rest}: ValueInputProps) {
 
     const placeholder = 0.0
-    const theme = useTheme()
+    const theme = useStyle()
     const menuStyles = MIStyles(theme.theme)
     
     const [isFocused, setIsFocused] = useState(false);

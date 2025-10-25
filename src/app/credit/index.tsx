@@ -1,6 +1,6 @@
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { ScrollView, Text, View } from "react-native"
@@ -8,18 +8,32 @@ import { ScrollView, Text, View } from "react-native"
 export default function CreditScreen() {
 
     const router = useRouter()
-    const {theme} = useTheme()
+    const {theme, layout} = useStyle()
 
     return(
-            <ScrollView contentContainerStyle={{paddingTop: useHeaderHeight(), paddingBottom: 120, gap: 16}}>
-                <View style={{gap: 10}}>
-                    <Text style={[FontStyles.title3, {color: theme.text.label, paddingHorizontal: 32}]}> Recorrentes </Text>
-
+            <ScrollView 
+                contentContainerStyle={{
+                    paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                    paddingHorizontal: layout.margin.contentArea,
+                    paddingBottom: 120,
+                    gap: layout.margin.sectionGap
+                }}
+            >
+                <View>
+                    <Text
+                        style={[
+                            FontStyles.title3,
+                            {color: theme.text.label,
+                            paddingHorizontal: layout.margin.contentArea}
+                        ]}
+                    >
+                        Recorrentes
+                    </Text>
+                </View>
                         <View
                             style={{
                                 flexDirection: "row",
-                                paddingHorizontal: 16,
-                                gap: 16
+                                gap: layout.margin.sectionGap
                             }}
                         >
                             <View style={{flex: 1}}>
@@ -39,7 +53,6 @@ export default function CreditScreen() {
                                 />
                             </View>
                         </View>
-                </View>
             </ScrollView>
     )
 }

@@ -1,6 +1,6 @@
 import { TileStyles } from "@/components/home-screen-items/TileStyles";
 import { FontStyles } from "@/components/styles/FontStyles";
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Transaction } from "@/database/useTransactionDatabase";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
@@ -16,7 +16,7 @@ type TransactionListItemProps = {
 export default function TransactionListItem({item, onItemPress}: TransactionListItemProps) {
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const tileStyles = TileStyles(theme)
     const value = item.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})

@@ -1,13 +1,13 @@
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useRouter } from "expo-router"
 import { ScrollView, Text, View } from "react-native"
 
 export default function PlanningScreen() {
 
     const router = useRouter()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
             <ScrollView contentContainerStyle={{paddingTop: 10, paddingBottom: 120, gap: 16}}>

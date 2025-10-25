@@ -1,5 +1,5 @@
 import { useSearchFilters } from "@/context/SearchFiltersContext"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
 import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
@@ -15,7 +15,7 @@ type FilterModalProps = {
 export default function FilterModal({onBackgroundPress}: FilterModalProps) {
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const text = TypographyProps(theme)
 
     const {filters, updateFilters, resetFilters} = useSearchFilters()

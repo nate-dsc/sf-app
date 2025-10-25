@@ -7,7 +7,7 @@ import SRedir from "@/components/menu-items/RedirSelect";
 import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl";
 import ValueInput from "@/components/menu-items/ValueInput";
 import { useNewTransaction } from "@/context/NewTransactionContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import i18n from "@/i18n";
 import { Flow } from "@/types/transaction";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -28,7 +28,7 @@ export default function AddModal() {
     const [newDate, setNewDate] = useState<Date>(new Date())
     const [numValue, setNumValue] = useState("")
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const buttonStyles = ButtonStyles(theme)
 
     const flowOptions: SCOption<Flow>[] = [

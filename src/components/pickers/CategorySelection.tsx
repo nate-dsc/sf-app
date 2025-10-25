@@ -1,5 +1,5 @@
 import { CategorySelectionStyles } from "@/components/styles/CategorySelectionStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Ionicons } from "@expo/vector-icons"
 import { Text, TouchableOpacity, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
@@ -11,7 +11,7 @@ type CategorySelectionProps = {
 
 export default function CategorySelection({options, onSelection}: CategorySelectionProps) {
 
-    const theme = useTheme()
+    const theme = useStyle()
     const styles = CategorySelectionStyles(theme.theme)
 
     const options2 = ["Home", "Food", "Groceries", "Transport", "Services", "Leisure", "Education", "Shopping", "Games", "Gambling",

@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Text, TouchableOpacity, View } from "react-native"
 import { FontStyles } from "../styles/FontStyles"
 import { MIStyles } from "./MenuItemStyles"
@@ -10,7 +10,7 @@ type DayPickerProps = {
 
 export default function DayPicker({selectedDays=[], onDayPress}: DayPickerProps) {
 
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
     const menuStyles = MIStyles(theme)
 
     const days = Array.from({ length: 31 }, (_, i) => i + 1)

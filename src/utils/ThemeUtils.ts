@@ -1,4 +1,4 @@
-import { type ThemePreference } from "@/context/ThemeContext"
+import { type ThemePreference } from "@/types/theme"
 
 export const preferenceToIndex = (pref: ThemePreference): number => {
     switch(pref) {

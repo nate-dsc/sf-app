@@ -2,7 +2,7 @@ import { MIStyles } from "@/components/menu-items/MenuItemStyles"
 import { type SCOption } from "@/components/menu-items/SegmentedControl"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
-import { ThemePreference, useTheme } from "@/context/ThemeContext"
+import { ThemePreference, useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
 import { Ionicons } from "@expo/vector-icons"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -17,7 +17,7 @@ export default function SettingsScreen() {
     const {t} = useTranslation()
 
     const router = useRouter()
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
 
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)

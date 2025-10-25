@@ -1,5 +1,5 @@
 
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -15,7 +15,7 @@ type StepperProps = {
 };
 
 export default function Stepper({singular, plural, min, max, value, onValueChange } : StepperProps) {
-    const {theme, setPreference, preference} = useTheme()
+    const {theme, setPreference, preference} = useStyle()
 
     const intervalRef = useRef<number | null>(null)
     const valueRef = useRef(value)

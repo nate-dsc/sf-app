@@ -1,6 +1,6 @@
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
-import { ThemeProvider, useTheme } from "@/context/ThemeContext"
+import { StyleProvider, useStyle } from "@/context/StyleContext"
 import { initializeDatabase } from "@/database/InitializeDatabase"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import "@/i18n"
@@ -16,7 +16,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 
 function RootLayoutNav() {
     const {t} = useTranslation()
-    const {theme, preference} = useTheme()
+    const {theme, preference} = useStyle()
 
     const { getSummaryFromDB, createAndSyncRecurringTransactions } = useTransactionDatabase();
     const {loadData, refreshKey} = useSummaryStore();
@@ -100,6 +100,7 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.newTransaction"),
+                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg
@@ -164,9 +165,9 @@ export default function RootLayout()
     return(
         <SearchFiltersProvider>
         <SQLiteProvider databaseName={"sf-app.db"} onInit={initializeDatabase}>
-            <ThemeProvider>
+            <StyleProvider>
                 <RootLayoutNav />
-            </ThemeProvider>
+            </StyleProvider>
         </SQLiteProvider>
         </SearchFiltersProvider>
     )

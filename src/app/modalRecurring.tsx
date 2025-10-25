@@ -10,7 +10,7 @@ import SegmentedControlCompact, { SCOption } from '@/components/menu-items/Segme
 import Stepper from '@/components/menu-items/Stepper';
 import { FontStyles } from '@/components/styles/FontStyles';
 import { useNewTransaction } from '@/context/NewTransactionContext';
-import { useTheme } from '@/context/ThemeContext';
+import { useStyle } from '@/context/StyleContext';
 import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
@@ -33,7 +33,7 @@ export default function ModalRecurring() {
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
     const menuStyles = MIStyles(theme)
 
     // Constantes para as opções da UI

@@ -1,10 +1,10 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Stack } from "expo-router"
 import { useTranslation } from "react-i18next"
 
 export default function CreditLayout() {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const {t} = useTranslation()
 
     return(
@@ -42,7 +42,8 @@ export default function CreditLayout() {
             <Stack.Screen
                 name="addCreditCard"
                 options={{
-                    title: t("nav.newTransaction"),
+                    title: t("nav.credit.new"),
+                    headerTitleStyle: {color: theme.text.label},
                     presentation: "formSheet",
                     contentStyle: {
                         backgroundColor: theme.background.group.secondaryBg

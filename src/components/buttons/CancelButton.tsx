@@ -1,6 +1,6 @@
 import { ButtonStyles } from "@/components/buttons/ButtonStyles"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Text, TouchableOpacity, type TouchableOpacityProps } from "react-native"
 
 type CancelButtonProps = TouchableOpacityProps & {
@@ -9,7 +9,7 @@ type CancelButtonProps = TouchableOpacityProps & {
 
 export default function CancelButton({buttonText, ...rest}: CancelButtonProps) {
 
-    const {theme, preference, setPreference} = useTheme()
+    const {theme, preference, setPreference} = useStyle()
     const buttonStyles = ButtonStyles(theme)
 
     return(

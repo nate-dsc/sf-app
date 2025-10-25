@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils"
@@ -12,7 +12,7 @@ import { TileStyles } from "./TileStyles"
 export default function LastTransactionTile() {
 
     const { data, loading, error } = useSummaryStore()
-    const { theme } = useTheme()
+    const { theme } = useStyle()
     const { t } = useTranslation()
     const tileStyles = TileStyles(theme)
 

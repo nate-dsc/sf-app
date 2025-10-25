@@ -10,7 +10,7 @@ import TransactionModal from "@/components/history-screen-items/TransactionList/
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
 import { useSearchFilters } from "@/context/SearchFiltersContext"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Transaction, TransactionTypeFilter } from "@/types/transaction"
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
@@ -62,7 +62,7 @@ export default function TransactionHistoryScreen() {
         setOrderModalVisible(false)
     }
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <View style={{flex: 1, paddingTop: 10}}>

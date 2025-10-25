@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Text, TextInput, TextInputProps, View } from "react-native"
 import { MIStyles } from "./MenuItemStyles"
 
@@ -9,7 +9,7 @@ type DescriptionInputProps = TextInputProps & {
 
 export default function DescriptionInput({leftText, ...rest}: DescriptionInputProps) {
 
-    const theme = useTheme()
+    const theme = useStyle()
         const menuStyles = MIStyles(theme.theme)
     
         return(
@@ -32,7 +32,7 @@ export default function DescriptionInput({leftText, ...rest}: DescriptionInputPr
             </View>
         )
 
-    /* const theme = useTheme()
+    /* const theme = useStyle()
     const inputStyles = InputStyles(theme)
 
     return(

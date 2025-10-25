@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { LinearGradient } from "expo-linear-gradient";
@@ -7,7 +7,7 @@ import AddButton from "../buttons/AddButton";
 import { TabBarStyles } from "./TabBarStyles";
 
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-    const { theme, preference, setPreference } = useTheme();
+    const { theme, preference, setPreference } = useStyle();
     const styles = TabBarStyles(theme)
 
     return (

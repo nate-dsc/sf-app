@@ -1,5 +1,5 @@
 
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker"
 import React from "react"
@@ -17,7 +17,7 @@ type GDateInputProps = GroupedComponentsProps & {
 
 export default function GDateInput({separator, label, value, onDateChange}: GDateInputProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     const separatorTypes = [
         {separator: "opaque", color: theme.separator.opaque},

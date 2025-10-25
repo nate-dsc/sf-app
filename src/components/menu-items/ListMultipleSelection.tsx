@@ -1,5 +1,5 @@
 // CategoryList.tsx
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons"; // npm i react-native-vector-icons
 import React from "react";
 import { FlatList, GestureResponderEvent, ListRenderItemInfo, Text, TouchableOpacity, View } from "react-native";
@@ -26,7 +26,7 @@ export default function MSList<T>({items, selectedIds = [], onSelect}: Props<T>)
     const iconSize = 30
     const checkmarkSize = 30
 
-    const theme = useTheme()
+    const theme = useStyle()
     const menuStyles = MIStyles(theme.theme)
 
     const renderItem = ({ item }: ListRenderItemInfo<MSListItem<T>>) => {

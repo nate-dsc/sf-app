@@ -1,11 +1,11 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Stack, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 
 export default function PlanningLayout() {
 
     const {t} = useTranslation()
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const router = useRouter()
 
     return (

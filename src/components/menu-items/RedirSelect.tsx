@@ -1,5 +1,5 @@
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useTheme } from "@/context/ThemeContext"
+import { useStyle } from "@/context/StyleContext"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, View } from "react-native"
@@ -14,7 +14,7 @@ export default function SRedir({text, selectText, onPress}: SRedirProps) {
 
     const {t} = useTranslation()
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <TouchableOpacity

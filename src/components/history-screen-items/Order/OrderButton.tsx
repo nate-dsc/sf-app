@@ -1,5 +1,5 @@
 import { useSearchFilters } from "@/context/SearchFiltersContext";
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 
@@ -9,7 +9,7 @@ type OrderButtonProps = TouchableOpacityProps & {
 
 export default function DateButton({isActive, ...rest}: OrderButtonProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
     const {filters} = useSearchFilters()
 
     return(

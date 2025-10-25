@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/ThemeContext";
+import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 
@@ -8,7 +8,7 @@ type DateButtonProps = TouchableOpacityProps & {
 
 export default function DateButton({isActive, ...rest}: DateButtonProps) {
 
-    const {theme} = useTheme()
+    const {theme} = useStyle()
 
     return(
         <TouchableOpacity style={{
