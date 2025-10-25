@@ -21,8 +21,9 @@ export default function CreditLayout() {
                 name="index"
                 options={{
                     title: t("nav.credit.index"),
-                    headerBackButtonDisplayMode: "minimal",
+                    headerBackButtonDisplayMode: "generic",
                     headerBackButtonMenuEnabled: false,
+                    headerBackVisible: true,
                     headerBackTitle: t("nav.planning.index"),
                     headerStyle: { backgroundColor: theme.colors.brown }
                 }}
