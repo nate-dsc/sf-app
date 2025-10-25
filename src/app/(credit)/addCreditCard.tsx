@@ -1,5 +1,6 @@
 import CreditCardView from "@/components/CreditCardView";
 import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
+import GSwitch from "@/components/grouped-list-components/GroupedSwitch";
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
 import SimpleColorPicker from "@/components/pickers/SimpleColorPicker";
@@ -18,6 +19,7 @@ export default function AddCardModal() {
 
     const [selectedColor, setSelectedColor] = useState(colors.gray1)
     const [name, setName] = useState("")
+    const [ignoreWeekends, setIgnoreWeekends] = useState(true)
 
     const colorOptions = [
         { code: colors.red, label: "Vermelho" },
@@ -72,10 +74,16 @@ export default function AddCardModal() {
                     onDateChange={() => {}}
                 />
                 <GDateInput
-                    separator="none"
+                    separator="translucent"
                     label="Data de vencimento"
                     value={new Date()}
                     onDateChange={() => {}}
+                />
+                <GSwitch 
+                    separator={"none"}
+                    label="Ignorar fins de semana"
+                    value={ignoreWeekends}
+                    onValueChange={setIgnoreWeekends}
                 />
             </View>
             <SimpleColorPicker

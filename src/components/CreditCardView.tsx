@@ -15,7 +15,6 @@ export default function CreditCardView({ color = "#007AFF", name = "Banco"}: Cre
         //aspectRatio: 1.59,
         borderRadius: 16,
         padding: 20,
-        marginVertical: 20,
         elevation: 4, // sombra Android
         shadowColor: "#000", // sombra iOS
         shadowOpacity: 0.25,

@@ -41,7 +41,7 @@ export default function CreditScreen() {
                                     label="Adicionar Cartão"
                                     icon="card"
                                     color={theme.colors.green}
-                                    onPress={() => router.push("/credit/addCreditCard")}
+                                    onPress={() => router.push("/(credit)/addCreditCard")}
                                 />
                             </View>
                             <View style={{flex: 1}}>

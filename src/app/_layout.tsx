@@ -89,12 +89,37 @@ function RootLayoutNav() {
                         />
                         {/* Telas de cartões de crédito */}
                         <Stack.Screen
-                            name="credit"
+                            name="(credit)/credit"
                             options={{
-                                headerShown: false,
+                                title: t("nav.credit.index"),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.brown }
                             }}
                         />
-                        {/* Modais */}
+                        {/* <Stack.Screen
+                            name="(credit)/[cardId]"
+                            options={{
+                                title: t("nav.credit.index"),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.brown }
+                            }}
+                        /> */}
+                        <Stack.Screen
+                            name="(credit)/addCreditCard"
+                            options={{
+                                title: t("nav.credit.new"),
+                                headerTitleStyle: {color: theme.text.label},
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg
+                                }
+                            }}
+                        />
+                        {/* Modais de nova transação*/}
                         <Stack.Screen
                             name="modalAdd"
                             options={{
