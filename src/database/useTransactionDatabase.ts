@@ -1,5 +1,6 @@
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { CCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { getIDfromColor } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
@@ -55,6 +56,19 @@ export function useTransactionDatabase() {
         }
     }
 
+    async function createCard(data: CCard) {
+        const statement = "INSERT INTO cards (name, color, closing_day, due_day, ign_wknd) VALUES (?,?,?,?,?)"
+
+        const params = [data.name, getIDfromColor(data.color), data.closingDay, data.dueDay, data.ignoreWeekends]
+
+        try {
+            database.runAsync(statement, params)
+        } catch (error) {
+            console.log("Não foi possivel adicionar o cartão")
+            throw error
+        }
+    }
+
     async function deleteTransaction(id: number) {
         try {
             await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
@@ -83,6 +97,15 @@ export function useTransactionDatabase() {
             })
         } catch (error) {
             console.error("Could not delete recurring transaction cascade", error)
+            throw error
+        }
+    }
+
+    async function deleteCard(id: number) {
+        try {
+            await database.runAsync("DELETE FROM cards WHERE id = ?", [id])
+        } catch (error) {
+            console.error("Could not delete card", error)
             throw error
         }
     }

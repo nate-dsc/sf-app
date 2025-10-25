@@ -9,7 +9,9 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             category INTEGER NOT NULL,
             date_start TEXT NOT NULL,
             rrule TEXT NOT NULL,
-            date_last_processed TEXT
+            date_last_processed TEXT,
+            card_id INTEGER,
+            FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
         );   
     `)
 
@@ -21,7 +23,20 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             category INTEGER NOT NULL,
             date INTEGER,
             id_recurring INTEGER,
-            FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL
+            card_id INTEGER,
+            FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
+            FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
         );   
+    `)
+
+    await database.execAsync(`
+        CREATE TABLE IF NOT EXISTS cards (
+            id INTEGER NOT NULL PRIMARY KEY,
+            name TEXT,
+            color INT,
+            closing_date INT,
+            due_date INT,
+            ign_wknd BOOLEAN
+        );
     `)
 }

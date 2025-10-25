@@ -19,6 +19,15 @@ export type RecurringTransaction = {
     date_last_processed: string | null
 }
 
+export type CCard = {
+    id: number,
+    name: string,
+    color: string,
+    closingDay: number,
+    dueDay: number,
+    ignoreWeekends: boolean
+}
+
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"
 
 export type FilterSortBy = "date" | "value"
