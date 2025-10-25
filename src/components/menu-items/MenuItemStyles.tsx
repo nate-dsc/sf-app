@@ -76,35 +76,43 @@ export const MIStyles = (Theme: typeof light) => StyleSheet.create({
         backgroundColor: Theme.menuItem.separator 
     },
     dayPicker: {
-        aspectRatio: 7 / 5,
         width: "100%",
-        borderRadius: 24,
-        borderWidth: 1,
-        borderColor: Theme.menuItem.border,
-        overflow: "hidden",
-        backgroundColor: Theme.menuItem.separator,
-        gap: StyleSheet.hairlineWidth
+        paddingVertical: 12,
+        paddingHorizontal: 4,
+        borderRadius: 20,
+        backgroundColor: Theme.menuItem.background,
     },
     dayPickerRow: {
         flex: 1,
-        flexDirection: "row", 
-        gap: StyleSheet.hairlineWidth, 
-        justifyContent: "space-evenly"
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 4,
+        marginBottom: 6,
+    },
+    dayPickerRowLast: {
+        marginBottom: 0,
+    },
+    dayPickerCell: {
+        flex: 1,
+        alignItems: "center",
+        paddingVertical: 6,
     },
     dayPickerItem: {
-        flex: 1,
+        width: 38,
         aspectRatio: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingVertical: 12,
-        backgroundColor: Theme.menuItem.background,
+        borderRadius: 999,
     },
     dayPickerSelectedItem: {
-        backgroundColor: Theme.menuItem.tint,
+        backgroundColor: Theme.colors.blue,
     },
     dayPickerPaddingView: {
         flex: 1,
-        backgroundColor: Theme.menuItem.background
+    },
+    dayPickerTodayText: {
+        color: Theme.colors.blue,
     },
     monthPicker: {
         aspectRatio: 8 / 3,
