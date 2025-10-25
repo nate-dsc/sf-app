@@ -1,4 +1,4 @@
-import { light } from "@/constants/Colors"
+import { light } from "@/styles/colors"
 import { TextProps } from "react-native"
 
 

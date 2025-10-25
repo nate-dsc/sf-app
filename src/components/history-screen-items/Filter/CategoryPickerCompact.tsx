@@ -1,5 +1,5 @@
-import { TransactionTypeFilter } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
+import { TransactionTypeFilter } from "@/types/transaction"
 import { Ionicons } from "@expo/vector-icons"
 import React, { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"

@@ -9,6 +9,7 @@ import ValueInput from "@/components/menu-items/ValueInput";
 import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useTheme } from "@/context/ThemeContext";
 import i18n from "@/i18n";
+import { Flow } from "@/types/transaction";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -18,8 +19,6 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 
 export default function AddModal() {
-
-    type FlowType = "inflow" | "outflow"
 
     const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
@@ -32,7 +31,7 @@ export default function AddModal() {
     const {theme} = useTheme()
     const buttonStyles = ButtonStyles(theme)
 
-    const flowOptions: SCOption<FlowType>[] = [
+    const flowOptions: SCOption<Flow>[] = [
         {label: t("modalAdd.inflow"), value: "inflow"},
         {label: t("modalAdd.outflow"), value: "outflow"}
     ]

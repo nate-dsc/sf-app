@@ -1,21 +1,5 @@
+import { SearchFilters } from "@/types/transaction"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
-
-export type TransactionTypeFilter = "inflow" | "outflow" | "all"
-export type FilterSortBy = "date" | "value"
-export type FilterOrderBy = "asc" | "desc"
-
-export type SearchFilters = {
-    textSearch?: string,
-    category?: number[],
-    minValue?: number,
-    maxValue?: number,
-    dateFilterActive?: boolean,
-    initialDate?: Date,
-    finalDate?: Date,
-    sortBy?: FilterSortBy,
-    orderBy?: FilterOrderBy,
-    type?: TransactionTypeFilter
-}
 
 type SearchFiltersContextType = {
     filters: SearchFilters,

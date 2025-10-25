@@ -1,7 +1,8 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
-import { TransactionRecurring, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { RecurringTransaction } from "@/types/transaction"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleMonthShortDate } from "@/utils/DateUtils"
 import { describeRRule } from "@/utils/RRULEUtils"
@@ -11,11 +12,11 @@ import { useTranslation } from "react-i18next"
 import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 
 type RecurringTransactionModalProps = {
-    transaction: TransactionRecurring | null,
+    transaction: RecurringTransaction | null,
     onBackgroundPress: () => void,
 }
 
-export default function TransactionModal({transaction, onBackgroundPress}: RecurringTransactionModalProps) {
+export default function RecurringTransactionModal({transaction, onBackgroundPress}: RecurringTransactionModalProps) {
 
     if(!transaction) return null
 

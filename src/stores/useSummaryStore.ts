@@ -1,15 +1,9 @@
-import { Transaction } from "@/database/useTransactionDatabase"
+import { Summary } from "@/types/transaction"
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
 const CACHE_KEY = "@summary"
-
-export type Summary = {
-    inflowCurrentMonth: number,
-    outflowCurrentMonth: number,
-    lastTransaction: Transaction | null
-}
 
 type SummaryState = {
     data: Summary | null,

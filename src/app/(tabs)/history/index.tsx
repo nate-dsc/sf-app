@@ -9,9 +9,10 @@ import TransactionList from "@/components/history-screen-items/TransactionList/T
 import TransactionModal from "@/components/history-screen-items/TransactionList/TransactionModal"
 import { SCOption } from "@/components/menu-items/SegmentedControl"
 import SegmentedControlCompact from "@/components/menu-items/SegmentedControlCompact"
-import { TransactionTypeFilter, useSearchFilters } from "@/context/SearchFiltersContext"
+import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useTheme } from "@/context/ThemeContext"
-import { Transaction } from "@/database/useTransactionDatabase"
+import { Transaction, TransactionTypeFilter } from "@/types/transaction"
+
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"

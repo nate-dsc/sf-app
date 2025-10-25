@@ -1,16 +1,16 @@
 // RecurringTransactionList.tsx
-import { TransactionRecurring } from "@/database/useTransactionDatabase"
+import { RecurringTransaction } from "@/types/transaction"
 import { FlatList } from "react-native"
 import TransactionListItem from "./RecurringTransactionListItem"
 
 type RecurringTransactionListProps = {
-    data: TransactionRecurring[]
-    onItemPress: (item: TransactionRecurring) => void
+    data: RecurringTransaction[]
+    onItemPress: (item: RecurringTransaction) => void
 }
 
 export default function RecurringTransactionList({ data, onItemPress }: RecurringTransactionListProps) {
 
-    const renderItem = ({ item }: { item: TransactionRecurring }) => (
+    const renderItem = ({ item }: { item: RecurringTransaction }) => (
         <TransactionListItem
         item={item}
         onItemPress={onItemPress}

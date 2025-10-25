@@ -3,7 +3,8 @@ import RecurringTransactionList from "@/components/recurring-screens-items/Recur
 import RecurringTransactionModal from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionModal"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useTheme } from "@/context/ThemeContext"
-import { TransactionRecurring, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, Modal, Text, View } from "react-native"
@@ -11,14 +12,14 @@ import { ActivityIndicator, Modal, Text, View } from "react-native"
 export default function ExpenseRecurringScreen() {
     const { getRecurringSummaryThisMonth } = useTransactionDatabase()
     const [loading, setLoading] = useState(true)
-    const [recurringTransactions, setRecurringTransactions] = useState<TransactionRecurring[]>([])
+    const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
     const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
     const [rTModalVisible, setRTModalVisible] = useState(false)
-    const [selectedRT, setSelectedRT] = useState<TransactionRecurring | null>(null)
+    const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const headerHeight = useHeaderHeight()
     const {theme} = useTheme()
 
-    const handleItemPress = (item: TransactionRecurring) => {
+    const handleItemPress = (item: RecurringTransaction) => {
         setSelectedRT(item)
         setRTModalVisible(true)
     }

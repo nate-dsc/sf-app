@@ -1,4 +1,4 @@
-import { dark, light } from "@/constants/Colors";
+import { dark, light } from "@/styles/colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useColorScheme } from "react-native";

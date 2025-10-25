@@ -1,7 +1,7 @@
 import { TileStyles } from "@/components/home-screen-items/TileStyles";
 import { FontStyles } from "@/components/styles/FontStyles";
 import { useTheme } from "@/context/ThemeContext";
-import { TransactionRecurring } from "@/database/useTransactionDatabase";
+import { RecurringTransaction } from "@/types/transaction";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,11 +9,11 @@ import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 type TransactionListItemProps = {
-    item: TransactionRecurring,
-    onItemPress: (item: TransactionRecurring) => void,
+    item: RecurringTransaction,
+    onItemPress: (item: RecurringTransaction) => void,
 }
 
-export default function TransactionRecurringListItem({item, onItemPress}: TransactionListItemProps) {
+export default function RecurringTransactionListItem({item, onItemPress}: TransactionListItemProps) {
 
     const {t} = useTranslation()
     const {theme} = useTheme()

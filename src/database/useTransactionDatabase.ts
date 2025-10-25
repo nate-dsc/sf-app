@@ -1,27 +1,9 @@
-import { SearchFilters } from "@/context/SearchFiltersContext"
-import { Summary, useSummaryStore } from "@/stores/useSummaryStore"
+import { useSummaryStore } from "@/stores/useSummaryStore"
+import { RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
 
-export type Transaction = {
-    id: number,
-    value: number,
-    description: string,
-    category: string,
-    date: string,
-    id_recurring?: number
-}
-
-export type TransactionRecurring = {
-    id: number,
-    value: number,
-    description: string,
-    category: string,
-    date_start: string,
-    rrule: string,
-    date_last_processed: string | null
-}
 
 export function useTransactionDatabase() {
     const {triggerRefresh} = useSummaryStore()
@@ -49,7 +31,7 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function createTransactionRecurring(data: TransactionRecurring) {
+    async function createRecurringTransaction(data: RecurringTransaction) {
         const statement = await database.prepareAsync(
             "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed)"
         )
@@ -249,7 +231,7 @@ export function useTransactionDatabase() {
         const newEndOfDayStr = newEndOfDay.toISOString().slice(0, 16)
 
         try {
-            const allRecurringTransactions = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring")
+            const allRecurringTransactions = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring")
 
             if(allRecurringTransactions.length === 0) {
                 console.log("Não há transações recorrentes")
@@ -296,7 +278,7 @@ export function useTransactionDatabase() {
 
     async function getRRULE(id: number): Promise<string> {
         try {
-            const parentTransaction = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring WHERE id = ?",[id])
+            const parentTransaction = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE id = ?",[id])
 
             return parentTransaction[0].rrule
 
@@ -308,7 +290,7 @@ export function useTransactionDatabase() {
 
     async function getRecurringIncomeTransactions() {
         try {
-            const result = await database.getAllAsync<TransactionRecurring>("SELECT * FROM transactions_recurring WHERE value > 0")
+            const result = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE value > 0")
             return result
         } catch (error) {
             console.log("Não foi possível recuperar as transações recorrentes")
@@ -331,7 +313,7 @@ export function useTransactionDatabase() {
         const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE value < 0" : "SELECT * FROM transactions_recurring WHERE value > 0"
 
         try {
-            const recurringIncomeTransactions = await database.getAllAsync<TransactionRecurring>(query)
+            const recurringIncomeTransactions = await database.getAllAsync<RecurringTransaction>(query)
 
             for(const recurringTransaction of recurringIncomeTransactions) {
                 const rruleOptions = RRule.parseString(recurringTransaction.rrule)
@@ -355,7 +337,7 @@ export function useTransactionDatabase() {
 
     return {
         createTransaction,
-        createTransactionRecurring,
+        createRecurringTransaction,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,

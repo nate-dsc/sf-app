@@ -29,7 +29,7 @@ export default function CreditLayout() {
             />
             {/* Telas de cartões de crédito */}
             <Stack.Screen
-                name="cards/[cardId]"
+                name="[cardId]/index"
                 options={{
                     title: t("nav.credit.index"),
                     headerBackButtonDisplayMode: "minimal",

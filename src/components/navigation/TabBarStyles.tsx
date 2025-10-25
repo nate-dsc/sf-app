@@ -1,4 +1,4 @@
-import { light } from "@/constants/Colors"
+import { light } from "@/styles/colors"
 import { StyleSheet } from "react-native"
 
 export const TabBarStyles = (Colors: typeof light) => StyleSheet.create({

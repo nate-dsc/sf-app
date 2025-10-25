@@ -1,5 +1,6 @@
-import { Transaction, TransactionRecurring, useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { RecurringTransaction, Transaction } from "@/types/transaction"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
 
 type NewTransaction = {
@@ -28,7 +29,7 @@ const NewTransactionContext = createContext<NewTransactionContextType | undefine
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
 
-    const { createTransaction, createTransactionRecurring, getSummaryFromDB } = useTransactionDatabase();
+    const { createTransaction, createRecurringTransaction, getSummaryFromDB } = useTransactionDatabase();
 
     // 2. Acesso à ação de recarregar dados do store do sumário
     const loadSummaryData = useSummaryStore((state) => state.loadData);
@@ -59,7 +60,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
     }
 
-    const getTransactionRecurringForDB = (): TransactionRecurring => {
+    const getTransactionRecurringForDB = (): RecurringTransaction => {
         if (!isValid && !newTransaction.rrule) {
             throw new Error("Tentativa de criar transação recorrente com dados inválidos.");
         }
@@ -78,7 +79,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         if(newTransaction.rrule) {
             try {
                 const transactionData = getTransactionRecurringForDB()
-                await createTransactionRecurring(transactionData)
+                await createRecurringTransaction(transactionData)
                 await loadSummaryData({ getSummaryFromDB })
                 triggerRefresh()
                 console.log("Transação recorrente salva com sucesso!")
