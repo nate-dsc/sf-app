@@ -38,7 +38,7 @@ export default function GSwitch({separator, label, value, onValueChange}: GSwitc
                     </Text>
                 </View>
                 
-                <Switch value={value} onValueChange={onValueChange} />
+                <Switch style={{alignSelf: "center"}} value={value} onValueChange={onValueChange} />
             </View>
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
 
