@@ -7,6 +7,7 @@ import SimpleColorPicker from "@/components/pickers/SimpleColorPicker";
 import { useStyle } from "@/context/StyleContext";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, View } from "react-native";
 
 
@@ -14,6 +15,7 @@ import { ScrollView, View } from "react-native";
 export default function AddCardModal() {
 
     const {theme, layout} = useStyle()
+    const {t} = useTranslation()
 
     const colors = theme.colors
 
@@ -22,14 +24,14 @@ export default function AddCardModal() {
     const [ignoreWeekends, setIgnoreWeekends] = useState(true)
 
     const colorOptions = [
-        { code: colors.red, label: "Vermelho" },
-        { code: colors.orange, label: "Laranja" },
-        { code: colors.mint, label: "Menta" },
-        { code: colors.green, label: "Verde" },
-        { code: colors.cyan, label: "Ciano" },
-        { code: colors.purple, label: "Roxo" },
-        { code: colors.indigo, label: "Anil" },
-        { code: colors.gray1, label: "Cinza" },
+        { code: colors.red, label: t("credit.red") },
+        { code: colors.orange, label: t("credit.orange") },
+        { code: colors.mint, label: t("credit.mint") },
+        { code: colors.green, label: t("credit.green") },
+        { code: colors.cyan, label: t("credit.cyan") },
+        { code: colors.purple, label: t("credit.purple") },
+        { code: colors.indigo, label: t("credit.indigo") },
+        { code: colors.gray1, label: t("credit.gray") },
     ]
     
     return(
@@ -54,7 +56,7 @@ export default function AddCardModal() {
             >
                 <GTextInput
                     separator={"translucent"}
-                    label={"Nome"}
+                    label={t("credit.name")}
                     value={name}
                     onChangeText={setName}
                     acViewKey={"nome"}
@@ -62,26 +64,26 @@ export default function AddCardModal() {
                 />
                 <GValueInput
                     separator={"translucent"}
-                    label={"Limite"}
+                    label={t("credit.limit")}
                     acViewKey={"lim"}
                     onChangeNumValue={() => {}}
                     flowType={"inflow"}
                 />
                 <GDateInput
                     separator={"translucent"}
-                    label={"Data de fechamento"}
+                    label={t("credit.closingDay")}
                     value={new Date()}
                     onDateChange={() => {}}
                 />
                 <GDateInput
                     separator="translucent"
-                    label="Data de vencimento"
+                    label={t("credit.dueDay")}
                     value={new Date()}
                     onDateChange={() => {}}
                 />
                 <GSwitch 
                     separator={"none"}
-                    label="Ignorar fins de semana"
+                    label={t("credit.ignoreWeekends")}
                     value={ignoreWeekends}
                     onValueChange={setIgnoreWeekends}
                 />

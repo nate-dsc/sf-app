@@ -3,12 +3,14 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
+import { useTranslation } from "react-i18next"
 import { ScrollView, Text, View } from "react-native"
 
 export default function CreditScreen() {
 
     const router = useRouter()
     const {theme, layout} = useStyle()
+    const {t} = useTranslation()
 
     return(
             <ScrollView 
@@ -38,8 +40,8 @@ export default function CreditScreen() {
                         >
                             <View style={{flex: 1}}>
                                 <LinkCard 
-                                    label="Adicionar Cartão"
-                                    icon="card"
+                                    label={t("credit.add")}
+                                    icon="add"
                                     color={theme.colors.green}
                                     onPress={() => router.push("/(credit)/addCreditCard")}
                                 />
