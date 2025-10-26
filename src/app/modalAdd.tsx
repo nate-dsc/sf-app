@@ -1,4 +1,3 @@
-import { ButtonStyles } from "@/components/buttons/ButtonStyles";
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo";
 import CreditCardCarousel from "@/components/credit-card-items/CreditCardCarousel";
 import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
@@ -14,10 +13,9 @@ import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
 import { CCard, Flow } from "@/types/transaction";
-import { useFocusEffect } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, View } from "react-native";
 
@@ -25,19 +23,16 @@ import { Alert, ScrollView, Text, View } from "react-native";
 
 export default function AddModal() {
 
-    const paddingTop = useHeaderHeight() + 10
     const router = useRouter()
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
     const { getCards } = useTransactionDatabase()
 
     const [newDate, setNewDate] = useState<Date>(new Date())
-    const [numValue, setNumValue] = useState("")
     const [cards, setCards] = useState<CCard[]>([])
     const [cardsLoading, setCardsLoading] = useState(true)
 
     const {theme, layout} = useStyle()
-    const buttonStyles = ButtonStyles(theme)
 
     const flowOptions: SCOption<Flow>[] = [
         {label: t("modalAdd.inflow"), value: "inflow"},
@@ -53,72 +48,40 @@ export default function AddModal() {
             setNewTransaction({});
       }
     }, []);
+    
 
-    useFocusEffect(
-        useCallback(() => {
-            let isActive = true
-
-            const loadCards = async () => {
-                try {
-                    setCardsLoading(true)
-                    const response = await getCards()
-                    if (isActive) {
-                        setCards(response)
-                    }
-                } catch (error) {
-                    console.log("Erro ao carregar cartões:", error)
-                } finally {
-                    if (isActive) {
-                        setCardsLoading(false)
-                    }
-                }
-            }
-
-            loadCards()
-
-            return () => {
-                isActive = false
-            }
-        }, [getCards])
-    )
-
-    useEffect(() => {
-        if (!newTransaction.useCreditCard) {
-            return
-        }
-
-        if (cardsLoading) {
-            return
-        }
-
-        if (cards.length === 0) {
-            updateNewTransaction({ useCreditCard: false, cardId: undefined })
-            return
-        }
-
-        if (!newTransaction.cardId || !cards.some((card) => card.id === newTransaction.cardId)) {
-            updateNewTransaction({ cardId: cards[0].id })
-        }
-    }, [cards, cardsLoading, newTransaction.useCreditCard, newTransaction.cardId, updateNewTransaction])
-
-    const handleToggleCredit = (value: boolean) => {
+    const handleToggleCredit = async (value: boolean) => {
         if (value) {
-            if (!cardsLoading && cards.length === 0) {
-                Alert.alert(
-                    t("modalAdd.noCardsAvailableTitle", { defaultValue: "Nenhum cartão disponível" }),
-                    t("modalAdd.noCardsAvailableMessage", { defaultValue: "Cadastre um cartão para usar esta opção." })
-                )
-                return
+            setCardsLoading(true)
+
+            try {
+                const response = await getCards()
+                setCards(response)
+
+                if (response.length === 0) {
+                    Alert.alert(
+                        t("modalAdd.noCardsAvailableTitle", { defaultValue: "Nenhum cartão disponível" }),
+                        t("modalAdd.noCardsAvailableMessage", { defaultValue: "Cadastre um cartão para usar esta opção." })
+                    )
+                    setCardsLoading(false)
+                    return
+                }
+
+                const hasSelectedCard = !!newTransaction.cardId && cards.some((card) => card.id === newTransaction.cardId)
+                const defaultCardId = hasSelectedCard ? newTransaction.cardId : cards[0]?.id
+
+                updateNewTransaction({
+                    useCreditCard: true,
+                    cardId: defaultCardId ?? undefined,
+                    flowType: "outflow"
+                })
+
+            } catch (error) {
+                console.log("Erro ao carregar cartões:", error)
+            } finally {
+                setCardsLoading(false)
             }
 
-            const hasSelectedCard = !!newTransaction.cardId && cards.some((card) => card.id === newTransaction.cardId)
-            const defaultCardId = hasSelectedCard ? newTransaction.cardId : cards[0]?.id
-
-            updateNewTransaction({
-                useCreditCard: true,
-                cardId: defaultCardId ?? undefined,
-                flowType: "outflow"
-            })
         } else {
             updateNewTransaction({ useCreditCard: false, cardId: undefined })
         }
@@ -148,32 +111,6 @@ export default function AddModal() {
             }
 
             console.log("Falha ao salvar. Tente novamente.", error);
-        }
-    }
-
-    const handleDecimalString = (decimalString: string) => {
-        if (!decimalString) {
-            updateNewTransaction({ value: undefined });
-            return;
-        }
-
-        const cleanString = i18n.language === "en-US" ? decimalString.replace(/,/g, '') 
-        : decimalString.replace(/\./g, '').replace(',', '.')
-
-        const parsedValue = parseFloat(cleanString)
-        console.log(isNaN(parsedValue))
-
-        if(isNaN(parsedValue)) {
-            updateNewTransaction({value: undefined})
-            setNumValue("")
-            console.log(`updateNewTransaction({value: ${undefined}})`)
-        } else {
-            const floatValue = 100*parsedValue
-            const centValue = Math.floor(floatValue)
-            if(centValue != 0) {
-                updateNewTransaction({value: centValue})
-                console.log(`updateNewTransaction({value: ${centValue}})`)
-            }
         }
     }
 
@@ -278,11 +215,11 @@ export default function AddModal() {
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>
                         {cardsLoading ? (
                             <Text style={{ color: theme.text.secondaryLabel }}>
-                                {t("modalAdd.loadingCards", { defaultValue: "Carregando cartões..." })}
+                                {t("modalAdd.loadingCards")}
                             </Text>
                         ) : cards.length === 0 ? (
                             <Text style={{ color: theme.text.secondaryLabel }}>
-                                {t("modalAdd.noCardsAvailable", { defaultValue: "Nenhum cartão cadastrado" })}
+                                {t("modalAdd.noCardsAvailable")}
                             </Text>
                         ) : (
                             <>

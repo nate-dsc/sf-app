@@ -1,5 +1,5 @@
 import React from "react"
-import { Pressable, ScrollView, StyleSheet, View } from "react-native"
+import { Pressable, ScrollView, View } from "react-native"
 
 import { useStyle } from "@/context/StyleContext"
 import { CCard } from "@/types/transaction"
@@ -16,8 +16,8 @@ export default function CreditCardCarouselSelector({cards, selectedCard, onSelec
     const {theme} = useStyle()
 
     const handleSelectCard = (card: CCard) => {
-        if (onSelectCard) {
-        onSelectCard(card)
+        if (onSelectCard && card.id !== selectedCard?.id) {
+            onSelectCard(card)
         }
     }
 
@@ -59,23 +59,3 @@ export default function CreditCardCarouselSelector({cards, selectedCard, onSelec
         </ScrollView>
     )
 }
-
-const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: 16,
-  },
-  cardWrapper: {
-    marginRight: 16,
-    borderRadius: 20,
-    padding: 2,
-    borderWidth: 2,
-    borderColor: "transparent",
-  },
-  lastItem: {
-    marginRight: 0,
-  },
-  selectedCard: {
-    borderWidth: 2,
-    borderColor: "#007AFF",
-  },
-})
