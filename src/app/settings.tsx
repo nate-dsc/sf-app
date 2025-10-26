@@ -1,6 +1,5 @@
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
-import { MIStyles } from "@/components/recurrence-modal-items/MenuItemStyles"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
@@ -29,7 +28,6 @@ export default function SettingsScreen() {
     const [selectedTheme, setSelectedTheme] = useState(preference)
     const [selectedLang, setSelectedLang] = useState(i18n.language)
     
-    const menuStyles = MIStyles(theme)
     
     const paddingTop = useHeaderHeight() + 10
 
@@ -56,7 +54,7 @@ export default function SettingsScreen() {
     return(
         <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {gap: 10}]}>
 
-            <Text style={[menuStyles.text, FontStyles.title2]}> Debug </Text>
+            <Text style={[{color: theme.text.label}, FontStyles.title2]}> Debug </Text>
 
             <GroupView>
                 <GRedir
@@ -115,7 +113,7 @@ export default function SettingsScreen() {
                 />
             </GroupView>
 
-            <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
+            <Text style={[{color: theme.text.label}, FontStyles.headline]}> ESTADO DO APP </Text>
 
             <SegmentedControlCompact
                 options={themeOptions}
