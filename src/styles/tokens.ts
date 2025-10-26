@@ -28,10 +28,12 @@ export const Margin = {
     contentArea: 16,
     sectionGap: 16,
     innerSectionGap: 10,
+    transparentModal: 12
 }
 
 export const Icons = {
-    md: 22
+    md: 22,
+    xl: 40
 }
 
 export const BorderRadius = {

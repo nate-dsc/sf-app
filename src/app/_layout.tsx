@@ -1,3 +1,4 @@
+import { AppIcon } from "@/components/AppIcon"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
@@ -6,11 +7,12 @@ import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import "@/i18n"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
-import { Stack } from "expo-router"
+import { Stack, useRouter } from "expo-router"
 import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
+import { TouchableOpacity } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 
 
@@ -20,6 +22,8 @@ function RootLayoutNav() {
 
     const { getSummaryFromDB, createAndSyncRecurringTransactions } = useTransactionDatabase();
     const {loadData, refreshKey} = useSummaryStore();
+
+    const router = useRouter()
 
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado
@@ -95,7 +99,28 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.brown }
+                                headerStyle: { backgroundColor: theme.colors.brown },
+                                headerRight: () => (
+                                    <TouchableOpacity
+                                        style={{paddingLeft: 7}}
+                                        onPress={() => router.push("/(credit)/creditHelp")}
+                                    >
+                                        <AppIcon
+                                            name={"questionmark"}
+                                            androidName={"help-outline"}
+                                            size={22}
+                                            tintColor={"rgba(255,255,255,0.7)"}
+                                        />
+                                    </TouchableOpacity>
+                                )
+                            }}
+                        />
+                        <Stack.Screen
+                            name="(credit)/creditHelp"
+                            options={{
+                                headerShown: false,
+                                presentation: "transparentModal",
+                                animation: "fade"
                             }}
                         />
                         {/* <Stack.Screen
