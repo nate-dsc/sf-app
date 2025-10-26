@@ -1,3 +1,4 @@
+import { AppIcon } from "@/components/AppIcon"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
@@ -41,7 +42,14 @@ export default function CreditScreen() {
                             <View style={{flex: 1}}>
                                 <LinkCard 
                                     label={t("credit.add")}
-                                    icon="add"
+                                    icon={
+                                        <AppIcon
+                                            name={"plus.circle"}
+                                            androidName={"add-card"}
+                                            size={40}
+                                            tintColor={theme.colors.white}
+                                        />
+                                    }
                                     color={theme.colors.green}
                                     onPress={() => router.push("/(credit)/addCreditCard")}
                                 />
@@ -49,7 +57,14 @@ export default function CreditScreen() {
                             <View style={{flex: 1}}>
                                 <LinkCard 
                                     label="Vazio"
-                                    icon="card"
+                                    icon={
+                                        <AppIcon
+                                            name={"plus.circle"}
+                                            androidName={"add-card"}
+                                            size={40}
+                                            tintColor={theme.colors.white}
+                                        />
+                                    }
                                     color={theme.colors.red}
                                     onPress={() => {}}
                                 />

@@ -1,7 +1,7 @@
+import { AppIcon } from "@/components/AppIcon";
 import { useSearchFilters } from "@/context/SearchFiltersContext";
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 type OrderButtonProps = TouchableOpacityProps & {
     isActive: boolean
@@ -23,14 +23,12 @@ export default function DateButton({isActive, ...rest}: OrderButtonProps) {
         }}
         {...rest}
         >
-            <View style={{flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                <Ionicons
-                    size={26}
-                    name={filters.orderBy === "desc" ? (filters.sortBy === "date"? "swap-vertical" : "arrow-down") : "arrow-up"}
-                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
-                />
-            </View>
-            
+            <AppIcon
+                name={filters.orderBy === "desc" ? (filters.sortBy === "date"? "arrow.up.arrow.down" : "arrow.down") : "arrow.up"}
+                androidName={filters.orderBy === "desc" ? (filters.sortBy === "date"? "swap-vert" : "arrow-downward") : "arrow-upward"} 
+                size={26}
+                tintColor={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+            />
         </TouchableOpacity>
     )
 }

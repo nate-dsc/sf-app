@@ -2,7 +2,6 @@ import CancelSaveButtons from '@/components/buttons/CancelSaveCombo';
 import GDateInput from '@/components/grouped-list-components/GroupedDateInput';
 import GSelectionList from '@/components/grouped-list-components/GroupedSelectionList';
 import DayPicker from '@/components/recurrence-modal-items/DayPicker';
-import { MIStyles } from '@/components/recurrence-modal-items/MenuItemStyles';
 import MonthPicker from '@/components/recurrence-modal-items/MonthPicker';
 import SegmentedControlCompact from '@/components/recurrence-modal-items/SegmentedControlCompact';
 import Stepper from '@/components/recurrence-modal-items/Stepper';
@@ -32,7 +31,6 @@ export default function ModalRecurring() {
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
     const {theme, layout} = useStyle()
-    const menuStyles = MIStyles(theme)
 
     // Constantes para as opções da UI
     const FREQUENCIES = [

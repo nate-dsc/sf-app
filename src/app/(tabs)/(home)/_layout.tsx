@@ -1,5 +1,5 @@
+import { AppIcon } from "@/components/AppIcon";
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
@@ -22,7 +22,12 @@ export default function HomeLayout() {
                         style={{width: 44, height: 44, paddingLeft: 4}}
                         onPress={() => router.push("/settings")}
                     >
-                        <Ionicons style={{}} name="cog" size={36} color={"rgba(255,255,255,0.7)"} />
+                        <AppIcon
+                            name={"gear"}
+                            androidName={"settings"}
+                            size={36}
+                            tintColor={"rgba(255,255,255,0.7)"}
+                        />
                     </TouchableOpacity>
                 )
             }}

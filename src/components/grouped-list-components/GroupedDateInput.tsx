@@ -56,7 +56,7 @@ export default function GDateInput({separator, label, value, onDateChange}: GDat
                     themeVariant={theme.themeName === 'light' ? 'light' : 'dark'}
                     locale={i18n.language}
                     onChange={handleDateChange}
-                    display="compact"
+                    display={"compact"}
                 />
             </View>
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>

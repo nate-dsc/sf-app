@@ -6,7 +6,7 @@ type IoniconName = React.ComponentProps<typeof Ionicons>['name']
 
 type LinkCardProps = {
     label?: string,
-    icon?: IoniconName,
+    icon?: React.ReactNode,
     color?: string,
     onPress?: () => void,
 }
@@ -29,7 +29,7 @@ export default function LinkCard({label, icon, color, onPress}: LinkCardProps) {
                 
             >
                 <View style={{paddingTop: 16}}>
-                    <Ionicons name={icon ?? "help-outline"} size={36} color={theme.colors.white}/>
+                    {icon ?? <Ionicons name="help-outline" size={36} color={theme.colors.white} />}
                 </View>
                 <View style={{paddingBottom: 16}}>
                     <Text 

@@ -1,4 +1,3 @@
-import { MIStyles } from "@/components/recurrence-modal-items/MenuItemStyles"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
@@ -23,8 +22,6 @@ export default function SettingsScreen() {
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)
     const [selectedLang, setSelectedLang] = useState(i18n.language)
-    
-    const menuStyles = MIStyles(theme)
     
     const paddingTop = useHeaderHeight() + 10
 

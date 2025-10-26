@@ -1,8 +1,8 @@
 import { ButtonStyles } from "@/components/buttons/ButtonStyles";
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
+import { AppIcon } from "../AppIcon";
 
 const router = useRouter()
 
@@ -26,7 +26,7 @@ export default function AddButton({ size=40, onPress=()=>router.navigate("/modal
     
     return(
         <TouchableOpacity style={[buttonSize, buttonStyles.addButton]} onPress={onPress} >
-            <Ionicons name="add" size={iconSize} color={"#F5F5F5"}/>
+            <AppIcon name="plus" androidName="add" size={iconSize} tintColor={"#F5F5F5"} />
         </TouchableOpacity>
     )
 

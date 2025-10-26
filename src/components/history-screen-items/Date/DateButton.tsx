@@ -1,6 +1,6 @@
+import { AppIcon } from "@/components/AppIcon";
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 type DateButtonProps = TouchableOpacityProps & {
     isActive: boolean
@@ -21,14 +21,12 @@ export default function DateButton({isActive, ...rest}: DateButtonProps) {
         }}
         {...rest}
         >
-            <View style={{justifyContent: "center", alignItems: "center"}}>
-                <Ionicons
-                    size={26}
-                    name={isActive ? "calendar" : "calendar-outline"}
-                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
-                />
-            </View>
-            
+            <AppIcon
+                name={"calendar"}
+                androidName={"calendar-month"} 
+                size={26}
+                tintColor={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+            />
         </TouchableOpacity>
     )
 }

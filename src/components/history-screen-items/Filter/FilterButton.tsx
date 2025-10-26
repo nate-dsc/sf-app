@@ -1,6 +1,6 @@
+import { AppIcon } from "@/components/AppIcon";
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity, TouchableOpacityProps, View } from "react-native";
+import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 type FilterButtonProps = TouchableOpacityProps & {
     isActive: boolean
@@ -21,14 +21,12 @@ export default function FilterButton({isActive, ...rest}: FilterButtonProps) {
         }}
         {...rest}
         >
-            <View style={{position: "absolute", top: 13, left: 11, right: 12}}>
-                <Ionicons
-                    size={26}
-                    name={isActive ? "funnel" : "funnel-outline"}
-                    color={isActive ? theme.colors.blue : theme.text.secondaryLabel}
-                />
-            </View>
-            
+            <AppIcon
+                name={"line.3.horizontal.decrease"}
+                androidName={"filter-alt"} 
+                size={26}
+                tintColor={isActive ? theme.colors.blue : theme.text.secondaryLabel}
+            />
         </TouchableOpacity>
     )
 }
