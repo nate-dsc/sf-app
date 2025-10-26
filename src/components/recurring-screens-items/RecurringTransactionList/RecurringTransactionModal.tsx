@@ -26,7 +26,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
 
-    const category = findCategoryByID(transaction.category)
+    const category = findCategoryByID(transaction.category, t)
 
     const { deleteRecurringTransaction, deleteRecurringTransactionCascade } = useTransactionDatabase()
 

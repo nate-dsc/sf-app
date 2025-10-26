@@ -1,8 +1,5 @@
-import { useStyle } from "@/context/StyleContext"
 
-export function getIDfromColor(code: string) {
-
-    const {theme} = useStyle()
+export function getIDfromColor(code: string, theme: any): number {
 
     const colorOptions = [
         { code: theme.colors.red, id: 0 },
@@ -20,9 +17,7 @@ export function getIDfromColor(code: string) {
     return (color ? color.id : 7)
 }
 
-export function getColorFromID(id: number) {
-
-    const {theme} = useStyle()
+export function getColorFromID(id: number, theme: any): string {
 
     const colorOptions = [
         { code: theme.colors.red, id: 0 },

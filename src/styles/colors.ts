@@ -24,6 +24,9 @@ const cyanDark = "rgb(60,211,254)"
 const blue = "rgb(0,136,255)"
 const blueDark = "rgb(0,145,255)"
 
+const blue20 = "rgba(0,136,255,0.2)"
+const blueDark20 = "rgba(0,145,255,0.2)"
+
 const indigo = "rgb(97,85,245)"
 const indigoDark = "rgb(109,124,255)"
 
@@ -129,6 +132,9 @@ const quaternaryFillDark = "rgba(118,118,128,0.18)"
 const scSelected = "#FFFFFF"
 const scSelectedDark = "#6C6C71"
 
+const white = "rgba(255, 255, 255, 1)"
+const white30 = "rgba(255, 255, 255, 0.3)"
+
 const defaultTint = "#007AFF"
 
 const defaultLightBackground = "#F8F8F8"
@@ -201,6 +207,14 @@ type CustomTheme = {
         tertiary: string,
         quaternary: string,
     },
+    buttons: {
+        primary: {
+            bg: string,
+            bgDisabled: string,
+            label: string,
+            labelDisabled: string 
+        }
+    }
     
     segmentedControl: {
         selected: string,
@@ -342,6 +356,14 @@ export const light: CustomTheme = {
         tertiary: tertiaryFill,
         quaternary: quaternaryFill
     },
+    buttons: {
+        primary: {
+            bg: blue,
+            bgDisabled: blue20,
+            label: white,
+            labelDisabled: white
+        }
+    },
 
     segmentedControl: {
         selected: scSelected
@@ -480,6 +502,14 @@ export const dark: CustomTheme = {
         secondary: secondaryFillDark,
         tertiary: tertiaryFillDark,
         quaternary: quaternaryFillDark
+    },
+    buttons: {
+        primary: {
+            bg: blueDark,
+            bgDisabled: blueDark20,
+            label: white,
+            labelDisabled: white30 
+        }
     },
     
     segmentedControl: {

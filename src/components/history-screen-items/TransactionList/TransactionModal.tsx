@@ -28,7 +28,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     const [rruleDescription, setRruleDescription] = useState<string | null>(null)
 
-    const category = findCategoryByID(transaction.category)
+    const category = findCategoryByID(transaction.category, t)
 
     const { deleteTransaction, getRRULE } = useTransactionDatabase()
 

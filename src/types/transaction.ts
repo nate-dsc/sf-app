@@ -19,9 +19,20 @@ export type RecurringTransaction = {
     date_last_processed: string | null
 }
 
+export type NewCard = {
+    name: string,
+    color: number,
+    limit: number,
+    closingDay: number,
+    dueDay: number,
+    ignoreWeekends: boolean
+}
+
 export type CCard = {
     id: number,
     name: string,
+    limit: number,
+    limitUsed: number,
     color: string,
     closingDay: number,
     dueDay: number,

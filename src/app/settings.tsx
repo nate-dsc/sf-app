@@ -3,9 +3,11 @@ import Redir from "@/components/menu-items/Redir"
 import SegmentedControlCompact, { type SCOption } from "@/components/menu-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
-import { ThemePreference, useStyle } from "@/context/StyleContext"
+import { useStyle } from "@/context/StyleContext"
+import { resetCCDatabase } from "@/database/ResetCCDatabase"
 import { resetDatabase } from "@/database/ResetDatabase"
 import i18n from "@/i18n"
+import { ThemePreference } from "@/types/theme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
@@ -67,6 +69,8 @@ export default function SettingsScreen() {
             <Redir iconName="list-outline" text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
 
             <Redir iconName="trash-outline" text="RESETAR BANCO DE DADOS" onPress={() => {resetDatabase(database)}} />
+
+            <Redir iconName="trash-outline" text="RESETAR CARTÕES" onPress={() => {resetCCDatabase(database)}} />
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
 

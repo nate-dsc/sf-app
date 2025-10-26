@@ -21,7 +21,7 @@ export default function TransactionListItem({item, onItemPress}: TransactionList
     const value = item.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
-    const category = findCategoryByID(item.category)
+    const category = findCategoryByID(item.category, t)
 
 
     return(

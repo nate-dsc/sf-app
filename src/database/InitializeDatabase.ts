@@ -34,9 +34,11 @@ export async function initializeDatabase(database: SQLiteDatabase) {
             id INTEGER NOT NULL PRIMARY KEY,
             name TEXT,
             color INT,
-            closing_date INT,
-            due_date INT,
+            card_limit INT,
+            limit_used INT,
+            closing_day INT,
+            due_day INT,
             ign_wknd BOOLEAN
         );
     `)
-}
+} 

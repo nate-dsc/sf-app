@@ -1,6 +1,5 @@
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { CCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
-import { getIDfromColor } from "@/utils/CardUtils"
+import { NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
@@ -56,13 +55,13 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function createCard(data: CCard) {
-        const statement = "INSERT INTO cards (name, color, closing_day, due_day, ign_wknd) VALUES (?,?,?,?,?)"
+    async function createCard(data: NewCard) {
+        const statement = "INSERT INTO cards (name, color, card_limit, limit_used, closing_day, due_day, ign_wknd) VALUES (?,?,?,?,?,?,?)"
 
-        const params = [data.name, getIDfromColor(data.color), data.closingDay, data.dueDay, data.ignoreWeekends]
+        const params = [data.name, data.color, data.limit, 0, data.closingDay, data.dueDay, data.ignoreWeekends]
 
         try {
-            database.runAsync(statement, params)
+            const result = await database.runAsync(statement, params)
         } catch (error) {
             console.log("Não foi possivel adicionar o cartão")
             throw error
@@ -361,6 +360,7 @@ export function useTransactionDatabase() {
     return {
         createTransaction,
         createRecurringTransaction,
+        createCard,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,

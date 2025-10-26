@@ -1,5 +1,4 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
 
 
 
@@ -13,8 +12,7 @@ type Category = {
 
 
 
-export function findCategoryByID(id: string|number){
-    const {t} = useTranslation()
+export function findCategoryByID(id: string|number, t: (key: string) => string){
 
     const categoryList: Category[] = [
         { id: "0", label: "undefined", iconName: "help-circle-outline"},

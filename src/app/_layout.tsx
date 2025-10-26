@@ -188,12 +188,12 @@ function RootLayoutNav() {
 export default function RootLayout()
 {
     return(
-        <SearchFiltersProvider>
         <SQLiteProvider databaseName={"sf-app.db"} onInit={initializeDatabase}>
-            <StyleProvider>
-                <RootLayoutNav />
-            </StyleProvider>
+            <SearchFiltersProvider>
+                <StyleProvider>
+                    <RootLayoutNav />
+                </StyleProvider>
+            </SearchFiltersProvider>
         </SQLiteProvider>
-        </SearchFiltersProvider>
     )
 }
