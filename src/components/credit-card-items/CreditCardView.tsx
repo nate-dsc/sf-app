@@ -9,18 +9,19 @@ type CreditCardViewProps = {
 export default function CreditCardView({ color = "#007AFF", name = "Banco"}: CreditCardViewProps) {
   return (
     <View
-    style={{
-        width: 200,
-        height: 125,
-        //aspectRatio: 1.59,
-        borderRadius: 16,
-        padding: 20,
-        elevation: 4, // sombra Android
-        shadowColor: "#000", // sombra iOS
-        shadowOpacity: 0.25,
-        shadowRadius: 6,
-        shadowOffset: { width: 0, height: 2 },
-        overflow: "hidden", backgroundColor: color 
+        style={{
+            width: 200,
+            height: 125,
+            //aspectRatio: 1.59,
+            borderRadius: 16,
+            borderCurve: "continuous",
+            padding: 20,
+            elevation: 4, // sombra Android
+            shadowColor: "#000", // sombra iOS
+            shadowOpacity: 0.25,
+            shadowRadius: 6,
+            shadowOffset: { width: 0, height: 2 },
+            overflow: "hidden", backgroundColor: color 
         }}
     >
         {/* Faixa magnética */}
@@ -42,6 +43,7 @@ export default function CreditCardView({ color = "#007AFF", name = "Banco"}: Cre
                 height: 30,
                 borderRadius: 6,
                 backgroundColor: "#f0c63be0", // dourado
+                borderCurve: "continuous",
                 marginTop: 40,
                 marginLeft: 0
             }}
