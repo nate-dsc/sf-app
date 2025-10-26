@@ -1,5 +1,5 @@
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { CCard, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
@@ -64,6 +64,35 @@ export function useTransactionDatabase() {
             const result = await database.runAsync(statement, params)
         } catch (error) {
             console.log("Não foi possivel adicionar o cartão")
+            throw error
+        }
+    }
+
+    async function getCards(): Promise<CCard[]> {
+        try {
+            const cards = await database.getAllAsync<{
+                id: number
+                name: string
+                color: number
+                card_limit: number
+                limit_used: number
+                closing_day: number
+                due_day: number
+                ign_wknd: number
+            }>("SELECT * FROM cards")
+
+            return cards.map((card) => ({
+                id: card.id,
+                name: card.name,
+                limit: card.card_limit,
+                limitUsed: card.limit_used,
+                color: String(card.color),
+                closingDay: card.closing_day,
+                dueDay: card.due_day,
+                ignoreWeekends: !!card.ign_wknd
+            }))
+        } catch (error) {
+            console.error("Could not fetch cards", error)
             throw error
         }
     }
@@ -361,6 +390,7 @@ export function useTransactionDatabase() {
         createTransaction,
         createRecurringTransaction,
         createCard,
+        getCards,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,
