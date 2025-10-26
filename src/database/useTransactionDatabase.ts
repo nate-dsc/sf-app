@@ -1,5 +1,7 @@
+import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { CCard, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
 import { RRule } from "rrule"
@@ -7,6 +9,7 @@ import { RRule } from "rrule"
 
 export function useTransactionDatabase() {
     const {triggerRefresh} = useSummaryStore()
+    const {theme} = useStyle()
     const database = useSQLiteContext()
 
     async function createTransaction(data: Transaction) {
@@ -86,7 +89,7 @@ export function useTransactionDatabase() {
                 name: card.name,
                 limit: card.card_limit,
                 limitUsed: card.limit_used,
-                color: String(card.color),
+                color: getColorFromID(card.color, theme),
                 closingDay: card.closing_day,
                 dueDay: card.due_day,
                 ignoreWeekends: !!card.ign_wknd
