@@ -100,6 +100,39 @@ export function useTransactionDatabase() {
         }
     }
 
+    async function getCard(cardId: number): Promise<CCard | null> {
+        try {
+            const card = await database.getFirstAsync<{
+                id: number
+                name: string
+                color: number
+                card_limit: number
+                limit_used: number
+                closing_day: number
+                due_day: number
+                ign_wknd: number
+            }>("SELECT * FROM cards WHERE id = ?", [cardId])
+
+            if (!card) {
+                return null
+            }
+
+            return {
+                id: card.id,
+                name: card.name,
+                limit: card.card_limit,
+                limitUsed: card.limit_used,
+                color: getColorFromID(card.color, theme),
+                closingDay: card.closing_day,
+                dueDay: card.due_day,
+                ignoreWeekends: !!card.ign_wknd,
+            }
+        } catch (error) {
+            console.error("Could not fetch card", error)
+            throw error
+        }
+    }
+
     async function deleteTransaction(id: number) {
         try {
             await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
@@ -394,6 +427,7 @@ export function useTransactionDatabase() {
         createRecurringTransaction,
         createCard,
         getCards,
+        getCard,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,
