@@ -158,6 +158,18 @@ function RootLayoutNav() {
                             }}
                         />
                         <Stack.Screen
+                            name="modalAddInstallment"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                title: t("nav.newInstallmentTransaction", { defaultValue: "Nova compra parcelada" }),
+                                headerTitleStyle: { color: theme.text.label },
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                },
+                            }}
+                        />
+                        <Stack.Screen
                             name="modalRecurring"
                             options={{
                                 headerBackButtonDisplayMode: "minimal",

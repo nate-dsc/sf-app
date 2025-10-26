@@ -2,13 +2,44 @@ import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import AddButton from "../buttons/AddButton";
 import { TabBarStyles } from "./TabBarStyles";
 
+type QuickAction = {
+    key: string;
+    label: string;
+    onPress: () => void;
+};
+
 export default function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
-    const { theme, preference, setPreference } = useStyle();
+    const { theme } = useStyle();
     const styles = TabBarStyles(theme)
+    const router = useRouter()
+    const { t } = useTranslation()
+    const [showOptions, setShowOptions] = useState(false)
+
+    const addButtonSize = 60
+    const quickActions = useMemo<QuickAction[]>(() => [
+        {
+            key: "purchase",
+            label: t("quickActions.newPurchase", { defaultValue: "Nova compra" }),
+            onPress: () => router.push("/modalAdd"),
+        },
+        {
+            key: "installmentPurchase",
+            label: t("quickActions.newInstallmentPurchase", { defaultValue: "Nova compra parcelada" }),
+            onPress: () => router.push("/modalAddInstallment"),
+        },
+    ], [router, t])
+
+    const handleActionPress = (action: QuickAction) => {
+        setShowOptions(false)
+        action.onPress()
+    }
 
     return (
         <View style={styles.tabBarContainer}>
@@ -18,6 +49,9 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                 end={{ x: 0, y: 0.8 }}
                 style={StyleSheet.absoluteFill}
             />
+            {showOptions ? (
+                <Pressable style={styles.optionsBackdrop} onPress={() => setShowOptions(false)} />
+            ) : null}
             <View
                 style={styles.tabBar}
             >
@@ -72,7 +106,7 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                             >
                                 {/* Fundo circular ativo */}
                                 <View
-                                style={[styles.tabBarHighlight, {backgroundColor: isFocused ? theme.colors.blue : theme.colors.gray5 }]}
+                                    style={[styles.tabBarHighlight, { backgroundColor: isFocused ? theme.colors.blue : theme.colors.gray5 }]}
                                 >
                                     <Ionicons
                                         name={iconName}
@@ -96,9 +130,40 @@ export default function CustomTabBar({ state, descriptors, navigation }: BottomT
                             </Pressable>
                         </View>
                     );
-                })} 
+                })}
             </View>
-            <AddButton size={60} />
-        </View>  
+            <View style={styles.addButtonWrapper} pointerEvents="box-none">
+                {showOptions ? (
+                    <View style={[styles.optionsWrapper, { bottom: addButtonSize + 16 }]}>
+                        <View
+                            style={[
+                                styles.optionsContainer,
+                                {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                    borderColor: theme.separator.translucent,
+                                },
+                            ]}
+                        >
+                            {quickActions.map((action, index) => (
+                                <View key={action.key}>
+                                    <Pressable
+                                        style={styles.optionButton}
+                                        onPress={() => handleActionPress(action)}
+                                    >
+                                        <Text style={styles.optionText}>
+                                            {action.label}
+                                        </Text>
+                                    </Pressable>
+                                    {index < quickActions.length - 1 ? (
+                                        <View style={[styles.optionDivider, { backgroundColor: theme.separator.translucent }]} />
+                                    ) : null}
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                ) : null}
+                <AddButton size={addButtonSize} onPress={() => setShowOptions((prev) => !prev)} />
+            </View>
+        </View>
     )
 }

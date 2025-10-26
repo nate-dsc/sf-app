@@ -20,7 +20,7 @@ export const TabBarStyles = (Colors: typeof light) => StyleSheet.create({
 
         gap: 6,
         padding: 6,
-        
+
         borderCurve: "continuous", // hmm, deixa mais redondo
         borderRadius: 24,
         borderWidth: 1,
@@ -42,5 +42,49 @@ export const TabBarStyles = (Colors: typeof light) => StyleSheet.create({
         padding: 6,
         borderRadius: 18,
         borderCurve: "continuous",
+    },
+    addButtonWrapper: {
+        position: "relative",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 2,
+    },
+    optionsWrapper: {
+        position: "absolute",
+        alignItems: "center",
+        justifyContent: "center",
+        left: 0,
+        right: 0,
+        zIndex: 2,
+        paddingBottom: 8,
+    },
+    optionsContainer: {
+        alignItems: "stretch",
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.12,
+        shadowRadius: 18,
+        elevation: 10,
+    },
+    optionButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 18,
+    },
+    optionText: {
+        fontSize: 15,
+        fontWeight: "600",
+        textAlign: "center",
+        color: Colors.text.label,
+    },
+    optionDivider: {
+        height: StyleSheet.hairlineWidth,
+        marginHorizontal: 12,
+    },
+    optionsBackdrop: {
+        ...StyleSheet.absoluteFillObject,
+        zIndex: 1,
     }
 })

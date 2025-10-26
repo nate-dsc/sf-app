@@ -14,14 +14,19 @@
         },
         "settings": "Configurações",
         "newTransaction": "Nova transação",
+        "newInstallmentTransaction": "Nova compra parcelada",
         "categories": "Selecione uma categoria",
         "recurring": "Configure a recorrência",
         "back": "Voltar"
     },
+    "quickActions": {
+        "newPurchase": "Nova compra",
+        "newInstallmentPurchase": "Nova compra parcelada"
+    },
     "buttons": {
         "cancel": "Cancelar",
         "save": "Salvar"
-    }, 
+    },
     "tiles": {
         "budget": "Orçamento",
         "balance": "Saldo",
@@ -88,6 +93,9 @@
         "recurring": "Repete",
         "Yes": "Sim",
         "No": "Não"
+    },
+    "modalAddInstallment": {
+        "placeholder": "Tela de compra parcelada em desenvolvimento."
     },
     "RRULEtoText": {
         "EverySingular": "Todo ",

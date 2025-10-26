@@ -14,7 +14,7 @@ import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
 import { CCard, Flow } from "@/types/transaction";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, View } from "react-native";
@@ -24,6 +24,7 @@ import { Alert, ScrollView, Text, View } from "react-native";
 export default function AddModal() {
 
     const router = useRouter()
+    const params = useLocalSearchParams<{ type?: string }>()
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
     const { getCards } = useTransactionDatabase()
@@ -34,21 +35,14 @@ export default function AddModal() {
 
     const {theme, layout} = useStyle()
 
+    const rawType = params.type
+    const normalizedType = Array.isArray(rawType) ? rawType[0] : rawType
+    const shouldUseCreditOnMount = normalizedType === "installment"
+
     const flowOptions: SCOption<Flow>[] = [
         {label: t("modalAdd.inflow"), value: "inflow"},
         {label: t("modalAdd.outflow"), value: "outflow"}
     ]
-
-    useEffect(() => {
-        // Limpa para garantir que não estamos editando uma transação antiga
-        setNewTransaction({ flowType: "outflow", date: newDate, useCreditCard: false }); // Define um valor inicial
-
-        return () => {
-            // Limpa ao sair da tela para não sujar a próxima abertura do modal
-            setNewTransaction({});
-      }
-    }, []);
-    
 
     const handleToggleCredit = async (value: boolean) => {
         if (value) {
@@ -67,8 +61,8 @@ export default function AddModal() {
                     return
                 }
 
-                const hasSelectedCard = !!newTransaction.cardId && cards.some((card) => card.id === newTransaction.cardId)
-                const defaultCardId = hasSelectedCard ? newTransaction.cardId : cards[0]?.id
+                const hasSelectedCard = !!newTransaction.cardId && response.some((card) => card.id === newTransaction.cardId)
+                const defaultCardId = hasSelectedCard ? newTransaction.cardId : response[0]?.id
 
                 updateNewTransaction({
                     useCreditCard: true,
@@ -86,6 +80,21 @@ export default function AddModal() {
             updateNewTransaction({ useCreditCard: false, cardId: undefined })
         }
     }
+
+    useEffect(() => {
+        // Limpa para garantir que não estamos editando uma transação antiga
+        setNewTransaction({ flowType: "outflow", date: newDate, useCreditCard: shouldUseCreditOnMount })
+
+        if (shouldUseCreditOnMount) {
+            void handleToggleCredit(true)
+        }
+
+        return () => {
+            // Limpa ao sair da tela para não sujar a próxima abertura do modal
+            setNewTransaction({})
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     const handleConfirm = async () => {
         try {

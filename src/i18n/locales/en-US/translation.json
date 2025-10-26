@@ -14,14 +14,19 @@
         },
         "settings": "Settings",
         "newTransaction": "New transaction",
+        "newInstallmentTransaction": "New installment purchase",
         "categories": "Select a category",
         "recurring": "Set recurrence",
         "back": "Return"
     },
+    "quickActions": {
+        "newPurchase": "New purchase",
+        "newInstallmentPurchase": "New installment purchase"
+    },
     "buttons": {
         "cancel": "Cancel",
         "save": "Save"
-    }, 
+    },
     "tiles": {
         "budget": "Budget",
         "balance": "Balance",
@@ -88,6 +93,9 @@
         "recurring": "Recurring",
         "Yes": "Yes",
         "No": "No"
+    },
+    "modalAddInstallment": {
+        "placeholder": "Installment purchase screen under construction."
     },
     "RRULEtoText": {
         "EverySingular": "Every ",
