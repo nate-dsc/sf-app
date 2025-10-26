@@ -1,14 +1,14 @@
 import CancelSaveButtons from '@/components/buttons/CancelSaveCombo';
 import GDateInput from '@/components/grouped-list-components/GroupedDateInput';
+import GSelectionList from '@/components/grouped-list-components/GroupedSelectionList';
 import DayPicker from '@/components/recurrence-modal-items/DayPicker';
-import MSList from '@/components/recurrence-modal-items/ListMultipleSelection';
-import SSList from '@/components/recurrence-modal-items/ListSingleSelection';
 import { MIStyles } from '@/components/recurrence-modal-items/MenuItemStyles';
 import MonthPicker from '@/components/recurrence-modal-items/MonthPicker';
-import SegmentedControlCompact, { SCOption } from '@/components/recurrence-modal-items/SegmentedControlCompact';
+import SegmentedControlCompact from '@/components/recurrence-modal-items/SegmentedControlCompact';
 import Stepper from '@/components/recurrence-modal-items/Stepper';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useStyle } from '@/context/StyleContext';
+import { SCOption } from '@/types/components';
 import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
@@ -289,10 +289,10 @@ export default function ModalRecurring() {
                     </Text>
                 </View>
                 
-                <MSList
+                <GSelectionList
                     items={WEEKDAYS}
-                    onSelect={(id: string, value: Weekday) => handleWeekdayToggle(id, value)}
                     selectedIds={selectedIds}
+                    onSelect={(id, label, value) => handleWeekdayToggle(id, value)}
                 />
             </View>
         )
@@ -339,23 +339,26 @@ export default function ModalRecurring() {
                 <View style={{ display: monthlyType === 'day_of_week' ? 'flex' : 'none'}}>
                     <View style={{ flexDirection: "row", gap: layout.margin.contentArea}}>
                         <View style={{flex: 1}}>
-                            <SSList
+                            <GSelectionList
+                                singleSelect
                                 items={MONTHLY_ORDINAL}
-                                selectedId={MONTHLY_ORDINAL.find(item => item.value === monthlyOrdinal)?.id}
-                                onSelect={(id: string, label: string, value: number) => setMonthlyOrdinal(value)}
-                                compact={true}
+                                selectedIds={MONTHLY_ORDINAL.flatMap(item => item.value === monthlyOrdinal ? [item.id] : [])
+                                }
+                                onSelect={(id, label, value) => setMonthlyOrdinal(value)}
+                                showIcons={false}
                             />
                         </View>
                         <View style={{flex: 1}}>
-                            <SSList
+                            <GSelectionList
+                                singleSelect
                                 items={WEEKDAYS_FOR_MONTHLY_FREQUENCY}
-                                selectedId={WEEKDAYS_FOR_MONTHLY_FREQUENCY.find(
-                                    item =>
-                                    item.value.length === monthlyWeekday.length &&
-                                    item.value.every((v, i) => v.weekday === monthlyWeekday[i].weekday)
-                                )?.id}
+                                selectedIds={
+                                    WEEKDAYS_FOR_MONTHLY_FREQUENCY.flatMap(item =>
+                                    ((item.value.length === monthlyWeekday.length) &&
+                                    (item.value.every((v, i) => v.weekday === monthlyWeekday[i].weekday))) ? [item.id] : [])
+                                }
                                 onSelect={(id, label, value) => setMonthlyWeekday(value)}
-                                compact={true}
+                                showIcons={false}
                             />
                         </View>
                     </View>

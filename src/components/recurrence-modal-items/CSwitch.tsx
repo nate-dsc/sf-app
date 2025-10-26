@@ -1,4 +1,4 @@
-import { FontStyles } from "@/components/styles/FontStyles"
+/* import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { Switch, SwitchProps, Text, View } from "react-native"
 import { MIStyles } from "./MenuItemStyles"
@@ -30,4 +30,4 @@ export default function CSwitch({text, ...rest}: CSwitchProps) {
         </View>
     )
 
-}
+} */

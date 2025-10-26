@@ -13,7 +13,7 @@ type DatePickerProps = {
 
 export default function DatePicker({text, value, onDateChange}: DatePickerProps) {
 
-    const {theme, preference, setPreference}= useStyle()
+    const {theme}= useStyle()
     const menuStyles = MIStyles(theme)
 
     const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {

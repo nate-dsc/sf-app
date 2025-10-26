@@ -1,18 +1,10 @@
 import { useStyle } from "@/context/StyleContext";
+import { SSListItem } from "@/types/components";
 import { Ionicons } from "@expo/vector-icons"; // npm i react-native-vector-icons
 import React from "react";
 import { FlatList, GestureResponderEvent, ListRenderItemInfo, Text, TouchableOpacity, View } from "react-native";
 import { FontStyles } from "../styles/FontStyles";
 import { MIStyles } from "./MenuItemStyles";
-
-type iconName = React.ComponentProps<typeof Ionicons>["name"]
-
-export type SSListItem<T> = {
-    id: string,
-    label: string;
-    value: T;
-    iconName?: iconName;
-};
 
 type Props<T> = {
     items: SSListItem<T>[],

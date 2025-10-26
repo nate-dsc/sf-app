@@ -12,7 +12,6 @@ export default function DayPicker({selectedDays=[], onDayPress}: DayPickerProps)
 
     const days = Array.from({ length: 31 }, (_, i) => i + 1)
     const rows: number[][] = []
-    const today = new Date().getDate()
     for (let i = 0; i < days.length; i += 7) rows.push(days.slice(i, i + 7))
 
     return(

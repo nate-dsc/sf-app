@@ -1,12 +1,14 @@
+import GRedir from "@/components/grouped-list-components/GroupedRedirect"
+import GroupView from "@/components/grouped-list-components/GroupView"
 import { MIStyles } from "@/components/recurrence-modal-items/MenuItemStyles"
-import Redir from "@/components/recurrence-modal-items/Redir"
-import SegmentedControlCompact, { type SCOption } from "@/components/recurrence-modal-items/SegmentedControlCompact"
+import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
 import { resetCCDatabase } from "@/database/ResetCCDatabase"
 import { resetDatabase } from "@/database/ResetDatabase"
 import i18n from "@/i18n"
+import { SCOption } from "@/types/components"
 import { ThemePreference } from "@/types/theme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -56,21 +58,62 @@ export default function SettingsScreen() {
 
             <Text style={[menuStyles.text, FontStyles.title2]}> Debug </Text>
 
-            <Redir iconName="hammer" text="Teste 1" onPress={() => {router.push("/experiment")}} />
+            <GroupView>
+                <GRedir
+                    separator={"translucent"}
+                    icon={"hammer"}
+                    label={"Teste 1"}
+                    onPress={() => {router.push("/experiment")}}
+                />
+                <GRedir
+                    separator={"none"}
+                    icon={"hammer"}
+                    label={"Teste 2"}
+                    onPress={() => {router.push("/experiment2")}}
+                />
+            </GroupView>
 
-            <Redir iconName="hammer" text="Teste 2" onPress={() => {router.push("/experiment2")}} />
+            <GroupView>
+                <GRedir
+                    separator="translucent"
+                    icon="move-outline"
+                    label="Medir componentes"
+                    onPress={() => { router.push("/measures") }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="add-outline"
+                    label="Modal adicionar"
+                    onPress={() => { router.push("/modalAdd") }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="sync-outline"
+                    label="Modal recorrência"
+                    onPress={() => { router.push("/modalRecurring") }}
+                />
+                <GRedir
+                    separator="none"
+                    icon="list-outline"
+                    label="Modal categorias"
+                    onPress={() => { router.push("/modalCategoryPicker") }}
+                />
+            </GroupView>
 
-            <Redir iconName="move-outline" text="MEDIR COMPONENTES" onPress={() => {router.push("/measures")}} />
-
-            <Redir iconName="add-outline" text="MODAL ADICIONAR" onPress={() => {router.push("/modalAdd")}} />
-
-            <Redir iconName="sync-outline" text="MODAL RECORRENCIA" onPress={() => {router.push("/modalRecurring")}} />
-            
-            <Redir iconName="list-outline" text="MODAL CATEGORIAS" onPress={() => {router.push("/modalCategoryPicker")}} />
-
-            <Redir iconName="trash-outline" text="RESETAR BANCO DE DADOS" onPress={() => {resetDatabase(database)}} />
-
-            <Redir iconName="trash-outline" text="RESETAR CARTÕES" onPress={() => {resetCCDatabase(database)}} />
+            <GroupView>
+                <GRedir
+                    separator="translucent"
+                    icon="trash-outline"
+                    label="Resetar banco de dados"
+                    onPress={() => { resetDatabase(database) }}
+                />
+                <GRedir
+                    separator="none"
+                    icon="trash-outline"
+                    label="Resetar cartões"
+                    onPress={() => { resetCCDatabase(database) }}
+                />
+            </GroupView>
 
             <Text style={[{color: menuStyles.text.color}, FontStyles.headline]}> ESTADO DO APP </Text>
 

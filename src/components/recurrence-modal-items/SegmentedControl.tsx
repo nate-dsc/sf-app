@@ -1,14 +1,11 @@
-import { useStyle } from "@/context/StyleContext";
+/* import { useStyle } from "@/context/StyleContext";
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { FontStyles } from "../styles/FontStyles";
 import { MIStyles } from "./MenuItemStyles";
 
 
-export type SCOption<T> = {
-  label: string,
-  value: T
-}
+
 
 type SegmentedControlProps<T> = {
   options: SCOption<T>[];
@@ -48,4 +45,4 @@ export default function SegmentedControl<T>({ options, selectedValue, onChange}:
       ))}
     </View>
   );
-};
+}; */

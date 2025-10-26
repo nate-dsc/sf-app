@@ -1,12 +1,7 @@
 import { useStyle } from "@/context/StyleContext";
+import { SCOption } from "@/types/components";
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-
-
-export type SCOption<T> = {
-  label: string,
-  value: T
-}
 
 type SegmentedControlProps<T> = {
   options: SCOption<T>[];

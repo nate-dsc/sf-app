@@ -6,6 +6,7 @@ export const Layout = {
     border: Tokens.Border,
     radius: Tokens.BorderRadius,
     grouped: Tokens.GroupedComponents,
+    icons: Tokens.Icons
 
 }
 
@@ -15,5 +16,6 @@ export const LayoutBorderless = {
     border: Tokens.Borderless,
     radius: Tokens.BorderRadius,
     grouped: Tokens.GroupedComponents,
+    icons: Tokens.Icons
 
 }

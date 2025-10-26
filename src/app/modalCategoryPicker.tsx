@@ -1,5 +1,7 @@
-import CategoryList, { SSListItem } from "@/components/recurrence-modal-items/ListSingleSelection"
+import GSelectionList from "@/components/grouped-list-components/GroupedSelectionList"
 import { useNewTransaction } from "@/context/NewTransactionContext"
+import { useStyle } from "@/context/StyleContext"
+import { GSListItem } from "@/types/components"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useState } from "react"
@@ -9,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function CategoryPicker() {
 
+    const {layout} = useStyle()
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
     const router = useRouter()
@@ -20,7 +23,7 @@ export default function CategoryPicker() {
 
     const [selected, setSelected] = useState<string | undefined>(selectedCategory);
     
-    const expenseList: SSListItem<number>[] = [
+    const expenseList: GSListItem<number>[] = [
         { id: "1", label: t("categories.expenses.home"), value: 1, iconName: "home" },
         { id: "2", label: t("categories.expenses.eating"), value: 2, iconName: "restaurant" },
         { id: "3", label: t("categories.expenses.groceries"), value: 3, iconName: "cart" },
@@ -39,7 +42,7 @@ export default function CategoryPicker() {
         { id: "16", label: t("categories.expenses.other"), value: 17, iconName: "ellipsis-horizontal" }
     ];
 
-    const incomeList: SSListItem<number>[] = [
+    const incomeList: GSListItem<number>[] = [
         { id: "21", label: t("categories.income.salary"), value: 21, iconName: "cash" },
         { id: "22", label: t("categories.income.freelance"), value: 22, iconName: "hammer" },
         { id: "23", label: t("categories.income.oncall"), value: 23, iconName: "id-card" },
@@ -52,10 +55,18 @@ export default function CategoryPicker() {
     ];
     
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom}]}>
-            <CategoryList
+        <ScrollView
+            contentContainerStyle={{
+                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: 100
+            }}
+            showsVerticalScrollIndicator={false}
+        >
+            <GSelectionList
                 items={type === "inflow" ? incomeList : expenseList}
-                selectedId={selected}
+                singleSelect
+                selectedIds={selected ? [selected] : undefined}
                 onSelect={(id, label) => {
                     updateNewTransaction({category: {id, label}})
                     router.back()

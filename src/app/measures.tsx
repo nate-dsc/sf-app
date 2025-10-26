@@ -1,6 +1,5 @@
-import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
-import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
-import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
+import GRedir from "@/components/grouped-list-components/GroupedRedirect";
+import GroupView from "@/components/grouped-list-components/GroupView";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useStyle } from "@/context/StyleContext";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -35,40 +34,20 @@ export default function MeasuresScreen() {
         <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
-                <View 
-                    style={{
-                        paddingHorizontal: layout.margin.contentArea,
-                        borderRadius: layout.radius.groupedView,
-                        borderCurve: "continuous",
-                        backgroundColor: theme.fill.secondary
-                    }}
-                >
-                    <GTextInput
+                <GroupView>
+                    <GRedir
                         separator={"translucent"}
-                        label={"Nome"}
-                        acViewKey={"nome"}
-                        maxLength={20}
+                        icon={"hammer"}
+                        label={"Teste 1"}
+                        onPress={() => {router.push("/experiment")}}
                     />
-                    <GValueInput
-                        separator={"translucent"}
-                        label={"Limite"}
-                        acViewKey={"lim"}
-                        onChangeNumValue={() => {}}
-                        flowType={"inflow"}
+                    <GRedir
+                        separator={"none"}
+                        icon={"hammer"}
+                        label={"Teste 2"}
+                        onPress={() => {router.push("/experiment2")}}
                     />
-                    <GDateInput
-                        separator={"translucent"}
-                        label={"Data de fechamento"}
-                        value={new Date()}
-                        onDateChange={() => {}}
-                    />
-                    <GDateInput
-                        separator="none"
-                        label="Data de vencimento"
-                        value={new Date()}
-                        onDateChange={() => {}}
-                    />
-                </View>
+                </GroupView>
             </View>
             <Text style={styles.heightText}>
                 A altura do componente é: {componentHeight.toFixed(2)} pixels

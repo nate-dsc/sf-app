@@ -5,11 +5,12 @@ import GPopup from "@/components/grouped-list-components/GroupedPopup";
 import GSwitch from "@/components/grouped-list-components/GroupedSwitch";
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
-import { SCOption } from "@/components/recurrence-modal-items/SegmentedControl";
+import GroupView from "@/components/grouped-list-components/GroupView";
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact";
 import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useStyle } from "@/context/StyleContext";
 import i18n from "@/i18n";
+import { SCOption } from "@/types/components";
 import { Flow } from "@/types/transaction";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -102,13 +103,7 @@ export default function AddModal() {
                 })}
             />
 
-            <View 
-                style={{
-                    paddingHorizontal: layout.margin.contentArea,
-                    borderRadius: layout.radius.groupedView,
-                    backgroundColor: theme.fill.secondary
-                }}
-            >   
+            <GroupView>   
                 <GValueInput
                     separator={"translucent"}
                     label={t("modalAdd.value")}
@@ -145,7 +140,7 @@ export default function AddModal() {
                     displayValue={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
                     onPress={() => {router.push("/modalRecurring")}}
                 />
-            </View>
+            </GroupView>
 
             {newTransaction.rruleDescription ?
                 <View style={{paddingHorizontal: layout.margin.contentArea}}>
@@ -157,20 +152,14 @@ export default function AddModal() {
                 </View>
             : null}
 
-            <View 
-                style={{
-                    paddingHorizontal: layout.margin.contentArea,
-                    borderRadius: layout.radius.groupedView,
-                    backgroundColor: theme.fill.secondary
-                }}
-            >
+            <GroupView>
                 <GSwitch 
                     separator={"none"}
                     label={t("modalAdd.useCredit")}
                     value={true}
                     onValueChange={() => {}}
                 />
-            </View>
+            </GroupView>
 
             <CancelSaveButtons
                 cancelAction={() => {router.back()}}
