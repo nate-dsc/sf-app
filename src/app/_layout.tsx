@@ -123,16 +123,16 @@ function RootLayoutNav() {
                                 animation: "fade"
                             }}
                         />
-                        {/* <Stack.Screen
+                        <Stack.Screen
                             name="(credit)/[cardId]"
                             options={{
                                 title: t("nav.credit.index"),
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
-                                headerBackTitle: t("nav.planning.index"),
+                                headerBackTitle: t("nav.credit.index"),
                                 headerStyle: { backgroundColor: theme.colors.brown }
                             }}
-                        /> */}
+                        />
                         <Stack.Screen
                             name="(credit)/addCreditCard"
                             options={{

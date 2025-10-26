@@ -36,7 +36,34 @@ export default function CreditScreen() {
 
         loadCards()
     }, [])
-    
+
+
+    useEffect(() => {
+        if (cards.length === 0) {
+            setSelectedCard(null)
+            return
+        }
+
+        setSelectedCard((previous) => {
+            if (previous) {
+                const updated = cards.find((card) => card.id === previous.id)
+                if (updated) {
+                    return updated
+                }
+            }
+
+            return cards[0]
+        })
+    }, [cards])
+
+    const handleNavigateToCard = (card: CCard) => {
+        setSelectedCard(card)
+        router.push({
+            pathname: "/(credit)/[cardId]",
+            params: { cardId: card.id.toString() }
+        })
+    }
+
 
     return(
             <ScrollView 
@@ -99,11 +126,15 @@ export default function CreditScreen() {
                 <View>
                 {loading ? (
                     <Text style={{color: theme.text.secondaryLabel}}>Carregando cartões...</Text>
+                ) : cards.length === 0 ? (
+                    <Text style={{color: theme.text.secondaryLabel}}>
+                        {t("credit.noCardsAvailable", { defaultValue: "Nenhum cartão cadastrado" })}
+                    </Text>
                 ) : (
                     <CreditCardCarousel
                         cards={cards}
                         selectedCard={selectedCard}
-                        onSelectCard={(card) => setSelectedCard(card)}
+                        onSelectCard={handleNavigateToCard}
                     />
                 )}
             </View>
