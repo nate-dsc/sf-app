@@ -1,6 +1,5 @@
 
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { FontStyles } from "../styles/FontStyles";
@@ -15,7 +14,7 @@ type StepperProps = {
 };
 
 export default function Stepper({singular, plural, min, max, value, onValueChange } : StepperProps) {
-    const {theme, setPreference, preference} = useStyle()
+    const {theme, layout} = useStyle()
 
     const intervalRef = useRef<number | null>(null)
     const valueRef = useRef(value)
@@ -72,71 +71,121 @@ export default function Stepper({singular, plural, min, max, value, onValueChang
     };
 
     return (
-    <View style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: theme.menuItem.border,
-        borderRadius: 24,
-        backgroundColor: theme.menuItem.background
-    }}>
-        <View style={{
-            flexDirection: "row",
-            flex: 1,
-            justifyContent: "space-between" 
-        }}>
-            <TouchableOpacity
+        <View 
+            style={{
+                paddingHorizontal: layout.margin.contentArea,
+                borderRadius: layout.radius.groupedView,
+                backgroundColor: theme.fill.secondary
+            }}
+        >  
+            <View 
                 style={{
-                    justifyContent: "center",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
                     alignItems: "center",
-                    paddingRight: 5,
-                    marginHorizontal: 6,
-                    marginVertical: 6,
-                    width: 46,
-                    height: 34,
-                    backgroundColor: theme.menuItem.tint,
-                    borderRadius: 17
                 }}
-                onPressIn={startDecreasing}
-                onPressOut={stopCounter}
-                disabled={value === min}
             >
-                <Ionicons name="chevron-back" size={30} color={"#F5F5F5"}/>
-            </TouchableOpacity>
+                <View 
+                    style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        flex: 1,
+                        justifyContent: "flex-start",
+                        gap: 8
+                    }}
+                >
+                    <TouchableOpacity
+                        style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: 52,
+                            height: 52,
+                        }}
+                        onPressIn={startDecreasing}
+                        onPressOut={stopCounter}
+                        disabled={value === min}
+                    >
+                        <View 
+                            style={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: 48,
+                                height: 36,
+                                borderRadius: layout.radius.round,
+                                backgroundColor: theme.segmentedControl.selected,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    fontSize: 28,
+                                    lineHeight: 30,
+                                    fontWeight: "bold",
+                                    color: theme.text.label
+                                }}
+                            >
+                                -
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
 
-            <Text
-                style={[{fontVariant: ["tabular-nums"], fontSize: 22, lineHeight: 22, fontWeight: "600"}, {paddingTop: 14, paddingBottom: 10, textAlign: "center", color: theme.menuItem.text}]}
-            >{String(value)}</Text>
+                    <View style={{width: 52}}>
+                        <Text
+                            style={{
+                                fontVariant: ["tabular-nums"],
+                                fontSize: 17,
+                                lineHeight: 22,
+                                fontWeight: "500",
+                                textAlign: "center",
+                                color: theme.text.label
+                            }}
+                        >
+                            {String(value)}
+                        </Text>
+                    </View>
 
-            <TouchableOpacity
-                style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingLeft: 5,
-                    marginHorizontal: 6,
-                    marginVertical: 6,
-                    width: 46,
-                    height: 34,
-                    backgroundColor: theme.menuItem.tint,
-                    borderRadius: 17
-                }}
-                onPressIn={startIncreasing}
-                onPressOut={stopCounter}
-                disabled={value === max}
-            >
-                <Ionicons name="chevron-forward" size={30} color={"#F5F5F5"}/>
-            </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: 52,
+                            height: 52,
+                        }}
+                        onPressIn={startIncreasing}
+                        onPressOut={stopCounter}
+                        disabled={value === max}
+                    >
+                        <View 
+                            style={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                width: 48,
+                                height: 36,
+                                borderRadius: layout.radius.round,
+                                backgroundColor: theme.segmentedControl.selected,
+                            }}
+                        >
+                            <Text
+                                style={{
+                                    fontSize: 28,
+                                    lineHeight: 30,
+                                    fontWeight: "bold",
+                                    color: theme.text.label
+                                }}
+                            >
+                                +
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, paddingVertical: 12, alignItems: "center"}}>
+                    <Text 
+                        style={[{color: theme.menuItem.text}, FontStyles.body]}
+                        ellipsizeMode="tail"
+                    >
+                        {value === 1 ? singular : plural}
+                    </Text>
+                </View>
+            </View>
         </View>
-        <View style={{ flex: 1, paddingVertical: 12, alignItems: "center"}}>
-            <Text 
-                style={[{color: theme.menuItem.text}, FontStyles.body]}
-                ellipsizeMode="tail"
-            >
-                {value === 1 ? singular : plural}
-            </Text>
-        </View>
-        
-    </View>
     );
 };
