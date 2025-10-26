@@ -13,7 +13,9 @@ type NewTransaction = {
         label: string
     },
     rrule?: string,
-    rruleDescription?: string
+    rruleDescription?: string,
+    useCreditCard?: boolean,
+    cardId?: number
 }
 
 type NewTransactionContextType = {
@@ -29,7 +31,14 @@ const NewTransactionContext = createContext<NewTransactionContextType | undefine
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
 
-    const { createTransaction, createRecurringTransaction, getSummaryFromDB } = useTransactionDatabase();
+    const {
+        createTransaction,
+        createRecurringTransaction,
+        createTransactionWithCard,
+        createRecurringTransactionWithCard,
+        getSummaryFromDB,
+        getCard
+    } = useTransactionDatabase();
 
     // 2. Acesso à ação de recarregar dados do store do sumário
     const loadSummaryData = useSummaryStore((state) => state.loadData);
@@ -43,8 +52,17 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }
 
     const isValid = useMemo(() => {
-        const { flowType, value, date, category } = newTransaction;
-        return !!(flowType && value && value > 0 && date && category?.id);
+        const { flowType, value, date, category, useCreditCard, cardId } = newTransaction;
+
+        if (!(flowType && value && value > 0 && date && category?.id)) {
+            return false
+        }
+
+        if (useCreditCard) {
+            return !!cardId
+        }
+
+        return true
     }, [newTransaction]);
 
     const getTransactionForDB = (): Transaction => {
@@ -57,6 +75,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             description: newTransaction.description || "",
             category: newTransaction.category?.id!,
             date: newTransaction.date?.toISOString().slice(0, 16)!,
+            card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
         }
     }
 
@@ -71,15 +90,42 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             category: newTransaction.category?.id!,
             date_start: newTransaction.date?.toISOString().slice(0, 16)!,
             rrule: newTransaction.rrule!,
-            date_last_processed: null
+            date_last_processed: null,
+            card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
         }
     }
 
     const saveTransaction = async () => {
+        const shouldUseCreditCard = !!newTransaction.useCreditCard && !!newTransaction.cardId
+
+        const ensureCardLimit = async () => {
+            if (!newTransaction.cardId || !newTransaction.value) {
+                throw new Error("Tentativa de usar cartão sem cartão selecionado ou valor definido.")
+            }
+
+            const card = await getCard(newTransaction.cardId)
+
+            if (!card) {
+                throw new Error("CARD_NOT_FOUND")
+            }
+
+            const availableLimit = card.limit - card.limitUsed
+            const purchaseValue = newTransaction.value
+
+            if (purchaseValue > availableLimit) {
+                throw new Error("INSUFFICIENT_CREDIT_LIMIT")
+            }
+        }
+
         if(newTransaction.rrule) {
             try {
                 const transactionData = getTransactionRecurringForDB()
-                await createRecurringTransaction(transactionData)
+                if (shouldUseCreditCard) {
+                    await ensureCardLimit()
+                    await createRecurringTransactionWithCard(transactionData, newTransaction.cardId!)
+                } else {
+                    await createRecurringTransaction(transactionData)
+                }
                 await loadSummaryData({ getSummaryFromDB })
                 triggerRefresh()
                 console.log("Transação recorrente salva com sucesso!")
@@ -91,7 +137,12 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         } else {
             try {
                 const transactionData = getTransactionForDB();
-                await createTransaction(transactionData)
+                if (shouldUseCreditCard) {
+                    await ensureCardLimit()
+                    await createTransactionWithCard(transactionData, newTransaction.cardId!)
+                } else {
+                    await createTransaction(transactionData)
+                }
                 await loadSummaryData({ getSummaryFromDB })
                 triggerRefresh()
                 console.log("Transação única salva com sucesso!")
@@ -102,8 +153,6 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
                 throw error; // Re-lança o erro para o chamador, se necessário
             }
         }
-
-        
     }
 
     return(
