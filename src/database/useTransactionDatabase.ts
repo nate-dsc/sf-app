@@ -16,7 +16,7 @@ export function useTransactionDatabase() {
         const statement = await database.prepareAsync(
             "INSERT INTO transactions (value, description, category, date) VALUES ($value, $description, $category, $date)"
         )
-        
+
         try {
             const result = await statement.executeAsync({
                 $value: data.value,
@@ -31,6 +31,30 @@ export function useTransactionDatabase() {
             throw error
         } finally {
             statement.finalizeAsync()
+        }
+    }
+
+    async function createTransactionWithCard(data: Transaction, cardId: number) {
+        try {
+            await database.withTransactionAsync(async () => {
+                await database.runAsync(
+                    "INSERT INTO transactions (value, description, category, date, card_id) VALUES (?, ?, ?, ?, ?)",
+                    [data.value, data.description, data.category, data.date, cardId]
+                )
+
+                const limitAdjustment = data.value < 0 ? Math.abs(data.value) : -Math.abs(data.value)
+
+                if (limitAdjustment !== 0) {
+                    await database.runAsync(
+                        "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
+                        [limitAdjustment, cardId]
+                    )
+                }
+            })
+
+            console.log(`Transação com cartão inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nCartão: ${cardId}`)
+        } catch (error) {
+            throw error
         }
     }
 
@@ -51,6 +75,30 @@ export function useTransactionDatabase() {
 
             console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}`)
             
+        } catch (error) {
+            throw error
+        } finally {
+            statement.finalizeAsync()
+        }
+    }
+
+    async function createRecurringTransactionWithCard(data: RecurringTransaction, cardId: number) {
+        const statement = await database.prepareAsync(
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id)"
+        )
+
+        try {
+            await statement.executeAsync({
+                $value: data.value,
+                $description: data.description,
+                $category: data.category,
+                $date_start: data.date_start,
+                $rrule: data.rrule,
+                $date_last_processed: null,
+                $card_id: cardId
+            })
+
+            console.log(`Transação recorrente com cartão inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}\nCartão: ${cardId}`)
         } catch (error) {
             throw error
         } finally {
@@ -342,9 +390,28 @@ export function useTransactionDatabase() {
                     await database.withTransactionAsync(async () => {
                         for(const occurrence of pendingOccurrences) {
                             occurrence.setHours(0,0,0)
-                            await database.runAsync("INSERT INTO transactions (value, description, category, date, id_recurring) VALUES (?, ?, ?, ?, ?)",
-                                [blueprint.value, blueprint.description, blueprint.category, occurrence.toISOString().slice(0, 16), blueprint.id]
+                            await database.runAsync("INSERT INTO transactions (value, description, category, date, id_recurring, card_id) VALUES (?, ?, ?, ?, ?, ?)",
+                                [
+                                    blueprint.value,
+                                    blueprint.description,
+                                    blueprint.category,
+                                    occurrence.toISOString().slice(0, 16),
+                                    blueprint.id,
+                                    blueprint.card_id ?? null
+                                ]
                             )
+
+                            if (blueprint.card_id) {
+                                const limitAdjustment = blueprint.value < 0 ? Math.abs(blueprint.value) : -Math.abs(blueprint.value)
+
+                                if (limitAdjustment !== 0) {
+                                    await database.runAsync(
+                                        "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
+                                        [limitAdjustment, blueprint.card_id]
+                                    )
+                                }
+                            }
+
                             console.log(`Criada transação da transação recorrente ${blueprint.id} no dia ${occurrence.toISOString().slice(0, 16)}`)
                         }
                         await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
@@ -425,6 +492,8 @@ export function useTransactionDatabase() {
     return {
         createTransaction,
         createRecurringTransaction,
+        createTransactionWithCard,
+        createRecurringTransactionWithCard,
         createCard,
         getCards,
         getCard,

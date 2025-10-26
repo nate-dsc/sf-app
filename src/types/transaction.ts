@@ -6,7 +6,8 @@ export type Transaction = {
     description: string,
     category: string,
     date: string,
-    id_recurring?: number
+    id_recurring?: number,
+    card_id?: number | null
 }
 
 export type RecurringTransaction = {
@@ -16,7 +17,8 @@ export type RecurringTransaction = {
     category: string,
     date_start: string,
     rrule: string,
-    date_last_processed: string | null
+    date_last_processed: string | null,
+    card_id?: number | null
 }
 
 export type NewCard = {
