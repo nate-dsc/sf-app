@@ -7,10 +7,11 @@ import { Switch, Text, View } from "react-native"
 type GSwitchProps = GroupedComponentsProps & {
     label: string,
     value: boolean,
-    onValueChange: (value: boolean) => void
+    onValueChange: (value: boolean) => void,
+    disabled?: boolean
 }
 
-export default function GSwitch({separator, label, value, onValueChange}: GSwitchProps) {
+export default function GSwitch({separator, label, value, onValueChange, disabled = false}: GSwitchProps) {
 
     const {theme} = useStyle()
 
@@ -38,7 +39,7 @@ export default function GSwitch({separator, label, value, onValueChange}: GSwitc
                     </Text>
                 </View>
                 
-                <Switch style={{alignSelf: "center"}} value={value} onValueChange={onValueChange} />
+                <Switch style={{alignSelf: "center"}} value={value} onValueChange={onValueChange} disabled={disabled}/>
             </View>
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
 

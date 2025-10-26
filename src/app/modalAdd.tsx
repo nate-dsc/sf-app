@@ -149,10 +149,13 @@ export default function AddModal() {
             <SegmentedControlCompact
                 options={flowOptions}
                 selectedValue={newTransaction.flowType || "outflow"}
-                onChange={(optionValue) => updateNewTransaction({
-                    flowType: optionValue,
-                    category: undefined
-                })}
+                onChange={(optionValue) => {
+                    updateNewTransaction({
+                        flowType: optionValue,
+                        category: undefined
+                    })
+                    if(optionValue === "inflow") { updateNewTransaction({useCreditCard: false})}
+                }}
             />
 
             <GroupView>   
@@ -210,6 +213,7 @@ export default function AddModal() {
                     label={t("modalAdd.useCredit")}
                     value={!!newTransaction.useCreditCard}
                     onValueChange={handleToggleCredit}
+                    disabled={newTransaction.flowType === "inflow"}
                 />
                 {newTransaction.useCreditCard ? (
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>
