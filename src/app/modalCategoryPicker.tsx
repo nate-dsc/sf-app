@@ -1,4 +1,4 @@
-import CategoryList, { SSListItem } from "@/components/menu-items/ListSingleSelection"
+import CategoryList, { SSListItem } from "@/components/recurrence-modal-items/ListSingleSelection"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"

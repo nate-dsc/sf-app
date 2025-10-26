@@ -138,6 +138,7 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.recurring"),
+                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg,
@@ -150,7 +151,11 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.categories"),
-                                presentation: "formSheet"
+                                headerTitleStyle: {color: theme.text.label},
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                }
                             }}
                         />
                         {/* Telas de teste */}

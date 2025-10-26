@@ -26,7 +26,8 @@ export const GroupedComponents = {
 
 export const Margin = {
     contentArea: 16,
-    sectionGap: 16
+    sectionGap: 16,
+    innerSectionGap: 10,
 }
 
 export const BorderRadius = {

@@ -1,14 +1,12 @@
-import CancelButton from '@/components/buttons/CancelButton';
-import ConfirmButton from '@/components/buttons/ConfirmButton';
-import DatePicker from '@/components/menu-items/DatePicker';
-import DayPicker from '@/components/menu-items/DayPicker';
-import MSList from '@/components/menu-items/ListMultipleSelection';
-import SSList from '@/components/menu-items/ListSingleSelection';
-import { MIStyles } from '@/components/menu-items/MenuItemStyles';
-import MonthPicker from '@/components/menu-items/MonthPicker';
-import SegmentedControlCompact, { SCOption } from '@/components/menu-items/SegmentedControlCompact';
-import Stepper from '@/components/menu-items/Stepper';
-import { FontStyles } from '@/components/styles/FontStyles';
+import CancelSaveButtons from '@/components/buttons/CancelSaveCombo';
+import GDateInput from '@/components/grouped-list-components/GroupedDateInput';
+import DayPicker from '@/components/recurrence-modal-items/DayPicker';
+import MSList from '@/components/recurrence-modal-items/ListMultipleSelection';
+import SSList from '@/components/recurrence-modal-items/ListSingleSelection';
+import { MIStyles } from '@/components/recurrence-modal-items/MenuItemStyles';
+import MonthPicker from '@/components/recurrence-modal-items/MonthPicker';
+import SegmentedControlCompact, { SCOption } from '@/components/recurrence-modal-items/SegmentedControlCompact';
+import Stepper from '@/components/recurrence-modal-items/Stepper';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useStyle } from '@/context/StyleContext';
 import { describeRRule } from '@/utils/RRULEUtils';
@@ -16,7 +14,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, View } from 'react-native';
+import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Frequency, Options, RRule, Weekday } from 'rrule';
 
@@ -33,7 +31,7 @@ export default function ModalRecurring() {
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
-    const {theme, preference, setPreference} = useStyle()
+    const {theme, layout} = useStyle()
     const menuStyles = MIStyles(theme)
 
     // Constantes para as opções da UI
@@ -248,10 +246,23 @@ export default function ModalRecurring() {
     const renderResetButton = () => {
         if (!newTransaction.rrule) return null
         return(
-            <CancelButton buttonText={t("modalRecurring.disable")} onPress={() => {
-                updateNewTransaction({rrule: undefined})
-                router.back()
-            }}/>
+            <TouchableOpacity
+                onPress={() => {
+                    updateNewTransaction({rrule: undefined})
+                    router.back()
+                }}
+                style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: layout.radius.round,
+                    paddingVertical: 13,
+                    backgroundColor: theme.fill.secondary
+                }}
+            >
+                <Text style={{lineHeight: 22, fontSize: 17, fontWeight: "500", color: theme.colors.red}}>
+                    {t("modalRecurring.disable")}
+                </Text>
+            </TouchableOpacity>
         )
     }
 
@@ -269,12 +280,19 @@ export default function ModalRecurring() {
     const renderWeeklySelector = () => {
         if (freq !== RRule.WEEKLY) return null;
         return (
-            <View style={{rowGap: 10}}>
-                <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.onthe")}</Text>
+            <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.onthe")}
+                    </Text>
+                </View>
+                
                 <MSList
-                items={WEEKDAYS}
-                onSelect={(id: string, value: Weekday) => handleWeekdayToggle(id, value)}
-                selectedIds={selectedIds}
+                    items={WEEKDAYS}
+                    onSelect={(id: string, value: Weekday) => handleWeekdayToggle(id, value)}
+                    selectedIds={selectedIds}
                 />
             </View>
         )
@@ -283,9 +301,19 @@ export default function ModalRecurring() {
     const renderMonthSelector = () => {
         if (freq !== RRule.YEARLY) return null
         return (
-            <View style={{rowGap: 10}}>
-                <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.onmonths")}</Text>
-                <MonthPicker selectedMonths={bymonth} onMonthPress={handleMonthPress} />
+            <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.onmonths")}
+                    </Text>
+                </View>
+                
+                <MonthPicker
+                    selectedMonths={bymonth}
+                    onMonthPress={handleMonthPress}
+                />
             </View>
         )
     }
@@ -293,17 +321,23 @@ export default function ModalRecurring() {
     const renderMonthlySelector = () => {
         if (freq !== RRule.MONTHLY && freq !== RRule.YEARLY) return <View/>;
         return (
-            <View style={{rowGap: 10}}>
-                <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.on")}</Text>
-                <SegmentedControlCompact options={MONTHLY_TYPE} selectedValue={monthlyType} onChange={(value) => setMonthlyType(value)} />
+            <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.on")}
+                    </Text>
+                </View>
 
+                <SegmentedControlCompact options={MONTHLY_TYPE} selectedValue={monthlyType} onChange={(value) => setMonthlyType(value)} />
                 
-                <View style={{ display: monthlyType === 'day_of_month' ? 'flex' : 'none', gap: 12 }}>
+                <View style={{ display: monthlyType === 'day_of_month' ? 'flex' : 'none'}}>
                     <DayPicker selectedDays={bymonthday} onDayPress={handleDayPress} />
                 </View>
 
-                <View style={{ display: monthlyType === 'day_of_week' ? 'flex' : 'none', gap: 12 }}>
-                    <View style={{ flexDirection: "row", gap: 12}}>
+                <View style={{ display: monthlyType === 'day_of_week' ? 'flex' : 'none'}}>
+                    <View style={{ flexDirection: "row", gap: layout.margin.contentArea}}>
                         <View style={{flex: 1}}>
                             <SSList
                                 items={MONTHLY_ORDINAL}
@@ -331,22 +365,48 @@ export default function ModalRecurring() {
     };
 
     const renderEndConditionSelector = () => (
-    <View style={{gap: 10}}>
-        <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.ends")}</Text>
-        <SegmentedControlCompact 
-            options={END_CONDITIONS} 
-            selectedValue={endCondition} 
-            onChange={(value: EndCondition) => setEndCondition(value)} 
-        />
+        <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.ends")}
+                    </Text>
+                </View>
 
-        <View style={{ display: endCondition === 'on_date' ? 'flex' : 'none' }}>
-            <DatePicker text={t("modalRecurring.enddate")} value={until} onDateChange={onDateChange} />
-        </View>
+                <SegmentedControlCompact 
+                    options={END_CONDITIONS} 
+                    selectedValue={endCondition} 
+                    onChange={(value: EndCondition) => setEndCondition(value)} 
+                />
+                
+                <View style={{ display: endCondition === 'on_date' ? 'flex' : 'none' }}>
+                    <View 
+                        style={{
+                            paddingHorizontal: layout.margin.contentArea,
+                            borderRadius: layout.radius.groupedView,
+                            backgroundColor: theme.fill.secondary
+                        }}
+                    >
+                        <GDateInput 
+                            separator={"none"}
+                            label={t("modalRecurring.enddate")}
+                            value={until}
+                            onDateChange={onDateChange}
+                        />
+                    </View>
+                </View>
 
-        <View style={{ display: endCondition === 'after_occurrences' ? 'flex' : 'none' }}>
-            <Stepper singular={t("modalRecurring.occurrence")} plural={t("modalRecurring.occurrences")} min={1} max={720} value={count} onValueChange={(value) => setCount(value)} />
-        </View>
-
+                <View style={{ display: endCondition === 'after_occurrences' ? 'flex' : 'none' }}>
+                    <Stepper
+                        singular={t("modalRecurring.occurrence")}
+                        plural={t("modalRecurring.occurrences")}
+                        min={1}
+                        max={720}
+                        value={count}
+                        onValueChange={(value) => setCount(value)}
+                    />
+                </View>
         </View>
     )
 
@@ -360,27 +420,57 @@ export default function ModalRecurring() {
 
     return (
         <ScrollView 
-            contentContainerStyle={[{paddingTop: paddingTop}, {paddingHorizontal: 20, paddingBottom: insets.bottom+30, rowGap: 10}]}
-            ref={scrollRef} onScroll={handleScroll} scrollEventThrottle={16}
+            contentContainerStyle={{
+                flex: 1,
+                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: 100,
+                gap: layout.margin.sectionGap
+            }}
+            ref={scrollRef}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
         >
             {renderResetButton()}
-            <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.frequency")}</Text>
-            <SegmentedControlCompact
-                options={FREQUENCIES}
-                selectedValue={freq}
-                onChange={(optionValue) => setFreq(optionValue)}
-            />
-            <Text style={[FontStyles.body, menuStyles.text]}>{t("modalRecurring.every")}</Text>
-            {renderIntervalSelector()}
+            <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.frequency")}
+                    </Text>
+                </View>
+                
+                <SegmentedControlCompact
+                    options={FREQUENCIES}
+                    selectedValue={freq}
+                    onChange={(optionValue) => setFreq(optionValue)}
+                />
+            </View>
+
+            <View style={{gap: layout.margin.innerSectionGap}}>
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    >
+                        {t("modalRecurring.every")}
+                    </Text>
+                </View>
+                
+                {renderIntervalSelector()}
+            </View>
+
             {renderWeeklySelector()}
+
             {renderMonthSelector()}
             {renderMonthlySelector()}
             {renderEndConditionSelector()}
 
-            <View style={{flexDirection: "row", columnGap: 12}}>
-                <CancelButton buttonText={t("buttons.cancel")} onPress={() => {router.back()}}/>
-                <ConfirmButton buttonText={t("buttons.save")} onPress={handleConfirm} />
-            </View>
+            <CancelSaveButtons 
+                cancelAction={() => {router.back()}}
+                primaryAction={handleConfirm}
+                isPrimaryActive={true}
+            />
         </ScrollView>
     )
 };

@@ -1,11 +1,12 @@
 import { ButtonStyles } from "@/components/buttons/ButtonStyles";
-import ConfirmButton from "@/components/buttons/ConfirmButton";
-import ReturnButton from "@/components/buttons/ReturnButton";
-import DatePicker from "@/components/menu-items/DatePicker";
-import DescriptionInput from "@/components/menu-items/DescriptionInput";
-import SRedir from "@/components/menu-items/RedirSelect";
-import SegmentedControl, { SCOption } from "@/components/menu-items/SegmentedControl";
-import ValueInput from "@/components/menu-items/ValueInput";
+import CancelSaveButtons from "@/components/buttons/CancelSaveCombo";
+import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
+import GPopup from "@/components/grouped-list-components/GroupedPopup";
+import GSwitch from "@/components/grouped-list-components/GroupedSwitch";
+import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
+import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
+import { SCOption } from "@/components/recurrence-modal-items/SegmentedControl";
+import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact";
 import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useStyle } from "@/context/StyleContext";
 import i18n from "@/i18n";
@@ -14,7 +15,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 
 
@@ -28,7 +29,7 @@ export default function AddModal() {
     const [newDate, setNewDate] = useState<Date>(new Date())
     const [numValue, setNumValue] = useState("")
 
-    const {theme} = useStyle()
+    const {theme, layout} = useStyle()
     const buttonStyles = ButtonStyles(theme)
 
     const flowOptions: SCOption<Flow>[] = [
@@ -84,8 +85,15 @@ export default function AddModal() {
     }
     
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop}, styles.modalView]}>
-            <SegmentedControl
+        <ScrollView
+            contentContainerStyle={{
+                flex: 1,
+                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                gap: layout.margin.sectionGap
+            }}
+        >
+            <SegmentedControlCompact
                 options={flowOptions}
                 selectedValue={newTransaction.flowType || "outflow"}
                 onChange={(optionValue) => updateNewTransaction({
@@ -94,69 +102,81 @@ export default function AddModal() {
                 })}
             />
 
-            <ValueInput
-                leftText={t("modalAdd.value")}
-                value={numValue}
-                onChangeText={(value: string) => {
-                    setNumValue(value)
-                    handleDecimalString(value)
+            <View 
+                style={{
+                    paddingHorizontal: layout.margin.contentArea,
+                    borderRadius: layout.radius.groupedView,
+                    backgroundColor: theme.fill.secondary
                 }}
-                flowType={newTransaction.flowType || "outflow"}
-            />
-
-            <DescriptionInput 
-                leftText={t("modalAdd.description")}
-                value={newTransaction.description || ""}
-                onChangeText={(description: string) => {updateNewTransaction({description: description})}}
-            />
-
-            <DatePicker
-                text={t("modalAdd.date")} 
-                onDateChange={(date) => {
-                    updateNewTransaction({ date: date })
-                    setNewDate(date)
-                }}
-                value={newDate}
-            />
-
-            <SRedir
-                text={t("modalAdd.category")} 
-                selectText={newTransaction.category?.label}
-                onPress={() => {router.push("/modalCategoryPicker")}}
-            />
-
-            <SRedir 
-                text={t("modalAdd.recurring")}
-                selectText={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
-                onPress={() => {router.push("/modalRecurring")}}
-            />
-            {newTransaction.rruleDescription ? <Text style={{alignSelf: "stretch"}} numberOfLines={1}>{newTransaction.rruleDescription?.replace("\n", " ")}</Text> : null}
-
-            <View style={{flexDirection: "row", columnGap: 12}}>
-                <View style={{flex: 1}}>
-                    <ReturnButton onPress={() => {router.back()}} />
-                </View>
-                <View style={{flex: 1}}>
-                    <ConfirmButton buttonText={t("buttons.save")} style={[buttonStyles.confirmButton, !isValid && buttonStyles.confirmButtonDisabled]}onPress={handleConfirm} disabled={!isValid} />
-                </View>
+            >   
+                <GValueInput
+                    separator={"translucent"}
+                    label={t("modalAdd.value")}
+                    acViewKey={"lim"}
+                    onChangeNumValue={(numValue) => updateNewTransaction({value: numValue})}
+                    flowType={newTransaction.flowType || "outflow"}
+                />
+                <GTextInput
+                    separator={"translucent"}
+                    label={t("modalAdd.description")}
+                    value={newTransaction.description}
+                    onChangeText={(description: string) => updateNewTransaction({ description: description })}
+                    acViewKey={"description"}
+                    maxLength={20}
+                />
+                <GDateInput
+                    separator="translucent"
+                    label={t("modalAdd.date")}
+                    value={newDate}
+                    onDateChange={(date) => {
+                        updateNewTransaction({ date: date })
+                        setNewDate(date)
+                    }}
+                />
+                <GPopup
+                    separator={"translucent"}
+                    label={t("modalAdd.category")}
+                    displayValue={newTransaction.category?.label}
+                    onPress={() => {router.push("/modalCategoryPicker")}}
+                />
+                <GPopup
+                    separator={"none"}
+                    label={t("modalAdd.recurring")}
+                    displayValue={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
+                    onPress={() => {router.push("/modalRecurring")}}
+                />
             </View>
+
+            {newTransaction.rruleDescription ?
+                <View style={{paddingHorizontal: layout.margin.contentArea}}>
+                    <Text
+                        style={{fontSize: 15, lineHeight: 20, color: theme.text.secondaryLabel}}
+                    >
+                        {newTransaction.rruleDescription?.replace(/\n/g, " ")}
+                    </Text>
+                </View>
+            : null}
+
+            <View 
+                style={{
+                    paddingHorizontal: layout.margin.contentArea,
+                    borderRadius: layout.radius.groupedView,
+                    backgroundColor: theme.fill.secondary
+                }}
+            >
+                <GSwitch 
+                    separator={"none"}
+                    label={t("modalAdd.useCredit")}
+                    value={true}
+                    onValueChange={() => {}}
+                />
+            </View>
+
+            <CancelSaveButtons
+                cancelAction={() => {router.back()}}
+                primaryAction={handleConfirm}
+                isPrimaryActive={isValid}
+            />
         </ScrollView>
     )
 }
-
-const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        padding: 10,
-        justifyContent: 'center',
-        //alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Fundo escurecido,
-        rowGap: 12
-    },
-    modalView: {
-        //borderRadius: 20,
-        paddingHorizontal: 20,
-        rowGap: 12,
-        alignItems: 'center',
-    },
-});

@@ -1,5 +1,5 @@
-import { MIStyles } from "@/components/menu-items/MenuItemStyles"
-import { type SCOption } from "@/components/menu-items/SegmentedControl"
+import { MIStyles } from "@/components/recurrence-modal-items/MenuItemStyles"
+import { type SCOption } from "@/components/recurrence-modal-items/SegmentedControl"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { ThemePreference, useStyle } from "@/context/StyleContext"
