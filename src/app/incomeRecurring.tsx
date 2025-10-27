@@ -4,9 +4,10 @@ import RecurringTransactionModal from "@/components/recurring-screens-items/Recu
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { ActivityIndicator, Modal, Text, View } from "react-native"
 
 export default function IncomeRecurringScreen() {
@@ -18,6 +19,30 @@ export default function IncomeRecurringScreen() {
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const headerHeight = useHeaderHeight()
     const {theme} = useStyle()
+    const refreshKey = useSummaryStore((state) => state.refreshKey)
+    const hasLoadedRef = useRef(false)
+
+    const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
+        const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
+
+        if (shouldShowLoading) {
+            setLoading(true)
+        }
+
+        try {
+            const { totalRecurringIncome, recurringIncomeTransactions } = await getRecurringSummaryThisMonth("inflow")
+            setTotalRecurringIncome(totalRecurringIncome)
+            setRecurringTransactions(recurringIncomeTransactions)
+        } catch (err) {
+            console.error("Erro ao carregar transações recorrentes:", err)
+        } finally {
+            hasLoadedRef.current = true
+
+            if (shouldShowLoading) {
+                setLoading(false)
+            }
+        }
+    }, [getRecurringSummaryThisMonth])
 
     const handleItemPress = (item: RecurringTransaction) => {
         setSelectedRT(item)
@@ -26,24 +51,16 @@ export default function IncomeRecurringScreen() {
 
     const handleRTModalClose = () => {
         setRTModalVisible(false)
+        setSelectedRT(null)
     }
 
-    useEffect(() => {
-        async function loadData() {
-        try {
-            setLoading(true)
-            const { totalRecurringIncome, recurringIncomeTransactions } = await getRecurringSummaryThisMonth("inflow")
-            setTotalRecurringIncome(totalRecurringIncome)
-            setRecurringTransactions(recurringIncomeTransactions)
-        } catch (err) {
-            console.error("Erro ao carregar transações recorrentes:", err)
-        } finally {
-            setLoading(false)
-        }
-        }
+    const handleDeleteSuccess = useCallback(() => {
+        void loadData({ showLoading: false })
+    }, [loadData])
 
-        loadData()
-    }, [])
+    useEffect(() => {
+        void loadData()
+    }, [loadData, refreshKey])
 
     if (loading) {
         return (
@@ -72,7 +89,11 @@ export default function IncomeRecurringScreen() {
                 visible={rTModalVisible}
                 onRequestClose={handleRTModalClose}
             >
-                <RecurringTransactionModal transaction={selectedRT} onBackgroundPress={handleRTModalClose} />
+                <RecurringTransactionModal
+                    transaction={selectedRT}
+                    onBackgroundPress={handleRTModalClose}
+                    onDeleteSuccess={handleDeleteSuccess}
+                />
             </Modal>
         </View>
     )
