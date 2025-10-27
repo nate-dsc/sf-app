@@ -5,15 +5,17 @@ import GPopup from "@/components/grouped-list-components/GroupedPopup"
 import GSwitch from "@/components/grouped-list-components/GroupedSwitch"
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
+import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { SCOption } from "@/types/components"
 import { BudgetInput, BudgetOverview, BudgetPeriod } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { ActionSheetIOS, ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { useTranslation } from "react-i18next"
+import { ActionSheetIOS, ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 const allowedPeriods: BudgetPeriod[] = ["weekly", "monthly", "quarterly", "yearly", "custom"]
 
@@ -327,9 +329,14 @@ export default function BudgetScreen() {
         !!formState.startDate &&
         isValidDate(formState.startDate)
 
+    const frequencyOptions: SCOption<string>[] = [
+        {label: t("budget.form.weekly"), value: "weekly"},
+        {label: t("budget.form.biweekly"), value: "biweekly"},
+        {label: t("budget.form.monthly"), value: "monthly"}
+    ]
+
     return (
         <ScrollView
-            style={{ flex: 1, backgroundColor: theme.background.bg }}
             contentContainerStyle={{
                 paddingTop: headerHeight + 24,
                 paddingBottom: 48,
@@ -337,6 +344,43 @@ export default function BudgetScreen() {
                 gap: 32,
             }}
         >
+            <View
+                style={{
+                    gap: layout.margin.innerSectionGap
+                }}
+            >
+                <Text
+                    style={{
+                        lineHeight: 22,
+                        fontSize: 17,
+                        paddingHorizontal: layout.margin.contentArea
+                    }}
+                >
+                    {t("budget.form.frequency")}
+                </Text>
+                <SegmentedControlCompact
+                    options={frequencyOptions}
+                    selectedValue={"monthly"}
+                    onChange={() => {}}
+                />
+                <GroupView>
+                    <GValueInput
+                        separator={"none"}
+                        label={t("budget.form.amountLabel")}
+                        acViewKey={"bgt"}
+                        onChangeNumValue={() => {}}
+                        flowType={"inflow"}
+                        labelFlex={2}
+                        fieldFlex={2}
+                    />
+                </GroupView>
+                <CancelSaveButtons 
+                    cancelAction={() => {}} 
+                    primaryAction={() => {}} 
+                    isPrimaryActive={false}                
+                />
+            </View>
+
             <View style={{ gap: 12 }}>
                 <Text style={[FontStyles.title2, { color: theme.text.label }]}>{t("budget.list.title")}</Text>
                 {loadingBudgets ? (
@@ -344,7 +388,7 @@ export default function BudgetScreen() {
                 ) : budgets.length === 0 ? (
                     <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>{t("budget.list.empty")}</Text>
                 ) : (
-                    <GroupView style={{ paddingHorizontal: layout.margin.contentArea }}>
+                    <GroupView>
                         {budgets.map((budget, index) => {
                             const isLast = index === budgets.length - 1
                             const isSelected = selectedBudget?.id === budget.id

@@ -7,9 +7,11 @@ import { GroupedComponentsProps } from "./GroupedValueInput"
 type GTextInputProps = GroupedComponentsProps & TextInputProps & {
     label: string,
     acViewKey: string,
+    labelFlex?: number,
+    fieldFlex?: number
 }
 
-export default function GTextInput({separator, label, acViewKey, ...rest}: GTextInputProps) {
+export default function GTextInput({separator, label, acViewKey, labelFlex, fieldFlex, ...rest}: GTextInputProps) {
 
     const {theme, layout} = useStyle()
 
@@ -33,7 +35,7 @@ export default function GTextInput({separator, label, acViewKey, ...rest}: GText
             >
                 <Text 
                     style={{
-                        flex: 1,
+                        flex: labelFlex ? labelFlex : 1,
                         lineHeight: layout.grouped.text.lh,
                         fontSize: layout.grouped.text.fs,
                         color: theme.text.label
@@ -45,7 +47,7 @@ export default function GTextInput({separator, label, acViewKey, ...rest}: GText
                 </Text>
                 <TextInput 
                     style={{
-                        flex: 3,
+                        flex: fieldFlex ? fieldFlex : 3,
                         lineHeight: layout.grouped.text.lh,
                         fontSize: layout.grouped.text.fs,
                         color: theme.text.label

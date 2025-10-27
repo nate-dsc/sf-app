@@ -17,9 +17,11 @@ type GValueInputProps = GroupedComponentsProps & {
     onChangeNumValue: (numValue: number) => void,
     flowType: "inflow" | "outflow",
     valueInCents?: number,
+    labelFlex?: number,
+    fieldFlex?: number
 }
 
-export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType, valueInCents}: GValueInputProps) {
+export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType, valueInCents, labelFlex, fieldFlex}: GValueInputProps) {
 
     const {theme} = useStyle()
     const text = TypographyProps(theme)
@@ -144,7 +146,7 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
             <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 15, paddingBottom: 14, gap: 8}}>
                 <Text 
                     style={{
-                        flex: 1,
+                        flex: labelFlex ? labelFlex : 1,
                         lineHeight: 22,
                         fontSize: 17,
                         color: theme.text.label
@@ -155,7 +157,7 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
                     {label}
                 </Text>
                 <TextInput 
-                    style={{flex: 3, lineHeight: 22, fontSize: 17, color: theme.text.label}}
+                    style={{flex: fieldFlex ? fieldFlex : 3, lineHeight: 22, fontSize: 17, color: theme.text.label}}
                     placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
                     placeholderTextColor={theme.text.secondaryLabel}
                     keyboardType="decimal-pad"
