@@ -1,4 +1,3 @@
-import { TileStyles } from "@/components/home-screen-items/TileStyles";
 import { FontStyles } from "@/components/styles/FontStyles";
 import { useStyle } from "@/context/StyleContext";
 import { RecurringTransaction } from "@/types/transaction";
@@ -17,7 +16,6 @@ export default function RecurringTransactionListItem({item, onItemPress}: Transa
 
     const {t} = useTranslation()
     const {theme} = useStyle()
-    const tileStyles = TileStyles(theme)
     const value = item.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 

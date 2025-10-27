@@ -20,7 +20,7 @@ export default function IncomeRecurringScreen() {
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
-    const {theme} = useStyle()
+    const {theme, layout} = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     const hasLoadedRef = useRef(false)
 
@@ -75,20 +75,21 @@ export default function IncomeRecurringScreen() {
 
     return (
         <View style={{ flex: 1, paddingTop: headerHeight, gap: 10}}>
-            <View style={{paddingHorizontal: 16, paddingTop: 10}}>
-                <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
-            </View>
-            <View style={{paddingHorizontal: 16}}>
-                <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" />
-            </View>
+            
+            <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
+        
+            <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" />
 
-            <View style={{paddingHorizontal: 32}}>
+            <View style={{paddingHorizontal: 16}}>
                 <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
                     Todas as receitas recorrentes
                 </Text>
             </View>
             
-            <RecurringTransactionList data={recurringTransactions} onItemPress={handleItemPress} />
+            <RecurringTransactionList
+                data={recurringTransactions}
+                onItemPress={handleItemPress}
+            />
 
             <Modal
                 animationType={"fade"}

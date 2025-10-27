@@ -4,11 +4,11 @@ import { FlatList } from "react-native"
 import TransactionListItem from "./RecurringTransactionListItem"
 
 type RecurringTransactionListProps = {
-    data: RecurringTransaction[]
-    onItemPress: (item: RecurringTransaction) => void
+    data: RecurringTransaction[],
+    onItemPress: (item: RecurringTransaction) => void,
 }
 
-export default function RecurringTransactionList({ data, onItemPress }: RecurringTransactionListProps) {
+export default function RecurringTransactionList({ data, onItemPress}: RecurringTransactionListProps) {
 
     const renderItem = ({ item }: { item: RecurringTransaction }) => (
         <TransactionListItem
@@ -20,11 +20,11 @@ export default function RecurringTransactionList({ data, onItemPress }: Recurrin
 
     return (
         <FlatList
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 16, paddingHorizontal: 16 }}
+            data={data}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 16, paddingHorizontal: 16 }}
         />
     )
 }
