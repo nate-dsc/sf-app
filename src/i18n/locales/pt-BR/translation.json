@@ -75,7 +75,26 @@
             "light": "Claro",
             "dark": "Escuro"
         },
-        "langDescription": "Idioma"
+        "langDescription": "Idioma",
+        "database": {
+            "sectionTitle": "Banco de dados",
+            "inspectTables": "Visualizar tabelas",
+            "tablesHeader": "Tabelas do banco",
+            "loadingTables": "Carregando tabelas...",
+            "loadError": "Não foi possível carregar as tabelas.",
+            "noTables": "Nenhuma tabela encontrada.",
+            "tableScreenTitle": "Tabela",
+            "loadingTable": "Carregando dados da tabela...",
+            "missingTable": "Nenhuma tabela selecionada.",
+            "tableLoadError": "Não foi possível carregar os dados da tabela.",
+            "columnsHeader": "Colunas",
+            "noColumns": "Nenhuma coluna encontrada.",
+            "default": "PADRÃO",
+            "unknownType": "Tipo desconhecido",
+            "rowsHeader": "Registros",
+            "noRows": "Nenhum registro encontrado.",
+            "rowIndex": "Registro"
+        }
     },
     "modalAdd": {
         "inflow": "Renda",
