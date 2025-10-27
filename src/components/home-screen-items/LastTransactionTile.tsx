@@ -24,7 +24,14 @@ export default function LastTransactionTile() {
         return <Text>{error}</Text>;
     }
 
-    const transaction = data?.lastTransaction ?? {value: 0, description: null, date: new Date().toISOString(), category: 0}
+    const transaction = data?.lastTransaction ?? {
+        id: 0,
+        value: 0,
+        description: "",
+        date: new Date().toISOString(),
+        category: 0,
+        flow: "outflow",
+    }
 
     const value = (transaction.value)/100
 
