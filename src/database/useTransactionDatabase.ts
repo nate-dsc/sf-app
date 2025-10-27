@@ -691,6 +691,7 @@ export function useTransactionDatabase() {
 
 
         let totalRecurring = 0
+        const categoryTotalsMap = new Map<number, number>()
 
         const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE flow = 'outflow'" : "SELECT * FROM transactions_recurring WHERE flow = 'inflow'"
 
@@ -705,11 +706,21 @@ export function useTransactionDatabase() {
                 const pendingOccurrences = rrule.between(startUTC, endUTC, true)
 
                 if(pendingOccurrences.length > 0) {
-                    totalRecurring += recurringTransaction.value * pendingOccurrences.length
+                    const transactionTotal = recurringTransaction.value * pendingOccurrences.length
+                    totalRecurring += transactionTotal
+
+                    const currentCategoryTotal = categoryTotalsMap.get(recurringTransaction.category) ?? 0
+                    categoryTotalsMap.set(recurringTransaction.category, currentCategoryTotal + transactionTotal)
                 }
             }
 
-            return {totalRecurring, recurringTransactions}
+            const categoryTotals: Record<number, number> = {}
+
+            categoryTotalsMap.forEach((value, key) => {
+                categoryTotals[key] = value
+            })
+
+            return {totalRecurring, recurringTransactions, categoryTotals}
 
         } catch (error) {
             console.log("Não foi possível recuperar o sumário das transações recorrentes")

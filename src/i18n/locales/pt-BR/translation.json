@@ -33,6 +33,16 @@
         "lastTransaction": "Última transação",
         "distribution": "Distribuição"
     },
+    "recurring": {
+        "categoryBreakdown": {
+            "incomeTitle": "Principais categorias de receitas recorrentes",
+            "expenseTitle": "Principais categorias de despesas recorrentes",
+            "totalLabel": "Total",
+            "noData": "Não há transações recorrentes previstas para este mês.",
+            "othersIncome": "Outras receitas recorrentes",
+            "othersExpense": "Outras despesas recorrentes"
+        }
+    },
     "categories": {
         "income": {
             "salary": "Salário",

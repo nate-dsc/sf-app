@@ -33,6 +33,16 @@
         "lastTransaction": "Last transaction",
         "distribution": "Distribution"
     },
+    "recurring": {
+        "categoryBreakdown": {
+            "incomeTitle": "Top recurring income categories",
+            "expenseTitle": "Top recurring expense categories",
+            "totalLabel": "Total",
+            "noData": "No recurring transactions scheduled for this month.",
+            "othersIncome": "Other recurring income",
+            "othersExpense": "Other recurring expenses"
+        }
+    },
     "categories": {
         "income": {
             "salary": "Salary",
