@@ -95,6 +95,43 @@
         "distribution": "Distribuição",
         "distributionEmpty": "Nenhuma transação registrada neste mês."
     },
+    "distribution": {
+        "periodSelector": {
+            "label": "Período",
+            "previous": "Mês anterior",
+            "next": "Próximo mês"
+        },
+        "filters": {
+            "inflow": "Entradas",
+            "outflow": "Saídas"
+        },
+        "summary": {
+            "title": "Resumo do mês",
+            "inflow": "Entradas",
+            "outflow": "Saídas",
+            "net": "Saldo"
+        },
+        "chart": {
+            "inflowTitle": "Distribuição das entradas",
+            "outflowTitle": "Distribuição das saídas",
+            "totalLabel": "Total",
+            "empty": "Sem dados para exibir.",
+            "others": "Outras categorias"
+        },
+        "list": {
+            "inflowTitle": "Categorias de entrada",
+            "outflowTitle": "Categorias de saída",
+            "itemDescription": "{{value}} • {{percentage}}% do total",
+            "percentage": "{{value}}% do total",
+            "empty": "Nenhuma categoria encontrada para este filtro."
+        },
+        "empty": {
+            "title": "Nada registrado no período selecionado",
+            "description": "Registre novas entradas e saídas para acompanhar a distribuição."
+        },
+        "error": "Não foi possível carregar a distribuição.",
+        "retry": "Tentar novamente"
+    },
     "budget": {
         "tile": {
             "noBudgets": "Nenhum orçamento configurado ainda."

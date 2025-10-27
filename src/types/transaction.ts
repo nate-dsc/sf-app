@@ -143,6 +143,11 @@ export type MonthlyCategoryAggregate = {
     total: number,
 }
 
+export type CategoryDistributionFilters = {
+    month?: Date,
+    flow?: Flow,
+}
+
 export type Summary = {
     inflowCurrentMonth: number,
     outflowCurrentMonth: number,
