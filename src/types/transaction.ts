@@ -80,59 +80,12 @@ export type SearchFilters = {
     type?: TransactionTypeFilter
 }
 
-export type BudgetPeriod = "weekly" | "monthly" | "quarterly" | "yearly" | "custom"
+export type BudgetPeriod = "weekly" | "biweekly" | "monthly"
 
-export type Budget = {
-    id: number,
-    name: string,
-    categoryId: number | null,
+export type BudgetSnapshot = {
     period: BudgetPeriod,
-    amount: number,
-    startDate: string,
-    endDate: string | null,
-    rollover: boolean,
-    createdAt: string,
-}
-
-export type BudgetInput = {
-    name: string,
-    category_id?: number | null,
-    period: BudgetPeriod,
-    amount: number,
-    start_date: string,
-    end_date?: string | null,
-    rollover: boolean,
-}
-
-export type BudgetOverview = {
-    id: number,
-    name: string,
-    categoryId: number | null,
-    period: BudgetPeriod,
-    amount: number,
-    spent: number,
-    startDate: string,
-    endDate: string | null,
-    rollover: boolean,
-    createdAt: string,
-    progress: number,
-}
-
-export type BudgetAllocation = {
-    id: number,
-    budgetId: number,
-    transactionId: number | null,
-    amount: number,
-    allocatedAt: string,
-    notes: string | null,
-}
-
-export type BudgetAllocationInput = {
-    budget_id: number,
-    transaction_id?: number | null,
-    amount: number,
-    allocated_at?: string,
-    notes?: string | null,
+    amountCents: number,
+    spentCents: number,
 }
 
 export type MonthlyCategoryAggregate = {
@@ -152,5 +105,5 @@ export type Summary = {
     inflowCurrentMonth: number,
     outflowCurrentMonth: number,
     lastTransaction: Transaction | null,
-    budgets: BudgetOverview[],
+    budget: BudgetSnapshot | null,
 }

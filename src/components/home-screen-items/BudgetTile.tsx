@@ -20,11 +20,26 @@ export default function BudgetTile() {
         return <Text>{error}</Text>
     }
 
-    const budgets = data?.budgets ?? []
+    const budget = data?.budget ?? null
 
-    const { plannedLabel, spentLabel, percentLabel, progressBarWidth, spentOverLimit } = useMemo(() => {
-        const plannedCents = budgets.reduce((total, budget) => total + (budget.amount ?? 0), 0)
-        const spentCents = budgets.reduce((total, budget) => total + (budget.spent ?? 0), 0)
+    const {
+        plannedLabel,
+        spentLabel,
+        percentLabel,
+        progressBarWidth,
+        spentOverLimit,
+        periodLabel,
+    } = useMemo(() => {
+        if (!budget || budget.amountCents <= 0) {
+            return {
+                plannedLabel: "-",
+                spentLabel: "-",
+                percentLabel: "0%",
+                progressBarWidth: 0,
+                spentOverLimit: false,
+                periodLabel: "",
+            }
+        }
 
         const locale = i18n.language
         const currency = locale === "pt-BR" ? "BRL" : "USD"
@@ -35,10 +50,10 @@ export default function BudgetTile() {
                 currencySign: "standard",
             })
 
-        const planned = toCurrency(plannedCents)
-        const spent = toCurrency(spentCents)
+        const planned = toCurrency(budget.amountCents)
+        const spent = toCurrency(budget.spentCents)
 
-        const percentValue = plannedCents > 0 ? (spentCents / plannedCents) * 100 : 0
+        const percentValue = budget.amountCents > 0 ? (budget.spentCents / budget.amountCents) * 100 : 0
         const safePercent = Number.isFinite(percentValue) ? percentValue : 0
         const clampedForBar = Math.min(Math.max(safePercent, 0), 100)
         const percentText = `${Math.max(safePercent, 0).toFixed(safePercent >= 100 || safePercent === 0 ? 0 : 1)}%`
@@ -48,11 +63,12 @@ export default function BudgetTile() {
             spentLabel: spent,
             percentLabel: percentText,
             progressBarWidth: clampedForBar,
-            spentOverLimit: plannedCents > 0 && spentCents > plannedCents,
+            spentOverLimit: budget.amountCents > 0 && budget.spentCents > budget.amountCents,
+            periodLabel: t(`budget.periods.${budget.period}`),
         }
-    }, [budgets, i18n.language])
+    }, [budget, i18n.language, t])
 
-    const hasBudgets = budgets.length > 0
+    const hasBudget = !!budget && budget.amountCents > 0
 
     return (
         <View style={{ gap: 6 }}>
@@ -69,10 +85,14 @@ export default function BudgetTile() {
                     gap: 12,
                 }}
             >
-                {!hasBudgets ? (
-                    <Text style={[tileStyles.textUnfocused, FontStyles.body]}>{t("budget.tile.noBudgets")}</Text>
+                {!hasBudget ? (
+                    <Text style={[tileStyles.textUnfocused, FontStyles.body]}>{t("budget.tile.noBudget")}</Text>
                 ) : (
                     <>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <Text style={[tileStyles.textUnfocused, FontStyles.body]}>{t("budget.tile.periodLabel")}</Text>
+                            <Text style={[tileStyles.text, FontStyles.body]}>{periodLabel}</Text>
+                        </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <Text style={[tileStyles.textUnfocused, FontStyles.body]}>{t("tiles.budgetPlanned")}</Text>
                             <Text style={[tileStyles.text, FontStyles.numBody]}>{plannedLabel}</Text>
