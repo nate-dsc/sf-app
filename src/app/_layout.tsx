@@ -121,6 +121,56 @@ function RootLayoutNav() {
                                 headerStyle: { backgroundColor: theme.colors.red }
                             }}
                         />
+                        <Stack.Screen
+                            name="budget"
+                            options={{
+                                title: t("nav.planning.budget", { defaultValue: "Orçamento" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.yellow },
+                            }}
+                        />
+                        <Stack.Screen
+                            name="distribution"
+                            options={{
+                                title: t("nav.planning.distribution", { defaultValue: "Distribuição" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.purple },
+                            }}
+                        />
+                        <Stack.Screen
+                            name="planPurchase"
+                            options={{
+                                title: t("nav.planning.planPurchase", { defaultValue: "Planejar compra" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.orange },
+                            }}
+                        />
+                        <Stack.Screen
+                            name="next12Months"
+                            options={{
+                                title: t("nav.planning.next12Months", { defaultValue: "Próximos 12 meses" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.indigo },
+                            }}
+                        />
+                        <Stack.Screen
+                            name="retirement"
+                            options={{
+                                title: t("nav.planning.retirement", { defaultValue: "Aposentadoria" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerBackTitle: t("nav.planning.index"),
+                                headerStyle: { backgroundColor: theme.colors.cyan },
+                            }}
+                        />
                         {/* Telas de cartões de crédito */}
                         <Stack.Screen
                             name="(credit)/credit"
