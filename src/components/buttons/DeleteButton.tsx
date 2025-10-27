@@ -1,15 +1,18 @@
 import { useStyle } from "@/context/StyleContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
+import { useTranslation } from "react-i18next";
 import { FontStyles } from "../styles/FontStyles";
 
 type DeleteButtonProps = TouchableOpacityProps & {
     styles?: ViewStyle
+    label?: string
 }
 
-export default function DeleteButton({styles, ...rest}: DeleteButtonProps) {
+export default function DeleteButton({styles, label, ...rest}: DeleteButtonProps) {
 
     const {theme} = useStyle()
+    const { t } = useTranslation()
 
     return(
         <TouchableOpacity {...rest}>
@@ -38,7 +41,7 @@ export default function DeleteButton({styles, ...rest}: DeleteButtonProps) {
                         {paddingVertical: 10, color: theme.colors.red}
                     ]}
                 >
-                    Delete
+                    {label ?? t("buttons.delete")}
                 </Text>
             </View>
         </TouchableOpacity>

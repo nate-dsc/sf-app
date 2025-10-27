@@ -1,6 +1,6 @@
 import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { BudgetAllocation, BudgetAllocationInput, BudgetInput, BudgetOverview, CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useCallback, useMemo } from "react"
@@ -12,6 +12,59 @@ export function useTransactionDatabase() {
     const {triggerRefresh} = useSummaryStore()
     const {theme} = useStyle()
     const { database } = useDatabase()
+
+    type BudgetRow = {
+        id: number
+        name: string
+        category_id: number | null
+        period: string
+        amount: number
+        start_date: string
+        end_date: string | null
+        rollover: number
+        created_at: string
+        spent?: number | null
+    }
+
+    type BudgetAllocationRow = {
+        id: number
+        budget_id: number
+        transaction_id: number | null
+        amount: number
+        allocated_at: string
+        notes: string | null
+    }
+
+    const mapBudgetRow = (row: BudgetRow): BudgetOverview => {
+        const planned = row.amount ?? 0
+        const spent = row.spent ?? 0
+        const ratio = planned > 0 ? spent / planned : 0
+        const normalizedProgress = Number.isFinite(ratio) ? ratio : 0
+        const safeProgress = planned > 0 ? Math.max(0, normalizedProgress) : 0
+
+        return {
+            id: row.id,
+            name: row.name,
+            categoryId: row.category_id ?? null,
+            period: row.period as BudgetOverview["period"],
+            amount: planned,
+            spent,
+            startDate: row.start_date,
+            endDate: row.end_date ?? null,
+            rollover: !!row.rollover,
+            createdAt: row.created_at,
+            progress: safeProgress,
+        }
+    }
+
+    const mapBudgetAllocationRow = (row: BudgetAllocationRow): BudgetAllocation => ({
+        id: row.id,
+        budgetId: row.budget_id,
+        transactionId: row.transaction_id ?? null,
+        amount: row.amount,
+        allocatedAt: row.allocated_at,
+        notes: row.notes ?? null,
+    })
 
     const createTransaction = useCallback(async (data: Transaction) => {
         const statement = await database.prepareAsync(
@@ -286,6 +339,221 @@ export function useTransactionDatabase() {
         }
     }, [database, theme])
 
+    const createBudget = useCallback(async (budget: BudgetInput) => {
+        try {
+            await database.runAsync(
+                "INSERT INTO budgets (name, category_id, period, amount, start_date, end_date, rollover) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                [
+                    budget.name.trim(),
+                    budget.category_id ?? null,
+                    budget.period,
+                    budget.amount,
+                    budget.start_date,
+                    budget.end_date ?? null,
+                    budget.rollover ? 1 : 0,
+                ]
+            )
+        } catch (error) {
+            console.error("Could not create budget", error)
+            throw error
+        }
+    }, [database])
+
+    const updateBudget = useCallback(async (id: number, updates: Partial<BudgetInput>) => {
+        const fields: string[] = []
+        const values: (string | number | null)[] = []
+
+        if (updates.name !== undefined) {
+            fields.push("name = ?")
+            values.push(updates.name.trim())
+        }
+
+        if (updates.category_id !== undefined) {
+            fields.push("category_id = ?")
+            values.push(updates.category_id ?? null)
+        }
+
+        if (updates.period !== undefined) {
+            fields.push("period = ?")
+            values.push(updates.period)
+        }
+
+        if (updates.amount !== undefined) {
+            fields.push("amount = ?")
+            values.push(updates.amount)
+        }
+
+        if (updates.start_date !== undefined) {
+            fields.push("start_date = ?")
+            values.push(updates.start_date)
+        }
+
+        if (updates.end_date !== undefined) {
+            fields.push("end_date = ?")
+            values.push(updates.end_date ?? null)
+        }
+
+        if (updates.rollover !== undefined) {
+            fields.push("rollover = ?")
+            values.push(updates.rollover ? 1 : 0)
+        }
+
+        if (fields.length === 0) {
+            return
+        }
+
+        values.push(id)
+
+        try {
+            await database.runAsync(`UPDATE budgets SET ${fields.join(", ")} WHERE id = ?`, values)
+        } catch (error) {
+            console.error("Could not update budget", error)
+            throw error
+        }
+    }, [database])
+
+    const deleteBudget = useCallback(async (id: number) => {
+        try {
+            await database.runAsync("DELETE FROM budgets WHERE id = ?", [id])
+        } catch (error) {
+            console.error("Could not delete budget", error)
+            throw error
+        }
+    }, [database])
+
+    const getBudgetsOverview = useCallback(async (): Promise<BudgetOverview[]> => {
+        try {
+            const rows = await database.getAllAsync<BudgetRow & { spent: number | null }>(
+                "SELECT b.*, COALESCE(SUM(a.amount), 0) AS spent FROM budgets b LEFT JOIN budget_allocations a ON a.budget_id = b.id GROUP BY b.id ORDER BY b.start_date DESC, b.id DESC"
+            )
+
+            return rows.map(mapBudgetRow)
+        } catch (error) {
+            console.error("Could not fetch budgets", error)
+            throw error
+        }
+    }, [database])
+
+    const getBudget = useCallback(async (budgetId: number): Promise<BudgetOverview | null> => {
+        try {
+            const row = await database.getFirstAsync<BudgetRow & { spent: number | null }>(
+                "SELECT b.*, (SELECT COALESCE(SUM(amount), 0) FROM budget_allocations WHERE budget_id = b.id) AS spent FROM budgets b WHERE b.id = ?",
+                [budgetId]
+            )
+
+            if (!row) {
+                return null
+            }
+
+            return mapBudgetRow(row)
+        } catch (error) {
+            console.error("Could not fetch budget", error)
+            throw error
+        }
+    }, [database])
+
+    const createBudgetAllocation = useCallback(async (allocation: BudgetAllocationInput) => {
+        try {
+            await database.runAsync(
+                "INSERT INTO budget_allocations (budget_id, transaction_id, amount, allocated_at, notes) VALUES (?, ?, ?, ?, ?)",
+                [
+                    allocation.budget_id,
+                    allocation.transaction_id ?? null,
+                    allocation.amount,
+                    allocation.allocated_at ?? new Date().toISOString().slice(0, 16),
+                    allocation.notes ?? null,
+                ]
+            )
+        } catch (error) {
+            console.error("Could not create budget allocation", error)
+            throw error
+        }
+    }, [database])
+
+    const updateBudgetAllocation = useCallback(async (id: number, updates: Partial<BudgetAllocationInput>) => {
+        const fields: string[] = []
+        const values: (string | number | null)[] = []
+
+        if (updates.budget_id !== undefined) {
+            fields.push("budget_id = ?")
+            values.push(updates.budget_id)
+        }
+
+        if (updates.transaction_id !== undefined) {
+            fields.push("transaction_id = ?")
+            values.push(updates.transaction_id ?? null)
+        }
+
+        if (updates.amount !== undefined) {
+            fields.push("amount = ?")
+            values.push(updates.amount)
+        }
+
+        if (updates.allocated_at !== undefined) {
+            fields.push("allocated_at = ?")
+            values.push(updates.allocated_at)
+        }
+
+        if (updates.notes !== undefined) {
+            fields.push("notes = ?")
+            values.push(updates.notes ?? null)
+        }
+
+        if (fields.length === 0) {
+            return
+        }
+
+        values.push(id)
+
+        try {
+            await database.runAsync(`UPDATE budget_allocations SET ${fields.join(", ")} WHERE id = ?`, values)
+        } catch (error) {
+            console.error("Could not update budget allocation", error)
+            throw error
+        }
+    }, [database])
+
+    const deleteBudgetAllocation = useCallback(async (id: number) => {
+        try {
+            await database.runAsync("DELETE FROM budget_allocations WHERE id = ?", [id])
+        } catch (error) {
+            console.error("Could not delete budget allocation", error)
+            throw error
+        }
+    }, [database])
+
+    const getBudgetAllocationsByBudget = useCallback(async (budgetId: number): Promise<BudgetAllocation[]> => {
+        try {
+            const rows = await database.getAllAsync<BudgetAllocationRow>(
+                "SELECT * FROM budget_allocations WHERE budget_id = ? ORDER BY allocated_at DESC",
+                [budgetId]
+            )
+
+            return rows.map(mapBudgetAllocationRow)
+        } catch (error) {
+            console.error("Could not fetch budget allocations", error)
+            throw error
+        }
+    }, [database])
+
+    const getBudgetAllocation = useCallback(async (id: number): Promise<BudgetAllocation | null> => {
+        try {
+            const row = await database.getFirstAsync<BudgetAllocationRow>(
+                "SELECT * FROM budget_allocations WHERE id = ?",
+                [id]
+            )
+
+            if (!row) {
+                return null
+            }
+
+            return mapBudgetAllocationRow(row)
+        } catch (error) {
+            console.error("Could not fetch budget allocation", error)
+            throw error
+        }
+    }, [database])
+
     const deleteTransaction = useCallback(async (id: number) => {
         try {
             await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
@@ -368,21 +636,24 @@ export function useTransactionDatabase() {
                 "SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1"
             );
 
+            const budgets = await getBudgetsOverview()
+
             const summaryData: Summary = {
                 // Usa ?? 0 para garantir que o valor seja um número caso não haja transações
                 inflowCurrentMonth: inflowResult?.total ?? 0,
                 // Multiplica por -1 para tornar o valor positivo
                 outflowCurrentMonth: (outflowResult?.total ?? 0) * -1,
                 lastTransaction: lastTransactionResult || null, // Garante que seja null se não houver transação
+                budgets,
             };
-            
+
             return summaryData;
 
         } catch (error) {
             console.error("Falha ao buscar dados do sumário:", error);
             throw error;
         }
-    }, [database])
+    }, [database, getBudgetsOverview])
 
     const getPaginatedFilteredTransactions = useCallback(async (page: number, pageSize: number, filterOptions: SearchFilters = {}) => {
         const offset = page*pageSize
@@ -742,6 +1013,16 @@ export function useTransactionDatabase() {
         createCard,
         getCards,
         getCard,
+        createBudget,
+        updateBudget,
+        deleteBudget,
+        getBudgetsOverview,
+        getBudget,
+        createBudgetAllocation,
+        updateBudgetAllocation,
+        deleteBudgetAllocation,
+        getBudgetAllocationsByBudget,
+        getBudgetAllocation,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,
@@ -761,6 +1042,16 @@ export function useTransactionDatabase() {
         createCard,
         getCards,
         getCard,
+        createBudget,
+        updateBudget,
+        deleteBudget,
+        getBudgetsOverview,
+        getBudget,
+        createBudgetAllocation,
+        updateBudgetAllocation,
+        deleteBudgetAllocation,
+        getBudgetAllocationsByBudget,
+        getBudgetAllocation,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,

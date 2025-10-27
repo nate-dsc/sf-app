@@ -1,7 +1,7 @@
 
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { TypographyProps } from "../styles/TextStyles"
 
@@ -15,10 +15,11 @@ type GValueInputProps = GroupedComponentsProps & {
     //value: string,
     //onChangeText: (value: string) => void,
     onChangeNumValue: (numValue: number) => void,
-    flowType: "inflow" | "outflow"
+    flowType: "inflow" | "outflow",
+    valueInCents?: number,
 }
 
-export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType}: GValueInputProps) {
+export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType, valueInCents}: GValueInputProps) {
 
     const {theme} = useStyle()
     const text = TypographyProps(theme)
@@ -85,6 +86,24 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
     const handleFocus = () => {
         setIsFocused(true)
     }
+
+    useEffect(() => {
+        if (valueInCents === undefined || isFocused) {
+            return
+        }
+
+        if (valueInCents === 0) {
+            setTextValue("")
+            return
+        }
+
+        const absoluteValue = Math.abs(valueInCents) / 100
+        const formatted = i18n.language === "en-US"
+            ? absoluteValue.toFixed(2)
+            : absoluteValue.toFixed(2).replace(".", ",")
+
+        setTextValue(formatted)
+    }, [valueInCents, isFocused])
 
     // Ao perder foco, formata como moeda
     const handleBlur = () => {
