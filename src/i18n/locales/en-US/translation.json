@@ -92,7 +92,8 @@
         "outflow": "Outflow",
         "expenses": "Expenses",
         "lastTransaction": "Last transaction",
-        "distribution": "Distribution"
+        "distribution": "Distribution",
+        "distributionEmpty": "No transactions recorded this month."
     },
     "budget": {
         "tile": {

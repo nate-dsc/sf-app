@@ -5,6 +5,7 @@ import { StyleProvider, useStyle } from "@/context/StyleContext"
 import { initializeDatabase } from "@/database/InitializeDatabase"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import "@/i18n"
+import { useDistributionStore } from "@/stores/useDistributionStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
 import { Stack, useRouter } from "expo-router"
@@ -20,8 +21,11 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const {theme, preference} = useStyle()
 
-    const { getSummaryFromDB, createAndSyncRecurringTransactions, createAndSyncInstallmentPurchases } = useTransactionDatabase();
-    const {loadData, refreshKey} = useSummaryStore();
+    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncInstallmentPurchases } = useTransactionDatabase();
+    const loadSummaryData = useSummaryStore((state) => state.loadData);
+    const summaryRefreshKey = useSummaryStore((state) => state.refreshKey);
+    const loadDistributionData = useDistributionStore((state) => state.loadData);
+    const distributionRefreshKey = useDistributionStore((state) => state.refreshKey);
 
     const router = useRouter()
 
@@ -46,8 +50,9 @@ function RootLayoutNav() {
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado
         console.log("Layout: Carregando sumário na inicialização...");
-        loadData({ getSummaryFromDB });
-    }, [refreshKey])
+        loadSummaryData({ getSummaryFromDB });
+        loadDistributionData({ getMonthlyCategoryDistribution });
+    }, [distributionRefreshKey, getMonthlyCategoryDistribution, getSummaryFromDB, loadDistributionData, loadSummaryData, summaryRefreshKey])
 
     //<StatusBar style={preference === 'dark' ? 'light' : preference === 'light' ? 'dark' : 'auto'}/>
 
