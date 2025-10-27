@@ -65,18 +65,18 @@ export default function PlanningScreen() {
                             }}
                         >
                             <View style={{flex:1}}>
-                                <LinkCard 
+                                <LinkCard
                                     label="Orçamento"
                                     icon={
                                         <AppIcon
-                                            name={"plus.circle"}
-                                            androidName={"add-card"}
+                                            name={"chart.pie.fill"}
+                                            androidName={"pie-chart"}
                                             size={40}
                                             tintColor={theme.colors.white}
                                         />
                                     }
                                     color={theme.colors.yellow}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/budget")}
                                 />
                             </View>
                             <View style={{flex:1}}>
@@ -103,18 +103,18 @@ export default function PlanningScreen() {
                             }}
                         >
                             <View style={{flex:1}}>
-                                <LinkCard 
+                                <LinkCard
                                     label="Distribuição"
                                     icon={
                                         <AppIcon
-                                            name={"plus.circle"}
-                                            androidName={"add-card"}
+                                            name={"chart.bar.doc.horizontal.fill"}
+                                            androidName={"leaderboard"}
                                             size={40}
                                             tintColor={theme.colors.white}
                                         />
                                     }
                                     color={theme.colors.purple}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/distribution")}
                                 />
                             </View>
                             <View style={{flex:1}}/>
@@ -131,33 +131,33 @@ export default function PlanningScreen() {
                             }}
                         >
                             <View style={{flex:1}}>
-                                <LinkCard 
+                                <LinkCard
                                     label="Planejar compra"
                                     icon={
                                         <AppIcon
-                                            name={"plus.circle"}
-                                            androidName={"add-card"}
+                                            name={"cart.fill"}
+                                            androidName={"shopping-cart"}
                                             size={40}
                                             tintColor={theme.colors.white}
                                         />
                                     }
                                     color={theme.colors.orange}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/planPurchase")}
                                 />
                             </View>
                             <View style={{flex:1}}>
-                                <LinkCard 
+                                <LinkCard
                                     label="Próximos 12 meses"
                                     icon={
                                         <AppIcon
-                                            name={"plus.circle"}
-                                            androidName={"add-card"}
+                                            name={"calendar.badge.clock"}
+                                            androidName={"calendar-today"}
                                             size={40}
                                             tintColor={theme.colors.white}
                                         />
                                     }
                                     color={theme.colors.indigo}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/next12Months")}
                                 />
                             </View>
                         </View>
@@ -169,18 +169,18 @@ export default function PlanningScreen() {
                             }}
                         >
                             <View style={{flex:1}}>
-                                <LinkCard 
+                                <LinkCard
                                     label="Aposentadoria"
                                     icon={
                                         <AppIcon
-                                            name={"plus.circle"}
-                                            androidName={"add-card"}
+                                            name={"beach.umbrella.fill"}
+                                            androidName={"beach-access"}
                                             size={40}
                                             tintColor={theme.colors.white}
                                         />
                                     }
                                     color={theme.colors.cyan}
-                                    onPress={() => router.push("/incomeRecurring")}
+                                    onPress={() => router.push("/retirement")}
                                 />
                             </View>
                             <View style={{flex:1}}/>

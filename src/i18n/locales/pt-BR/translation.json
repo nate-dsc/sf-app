@@ -10,13 +10,70 @@
         "planning": {
             "index": "Planejar",
             "incomeRecurring": "Receita recorrente",
-            "expenseRecurring": "Despesas recorrentes"
+            "expenseRecurring": "Despesas recorrentes",
+            "budget": "Orçamento",
+            "distribution": "Distribuição",
+            "planPurchase": "Planejar compra",
+            "next12Months": "Próximos 12 meses",
+            "retirement": "Aposentadoria"
+        },
+        "credit": {
+            "index": "Cartões de crédito",
+            "new": "Novo cartão",
+            "installmentPurchase": "Compra parcelada"
         },
         "settings": "Configurações",
         "newTransaction": "Nova transação",
         "categories": "Selecione uma categoria",
         "recurring": "Configure a recorrência",
         "back": "Voltar"
+    },
+    "planningScreens": {
+        "budget": {
+            "title": "Monte e acompanhe seu orçamento",
+            "description": "Em breve você poderá definir limites para cada categoria e acompanhar o que já foi gasto ao longo do mês.",
+            "highlights": [
+                "Defina metas mensais para gastos e receitas por categoria.",
+                "Receba alertas quando estiver perto de estourar algum limite.",
+                "Compare o planejado com o realizado para ajustar seu plano."
+            ]
+        },
+        "distribution": {
+            "title": "Entenda como seu dinheiro é distribuído",
+            "description": "Visualize suas despesas e receitas agrupadas para enxergar os maiores impactos no orçamento.",
+            "highlights": [
+                "Veja a participação de cada categoria no total.",
+                "Compare distribuições mês a mês.",
+                "Descubra oportunidades para reduzir gastos."
+            ]
+        },
+        "planPurchase": {
+            "title": "Planeje a próxima grande compra",
+            "description": "Simule parcelas, datas e impacto de novas despesas antes de efetivar a compra.",
+            "highlights": [
+                "Simulações com ou sem cartão de crédito.",
+                "Projeção do fluxo de caixa com a nova compra.",
+                "Escolha a melhor data para encaixar a despesa."
+            ]
+        },
+        "next12Months": {
+            "title": "Projete os próximos 12 meses",
+            "description": "Combine transações recorrentes e metas para entender a evolução do seu saldo ao longo do ano.",
+            "highlights": [
+                "Antecipe entradas e saídas por mês.",
+                "Visualize pontos de atenção no calendário.",
+                "Ajuste seus planos com base em cenários simulados."
+            ]
+        },
+        "retirement": {
+            "title": "Simule sua aposentadoria",
+            "description": "Planeje aportes, rendimentos e gastos futuros para alcançar a independência financeira.",
+            "highlights": [
+                "Defina metas de patrimônio e renda passiva.",
+                "Projete crescimento com base nos seus investimentos.",
+                "Acompanhe quanto tempo falta para atingir o objetivo."
+            ]
+        }
     },
     "buttons": {
         "cancel": "Cancelar",
