@@ -144,28 +144,6 @@ export async function initializeAppDatabase(database: SQLiteDatabase) {
                     uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
                 );`,
-                `CREATE TABLE IF NOT EXISTS budgets (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    category_id INTEGER,
-                    period TEXT NOT NULL CHECK (period IN ('weekly','monthly','quarterly','yearly','custom')),
-                    amount INTEGER NOT NULL,
-                    start_date TEXT NOT NULL,
-                    end_date TEXT,
-                    rollover INTEGER NOT NULL DEFAULT 0,
-                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
-                    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
-                );`,
-                `CREATE TABLE IF NOT EXISTS budget_allocations (
-                    id INTEGER PRIMARY KEY,
-                    budget_id INTEGER NOT NULL,
-                    transaction_id INTEGER,
-                    amount INTEGER NOT NULL,
-                    allocated_at TEXT NOT NULL DEFAULT (datetime('now')),
-                    notes TEXT,
-                    FOREIGN KEY (budget_id) REFERENCES budgets(id) ON DELETE CASCADE,
-                    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE SET NULL
-                );`,
                 `CREATE TABLE IF NOT EXISTS savings_goals (
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,

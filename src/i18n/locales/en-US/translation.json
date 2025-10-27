@@ -134,46 +134,32 @@
     },
     "budget": {
         "tile": {
-            "noBudgets": "No budgets configured yet."
-        },
-        "list": {
-            "title": "Budgets",
-            "empty": "No budgets yet. Create your first budget below.",
-            "error": "We couldn't load your budgets."
+            "noBudget": "No budget configured yet.",
+            "periodLabel": "Period"
         },
         "form": {
-            "createTitle": "Create budget",
-            "editTitle": "Edit budget",
-            "nameLabel": "Name",
-            "amountLabel": "Planned amount",
-            "periodLabel": "Period",
-            "startDateLabel": "Start date",
-            "endDateLabel": "End date (optional)",
-            "categoryLabel": "Category ID",
-            "categoryPlaceholder": "Optional",
-            "rolloverLabel": "Allow rollover to next period",
-            "selectPeriodTitle": "Select a period",
+            "heading": "Set your budget",
+            "description": "Choose how often you'd like to track spending and how much you want to allocate.",
+            "frequency": "Budget frequency",
+            "amountLabel": "Budget amount",
+            "weekly": "Weekly",
+            "biweekly": "Every two weeks",
+            "monthly": "Monthly",
             "errors": {
-                "name": "Enter a name for the budget.",
                 "amount": "Enter an amount greater than zero.",
-                "period": "Select a valid period.",
-                "startDate": "Enter a valid start date (YYYY-MM-DD).",
-                "endDate": "Enter a valid end date (YYYY-MM-DD).",
-                "categoryId": "Category must be a number."
+                "period": "Select a valid period."
             },
             "saveError": "We couldn't save the budget. Try again.",
-            "deleteButton": "Delete budget",
-            "deleteError": "We couldn't delete the budget. Try again.",
-            "confirmDeleteTitle": "Delete budget",
-            "confirmDeleteMessage": "This will remove the budget and all allocations. Continue?",
-            "confirmDeleteConfirm": "Delete"
+            "removeButton": "Remove budget",
+            "removeError": "We couldn't remove the budget. Try again.",
+            "confirmRemoveTitle": "Remove budget",
+            "confirmRemoveMessage": "This will clear the current budget. Continue?",
+            "confirmRemoveConfirm": "Remove"
         },
         "periods": {
             "weekly": "Weekly",
-            "monthly": "Monthly",
-            "quarterly": "Quarterly",
-            "yearly": "Yearly",
-            "custom": "Custom"
+            "biweekly": "Every two weeks",
+            "monthly": "Monthly"
         }
     },
     "recurring": {

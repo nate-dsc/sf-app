@@ -134,46 +134,32 @@
     },
     "budget": {
         "tile": {
-            "noBudgets": "Nenhum orçamento configurado ainda."
-        },
-        "list": {
-            "title": "Orçamentos",
-            "empty": "Você ainda não criou orçamentos. Comece abaixo.",
-            "error": "Não foi possível carregar os orçamentos."
+            "noBudget": "Nenhum orçamento configurado ainda.",
+            "periodLabel": "Período"
         },
         "form": {
-            "createTitle": "Criar orçamento",
-            "editTitle": "Editar orçamento",
-            "nameLabel": "Nome",
-            "amountLabel": "Valor planejado",
-            "periodLabel": "Período",
-            "startDateLabel": "Data inicial",
-            "endDateLabel": "Data final (opcional)",
-            "categoryLabel": "ID da categoria",
-            "categoryPlaceholder": "Opcional",
-            "rolloverLabel": "Permitir rollover para o próximo período",
-            "selectPeriodTitle": "Selecione um período",
+            "heading": "Defina seu orçamento",
+            "description": "Escolha com que frequência deseja acompanhar os gastos e quanto deseja reservar.",
+            "frequency": "Frequência do orçamento",
+            "amountLabel": "Valor do orçamento",
+            "weekly": "Semanal",
+            "biweekly": "Quinzenal",
+            "monthly": "Mensal",
             "errors": {
-                "name": "Informe um nome para o orçamento.",
                 "amount": "Informe um valor maior que zero.",
-                "period": "Selecione um período válido.",
-                "startDate": "Informe uma data inicial válida (AAAA-MM-DD).",
-                "endDate": "Informe uma data final válida (AAAA-MM-DD).",
-                "categoryId": "A categoria deve ser um número."
+                "period": "Selecione um período válido."
             },
             "saveError": "Não foi possível salvar o orçamento. Tente novamente.",
-            "deleteButton": "Excluir orçamento",
-            "deleteError": "Não foi possível excluir o orçamento. Tente novamente.",
-            "confirmDeleteTitle": "Excluir orçamento",
-            "confirmDeleteMessage": "Isso removerá o orçamento e todas as alocações. Deseja continuar?",
-            "confirmDeleteConfirm": "Excluir"
+            "removeButton": "Remover orçamento",
+            "removeError": "Não foi possível remover o orçamento. Tente novamente.",
+            "confirmRemoveTitle": "Remover orçamento",
+            "confirmRemoveMessage": "Isso vai limpar o orçamento atual. Deseja continuar?",
+            "confirmRemoveConfirm": "Remover"
         },
         "periods": {
             "weekly": "Semanal",
-            "monthly": "Mensal",
-            "quarterly": "Trimestral",
-            "yearly": "Anual",
-            "custom": "Personalizado"
+            "biweekly": "Quinzenal",
+            "monthly": "Mensal"
         }
     },
     "recurring": {
