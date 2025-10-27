@@ -1,13 +1,13 @@
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useLocalSearchParams, useNavigation } from "expo-router"
+import { useSQLiteContext } from "expo-sqlite"
 import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, ScrollView, Text, View } from "react-native"
-import { useSQLiteContext } from "expo-sqlite"
+
 
 type TableColumn = {
     name: string
@@ -40,7 +40,7 @@ function quoteIdentifier(value: string) {
 }
 
 export default function SettingsDatabaseTableScreen() {
-    const { theme } = useStyle()
+    const { theme, layout } = useStyle()
     const { t } = useTranslation()
     const navigation = useNavigation()
     const database = useSQLiteContext()
@@ -113,8 +113,12 @@ export default function SettingsDatabaseTableScreen() {
 
     return (
         <ScrollView
-            style={{ backgroundColor: theme.background.bg }}
-            contentContainerStyle={[{ paddingTop, marginTop: 4 }, SStyles.mainContainer, { gap: 16 }]}
+            contentContainerStyle={{
+                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: 120,
+                gap: layout.margin.sectionGap
+            }}
         >
             {loading ? (
                 <View style={{ alignItems: "center", gap: 8 }}>
