@@ -3,6 +3,7 @@ import { useSummaryStore } from "@/stores/useSummaryStore"
 import { CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
+import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 import { useDatabase } from "./useDatabase"
 
@@ -12,7 +13,7 @@ export function useTransactionDatabase() {
     const {theme} = useStyle()
     const { database } = useDatabase()
 
-    async function createTransaction(data: Transaction) {
+    const createTransaction = useCallback(async (data: Transaction) => {
         const statement = await database.prepareAsync(
             "INSERT INTO transactions (value, description, category, date, flow, account_id, payee_id, notes) VALUES ($value, $description, $category, $date, $flow, $account_id, $payee_id, $notes)"
         )
@@ -38,9 +39,9 @@ export function useTransactionDatabase() {
         } finally {
             statement.finalizeAsync()
         }
-    }
+    }, [database])
 
-    async function createTransactionWithCard(data: Transaction, cardId: number) {
+    const createTransactionWithCard = useCallback(async (data: Transaction, cardId: number) => {
         try {
             await database.withTransactionAsync(async () => {
                 await database.runAsync(
@@ -72,9 +73,9 @@ export function useTransactionDatabase() {
         } catch (error) {
             throw error
         }
-    }
+    }, [database])
 
-    async function createInstallmentPurchase(data: InstallmentPurchaseInput) {
+    const createInstallmentPurchase = useCallback(async (data: InstallmentPurchaseInput) => {
         const resolveFirstOccurrence = (purchaseDay: number) => {
             const now = new Date()
             now.setHours(0, 0, 0, 0)
@@ -147,9 +148,9 @@ export function useTransactionDatabase() {
             console.error("Falha ao registrar compra parcelada", error)
             throw error
         }
-    }
+    }, [database])
 
-    async function createRecurringTransaction(data: RecurringTransaction) {
+    const createRecurringTransaction = useCallback(async (data: RecurringTransaction) => {
         const statement = await database.prepareAsync(
             "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
         )
@@ -179,9 +180,9 @@ export function useTransactionDatabase() {
         } finally {
             statement.finalizeAsync()
         }
-    }
+    }, [database])
 
-    async function createRecurringTransactionWithCard(data: RecurringTransaction, cardId: number) {
+    const createRecurringTransactionWithCard = useCallback(async (data: RecurringTransaction, cardId: number) => {
         const statement = await database.prepareAsync(
             "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
         )
@@ -208,22 +209,22 @@ export function useTransactionDatabase() {
         } finally {
             statement.finalizeAsync()
         }
-    }
+    }, [database])
 
-    async function createCard(data: NewCard) {
+    const createCard = useCallback(async (data: NewCard) => {
         const statement = "INSERT INTO cards (name, color, card_limit, limit_used, closing_day, due_day, ign_wknd) VALUES (?,?,?,?,?,?,?)"
 
         const params = [data.name, data.color, data.limit, 0, data.closingDay, data.dueDay, data.ignoreWeekends]
 
         try {
-            const result = await database.runAsync(statement, params)
+            await database.runAsync(statement, params)
         } catch (error) {
             console.log("Não foi possivel adicionar o cartão")
             throw error
         }
-    }
+    }, [database])
 
-    async function getCards(): Promise<CCard[]> {
+    const getCards = useCallback(async (): Promise<CCard[]> => {
         try {
             const cards = await database.getAllAsync<{
                 id: number
@@ -250,9 +251,9 @@ export function useTransactionDatabase() {
             console.error("Could not fetch cards", error)
             throw error
         }
-    }
+    }, [database, theme])
 
-    async function getCard(cardId: number): Promise<CCard | null> {
+    const getCard = useCallback(async (cardId: number): Promise<CCard | null> => {
         try {
             const card = await database.getFirstAsync<{
                 id: number
@@ -283,9 +284,9 @@ export function useTransactionDatabase() {
             console.error("Could not fetch card", error)
             throw error
         }
-    }
+    }, [database, theme])
 
-    async function deleteTransaction(id: number) {
+    const deleteTransaction = useCallback(async (id: number) => {
         try {
             await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
         } catch (error) {
@@ -293,9 +294,9 @@ export function useTransactionDatabase() {
             throw error
         }
 
-    }
+    }, [database])
 
-    async function deleteRecurringTransaction(id: number) {
+    const deleteRecurringTransaction = useCallback(async (id: number) => {
         try {
             await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
         } catch (error) {
@@ -303,9 +304,9 @@ export function useTransactionDatabase() {
             throw error
         }
 
-    }
+    }, [database])
 
-    async function deleteRecurringTransactionCascade(id: number) {
+    const deleteRecurringTransactionCascade = useCallback(async (id: number) => {
         try {
             await database.withTransactionAsync(async () => {
                 await database.runAsync("DELETE FROM transactions WHERE id_recurring = ?", [id])
@@ -315,7 +316,7 @@ export function useTransactionDatabase() {
             console.error("Could not delete recurring transaction cascade", error)
             throw error
         }
-    }
+    }, [database])
 
     async function deleteCard(id: number) {
         try {
@@ -326,12 +327,12 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function getTransactionsFromMonth(YMString: string, orderBy: "day" | "id") {
+    const getTransactionsFromMonth = useCallback(async (YMString: string, orderBy: "day" | "id") => {
         const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
-        
+
         try {
             const query = `SELECT * FROM transactions WHERE strftime('%Y-%m', date) = ${YMString} ORDER BY ${orderStr}`
-            
+
             const response = await database.getAllAsync<Transaction>(query)
 
             return response
@@ -339,9 +340,9 @@ export function useTransactionDatabase() {
             console.log("Could not find transactions by month")
             throw error
         }
-    }
+    }, [database])
 
-    async function getSummaryFromDB(): Promise<Summary> {
+    const getSummaryFromDB = useCallback(async (): Promise<Summary> => {
         // Lógica para obter o mês anterior no formato YYYY-MM
         const today = new Date();
         // Leva a data para o primeiro dia do mês atual e depois subtrai 1 dia para ir para o último dia do mês anterior
@@ -381,9 +382,9 @@ export function useTransactionDatabase() {
             console.error("Falha ao buscar dados do sumário:", error);
             throw error;
         }
-    }
+    }, [database])
 
-    async function getPaginatedFilteredTransactions(page: number, pageSize: number, filterOptions: SearchFilters = {}) {
+    const getPaginatedFilteredTransactions = useCallback(async (page: number, pageSize: number, filterOptions: SearchFilters = {}) => {
         const offset = page*pageSize
 
         let whereClauses: string[] = []
@@ -461,9 +462,9 @@ export function useTransactionDatabase() {
             console.error("Could not fetch paginated transactions", error)
             throw error
         }
-    }
+    }, [database])
 
-    async function createAndSyncRecurringTransactions() {
+    const createAndSyncRecurringTransactions = useCallback(async () => {
         console.log("Iniciando criação e sincronização de transações recorrentes")
         const newEndOfDay = new Date()
         newEndOfDay.setHours(23,59,59)
@@ -539,9 +540,9 @@ export function useTransactionDatabase() {
             console.error("Erro fatal durante a sincronização de transações recorrentes:", error)
             throw error
         }
-    }
+    }, [database])
 
-    async function createAndSyncInstallmentPurchases() {
+    const createAndSyncInstallmentPurchases = useCallback(async () => {
         console.log("Sincronizando compras parceladas")
         const endOfDay = new Date()
         endOfDay.setHours(23,59,59,0)
@@ -656,9 +657,9 @@ export function useTransactionDatabase() {
             console.error("Erro ao sincronizar compras parceladas:", error)
             throw error
         }
-    }
+    }, [database])
 
-    async function getRRULE(id: number): Promise<string> {
+    const getRRULE = useCallback(async (id: number): Promise<string> => {
         try {
             const parentTransaction = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE id = ?",[id])
 
@@ -668,7 +669,7 @@ export function useTransactionDatabase() {
             console.error("Erro na busca por transação recorrente:", error)
             throw error
         }
-    }
+    }, [database])
 
     async function getRecurringIncomeTransactions() {
         try {
@@ -680,7 +681,7 @@ export function useTransactionDatabase() {
         }
     }
 
-    async function getRecurringSummaryThisMonth(flowType: "inflow" | "outflow") {
+    const getRecurringSummaryThisMonth = useCallback(async (flowType: "inflow" | "outflow") => {
         const now = new Date()
 
         const startLocal = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0)
@@ -728,9 +729,9 @@ export function useTransactionDatabase() {
             console.log("Não foi possível recuperar o sumário das transações recorrentes")
             throw error
         }
-    }
+    }, [database])
 
-    return {
+    const databaseMethods = useMemo(() => ({
         createTransaction,
         createRecurringTransaction,
         createTransactionWithCard,
@@ -748,6 +749,27 @@ export function useTransactionDatabase() {
         createAndSyncRecurringTransactions,
         createAndSyncInstallmentPurchases,
         getRRULE,
-        getRecurringSummaryThisMonth
-    }
+        getRecurringSummaryThisMonth,
+    }), [
+        createTransaction,
+        createRecurringTransaction,
+        createTransactionWithCard,
+        createRecurringTransactionWithCard,
+        createInstallmentPurchase,
+        createCard,
+        getCards,
+        getCard,
+        deleteTransaction,
+        deleteRecurringTransaction,
+        deleteRecurringTransactionCascade,
+        getTransactionsFromMonth,
+        getSummaryFromDB,
+        getPaginatedFilteredTransactions,
+        createAndSyncRecurringTransactions,
+        createAndSyncInstallmentPurchases,
+        getRRULE,
+        getRecurringSummaryThisMonth,
+    ])
+
+    return databaseMethods
 }
