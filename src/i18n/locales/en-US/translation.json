@@ -10,13 +10,70 @@
         "planning": {
             "index": "Planning",
             "incomeRecurring": "Recurring income",
-            "expenseRecurring": "Recurring expenses"
+            "expenseRecurring": "Recurring expenses",
+            "budget": "Budget",
+            "distribution": "Distribution",
+            "planPurchase": "Plan purchase",
+            "next12Months": "Next 12 months",
+            "retirement": "Retirement"
+        },
+        "credit": {
+            "index": "Credit cards",
+            "new": "New card",
+            "installmentPurchase": "Installment purchase"
         },
         "settings": "Settings",
         "newTransaction": "New transaction",
         "categories": "Select a category",
         "recurring": "Set recurrence",
         "back": "Return"
+    },
+    "planningScreens": {
+        "budget": {
+            "title": "Build and monitor your budget",
+            "description": "Soon you'll be able to set limits for each category and track how much has already been spent during the month.",
+            "highlights": [
+                "Set monthly targets for income and expense categories.",
+                "Get alerts as you approach any limit.",
+                "Compare planned versus actual results to adjust your plan."
+            ]
+        },
+        "distribution": {
+            "title": "Understand how your money is distributed",
+            "description": "Group your expenses and income to identify the areas that have the biggest impact on the budget.",
+            "highlights": [
+                "See how much each category contributes to the total.",
+                "Review distributions month over month.",
+                "Spot categories that deserve extra attention."
+            ]
+        },
+        "planPurchase": {
+            "title": "Plan your next big purchase",
+            "description": "Simulate installments, dates, and the impact of new expenses before committing to them.",
+            "highlights": [
+                "Simulate installments with or without a credit card.",
+                "Project the cash flow impact before confirming the purchase.",
+                "Pick the best date to fit the expense into your schedule."
+            ]
+        },
+        "next12Months": {
+            "title": "Forecast the next 12 months",
+            "description": "Combine recurring transactions and goals to understand how your balance evolves throughout the year.",
+            "highlights": [
+                "Forecast inflows and outflows for each upcoming month.",
+                "Highlight critical dates on your financial calendar.",
+                "Test different scenarios to stay on track."
+            ]
+        },
+        "retirement": {
+            "title": "Simulate your retirement",
+            "description": "Plan contributions, returns, and future expenses to achieve financial independence.",
+            "highlights": [
+                "Set targets for assets and passive income.",
+                "Project growth based on your contributions.",
+                "Track how close you are to financial independence."
+            ]
+        }
     },
     "buttons": {
         "cancel": "Cancel",
