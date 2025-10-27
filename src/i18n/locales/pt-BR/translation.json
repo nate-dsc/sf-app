@@ -92,7 +92,8 @@
         "outflow": "Saídas",
         "expenses": "Despesas",
         "lastTransaction": "Última transação",
-        "distribution": "Distribuição"
+        "distribution": "Distribuição",
+        "distributionEmpty": "Nenhuma transação registrada neste mês."
     },
     "budget": {
         "tile": {

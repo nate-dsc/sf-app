@@ -1,6 +1,5 @@
 import { useStyle } from "@/context/StyleContext"
-import { useSummaryStore } from "@/stores/useSummaryStore"
-import { BudgetAllocation, BudgetAllocationInput, BudgetInput, BudgetOverview, CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { BudgetAllocation, BudgetAllocationInput, BudgetInput, BudgetOverview, CCard, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useCallback, useMemo } from "react"
@@ -9,7 +8,6 @@ import { useDatabase } from "./useDatabase"
 
 
 export function useTransactionDatabase() {
-    const {triggerRefresh} = useSummaryStore()
     const {theme} = useStyle()
     const { database } = useDatabase()
 
@@ -33,6 +31,14 @@ export function useTransactionDatabase() {
         amount: number
         allocated_at: string
         notes: string | null
+    }
+
+    type CategoryDistributionRow = {
+        categoryId: number
+        categoryName: string
+        flow: string
+        color: string | null
+        totalValue: number | null
     }
 
     const mapBudgetRow = (row: BudgetRow): BudgetOverview => {
@@ -655,6 +661,48 @@ export function useTransactionDatabase() {
         }
     }, [database, getBudgetsOverview])
 
+    const getMonthlyCategoryDistribution = useCallback(async (): Promise<MonthlyCategoryAggregate[]> => {
+        const today = new Date()
+        const year = today.getFullYear()
+        const month = (today.getMonth() + 1).toString().padStart(2, "0")
+        const currentMonthStr = `${year}-${month}`
+
+        try {
+            const rows = await database.getAllAsync<CategoryDistributionRow>(
+                `SELECT
+                    c.id AS categoryId,
+                    c.name AS categoryName,
+                    c.flow AS flow,
+                    c.color AS color,
+                    SUM(t.value) AS totalValue
+                FROM transactions t
+                INNER JOIN categories c ON c.id = t.category
+                WHERE strftime('%Y-%m', t.date) = ?
+                GROUP BY c.id, c.name, c.flow, c.color`,
+                [currentMonthStr]
+            )
+
+            return rows
+                .map((row) => {
+                    const rawTotal = typeof row.totalValue === "number" ? row.totalValue : Number(row.totalValue ?? 0)
+                    const normalizedTotal = row.flow === "outflow" ? Math.abs(rawTotal) : rawTotal
+                    const safeTotal = Number.isFinite(normalizedTotal) ? normalizedTotal : 0
+
+                    return {
+                        categoryId: row.categoryId,
+                        name: row.categoryName,
+                        color: row.color ?? null,
+                        flow: row.flow === "outflow" ? "outflow" : "inflow",
+                        total: safeTotal,
+                    } satisfies MonthlyCategoryAggregate
+                })
+                .filter((entry) => entry.total > 0)
+        } catch (error) {
+            console.error("Falha ao buscar distribuição mensal por categoria:", error)
+            throw error
+        }
+    }, [database])
+
     const getPaginatedFilteredTransactions = useCallback(async (page: number, pageSize: number, filterOptions: SearchFilters = {}) => {
         const offset = page*pageSize
 
@@ -1028,6 +1076,7 @@ export function useTransactionDatabase() {
         deleteRecurringTransactionCascade,
         getTransactionsFromMonth,
         getSummaryFromDB,
+        getMonthlyCategoryDistribution,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
         createAndSyncInstallmentPurchases,
@@ -1057,6 +1106,7 @@ export function useTransactionDatabase() {
         deleteRecurringTransactionCascade,
         getTransactionsFromMonth,
         getSummaryFromDB,
+        getMonthlyCategoryDistribution,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
         createAndSyncInstallmentPurchases,

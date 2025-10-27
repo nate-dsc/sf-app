@@ -135,6 +135,14 @@ export type BudgetAllocationInput = {
     notes?: string | null,
 }
 
+export type MonthlyCategoryAggregate = {
+    categoryId: number,
+    name: string,
+    color: string | null,
+    flow: Flow,
+    total: number,
+}
+
 export type Summary = {
     inflowCurrentMonth: number,
     outflowCurrentMonth: number,
