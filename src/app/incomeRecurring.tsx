@@ -1,3 +1,6 @@
+import BlurredModalView from "@/components/BlurredModalView"
+import GPopup from "@/components/grouped-list-components/GroupedPopup"
+import GroupView from "@/components/grouped-list-components/GroupView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
@@ -17,6 +20,7 @@ export default function IncomeRecurringScreen() {
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
     const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
     const [rTModalVisible, setRTModalVisible] = useState(false)
+    const [chartModalVisible, setChartModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
@@ -57,6 +61,10 @@ export default function IncomeRecurringScreen() {
         setSelectedRT(null)
     }
 
+    const handleChartModalClose = () => {
+        setChartModalVisible(false)
+    }
+
     const handleDeleteSuccess = useCallback(() => {
         void loadData({ showLoading: false })
     }, [loadData])
@@ -77,8 +85,12 @@ export default function IncomeRecurringScreen() {
         <View style={{ flex: 1, paddingTop: headerHeight, gap: 10}}>
             
             <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
+
+            <GroupView>
+                <GPopup separator={"none"} label={"Ver todas as transações"} onPress={() => setChartModalVisible(true)} />
+            </GroupView>
         
-            <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" />
+            {/* <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" /> */}
 
             <View style={{paddingHorizontal: 16}}>
                 <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
@@ -102,6 +114,17 @@ export default function IncomeRecurringScreen() {
                     onBackgroundPress={handleRTModalClose}
                     onDeleteSuccess={handleDeleteSuccess}
                 />
+            </Modal>
+
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={chartModalVisible}
+                onRequestClose={handleChartModalClose}
+            >
+                <BlurredModalView onBackgroundPress={handleChartModalClose}>
+                    <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" />
+                </BlurredModalView>
             </Modal>
         </View>
     )

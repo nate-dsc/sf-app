@@ -704,6 +704,8 @@ export function useTransactionDatabase() {
                 const rrule = new RRule(rruleOptions)
 
                 const pendingOccurrences = rrule.between(startUTC, endUTC, true)
+                console.log(`rrule: ${rrule.toString()}`)
+                console.log(`pendingocurrences: ${pendingOccurrences.toString()}`)
 
                 if(pendingOccurrences.length > 0) {
                     const transactionTotal = recurringTransaction.value * pendingOccurrences.length
