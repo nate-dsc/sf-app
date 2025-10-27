@@ -126,14 +126,27 @@ function RootLayoutNav() {
                                 headerStyle: { backgroundColor: theme.colors.red }
                             }}
                         />
+                        {/* Telas de orçamento */}
                         <Stack.Screen
-                            name="budget"
+                            name="(budget)/budget"
                             options={{
                                 title: t("nav.planning.budget", { defaultValue: "Orçamento" }),
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
                                 headerStyle: { backgroundColor: theme.colors.yellow },
+                            }}
+                        />
+                        <Stack.Screen
+                            name="(budget)/budgetEdit"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                title: t("nav.planning.budget"),
+                                headerTitleStyle: {color: theme.text.label},
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg
+                                }
                             }}
                         />
                         <Stack.Screen

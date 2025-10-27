@@ -1,49 +1,51 @@
 import { useStyle } from "@/context/StyleContext";
-import { Ionicons } from "@expo/vector-icons";
-import { Text, TouchableOpacity, TouchableOpacityProps, View, ViewStyle } from "react-native";
-import { useTranslation } from "react-i18next";
-import { FontStyles } from "../styles/FontStyles";
+import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 
-type DeleteButtonProps = TouchableOpacityProps & {
-    styles?: ViewStyle
-    label?: string
+type DestructiveButtonProps = TouchableOpacityProps & {
+    label: string,
+    onPress: () => void,
+    disabled?: boolean,
+    background?: "red-fill" | "tinted" | "fill"
 }
 
-export default function DeleteButton({styles, label, ...rest}: DeleteButtonProps) {
+export default function DestructiveButton({label, onPress, disabled = false, background = "fill"}: DestructiveButtonProps) {
 
     const {theme} = useStyle()
-    const { t } = useTranslation()
+
+    let backgroundColor
+    let labelColor
+
+    if(disabled) {
+        backgroundColor = background === "red-fill" ? theme.buttons.destructive.bgDisabledProminent : background === "tinted" ? theme.buttons.destructive.bgDisabled : theme.fill.tertiary
+        labelColor = background === "red-fill" ? theme.buttons.primary.labelDisabled : theme.buttons.destructive.labelDisabled
+    } else {
+        backgroundColor = background === "red-fill" ? theme.colors.red : background === "tinted" ? theme.buttons.destructive.bgDisabled : theme.fill.tertiary
+        labelColor = background === "red-fill" ? theme.colors.white : theme.colors.red
+    }
 
     return(
-        <TouchableOpacity {...rest}>
-            <View style={[{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    gap: 8,
-                    backgroundColor: theme.background.group.secondaryBg,
-                    borderRadius: 100,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderCurve: "continuous",
-                    paddingHorizontal: 15,
-                    shadowColor: "#000",
-                    shadowOpacity: 0.2,
-                    shadowRadius: 32 ,
-                    shadowOffset: {width: 0, height: 0}
-                },
-                styles
-            ]}>
-                <Ionicons size={20} name="trash-outline" color={theme.colors.red}/>
-                <Text
-                    style={[
-                        FontStyles.body,
-                        {paddingVertical: 10, color: theme.colors.red}
-                    ]}
-                >
-                    {label ?? t("buttons.delete")}
-                </Text>
-            </View>
+        <TouchableOpacity
+            onPress={onPress}
+            disabled={disabled}
+            style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 100,
+                paddingVertical: 13,
+                backgroundColor: backgroundColor
+            }}
+        >
+            <Text
+                style={{
+                    lineHeight: 22,
+                    fontSize: 17,
+                    fontWeight: "500",
+                    color: labelColor
+                }}
+            >
+                {label}
+            </Text>
         </TouchableOpacity>
     )
 }

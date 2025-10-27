@@ -135,6 +135,14 @@ const scSelectedDark = "#6C6C71"
 const white = "rgba(255, 255, 255, 1)"
 const white30 = "rgba(255, 255, 255, 0.3)"
 
+const destructiveLabelDisabled = "rgba(255,56,60,0.5)"
+const destructiveBgProminent = "rgba(255,56,60,0.2)"
+const destructiveBg = "rgba(255,56,60,0.14)"
+
+const destructiveLabelDisabledDark = "rgba(255,66,69,0.5)"
+const destructiveBgProminentDark = "rgba(255,66,69,0.2)"
+const destructiveBgDark = "rgba(255,66,69,0.14)"
+
 const defaultTint = "#007AFF"
 
 const defaultLightBackground = "#F8F8F8"
@@ -213,6 +221,11 @@ type CustomTheme = {
             bgDisabled: string,
             label: string,
             labelDisabled: string 
+        },
+        destructive: {
+            bgDisabled: string,
+            bgDisabledProminent: string,
+            labelDisabled: string,
         }
     }
     
@@ -362,6 +375,11 @@ export const light: CustomTheme = {
             bgDisabled: blue20,
             label: white,
             labelDisabled: white
+        },
+        destructive: {
+            bgDisabled: destructiveBg,
+            bgDisabledProminent: destructiveBgProminent,
+            labelDisabled: destructiveLabelDisabled
         }
     },
 
@@ -509,6 +527,11 @@ export const dark: CustomTheme = {
             bgDisabled: blueDark20,
             label: white,
             labelDisabled: white30 
+        },
+        destructive: {
+            bgDisabled: destructiveBgDark,
+            bgDisabledProminent: destructiveBgProminentDark,
+            labelDisabled: destructiveLabelDisabledDark
         }
     },
     

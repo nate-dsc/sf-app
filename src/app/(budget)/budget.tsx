@@ -1,3 +1,4 @@
+import BottomButton from "@/components/buttons/BottomButton"
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
 import DeleteButton from "@/components/buttons/DeleteButton"
 import GroupView from "@/components/grouped-list-components/GroupView"
@@ -14,6 +15,7 @@ import { useHeaderHeight } from "@react-navigation/elements"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, ScrollView, Text, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const allowedPeriods: BudgetPeriod[] = ["weekly", "biweekly", "monthly"]
 
@@ -21,6 +23,7 @@ export default function BudgetScreen() {
     const headerHeight = useHeaderHeight()
     const { theme, layout } = useStyle()
     const { t } = useTranslation()
+    const insets = useSafeAreaInsets()
 
     const { getSummaryFromDB } = useTransactionDatabase()
 
@@ -125,11 +128,18 @@ export default function BudgetScreen() {
     }, [clearBudget, refreshSummary, t])
 
     return (
-        <ScrollView
-            contentContainerStyle={{
+        <View
+            style={{
+                flex: 1,
                 paddingTop: headerHeight + 24,
-                paddingBottom: 48,
                 paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: insets.bottom
+            }}
+        >
+        <ScrollView
+            style={{flex: 1}}
+            contentContainerStyle={{
+                paddingBottom: 48,
                 gap: 32,
             }}
         >
@@ -169,6 +179,8 @@ export default function BudgetScreen() {
                     }}
                     flowType="outflow"
                     valueInCents={amountCents}
+                    labelFlex={2}
+                    fieldFlex={2}
                 />
             </GroupView>
 
@@ -187,9 +199,11 @@ export default function BudgetScreen() {
                     onPress={handleRemove}
                     label={t("budget.form.removeButton")}
                     disabled={submitting}
-                    styles={{ alignSelf: "flex-start", marginTop: 8 }}
                 />
             ) : null}
         </ScrollView>
+
+        <BottomButton label={"Editar orçamento"} color={theme.colors.green}/>
+        </View>
     )
 }
