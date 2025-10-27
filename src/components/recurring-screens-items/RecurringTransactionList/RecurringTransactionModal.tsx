@@ -14,9 +14,10 @@ import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutF
 type RecurringTransactionModalProps = {
     transaction: RecurringTransaction | null,
     onBackgroundPress: () => void,
+    onDeleteSuccess?: (deletedId: number) => void,
 }
 
-export default function RecurringTransactionModal({transaction, onBackgroundPress}: RecurringTransactionModalProps) {
+export default function RecurringTransactionModal({transaction, onBackgroundPress, onDeleteSuccess}: RecurringTransactionModalProps) {
 
     if(!transaction) return null
 
@@ -59,16 +60,18 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
             await deleteRecurringTransaction(transaction.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
+            onDeleteSuccess?.(id)
         } catch (error) {
             console.log("Falha ao deletar. Tente novamente.");
         }
     }
-    
+
     const handleCascadeDeletion = async (id: number) => {
         try {
             await deleteRecurringTransactionCascade(transaction.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
+            onDeleteSuccess?.(id)
         } catch (error) {
             console.log("Falha ao deletar em cascata. Tente novamente.");
         }
