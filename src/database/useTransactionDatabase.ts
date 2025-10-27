@@ -3,14 +3,14 @@ import { useSummaryStore } from "@/stores/useSummaryStore"
 import { CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
-import { useSQLiteContext } from "expo-sqlite"
+import { useDatabase } from "./useDatabase"
 import { RRule } from "rrule"
 
 
 export function useTransactionDatabase() {
     const {triggerRefresh} = useSummaryStore()
     const {theme} = useStyle()
-    const database = useSQLiteContext()
+    const { database } = useDatabase()
 
     async function createTransaction(data: Transaction) {
         const statement = await database.prepareAsync(
@@ -595,7 +595,7 @@ export function useTransactionDatabase() {
                                 blueprint.category,
                                 dueDateStr,
                                 blueprint.id,
-                                blueprint.card_id,
+                                blueprint.card_id ?? null,
                             ]
                         )
 

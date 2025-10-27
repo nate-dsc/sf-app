@@ -1,23 +1,24 @@
-import { SQLiteDatabase } from "expo-sqlite";
+import { SQLiteDatabase } from "expo-sqlite"
+import { initializeAppDatabase } from "./useDatabase"
+
+function quoteIdentifier(value: string) {
+    return `"${value.replace(/"/g, '""')}"`
+}
 
 export async function resetCCDatabase(database: SQLiteDatabase) {
+    const cardRelatedTables = [
+        "card_statement_transactions",
+        "card_statements",
+        "cards",
+    ]
 
-    await database.execAsync(`
-        DROP TABLE IF EXISTS cards; 
-    `)
+    await database.withTransactionAsync(async () => {
+        for (const table of cardRelatedTables) {
+            await database.execAsync(`DROP TABLE IF EXISTS ${quoteIdentifier(table)}`)
+        }
+    })
 
-    await database.execAsync(`
-        CREATE TABLE IF NOT EXISTS cards (
-            id INTEGER NOT NULL PRIMARY KEY,
-            name TEXT,
-            color INT,
-            card_limit INT,
-            limit_used INT,
-            closing_day INT,
-            due_day INT,
-            ign_wknd BOOLEAN
-        );
-    `)
+    await initializeAppDatabase(database)
 
     console.log("Banco de dados de cartões de crédito resetado")
 }
