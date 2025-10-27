@@ -104,13 +104,16 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         if (!isValid) {
             throw new Error("Tentativa de criar transação com dados inválidos.");
         }
+        const categoryId = Number(newTransaction.category?.id)
+
         return {
             id: 0,
             value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
-            category: newTransaction.category?.id!,
+            category: Number.isNaN(categoryId) ? 0 : categoryId,
             date: newTransaction.date?.toISOString().slice(0, 16)!,
             card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
+            flow: newTransaction.flowType === "inflow" ? "inflow" : "outflow",
         }
     }
 
@@ -118,15 +121,18 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         if (!isValid && !newTransaction.rrule) {
             throw new Error("Tentativa de criar transação recorrente com dados inválidos.");
         }
+        const categoryId = Number(newTransaction.category?.id)
+
         return {
             id: 0,
             value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
-            category: newTransaction.category?.id!,
+            category: Number.isNaN(categoryId) ? 0 : categoryId,
             date_start: newTransaction.date?.toISOString().slice(0, 16)!,
             rrule: newTransaction.rrule!,
             date_last_processed: null,
             card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
+            flow: newTransaction.flowType === "inflow" ? "inflow" : "outflow",
         }
     }
 
