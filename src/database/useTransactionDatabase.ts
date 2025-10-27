@@ -3,8 +3,8 @@ import { useSummaryStore } from "@/stores/useSummaryStore"
 import { CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
-import { useDatabase } from "./useDatabase"
 import { RRule } from "rrule"
+import { useDatabase } from "./useDatabase"
 
 
 export function useTransactionDatabase() {
@@ -690,14 +690,14 @@ export function useTransactionDatabase() {
         const endUTC = localToUTC(endLocal)
 
 
-        let totalRecurringIncome = 0
+        let totalRecurring = 0
 
         const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE flow = 'outflow'" : "SELECT * FROM transactions_recurring WHERE flow = 'inflow'"
 
         try {
-            const recurringIncomeTransactions = await database.getAllAsync<RecurringTransaction>(query)
+            const recurringTransactions = await database.getAllAsync<RecurringTransaction>(query)
 
-            for(const recurringTransaction of recurringIncomeTransactions) {
+            for(const recurringTransaction of recurringTransactions) {
                 const rruleOptions = RRule.parseString(recurringTransaction.rrule)
                 rruleOptions.dtstart = new Date(`${recurringTransaction.date_start}Z`)
                 const rrule = new RRule(rruleOptions)
@@ -705,11 +705,11 @@ export function useTransactionDatabase() {
                 const pendingOccurrences = rrule.between(startUTC, endUTC, true)
 
                 if(pendingOccurrences.length > 0) {
-                    totalRecurringIncome += recurringTransaction.value * pendingOccurrences.length
+                    totalRecurring += recurringTransaction.value * pendingOccurrences.length
                 }
             }
 
-            return {totalRecurringIncome, recurringIncomeTransactions}
+            return {totalRecurring, recurringTransactions}
 
         } catch (error) {
             console.log("Não foi possível recuperar o sumário das transações recorrentes")

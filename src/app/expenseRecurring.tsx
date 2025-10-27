@@ -30,9 +30,9 @@ export default function ExpenseRecurringScreen() {
         }
 
         try {
-            const { totalRecurringIncome, recurringIncomeTransactions } = await getRecurringSummaryThisMonth("outflow")
-            setTotalRecurringIncome(totalRecurringIncome)
-            setRecurringTransactions(recurringIncomeTransactions)
+            const { totalRecurring, recurringTransactions } = await getRecurringSummaryThisMonth("outflow")
+            setTotalRecurringIncome(totalRecurring)
+            setRecurringTransactions(recurringTransactions)
         } catch (err) {
             console.error("Erro ao carregar transações recorrentes:", err)
         } finally {
