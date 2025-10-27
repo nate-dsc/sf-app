@@ -4,12 +4,14 @@
 
 O que precisa:
 - Total gerado por renda recorrente no mês
+- Modal com gráficos da distribuição da renda
 - Todas as rendas recorrentes
 
 ### Tela: Despesa recorrente
 
 O que precisa:
 - Total gerado pelas despessas recorrentes no mês
+- Modal com gráficos da distribuição das despesas
 - Todas as despesas recorrentes
 
 ### Cartões de crédito
@@ -19,7 +21,7 @@ Devem ter:
 - Data de vencimento
 - Data de fechamento
 - Limite
-- Limite usado
+- Limite usado 
 
 Como devem aparecer nas transações:
 - payment type (INT)
