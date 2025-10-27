@@ -1,3 +1,6 @@
+import BlurredModalView from "@/components/BlurredModalView"
+import GPopup from "@/components/grouped-list-components/GroupedPopup"
+import GroupView from "@/components/grouped-list-components/GroupView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
@@ -18,6 +21,7 @@ export default function ExpenseRecurringScreen() {
     const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
     const [rTModalVisible, setRTModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
+    const [chartModalVisible, setChartModalVisible] = useState(false)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
     const {theme} = useStyle()
@@ -61,6 +65,10 @@ export default function ExpenseRecurringScreen() {
         void loadData({ showLoading: false })
     }, [loadData])
 
+    const handleChartModalClose = () => {
+        setChartModalVisible(false)
+    }
+
     useEffect(() => {
         void loadData()
     }, [loadData, refreshKey])
@@ -75,19 +83,22 @@ export default function ExpenseRecurringScreen() {
 
     return (
         <View style={{ flex: 1, paddingTop: headerHeight, gap: 10}}>
-            <View style={{paddingHorizontal: 16, paddingTop: 10}}>
-                <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
-            </View>
-            <View style={{paddingHorizontal: 16}}>
-                <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="outflow" />
-            </View>
+            <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
 
-            <View style={{paddingHorizontal: 32}}>
+            <GroupView>
+                <GPopup
+                    separator={"none"}
+                    label={"Ver distribuição das categorias"}
+                    onPress={() => setChartModalVisible(true)}
+                />
+            </GroupView>
+
+            <View style={{paddingHorizontal: 16}}>
                 <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
                     Todas as despesas recorrentes
                 </Text>
             </View>
-            
+
             <RecurringTransactionList data={recurringTransactions} onItemPress={handleItemPress} />
 
             <Modal
@@ -101,6 +112,17 @@ export default function ExpenseRecurringScreen() {
                     onBackgroundPress={handleRTModalClose}
                     onDeleteSuccess={handleDeleteSuccess}
                 />
+            </Modal>
+
+            <Modal
+                animationType={"fade"}
+                transparent={true}
+                visible={chartModalVisible}
+                onRequestClose={handleChartModalClose}
+            >
+                <BlurredModalView onBackgroundPress={handleChartModalClose}>
+                    <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="outflow" />
+                </BlurredModalView>
             </Modal>
         </View>
     )
