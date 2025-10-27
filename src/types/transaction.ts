@@ -4,22 +4,32 @@ export type Transaction = {
     id: number,
     value: number,
     description: string,
-    category: string,
+    category: number,
     date: string,
-    id_recurring?: number,
-    card_id?: number | null
+    id_recurring?: number | null,
+    card_id?: number | null,
+    account_id?: number | null,
+    payee_id?: number | null,
+    flow: Flow,
+    notes?: string | null,
+    created_at?: string,
+    updated_at?: string,
 }
 
 export type RecurringTransaction = {
     id: number,
     value: number,
     description: string,
-    category: string,
+    category: number,
     date_start: string,
     rrule: string,
     date_last_processed: string | null,
     card_id?: number | null,
-    is_installment?: number
+    account_id?: number | null,
+    payee_id?: number | null,
+    flow: Flow,
+    notes?: string | null,
+    is_installment?: number,
 }
 
 export type NewCard = {

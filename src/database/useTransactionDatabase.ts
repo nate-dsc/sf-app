@@ -14,19 +14,25 @@ export function useTransactionDatabase() {
 
     async function createTransaction(data: Transaction) {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions (value, description, category, date) VALUES ($value, $description, $category, $date)"
+            "INSERT INTO transactions (value, description, category, date, flow, account_id, payee_id, notes) VALUES ($value, $description, $category, $date, $flow, $account_id, $payee_id, $notes)"
         )
 
+        const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
+
         try {
-            const result = await statement.executeAsync({
+            await statement.executeAsync({
                 $value: data.value,
                 $description: data.description,
-                $category: data.category,
-                $date: data.date
+                $category: Number(data.category),
+                $date: data.date,
+                $flow: flow,
+                $account_id: data.account_id ?? null,
+                $payee_id: data.payee_id ?? null,
+                $notes: data.notes ?? null,
             })
 
-            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}`)
-            
+            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nFluxo: ${flow}`)
+
         } catch (error) {
             throw error
         } finally {
@@ -38,8 +44,18 @@ export function useTransactionDatabase() {
         try {
             await database.withTransactionAsync(async () => {
                 await database.runAsync(
-                    "INSERT INTO transactions (value, description, category, date, card_id) VALUES (?, ?, ?, ?, ?)",
-                    [data.value, data.description, data.category, data.date, cardId]
+                    "INSERT INTO transactions (value, description, category, date, card_id, flow, account_id, payee_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        data.value,
+                        data.description,
+                        Number(data.category),
+                        data.date,
+                        cardId,
+                        data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
+                        data.account_id ?? null,
+                        data.payee_id ?? null,
+                        data.notes ?? null,
+                    ]
                 )
 
                 const limitAdjustment = data.value < 0 ? Math.abs(data.value) : -Math.abs(data.value)
@@ -101,16 +117,20 @@ export function useTransactionDatabase() {
                 const description = data.description.trim()
 
                 await database.runAsync(
-                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                         -Math.abs(data.installmentValue),
                         description,
-                        data.category,
+                        Number(data.category),
                         firstOccurrenceStr,
                         rrule.toString(),
                         null,
                         data.cardId,
                         1,
+                        null,
+                        null,
+                        "outflow",
+                        null,
                     ]
                 )
 
@@ -131,21 +151,29 @@ export function useTransactionDatabase() {
 
     async function createRecurringTransaction(data: RecurringTransaction) {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
         )
-        
+
+        const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
+
         try {
-            const result = await statement.executeAsync({
+            await statement.executeAsync({
                 $value: data.value,
                 $description: data.description,
-                $category: data.category,
+                $category: Number(data.category),
                 $date_start: data.date_start,
                 $rrule: data.rrule,
-                $date_last_processed: null
+                $date_last_processed: null,
+                $card_id: data.card_id ?? null,
+                $account_id: data.account_id ?? null,
+                $payee_id: data.payee_id ?? null,
+                $flow: flow,
+                $notes: data.notes ?? null,
+                $is_installment: data.is_installment ?? 0,
             })
 
-            console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}`)
-            
+            console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}\nFluxo: ${flow}`)
+
         } catch (error) {
             throw error
         } finally {
@@ -155,18 +183,23 @@ export function useTransactionDatabase() {
 
     async function createRecurringTransactionWithCard(data: RecurringTransaction, cardId: number) {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
         )
 
         try {
             await statement.executeAsync({
                 $value: data.value,
                 $description: data.description,
-                $category: data.category,
+                $category: Number(data.category),
                 $date_start: data.date_start,
                 $rrule: data.rrule,
                 $date_last_processed: null,
-                $card_id: cardId
+                $card_id: cardId,
+                $account_id: data.account_id ?? null,
+                $payee_id: data.payee_id ?? null,
+                $flow: data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
+                $notes: data.notes ?? null,
+                $is_installment: data.is_installment ?? 0,
             })
 
             console.log(`Transação recorrente com cartão inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}\nCartão: ${cardId}`)
@@ -319,13 +352,13 @@ export function useTransactionDatabase() {
         try {
             // Query para somar todas as transações positivas (entradas) do mês anterior
             const inflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE value > 0 AND strftime('%Y-%m', date) = ?",
+                "SELECT SUM(value) as total FROM transactions WHERE flow = 'inflow' AND strftime('%Y-%m', date) = ?",
                 [currentMonthStr]
             );
 
             // Query para somar todas as transações negativas (saídas) do mês anterior
             const outflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE value < 0 AND strftime('%Y-%m', date) = ?",
+                "SELECT SUM(value) as total FROM transactions WHERE flow = 'outflow' AND strftime('%Y-%m', date) = ?",
                 [currentMonthStr]
             );
             
@@ -370,9 +403,9 @@ export function useTransactionDatabase() {
         }
 
         if(filterOptions.type === "inflow") {
-            whereClauses.push("value > 0")
+            whereClauses.push("flow = 'inflow'")
         } else if (filterOptions.type === "outflow") {
-            whereClauses.push("value < 0")
+            whereClauses.push("flow = 'outflow'")
         }
 
         if (filterOptions.minValue !== undefined) {
@@ -418,7 +451,7 @@ export function useTransactionDatabase() {
         const orderBy = filterOptions.orderBy === "asc" ? "ASC" : "DESC";   // Whitelist
         
         // Adiciona a ordenação principal e uma secundária para desempate
-        query += ` ORDER BY ${sortBy} ${orderBy}, id DESC`;
+        query += ` ORDER BY ${sortBy} ${orderBy}, id DESC LIMIT ? OFFSET ?`;
         params.push(pageSize, offset)
 
         try {
@@ -463,14 +496,19 @@ export function useTransactionDatabase() {
                     await database.withTransactionAsync(async () => {
                         for(const occurrence of pendingOccurrences) {
                             occurrence.setHours(0,0,0)
-                            await database.runAsync("INSERT INTO transactions (value, description, category, date, id_recurring, card_id) VALUES (?, ?, ?, ?, ?, ?)",
+                            await database.runAsync(
+                                "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                                 [
                                     blueprint.value,
                                     blueprint.description,
                                     blueprint.category,
                                     occurrence.toISOString().slice(0, 16),
                                     blueprint.id,
-                                    blueprint.card_id ?? null
+                                    blueprint.card_id ?? null,
+                                    blueprint.account_id ?? null,
+                                    blueprint.payee_id ?? null,
+                                    blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow"),
+                                    blueprint.notes ?? null,
                                 ]
                             )
 
@@ -588,7 +626,7 @@ export function useTransactionDatabase() {
                         const dueDateStr = dueDate.toISOString().slice(0, 16)
 
                         await database.runAsync(
-                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id) VALUES (?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             [
                                 blueprint.value,
                                 blueprint.description,
@@ -596,6 +634,10 @@ export function useTransactionDatabase() {
                                 dueDateStr,
                                 blueprint.id,
                                 blueprint.card_id ?? null,
+                                blueprint.account_id ?? null,
+                                blueprint.payee_id ?? null,
+                                blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow"),
+                                blueprint.notes ?? null,
                             ]
                         )
 
@@ -630,7 +672,7 @@ export function useTransactionDatabase() {
 
     async function getRecurringIncomeTransactions() {
         try {
-            const result = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE value > 0")
+            const result = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE flow = 'inflow'")
             return result
         } catch (error) {
             console.log("Não foi possível recuperar as transações recorrentes")
@@ -650,7 +692,7 @@ export function useTransactionDatabase() {
 
         let totalRecurringIncome = 0
 
-        const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE value < 0" : "SELECT * FROM transactions_recurring WHERE value > 0"
+        const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE flow = 'outflow'" : "SELECT * FROM transactions_recurring WHERE flow = 'inflow'"
 
         try {
             const recurringIncomeTransactions = await database.getAllAsync<RecurringTransaction>(query)
