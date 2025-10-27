@@ -1,4 +1,4 @@
-import { Flow, MonthlyCategoryAggregate } from "@/types/transaction"
+import { CategoryDistributionFilters, Flow, MonthlyCategoryAggregate } from "@/types/transaction"
 import { create } from "zustand"
 
 export type DistributionCategory = {
@@ -22,8 +22,13 @@ type DistributionStore = {
     loading: boolean
     error: string | null
     refreshKey: boolean
+    filters: CategoryDistributionFilters
+    setFilters: (filters: CategoryDistributionFilters) => void
     triggerRefresh: () => void
-    loadData: (dbFunctions: { getMonthlyCategoryDistribution: () => Promise<MonthlyCategoryAggregate[]> }) => Promise<void>
+    loadData: (params: {
+        getMonthlyCategoryDistribution: (filters?: CategoryDistributionFilters) => Promise<MonthlyCategoryAggregate[]>
+        filters?: CategoryDistributionFilters
+    }) => Promise<void>
 }
 
 const normalizeFlow = (
@@ -53,21 +58,36 @@ const normalizeFlow = (
     return { total, entries }
 }
 
+const cloneFilters = (filters: CategoryDistributionFilters): CategoryDistributionFilters => ({
+    ...filters,
+    month: filters.month ? new Date(filters.month) : undefined,
+})
+
 export const useDistributionStore = create<DistributionStore>()((set, get) => ({
     data: null,
     error: null,
     loading: false,
     refreshKey: false,
+    filters: { month: new Date() },
+    setFilters: (filters) => {
+        set({ filters: cloneFilters(filters) })
+    },
     triggerRefresh: () => set((state) => ({ refreshKey: !state.refreshKey })),
-    loadData: async ({ getMonthlyCategoryDistribution }) => {
+    loadData: async ({ getMonthlyCategoryDistribution, filters }) => {
+        const previousFilters = get().filters
+        const normalizedFilters = cloneFilters({
+            month: filters?.month ?? previousFilters.month ?? new Date(),
+            flow: filters?.flow ?? previousFilters.flow,
+        })
+
         if (!get().data) {
-            set({ loading: true, error: null })
+            set({ loading: true, error: null, filters: normalizedFilters })
         } else {
-            set({ loading: true, error: null })
+            set({ loading: true, error: null, filters: normalizedFilters })
         }
 
         try {
-            const aggregates = await getMonthlyCategoryDistribution()
+            const aggregates = await getMonthlyCategoryDistribution(normalizedFilters)
             const inflowAggregates = aggregates.filter((aggregate) => aggregate.flow === "inflow")
             const outflowAggregates = aggregates.filter((aggregate) => aggregate.flow === "outflow")
 

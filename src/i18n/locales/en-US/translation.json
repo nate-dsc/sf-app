@@ -95,6 +95,43 @@
         "distribution": "Distribution",
         "distributionEmpty": "No transactions recorded this month."
     },
+    "distribution": {
+        "periodSelector": {
+            "label": "Period",
+            "previous": "Previous month",
+            "next": "Next month"
+        },
+        "filters": {
+            "inflow": "Income",
+            "outflow": "Expenses"
+        },
+        "summary": {
+            "title": "Monthly summary",
+            "inflow": "Income",
+            "outflow": "Expenses",
+            "net": "Net"
+        },
+        "chart": {
+            "inflowTitle": "Income distribution",
+            "outflowTitle": "Expense distribution",
+            "totalLabel": "Total",
+            "empty": "No data to display.",
+            "others": "Other categories"
+        },
+        "list": {
+            "inflowTitle": "Income categories",
+            "outflowTitle": "Expense categories",
+            "itemDescription": "{{value}} • {{percentage}}% of total",
+            "percentage": "{{value}}% of total",
+            "empty": "No categories available for this filter."
+        },
+        "empty": {
+            "title": "Nothing recorded for this period",
+            "description": "Add new income or expense transactions to see how they distribute."
+        },
+        "error": "Unable to load the distribution.",
+        "retry": "Try again"
+    },
     "budget": {
         "tile": {
             "noBudgets": "No budgets configured yet."

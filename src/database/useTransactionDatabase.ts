@@ -1,5 +1,5 @@
 import { useStyle } from "@/context/StyleContext"
-import { BudgetAllocation, BudgetAllocationInput, BudgetInput, BudgetOverview, CCard, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { BudgetAllocation, BudgetAllocationInput, BudgetInput, BudgetOverview, CCard, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useCallback, useMemo } from "react"
@@ -661,11 +661,23 @@ export function useTransactionDatabase() {
         }
     }, [database, getBudgetsOverview])
 
-    const getMonthlyCategoryDistribution = useCallback(async (): Promise<MonthlyCategoryAggregate[]> => {
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = (today.getMonth() + 1).toString().padStart(2, "0")
-        const currentMonthStr = `${year}-${month}`
+    const getMonthlyCategoryDistribution = useCallback(async (
+        filters: CategoryDistributionFilters = {}
+    ): Promise<MonthlyCategoryAggregate[]> => {
+        const targetDate = filters.month ? new Date(filters.month) : new Date()
+        const year = targetDate.getFullYear()
+        const month = (targetDate.getMonth() + 1).toString().padStart(2, "0")
+        const monthKey = `${year}-${month}`
+
+        const whereClauses = ["strftime('%Y-%m', t.date) = ?"]
+        const params: (string | number)[] = [monthKey]
+
+        if (filters.flow) {
+            whereClauses.push("c.flow = ?")
+            params.push(filters.flow)
+        }
+
+        const whereStatement = `WHERE ${whereClauses.join(" AND ")}`
 
         try {
             const rows = await database.getAllAsync<CategoryDistributionRow>(
@@ -677,9 +689,9 @@ export function useTransactionDatabase() {
                     SUM(t.value) AS totalValue
                 FROM transactions t
                 INNER JOIN categories c ON c.id = t.category
-                WHERE strftime('%Y-%m', t.date) = ?
+                ${whereStatement}
                 GROUP BY c.id, c.name, c.flow, c.color`,
-                [currentMonthStr]
+                params
             )
 
             return rows
