@@ -77,10 +77,14 @@
     },
     "buttons": {
         "cancel": "Cancel",
-        "save": "Save"
-    }, 
+        "save": "Save",
+        "delete": "Delete"
+    },
     "tiles": {
         "budget": "Budget",
+        "budgetPlanned": "Planned",
+        "budgetSpent": "Spent",
+        "budgetProgress": "Progress",
         "balance": "Balance",
         "balanceThisMonth": "Balance this month",
         "inflow": "Inflow",
@@ -89,6 +93,50 @@
         "expenses": "Expenses",
         "lastTransaction": "Last transaction",
         "distribution": "Distribution"
+    },
+    "budget": {
+        "tile": {
+            "noBudgets": "No budgets configured yet."
+        },
+        "list": {
+            "title": "Budgets",
+            "empty": "No budgets yet. Create your first budget below.",
+            "error": "We couldn't load your budgets."
+        },
+        "form": {
+            "createTitle": "Create budget",
+            "editTitle": "Edit budget",
+            "nameLabel": "Name",
+            "amountLabel": "Planned amount",
+            "periodLabel": "Period",
+            "startDateLabel": "Start date",
+            "endDateLabel": "End date (optional)",
+            "categoryLabel": "Category ID",
+            "categoryPlaceholder": "Optional",
+            "rolloverLabel": "Allow rollover to next period",
+            "selectPeriodTitle": "Select a period",
+            "errors": {
+                "name": "Enter a name for the budget.",
+                "amount": "Enter an amount greater than zero.",
+                "period": "Select a valid period.",
+                "startDate": "Enter a valid start date (YYYY-MM-DD).",
+                "endDate": "Enter a valid end date (YYYY-MM-DD).",
+                "categoryId": "Category must be a number."
+            },
+            "saveError": "We couldn't save the budget. Try again.",
+            "deleteButton": "Delete budget",
+            "deleteError": "We couldn't delete the budget. Try again.",
+            "confirmDeleteTitle": "Delete budget",
+            "confirmDeleteMessage": "This will remove the budget and all allocations. Continue?",
+            "confirmDeleteConfirm": "Delete"
+        },
+        "periods": {
+            "weekly": "Weekly",
+            "monthly": "Monthly",
+            "quarterly": "Quarterly",
+            "yearly": "Yearly",
+            "custom": "Custom"
+        }
     },
     "recurring": {
         "categoryBreakdown": {
