@@ -1,4 +1,5 @@
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
+import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
 import RecurringTransactionModal from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionModal"
 import { FontStyles } from "@/components/styles/FontStyles"
@@ -17,6 +18,7 @@ export default function IncomeRecurringScreen() {
     const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
     const [rTModalVisible, setRTModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
+    const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
     const {theme} = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
@@ -30,9 +32,10 @@ export default function IncomeRecurringScreen() {
         }
 
         try {
-            const { totalRecurring, recurringTransactions } = await getRecurringSummaryThisMonth("inflow")
+            const { totalRecurring, recurringTransactions, categoryTotals } = await getRecurringSummaryThisMonth("inflow")
             setTotalRecurringIncome(totalRecurring)
             setRecurringTransactions(recurringTransactions)
+            setCategoryTotals(categoryTotals)
         } catch (err) {
             console.error("Erro ao carregar transações recorrentes:", err)
         } finally {
@@ -75,6 +78,10 @@ export default function IncomeRecurringScreen() {
             <View style={{paddingHorizontal: 16, paddingTop: 10}}>
                 <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
             </View>
+            <View style={{paddingHorizontal: 16}}>
+                <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" />
+            </View>
+
             <View style={{paddingHorizontal: 32}}>
                 <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
                     Todas as receitas recorrentes
