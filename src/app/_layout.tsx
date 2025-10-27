@@ -20,7 +20,7 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const {theme, preference} = useStyle()
 
-    const { getSummaryFromDB, createAndSyncRecurringTransactions } = useTransactionDatabase();
+    const { getSummaryFromDB, createAndSyncRecurringTransactions, createAndSyncInstallmentPurchases } = useTransactionDatabase();
     const {loadData, refreshKey} = useSummaryStore();
 
     const router = useRouter()
@@ -28,7 +28,19 @@ function RootLayoutNav() {
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado
         console.log("Atualizando transações pendentes")
-        createAndSyncRecurringTransactions()
+
+        const syncTransactions = async () => {
+            try {
+                await Promise.all([
+                    createAndSyncRecurringTransactions(),
+                    createAndSyncInstallmentPurchases(),
+                ])
+            } catch (error) {
+                console.error("Falha ao sincronizar transações pendentes", error)
+            }
+        }
+
+        syncTransactions()
     }, [])
 
     useEffect(() => {
@@ -142,6 +154,18 @@ function RootLayoutNav() {
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg
                                 }
+                            }}
+                        />
+                        <Stack.Screen
+                            name="(credit)/modalAddInstallmentPurchase"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                title: t("nav.credit.installmentPurchase", { defaultValue: "Compra parcelada" }),
+                                headerTitleStyle: { color: theme.text.label },
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                },
                             }}
                         />
                         {/* Modais de nova transação*/}

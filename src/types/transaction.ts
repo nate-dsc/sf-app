@@ -18,7 +18,8 @@ export type RecurringTransaction = {
     date_start: string,
     rrule: string,
     date_last_processed: string | null,
-    card_id?: number | null
+    card_id?: number | null,
+    is_installment?: number
 }
 
 export type NewCard = {
@@ -39,6 +40,15 @@ export type CCard = {
     closingDay: number,
     dueDay: number,
     ignoreWeekends: boolean
+}
+
+export type InstallmentPurchaseInput = {
+    description: string,
+    category: string,
+    installmentValue: number,
+    installmentsCount: number,
+    purchaseDay: number,
+    cardId: number,
 }
 
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"

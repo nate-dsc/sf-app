@@ -107,18 +107,18 @@ export default function CreditScreen() {
                         />
                     </View>
                     <View style={{flex: 1}}>
-                        <LinkCard 
-                            label="Vazio"
+                        <LinkCard
+                            label={t("credit.installmentPurchase", { defaultValue: "Compra parcelada" })}
                             icon={
                                 <AppIcon
-                                    name={"plus.circle"}
-                                    androidName={"add-card"}
+                                    name={"cart.badge.plus"}
+                                    androidName={"add-shopping-cart"}
                                     size={40}
                                     tintColor={theme.colors.white}
                                 />
                             }
-                            color={theme.colors.red}
-                            onPress={() => {}}
+                            color={theme.colors.pink}
+                            onPress={() => router.push("/(credit)/modalAddInstallmentPurchase")}
                         />
                     </View>
                 </View>
