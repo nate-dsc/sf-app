@@ -3,11 +3,15 @@ import { SQLiteDatabase } from "expo-sqlite";
 export async function resetDatabase(database: SQLiteDatabase) {
 
     await database.execAsync(`
-        DROP TABLE IF EXISTS transactions; 
+        DROP TABLE IF EXISTS transactions;
     `)
 
     await database.execAsync(`
-        DROP TABLE IF EXISTS transactions_recurring; 
+        DROP TABLE IF EXISTS transactions_recurring;
+    `)
+
+    await database.execAsync(`
+        DROP TABLE IF EXISTS installment_purchases;
     `)
 
     await database.execAsync(`
@@ -19,8 +23,9 @@ export async function resetDatabase(database: SQLiteDatabase) {
             date_start TEXT NOT NULL,
             rrule TEXT NOT NULL,
             date_last_processed TEXT,
-            card_id INTEGER
-        );   
+            card_id INTEGER,
+            is_installment INTEGER NOT NULL DEFAULT 0
+        );
     `)
 
     await database.execAsync(`
@@ -34,7 +39,7 @@ export async function resetDatabase(database: SQLiteDatabase) {
             card_id INTEGER,
             FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
             FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
-        );   
+        );
     `)
 
     console.log("Banco de dados resetado")

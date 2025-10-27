@@ -1,6 +1,6 @@
 import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { CCard, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { CCard, InstallmentPurchaseInput, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useSQLiteContext } from "expo-sqlite"
@@ -54,6 +54,77 @@ export function useTransactionDatabase() {
 
             console.log(`Transação com cartão inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nCartão: ${cardId}`)
         } catch (error) {
+            throw error
+        }
+    }
+
+    async function createInstallmentPurchase(data: InstallmentPurchaseInput) {
+        const resolveFirstOccurrence = (purchaseDay: number) => {
+            const now = new Date()
+            now.setHours(0, 0, 0, 0)
+
+            const currentMonthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+
+            if (purchaseDay <= currentMonthDays) {
+                return new Date(now.getFullYear(), now.getMonth(), purchaseDay, 0, 0, 0, 0)
+            }
+
+            let year = now.getFullYear()
+            let month = now.getMonth() - 1
+
+            while (true) {
+                if (month < 0) {
+                    month = 11
+                    year -= 1
+                }
+
+                const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+                if (purchaseDay <= daysInMonth) {
+                    return new Date(year, month, purchaseDay, 0, 0, 0, 0)
+                }
+
+                month -= 1
+            }
+        }
+
+        try {
+            await database.withTransactionAsync(async () => {
+                const firstOccurrence = resolveFirstOccurrence(data.purchaseDay)
+                const firstOccurrenceStr = firstOccurrence.toISOString().slice(0, 16)
+
+                const rrule = new RRule({
+                    freq: RRule.MONTHLY,
+                    count: data.installmentsCount,
+                })
+
+                const description = data.description.trim()
+
+                await database.runAsync(
+                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    [
+                        -Math.abs(data.installmentValue),
+                        description,
+                        data.category,
+                        firstOccurrenceStr,
+                        rrule.toString(),
+                        null,
+                        data.cardId,
+                        1,
+                    ]
+                )
+
+                const totalValue = data.installmentValue * data.installmentsCount
+
+                await database.runAsync(
+                    "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
+                    [totalValue, data.cardId]
+                )
+            })
+
+            console.log("Compra parcelada registrada com sucesso")
+        } catch (error) {
+            console.error("Falha ao registrar compra parcelada", error)
             throw error
         }
     }
@@ -366,7 +437,9 @@ export function useTransactionDatabase() {
         const newEndOfDayStr = newEndOfDay.toISOString().slice(0, 16)
 
         try {
-            const allRecurringTransactions = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring")
+            const allRecurringTransactions = await database.getAllAsync<RecurringTransaction>(
+                "SELECT * FROM transactions_recurring WHERE is_installment = 0 OR is_installment IS NULL"
+            )
 
             if(allRecurringTransactions.length === 0) {
                 console.log("Não há transações recorrentes")
@@ -426,6 +499,119 @@ export function useTransactionDatabase() {
             console.log("Sincronização concluída.")
         } catch(error) {
             console.error("Erro fatal durante a sincronização de transações recorrentes:", error)
+            throw error
+        }
+    }
+
+    async function createAndSyncInstallmentPurchases() {
+        console.log("Sincronizando compras parceladas")
+        const endOfDay = new Date()
+        endOfDay.setHours(23,59,59,0)
+        const endOfDayTimestamp = endOfDay.getTime()
+
+        const calculateDueDate = (purchaseDate: Date, dueDay: number) => {
+            const purchaseDay = purchaseDate.getDate()
+
+            let dueYear = purchaseDate.getFullYear()
+            let dueMonth = purchaseDate.getMonth()
+
+            const daysInCurrentMonth = new Date(dueYear, dueMonth + 1, 0).getDate()
+            const dueDayThisMonth = Math.min(dueDay, daysInCurrentMonth)
+
+            if (dueDayThisMonth >= purchaseDay) {
+                return new Date(dueYear, dueMonth, dueDayThisMonth, 0, 0, 0, 0)
+            }
+
+            dueMonth += 1
+            if (dueMonth > 11) {
+                dueMonth = 0
+                dueYear += 1
+            }
+
+            const daysInNextMonth = new Date(dueYear, dueMonth + 1, 0).getDate()
+            const adjustedDueDay = Math.min(dueDay, daysInNextMonth)
+
+            return new Date(dueYear, dueMonth, adjustedDueDay, 0, 0, 0, 0)
+        }
+
+        try {
+            const installmentBlueprints = await database.getAllAsync<RecurringTransaction>(
+                "SELECT * FROM transactions_recurring WHERE is_installment = 1"
+            )
+
+            if (installmentBlueprints.length === 0) {
+                return
+            }
+
+            for (const blueprint of installmentBlueprints) {
+                if (!blueprint.card_id) {
+                    console.warn(`Compra parcelada ${blueprint.id} sem cartão associado foi ignorada.`)
+                    continue
+                }
+
+                const card = await database.getFirstAsync<{
+                    due_day: number
+                }>("SELECT due_day FROM cards WHERE id = ?", [blueprint.card_id])
+
+                if (!card) {
+                    console.warn(`Cartão ${blueprint.card_id} não encontrado para compra parcelada ${blueprint.id}`)
+                    continue
+                }
+
+                const rruleOptions = RRule.parseString(blueprint.rrule)
+                rruleOptions.dtstart = new Date(`${blueprint.date_start}Z`)
+                const rrule = new RRule(rruleOptions)
+                const allOccurrences = rrule.all()
+
+                const existingCountRow = await database.getFirstAsync<{ total: number }>(
+                    "SELECT COUNT(*) as total FROM transactions WHERE id_recurring = ?",
+                    [blueprint.id]
+                )
+
+                let generatedCount = existingCountRow?.total ?? 0
+
+                if (generatedCount >= allOccurrences.length) {
+                    continue
+                }
+
+                await database.withTransactionAsync(async () => {
+                    for (let index = generatedCount; index < allOccurrences.length; index++) {
+                        const occurrence = new Date(allOccurrences[index].getTime())
+                        occurrence.setHours(0, 0, 0, 0)
+
+                        const dueDate = calculateDueDate(occurrence, card.due_day)
+
+                        if (dueDate.getTime() > endOfDayTimestamp) {
+                            break
+                        }
+
+                        const dueDateStr = dueDate.toISOString().slice(0, 16)
+
+                        await database.runAsync(
+                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id) VALUES (?, ?, ?, ?, ?, ?)",
+                            [
+                                blueprint.value,
+                                blueprint.description,
+                                blueprint.category,
+                                dueDateStr,
+                                blueprint.id,
+                                blueprint.card_id,
+                            ]
+                        )
+
+                        await database.runAsync(
+                            "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
+                            [dueDateStr, blueprint.id]
+                        )
+
+                        generatedCount += 1
+                    }
+                })
+            }
+
+            console.log("Sincronização de compras parceladas concluída")
+        } catch (error) {
+            console.error("Erro ao sincronizar compras parceladas:", error)
             throw error
         }
     }
@@ -494,6 +680,7 @@ export function useTransactionDatabase() {
         createRecurringTransaction,
         createTransactionWithCard,
         createRecurringTransactionWithCard,
+        createInstallmentPurchase,
         createCard,
         getCards,
         getCard,
@@ -504,6 +691,7 @@ export function useTransactionDatabase() {
         getSummaryFromDB,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
+        createAndSyncInstallmentPurchases,
         getRRULE,
         getRecurringSummaryThisMonth
     }

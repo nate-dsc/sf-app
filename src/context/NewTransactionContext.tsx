@@ -15,7 +15,9 @@ type NewTransaction = {
     rrule?: string,
     rruleDescription?: string,
     useCreditCard?: boolean,
-    cardId?: number
+    cardId?: number,
+    installmentsCount?: number,
+    purchaseDay?: number,
 }
 
 type NewTransactionContextType = {
@@ -24,6 +26,8 @@ type NewTransactionContextType = {
     updateNewTransaction: (updates: Partial<NewTransaction>) => void
     saveTransaction: () => Promise<void>
     isValid: boolean
+    saveInstallmentPurchase: () => Promise<void>
+    isInstallmentValid: boolean
 }
 
 const NewTransactionContext = createContext<NewTransactionContextType | undefined>(undefined)
@@ -36,6 +40,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         createRecurringTransaction,
         createTransactionWithCard,
         createRecurringTransactionWithCard,
+        createInstallmentPurchase,
         getSummaryFromDB,
         getCard
     } = useTransactionDatabase();
@@ -64,6 +69,36 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
         return true
     }, [newTransaction]);
+
+    const isInstallmentValid = useMemo(() => {
+        const { value, description, category, installmentsCount, purchaseDay, cardId } = newTransaction
+
+        if (!(value && value > 0)) {
+            return false
+        }
+
+        if (!(installmentsCount && installmentsCount > 0)) {
+            return false
+        }
+
+        if (!description || description.trim().length === 0) {
+            return false
+        }
+
+        if (!category?.id) {
+            return false
+        }
+
+        if (!(purchaseDay && purchaseDay >= 1 && purchaseDay <= 31)) {
+            return false
+        }
+
+        if (!cardId) {
+            return false
+        }
+
+        return true
+    }, [newTransaction])
 
     const getTransactionForDB = (): Transaction => {
         if (!isValid) {
@@ -155,9 +190,52 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
     }
 
+    const saveInstallmentPurchase = async () => {
+        if (!isInstallmentValid) {
+            throw new Error("Tentativa de criar compra parcelada com dados inválidos.")
+        }
+
+        const { value, description, category, installmentsCount, purchaseDay, cardId } = newTransaction
+
+        if (!cardId || !value || !installmentsCount || !purchaseDay || !category?.id) {
+            throw new Error("Tentativa de criar compra parcelada com dados inválidos.")
+        }
+
+        try {
+            const card = await getCard(cardId)
+
+            if (!card) {
+                throw new Error("CARD_NOT_FOUND")
+            }
+
+            const totalValue = value * installmentsCount
+            const availableLimit = card.limit - card.limitUsed
+
+            if (totalValue > availableLimit) {
+                throw new Error("INSUFFICIENT_CREDIT_LIMIT")
+            }
+
+            await createInstallmentPurchase({
+                description: description?.trim() ?? "",
+                category: category.id,
+                installmentValue: value,
+                installmentsCount,
+                purchaseDay,
+                cardId,
+            })
+
+            await loadSummaryData({ getSummaryFromDB })
+            triggerRefresh()
+            setNewTransaction({})
+        } catch (error) {
+            console.error("Erro ao salvar compra parcelada:", error)
+            throw error
+        }
+    }
+
     return(
         <NewTransactionContext.Provider value={{
-            newTransaction, setNewTransaction, updateNewTransaction, saveTransaction, isValid
+            newTransaction, setNewTransaction, updateNewTransaction, saveTransaction, isValid, saveInstallmentPurchase, isInstallmentValid
         }}>
             {children}
         </NewTransactionContext.Provider>
