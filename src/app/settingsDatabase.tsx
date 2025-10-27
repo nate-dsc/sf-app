@@ -1,14 +1,13 @@
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
+import { useSQLiteContext } from "expo-sqlite"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, ScrollView, Text, View } from "react-native"
-import { useSQLiteContext } from "expo-sqlite"
 
 type TableInfo = {
     name: string
@@ -20,7 +19,7 @@ function quoteIdentifier(value: string) {
 }
 
 export default function SettingsDatabaseScreen() {
-    const { theme } = useStyle()
+    const { theme, layout } = useStyle()
     const { t } = useTranslation()
     const router = useRouter()
     const database = useSQLiteContext()
@@ -28,8 +27,6 @@ export default function SettingsDatabaseScreen() {
     const [tables, setTables] = useState<TableInfo[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-
-    const paddingTop = useHeaderHeight() + 10
 
     useEffect(() => {
         let isMounted = true
@@ -87,8 +84,12 @@ export default function SettingsDatabaseScreen() {
 
     return (
         <ScrollView
-            style={{ backgroundColor: theme.background.bg }}
-            contentContainerStyle={[{ paddingTop, marginTop: 4 }, SStyles.mainContainer, { gap: 16 }]}
+            contentContainerStyle={{
+                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: 120,
+                gap: layout.margin.sectionGap
+            }}
         >
             <Text style={[FontStyles.title2, { color: theme.text.label }]}>
                 {t("settings.database.tablesHeader", { defaultValue: "Tabelas do banco" })}
