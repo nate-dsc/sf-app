@@ -24,7 +24,7 @@ export default function IncomeRecurringScreen() {
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
-    const {theme, layout} = useStyle()
+    const { theme } = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     const hasLoadedRef = useRef(false)
 
@@ -87,10 +87,12 @@ export default function IncomeRecurringScreen() {
             <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
 
             <GroupView>
-                <GPopup separator={"none"} label={"Ver todas as transações"} onPress={() => setChartModalVisible(true)} />
+                <GPopup
+                    separator={"none"}
+                    label={"Ver distribuição das categorias"}
+                    onPress={() => setChartModalVisible(true)}
+                />
             </GroupView>
-        
-            {/* <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="inflow" /> */}
 
             <View style={{paddingHorizontal: 16}}>
                 <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
