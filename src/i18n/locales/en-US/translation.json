@@ -75,7 +75,26 @@
             "light": "Light",
             "dark": "Dark"
         },
-        "langDescription": "Language"
+        "langDescription": "Language",
+        "database": {
+            "sectionTitle": "Database",
+            "inspectTables": "View tables",
+            "tablesHeader": "Database tables",
+            "loadingTables": "Loading tables...",
+            "loadError": "We couldn't load the database tables.",
+            "noTables": "No tables found.",
+            "tableScreenTitle": "Table",
+            "loadingTable": "Loading table data...",
+            "missingTable": "No table selected.",
+            "tableLoadError": "We couldn't load the table data.",
+            "columnsHeader": "Columns",
+            "noColumns": "No columns found.",
+            "default": "DEFAULT",
+            "unknownType": "Unknown type",
+            "rowsHeader": "Rows",
+            "noRows": "No rows found.",
+            "rowIndex": "Row"
+        }
     },
     "modalAdd": {
         "inflow": "Income",

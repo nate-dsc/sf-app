@@ -82,6 +82,24 @@ function RootLayoutNav() {
                                 headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
+                        <Stack.Screen
+                            name="settingsDatabase"
+                            options={{
+                                title: t("settings.database.tablesHeader", { defaultValue: "Tabelas do banco" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerStyle: { backgroundColor: theme.colors.blue }
+                            }}
+                        />
+                        <Stack.Screen
+                            name="settingsDatabaseTable"
+                            options={{
+                                title: t("settings.database.tableScreenTitle", { defaultValue: "Tabela" }),
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                                headerStyle: { backgroundColor: theme.colors.blue }
+                            }}
+                        />
                         {/* Telas de planejamento */}
                         <Stack.Screen
                             name="incomeRecurring"

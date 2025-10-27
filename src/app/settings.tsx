@@ -71,6 +71,20 @@ export default function SettingsScreen() {
                 />
             </GroupView>
 
+            <Text style={[{color: theme.text.label}, FontStyles.headline]}>
+                {t("settings.database.sectionTitle", { defaultValue: "Banco de dados" })}
+            </Text>
+            <GroupView>
+                <GRedir
+                    separator="none"
+                    icon="grid-outline"
+                    label={t("settings.database.inspectTables", { defaultValue: "Visualizar tabelas" })}
+                    onPress={() => {
+                        router.push("/settingsDatabase")
+                    }}
+                />
+            </GroupView>
+
             <GroupView>
                 <GRedir
                     separator="translucent"
