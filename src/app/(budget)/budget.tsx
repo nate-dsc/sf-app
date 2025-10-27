@@ -1,6 +1,6 @@
 import BottomButton from "@/components/buttons/BottomButton"
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
-import DeleteButton from "@/components/buttons/DeleteButton"
+import DeleteButton from "@/components/buttons/DestructiveButton"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
