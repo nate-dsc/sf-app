@@ -489,7 +489,9 @@ export function useTransactionDatabase() {
                 const startDateForCheck = blueprint.date_last_processed ? new Date(`${blueprint.date_last_processed}Z`) : new Date(`${blueprint.date_start}Z`)
                 //console.log("startDateForCheck: " + startDateForCheck.toISOString())
 
-                const pendingOccurrences = rrule.between(startDateForCheck, newEndOfDay)
+                const pendingOccurrences = rrule.between(startDateForCheck, newEndOfDay, true)
+                console.log(`rrule: ${rrule.toString()}`)
+                console.log(`pendingocurrences: ${pendingOccurrences.toString()}`)
 
                 if(pendingOccurrences.length > 0) {
                     console.log(`${pendingOccurrences.length} ocorrências pendentes`)
