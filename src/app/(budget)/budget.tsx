@@ -1,131 +1,57 @@
 import BottomButton from "@/components/buttons/BottomButton"
-import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
-import DeleteButton from "@/components/buttons/DestructiveButton"
-import GroupView from "@/components/grouped-list-components/GroupView"
-import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
-import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
-import { useSummaryStore } from "@/stores/useSummaryStore"
-import { SCOption } from "@/types/components"
-import { BudgetPeriod } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useRouter } from "expo-router"
+import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Alert, ScrollView, Text, View } from "react-native"
+import { ScrollView, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-const allowedPeriods: BudgetPeriod[] = ["weekly", "biweekly", "monthly"]
+const periodDefaults = {
+    weekly: "Weekly",
+    biweekly: "Every two weeks",
+    monthly: "Monthly",
+} as const
 
 export default function BudgetScreen() {
     const headerHeight = useHeaderHeight()
+    const router = useRouter()
     const { theme, layout } = useStyle()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const insets = useSafeAreaInsets()
 
-    const { getSummaryFromDB } = useTransactionDatabase()
-
-    const loadSummaryData = useSummaryStore((state) => state.loadData)
-    const triggerRefresh = useSummaryStore.getState().triggerRefresh
-
     const storedBudget = useBudgetStore((state) => state.budget)
-    const setBudget = useBudgetStore((state) => state.setBudget)
-    const clearBudget = useBudgetStore((state) => state.clearBudget)
 
-    const [period, setPeriod] = useState<BudgetPeriod>(storedBudget?.period ?? "monthly")
-    const [amountCents, setAmountCents] = useState<number>(storedBudget?.amountCents ?? 0)
-    const [submitting, setSubmitting] = useState(false)
-    const [formError, setFormError] = useState<string | null>(null)
-
-    useEffect(() => {
-        setPeriod(storedBudget?.period ?? "monthly")
-        setAmountCents(storedBudget?.amountCents ?? 0)
-    }, [storedBudget])
-
-    const frequencyOptions: SCOption<string>[] = useMemo(
-        () => [
-            { label: t("budget.form.weekly"), value: "weekly" },
-            { label: t("budget.form.biweekly"), value: "biweekly" },
-            { label: t("budget.form.monthly"), value: "monthly" },
-        ],
-        [t]
-    )
-
-    const hasChanges = useMemo(() => {
-        return (
-            period !== (storedBudget?.period ?? "monthly") ||
-            amountCents !== (storedBudget?.amountCents ?? 0)
-        )
-    }, [amountCents, period, storedBudget])
-
-    const canSave = amountCents > 0 && hasChanges && !submitting
-
-    const handleCancel = useCallback(() => {
-        setPeriod(storedBudget?.period ?? "monthly")
-        setAmountCents(storedBudget?.amountCents ?? 0)
-        setFormError(null)
-    }, [storedBudget])
-
-    const refreshSummary = useCallback(async () => {
-        await loadSummaryData({ getSummaryFromDB })
-        triggerRefresh()
-    }, [getSummaryFromDB, loadSummaryData, triggerRefresh])
-
-    const handleSave = useCallback(async () => {
-        if (!allowedPeriods.includes(period)) {
-            setFormError(t("budget.form.errors.period"))
-            return
+    const formattedAmount = useMemo(() => {
+        if (!storedBudget) {
+            return null
         }
 
-        if (amountCents <= 0) {
-            setFormError(t("budget.form.errors.amount"))
-            return
+        const currency = i18n.language === "pt-BR" ? "BRL" : "USD"
+
+        return new Intl.NumberFormat(i18n.language, {
+            style: "currency",
+            currency,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(storedBudget.amountCents / 100)
+    }, [i18n.language, storedBudget])
+
+    const periodLabel = useMemo(() => {
+        if (!storedBudget) {
+            return null
         }
 
-        setSubmitting(true)
-        setFormError(null)
+        return t(`budget.periods.${storedBudget.period}`, {
+            defaultValue: periodDefaults[storedBudget.period],
+        })
+    }, [storedBudget, t])
 
-        try {
-            setBudget({ period, amountCents })
-            await refreshSummary()
-        } catch (error) {
-            console.error("Failed to save budget", error)
-            setFormError(t("budget.form.saveError"))
-        } finally {
-            setSubmitting(false)
-        }
-    }, [amountCents, period, refreshSummary, setBudget, t])
-
-    const handleRemove = useCallback(() => {
-        Alert.alert(
-            t("budget.form.confirmRemoveTitle"),
-            t("budget.form.confirmRemoveMessage"),
-            [
-                { text: t("buttons.cancel"), style: "cancel" },
-                {
-                    text: t("budget.form.confirmRemoveConfirm"),
-                    style: "destructive",
-                    onPress: async () => {
-                        setSubmitting(true)
-                        setFormError(null)
-                        try {
-                            clearBudget()
-                            await refreshSummary()
-                            setPeriod("monthly")
-                            setAmountCents(0)
-                        } catch (error) {
-                            console.error("Failed to remove budget", error)
-                            setFormError(t("budget.form.removeError"))
-                        } finally {
-                            setSubmitting(false)
-                        }
-                    },
-                },
-            ]
-        )
-    }, [clearBudget, refreshSummary, t])
+    const buttonLabel = storedBudget
+        ? t("budget.form.editButton", { defaultValue: "Edit budget" })
+        : t("budget.form.createButton", { defaultValue: "Create budget" })
 
     return (
         <View
@@ -133,77 +59,67 @@ export default function BudgetScreen() {
                 flex: 1,
                 paddingTop: headerHeight + 24,
                 paddingHorizontal: layout.margin.contentArea,
-                paddingBottom: insets.bottom
+                paddingBottom: Math.max(insets.bottom, 24),
+                gap: 16,
             }}
         >
-        <ScrollView
-            style={{flex: 1}}
-            contentContainerStyle={{
-                paddingBottom: 48,
-                gap: 32,
-            }}
-        >
-            <View style={{ gap: 8 }}>
-                <Text style={[FontStyles.title2, { color: theme.text.label }]}>{t("budget.form.heading")}</Text>
-                <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>{t("budget.form.description")}</Text>
-            </View>
+            <ScrollView
+                style={{ flex: 1 }}
+                contentContainerStyle={{
+                    paddingBottom: 32,
+                    gap: 32,
+                }}
+            >
+                <View style={{ gap: 8 }}>
+                    <Text style={[FontStyles.title2, { color: theme.text.label }]}>{t("budget.form.heading")}</Text>
+                    <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>
+                        {t("budget.form.description")}
+                    </Text>
+                </View>
 
-            <View style={{ gap: layout.margin.innerSectionGap }}>
-                <Text
-                    style={{
-                        lineHeight: 22,
-                        fontSize: 17,
-                        paddingHorizontal: layout.margin.contentArea,
-                        color: theme.text.label,
-                    }}
-                >
-                    {t("budget.form.frequency")}
-                </Text>
-                <SegmentedControlCompact
-                    options={frequencyOptions}
-                    selectedValue={period}
-                    onChange={(value) => setPeriod(value as BudgetPeriod)}
-                />
-            </View>
+                {storedBudget ? (
+                    <View
+                        style={{
+                            gap: 24,
+                            padding: layout.margin.contentArea,
+                            borderRadius: layout.radius.groupedView,
+                            backgroundColor: theme.fill.secondary,
+                        }}
+                    >
+                        <View style={{ gap: 4 }}>
+                            <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
+                                {t("budget.form.amountLabel")}
+                            </Text>
+                            <Text style={[FontStyles.title1, { color: theme.text.label }]}>{formattedAmount}</Text>
+                        </View>
 
-            <GroupView>
-                <GValueInput
-                    separator="none"
-                    label={t("budget.form.amountLabel")}
-                    acViewKey="budget-amount"
-                    onChangeNumValue={(value) => {
-                        setAmountCents(value)
-                        if (formError) {
-                            setFormError(null)
-                        }
-                    }}
-                    flowType="outflow"
-                    valueInCents={amountCents}
-                    labelFlex={2}
-                    fieldFlex={2}
-                />
-            </GroupView>
+                        <View style={{ gap: 4 }}>
+                            <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
+                                {t("budget.form.frequency")}
+                            </Text>
+                            <Text style={[FontStyles.title3, { color: theme.text.label }]}>{periodLabel}</Text>
+                        </View>
+                    </View>
+                ) : (
+                    <View
+                        style={{
+                            padding: layout.margin.contentArea,
+                            borderRadius: layout.radius.groupedView,
+                            backgroundColor: theme.fill.secondary,
+                        }}
+                    >
+                        <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>
+                            {t("budget.tile.noBudget")}
+                        </Text>
+                    </View>
+                )}
+            </ScrollView>
 
-            {formError ? (
-                <Text style={[FontStyles.footnote, { color: theme.colors.red }]}>{formError}</Text>
-            ) : null}
-
-            <CancelSaveButtons
-                cancelAction={handleCancel}
-                primaryAction={handleSave}
-                isPrimaryActive={canSave}
+            <BottomButton
+                label={buttonLabel}
+                color={theme.colors.green}
+                onPress={() => router.push("/(budget)/budgetEdit")}
             />
-
-            {storedBudget ? (
-                <DeleteButton
-                    onPress={handleRemove}
-                    label={t("budget.form.removeButton")}
-                    disabled={submitting}
-                />
-            ) : null}
-        </ScrollView>
-
-        <BottomButton label={"Editar orçamento"} color={theme.colors.green}/>
         </View>
     )
 }
