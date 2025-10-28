@@ -1,5 +1,6 @@
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
+import GSwitch from "@/components/grouped-list-components/GroupedSwitch"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
@@ -7,6 +8,7 @@ import { useStyle } from "@/context/StyleContext"
 import { resetCCDatabase } from "@/database/ResetCCDatabase"
 import { resetDatabase } from "@/database/ResetDatabase"
 import i18n from "@/i18n"
+import { useBudgetStore } from "@/stores/useBudgetStore"
 import { SCOption } from "@/types/components"
 import { ThemePreference } from "@/types/theme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -27,8 +29,13 @@ export default function SettingsScreen() {
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)
     const [selectedLang, setSelectedLang] = useState(i18n.language)
-    
-    
+
+    const {budget, budgetTileMode, setBudgetTileMode} = useBudgetStore()
+
+    const hasBudget = !!budget
+    const effectiveBudgetTileMode = hasBudget ? budgetTileMode : "estimatedBalance"
+
+
     const paddingTop = useHeaderHeight() + 10
 
     const themeOptions: SCOption<ThemePreference>[] = [
@@ -128,6 +135,25 @@ export default function SettingsScreen() {
             </GroupView>
 
             <Text style={[{color: theme.text.label}, FontStyles.headline]}> ESTADO DO APP </Text>
+
+            <Text style={[{color: theme.text.secondaryLabel}, FontStyles.subhead]}>
+                {t("settings.budgetTileMode.title", { defaultValue: "Budget tile display" })}
+            </Text>
+
+            <GroupView>
+                <GSwitch
+                    separator="none"
+                    label={t(`settings.budgetTileMode.${effectiveBudgetTileMode}`)}
+                    value={effectiveBudgetTileMode === "expensesVsBudget"}
+                    onValueChange={(value) => {
+                        if (!hasBudget) {
+                            return
+                        }
+                        setBudgetTileMode(value ? "expensesVsBudget" : "estimatedBalance")
+                    }}
+                    disabled={!hasBudget}
+                />
+            </GroupView>
 
             <SegmentedControlCompact
                 options={themeOptions}

@@ -229,6 +229,11 @@
             "dark": "Escuro"
         },
         "langDescription": "Idioma",
+        "budgetTileMode": {
+            "title": "Exibição do card de orçamento",
+            "estimatedBalance": "Saldo estimado",
+            "expensesVsBudget": "Gastos vs orçamento"
+        },
         "database": {
             "sectionTitle": "Banco de dados",
             "inspectTables": "Visualizar tabelas",

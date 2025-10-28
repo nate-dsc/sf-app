@@ -8,9 +8,13 @@ export type StoredBudget = {
     amountCents: number
 }
 
+export type BudgetTileMode = "estimatedBalance" | "expensesVsBudget"
+
 type BudgetState = {
     budget: StoredBudget | null
+    budgetTileMode: BudgetTileMode
     setBudget: (budget: StoredBudget) => void
+    setBudgetTileMode: (budgetTileMode: BudgetTileMode) => void
     clearBudget: () => void
 }
 
@@ -20,8 +24,10 @@ export const useBudgetStore = create<BudgetState>()(
     persist(
         (set) => ({
             budget: null,
+            budgetTileMode: "estimatedBalance",
             setBudget: (budget) => set({ budget }),
-            clearBudget: () => set({ budget: null }),
+            setBudgetTileMode: (budgetTileMode) => set({ budgetTileMode }),
+            clearBudget: () => set({ budget: null, budgetTileMode: "estimatedBalance" }),
         }),
         {
             name: STORAGE_KEY,

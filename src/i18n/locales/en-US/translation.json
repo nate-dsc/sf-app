@@ -225,6 +225,11 @@
             "dark": "Dark"
         },
         "langDescription": "Language",
+        "budgetTileMode": {
+            "title": "Budget tile display",
+            "estimatedBalance": "Estimated balance",
+            "expensesVsBudget": "Spending vs budget"
+        },
         "database": {
             "sectionTitle": "Database",
             "inspectTables": "View tables",
