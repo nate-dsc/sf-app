@@ -3,7 +3,7 @@ import { BudgetPeriod } from "@/types/transaction"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 
-type StoredBudget = {
+export type StoredBudget = {
     period: BudgetPeriod
     amountCents: number
 }
