@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next"
 import { ScrollView, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
+import EmptyView from "@/components/EmptyView"
 import { BudgetDisplay } from "./components/BudgetDisplay"
 import { BudgetList } from "./components/BudgetList"
 
@@ -108,45 +109,24 @@ export default function BudgetScreen() {
                     </View>
                 </ScrollView>
             ) : (
-                <View
-                    style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 16,
-                    }}
-                >
-                    <AppIcon
-                        name={"chart.pie.fill"}
-                        androidName={"pie-chart"}
-                        size={70}
-                        tintColor={theme.colors.indigo}
-                    />
-
-                    <View style={{ gap: 8 }}>
-                        <Text
-                            style={[
-                                FontStyles.title2,
-                                { color: theme.text.label, textAlign: "center" },
-                            ]}
-                        >
-                            {t("budget.empty.title")}
-                        </Text>
-                        <Text
-                            style={[
-                                FontStyles.body,
-                                { color: theme.text.secondaryLabel, textAlign: "center" },
-                            ]}
-                        >
-                            {t("budget.empty.description")}
-                        </Text>
-                    </View>
-                </View>
+                <EmptyView
+                    icon={
+                        <AppIcon
+                            name={"chart.pie.fill"}
+                            androidName={"pie-chart"}
+                            size={70}
+                            tintColor={theme.colors.indigo}
+                        />
+                    }
+                    title={t("budget.empty.title")}
+                    subtitle={t("budget.empty.description")}
+                />
+                
             )}
 
             <BottomButton
                 label={buttonLabel}
-                color={theme.colors.green}
+                color={storedBudget ? theme.colors.blue : theme.colors.green}
                 onPress={() => router.push("/(budget)/budgetEdit")}
             />
         </View>
