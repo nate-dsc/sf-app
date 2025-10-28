@@ -14,6 +14,7 @@ export default function BottomButton({label, onPress, color, labelColor}: Bottom
 
     return(
         <TouchableOpacity
+            onPress={onPress}
             style={{
                 justifyContent: "center",
                 alignItems: "center",

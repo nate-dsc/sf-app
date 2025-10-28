@@ -154,7 +154,9 @@
             "removeError": "We couldn't remove the budget. Try again.",
             "confirmRemoveTitle": "Remove budget",
             "confirmRemoveMessage": "This will clear the current budget. Continue?",
-            "confirmRemoveConfirm": "Remove"
+            "confirmRemoveConfirm": "Remove",
+            "createButton": "Create budget",
+            "editButton": "Edit budget"
         },
         "periods": {
             "weekly": "Weekly",

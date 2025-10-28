@@ -154,7 +154,9 @@
             "removeError": "Não foi possível remover o orçamento. Tente novamente.",
             "confirmRemoveTitle": "Remover orçamento",
             "confirmRemoveMessage": "Isso vai limpar o orçamento atual. Deseja continuar?",
-            "confirmRemoveConfirm": "Remover"
+            "confirmRemoveConfirm": "Remover",
+            "createButton": "Criar orçamento",
+            "editButton": "Editar orçamento"
         },
         "periods": {
             "weekly": "Semanal",
