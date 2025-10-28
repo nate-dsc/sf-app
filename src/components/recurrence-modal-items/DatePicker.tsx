@@ -1,4 +1,4 @@
-import { FontStyles } from "@/components/styles/FontStyles";
+/* import { FontStyles } from "@/components/styles/FontStyles";
 import { useStyle } from "@/context/StyleContext";
 import i18n from "@/i18n";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
@@ -43,4 +43,4 @@ export default function DatePicker({text, value, onDateChange}: DatePickerProps)
         </View>
     )
 
-}
+} */
