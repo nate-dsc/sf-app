@@ -173,7 +173,7 @@
             "under": "{{amount}} abaixo da meta",
             "over": "{{amount}} acima da meta",
             "onTrack": "Dentro do orçamento",
-            "budgetVsSpent": "Meta {{budget}} · Gasto {{spent}}"
+            "budgetVsSpent": "Gasto {{spent}}"
         }
     },
     "recurring": {

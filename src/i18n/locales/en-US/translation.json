@@ -169,7 +169,7 @@
             "under": "{{amount}} under budget",
             "over": "{{amount}} over budget",
             "onTrack": "On budget",
-            "budgetVsSpent": "Budget {{budget}} · Spent {{spent}}"
+            "budgetVsSpent": "Spent {{spent}}"
         }
     },
     "recurring": {

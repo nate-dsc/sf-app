@@ -31,3 +31,10 @@ export type SSListItem<T> = {
     value: T;
     iconName?: IconName;
 };
+
+export type BudgetMonthlyPerformanceDisplay = {
+    monthStr: string,
+    budgetStr: string,
+    spentStr: string,
+    differenceStr: string,
+}

@@ -1,6 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
 import BottomButton from "@/components/buttons/BottomButton"
-import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
@@ -9,12 +8,14 @@ import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView, Text, View } from "react-native"
+import { View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
+import BudgetList from "@/components/budget-screen-items/BudgetList"
 import EmptyView from "@/components/EmptyView"
-import { BudgetDisplay } from "./components/BudgetDisplay"
-import { BudgetList } from "./components/BudgetList"
+
+import BlurredListView from "@/components/BlurredListView"
+import { BudgetDisplay as BudgetDisplay2 } from "@/components/budget"
 
 export default function BudgetScreen() {
     const headerHeight = useHeaderHeight()
@@ -80,34 +81,22 @@ export default function BudgetScreen() {
             }}
         >
             {storedBudget ? (
-                <ScrollView
+                <View
                     style={{
                         flex: 1,
-                    }}
-                    contentContainerStyle={{
                         paddingTop: headerHeight + layout.margin.contentArea,
                         gap: 32,
                     }}
                 >
-                    <BudgetDisplay budget={storedBudget} />
+                    
+                    <BudgetDisplay2 budget={storedBudget} />
 
-                    <View style={{ gap: 16 }}>
-                        <Text style={[FontStyles.title3, { color: theme.text.label }]}>
-                            {t("budget.monthlyPerformance.title", { defaultValue: "Monthly performance" })}
-                        </Text>
-
-                        <View
-                            style={{
-                                gap: 16,
-                                padding: layout.margin.contentArea,
-                                borderRadius: layout.radius.groupedView,
-                                backgroundColor: theme.background.elevated.bg,
-                            }}
-                        >
-                            <BudgetList data={monthlyPerformance} loading={loadingPerformance} />
-                        </View>
-                    </View>
-                </ScrollView>
+                    <BlurredListView
+                        title={t("budget.monthlyPerformance.title", { defaultValue: "Monthly performance" })}
+                    >
+                        <BudgetList data={monthlyPerformance} loading={loadingPerformance} />
+                    </BlurredListView>
+                </View>
             ) : (
                 <EmptyView
                     icon={
@@ -132,3 +121,14 @@ export default function BudgetScreen() {
         </View>
     )
 }
+
+
+{/* <View style={{ gap: 16 }}>
+    <Text style={[FontStyles.title3, { color: theme.text.label }]}>
+        {t("budget.monthlyPerformance.title", { defaultValue: "Monthly performance" })}
+    </Text>
+
+    <View>
+        <BudgetList data={monthlyPerformance} loading={loadingPerformance} />
+    </View>
+</View> */}

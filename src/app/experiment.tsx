@@ -1,105 +1,67 @@
-import { FontStyles } from "@/components/styles/FontStyles"
-import { SStyles } from "@/components/styles/ScreenStyles"
-import { useStyle } from "@/context/StyleContext"
-import i18n from "@/i18n"
-import { SCOption } from "@/types/components"
-import { ThemePreference } from "@/types/theme"
-import { Ionicons } from "@expo/vector-icons"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import { useHeaderHeight } from "@react-navigation/elements"
-import { useRouter } from "expo-router"
-import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { Text, View } from "react-native"
+import MaskedView from "@react-native-masked-view/masked-view";
+import { LinearGradient } from "expo-linear-gradient";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 
-export default function SettingsScreen() {
+const DATA = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
 
-    const {t} = useTranslation()
+export default function BlurredListExample() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Minha Lista</Text>
 
-    const router = useRouter()
-    const {theme, preference, setPreference} = useStyle()
-
-    const [category, setCategory] = useState("")
-    const [selectedTheme, setSelectedTheme] = useState(preference)
-    const [selectedLang, setSelectedLang] = useState(i18n.language)
-    
-    const paddingTop = useHeaderHeight() + 10
-
-    const themeOptions: SCOption<ThemePreference>[] = [
-        {label: t("settings.theme.system"), value: "system"},
-        {label: t("settings.theme.light"), value: "light"},
-        {label: t("settings.theme.dark"), value: "dark"}
-    ]
-
-    const langOptions: SCOption<string>[] = [
-        {label: "English", value: "en-US"},
-        {label: "Português", value: "pt-BR"}
-    ]
-
-    useEffect(() => {setSelectedTheme(preference)}, [preference])
-
-    const changeLanguage = async (lang: string) => {
-        await AsyncStorage.setItem("language", lang);
-        i18n.changeLanguage(lang);
-    }
-
-    return(
-        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
-            <View style={{flexDirection: "row", gap: 6}}>
-                <View style={[{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 10,
-                        backgroundColor: theme.background.group.secondaryBg,
-                        borderRadius: 24,
-                        borderWidth: 1,
-                        borderColor: theme.background.group.tertiaryBg,
-                        borderCurve: "continuous",
-                        paddingRight: 22,
-                        paddingLeft: 18,
-                    }
-                ]}>
-                    <Ionicons size={20} name="trash-outline" color={theme.colors.red}/>
-                    <Text
-                        style={[
-                            FontStyles.title3,
-                            {paddingVertical: 10, color: theme.colors.red}
-                        ]}
-                    >
-                        Delete
-                    </Text>
-                </View>
-                <View style={[{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        gap: 10,
-                        backgroundColor: theme.background.group.secondaryBg,
-                        borderRadius: 24,
-                        borderWidth: 1,
-                        borderColor: theme.background.group.tertiaryBg,
-                        borderCurve: "continuous",
-                        paddingRight: 22,
-                        paddingLeft: 18,
-                    }
-                ]}>
-                    <Ionicons size={20} name="arrow-back" color={theme.text.label}/>
-                    <Text
-                        style={[
-                            FontStyles.title3,
-                            {paddingVertical: 10, color: theme.text.label}
-                        ]}
-                    >
-                        Return
-                    </Text>
-                </View>
+      <MaskedView
+        style={styles.maskedView}
+        maskElement={
+          <LinearGradient
+            // A máscara define onde o conteúdo será visível (opaco = visível)
+            colors={["transparent", "black", "black", "transparent"]}
+            locations={[0, 0.1, 0.9, 1]}
+            style={StyleSheet.absoluteFill}
+          />
+        }
+      >
+        <FlatList
+          data={DATA}
+          keyExtractor={(item) => item}
+          style={styles.list}
+          contentContainerStyle={{ paddingVertical: 16 }}
+          renderItem={({ item }) => (
+            <View style={styles.item}>
+              <Text style={styles.text}>{item}</Text>
             </View>
-            
-            
-
-        </View>
-    )
-
-
+          )}
+        />
+      </MaskedView>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 120,
+    padding: 24,
+    backgroundColor: "#fff",
+    flex: 1,
+    justifyContent: "flex-start",
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "600",
+    marginBottom: 12,
+  },
+  maskedView: {
+    height: 250, // Altura fixa da lista
+  },
+  list: {
+    flexGrow: 0,
+  },
+  item: {
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#ccc",
+  },
+  text: {
+    fontSize: 16,
+  },
+});
