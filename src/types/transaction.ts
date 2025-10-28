@@ -88,6 +88,13 @@ export type BudgetSnapshot = {
     spentCents: number,
 }
 
+export type BudgetMonthlyPerformance = {
+    monthKey: string,
+    budgetCents: number,
+    spentCents: number,
+    differenceCents: number,
+}
+
 export type MonthlyCategoryAggregate = {
     categoryId: number,
     name: string,
