@@ -134,7 +134,7 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.yellow },
+                                headerStyle: { backgroundColor: theme.colors.indigo },
                             }}
                         />
                         <Stack.Screen

@@ -1,3 +1,4 @@
+import { AppIcon } from "@/components/AppIcon"
 import BottomButton from "@/components/buttons/BottomButton"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
@@ -57,63 +58,69 @@ export default function BudgetScreen() {
         <View
             style={{
                 flex: 1,
-                paddingTop: headerHeight + 24,
                 paddingHorizontal: layout.margin.contentArea,
-                paddingBottom: Math.max(insets.bottom, 24),
+                paddingBottom: insets.bottom,
                 gap: 16,
             }}
         >
-            <ScrollView
-                style={{ flex: 1 }}
-                contentContainerStyle={{
-                    paddingBottom: 32,
-                    gap: 32,
-                }}
-            >
-                <View style={{ gap: 8 }}>
-                    <Text style={[FontStyles.title2, { color: theme.text.label }]}>{t("budget.form.heading")}</Text>
-                    <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>
-                        {t("budget.form.description")}
-                    </Text>
-                </View>
-
+            
                 {storedBudget ? (
-                    <View
+                    <ScrollView
                         style={{
-                            gap: 24,
-                            padding: layout.margin.contentArea,
-                            borderRadius: layout.radius.groupedView,
-                            backgroundColor: theme.fill.secondary,
+                            flex: 1
+                        }}
+                        contentContainerStyle={{
+                            paddingTop: headerHeight + layout.margin.contentArea,
+                            gap: 32,
                         }}
                     >
-                        <View style={{ gap: 4 }}>
-                            <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
-                                {t("budget.form.amountLabel")}
-                            </Text>
-                            <Text style={[FontStyles.title1, { color: theme.text.label }]}>{formattedAmount}</Text>
-                        </View>
+                        <View
+                            style={{
+                                gap: 24,
+                                padding: layout.margin.contentArea,
+                                borderRadius: layout.radius.groupedView,
+                                backgroundColor: theme.fill.secondary,
+                            }}
+                        >
+                            <View style={{ gap: 4 }}>
+                                <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
+                                    {t("budget.form.amountLabel")}
+                                </Text>
+                                <Text style={[FontStyles.title1, { color: theme.text.label }]}>{formattedAmount}</Text>
+                            </View>
 
-                        <View style={{ gap: 4 }}>
-                            <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
-                                {t("budget.form.frequency")}
-                            </Text>
-                            <Text style={[FontStyles.title3, { color: theme.text.label }]}>{periodLabel}</Text>
+                            <View style={{ gap: 4 }}>
+                                <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
+                                    {t("budget.form.frequency")}
+                                </Text>
+                                <Text style={[FontStyles.title3, { color: theme.text.label }]}>{periodLabel}</Text>
+                            </View>
                         </View>
-                    </View>
+                    </ScrollView>
                 ) : (
                     <View
                         style={{
-                            padding: layout.margin.contentArea,
-                            borderRadius: layout.radius.groupedView,
-                            backgroundColor: theme.fill.secondary,
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            gap: 16
                         }}
                     >
-                        <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>
-                            {t("budget.tile.noBudget")}
-                        </Text>
+                        <AppIcon
+                            name={"chart.pie.fill"}
+                            androidName={"pie-chart"}
+                            size={70}
+                            tintColor={theme.colors.indigo}
+                        />
+
+                        <View style={{ gap: 8 }}>
+                            <Text style={[FontStyles.title2, { color: theme.text.label, textAlign: "center" }]}>{t("budget.form.heading")}</Text>
+                            <Text style={[FontStyles.body, { color: theme.text.secondaryLabel, textAlign: "center" }]}>
+                                {t("budget.form.description")}
+                            </Text>
+                        </View>
                     </View>
                 )}
-            </ScrollView>
 
             <BottomButton
                 label={buttonLabel}

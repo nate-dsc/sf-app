@@ -75,7 +75,7 @@ export default function PlanningScreen() {
                                             tintColor={theme.colors.white}
                                         />
                                     }
-                                    color={theme.colors.yellow}
+                                    color={theme.colors.indigo}
                                     onPress={() => router.push("/budget")}
                                 />
                             </View>

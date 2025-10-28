@@ -21,22 +21,22 @@ export default function BottomButton({label, onPress, color, labelColor}: Bottom
                 padding: 8,
                 marginHorizontal: 18,
                 borderRadius: layout.radius.round,
-                backgroundColor: color ?? theme.colors.blue
+                backgroundColor: color ?? theme.colors.blue,
+                minHeight: 52
             }}
         >
             <View
                 style={{
-                    height: 36,
                     justifyContent: "center",
                     alignItems: "center",
                 }}
             >
                 <Text
                     style={{
-                        lineHeight: 22,
                         fontSize: 17,
                         fontWeight: "500",
-                        color: labelColor ?? theme.colors.white
+                        color: labelColor ?? theme.colors.white,
+                        textAlign: "center"
                     }}
                 >
                     {label}
