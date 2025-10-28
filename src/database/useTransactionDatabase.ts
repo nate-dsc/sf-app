@@ -1,6 +1,6 @@
 import { useStyle } from "@/context/StyleContext"
 import { useBudgetStore } from "@/stores/useBudgetStore"
-import { BudgetPeriod, CCard, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useCallback, useMemo } from "react"
@@ -486,6 +486,88 @@ export function useTransactionDatabase() {
         }
     }, [database])
 
+    const getBudgetMonthlyPerformance = useCallback(
+        async (options: { months?: number } = {}): Promise<BudgetMonthlyPerformance[]> => {
+            const budgetState = useBudgetStore.getState().budget
+
+            if (!budgetState) {
+                return []
+            }
+
+            const monthsToFetch = Math.max(options.months ?? 6, 1)
+            const monthKeys: string[] = []
+
+            const referenceDate = new Date()
+            referenceDate.setDate(1)
+            referenceDate.setHours(0, 0, 0, 0)
+
+            for (let index = 0; index < monthsToFetch; index += 1) {
+                const target = new Date(referenceDate.getFullYear(), referenceDate.getMonth() - index, 1)
+                const year = target.getFullYear()
+                const month = (target.getMonth() + 1).toString().padStart(2, "0")
+                monthKeys.push(`${year}-${month}`)
+            }
+
+            type MonthlyTotalRow = { monthKey: string; totalValue: number | null }
+
+            const placeholders = monthKeys.map(() => "?").join(", ")
+
+            let totals: MonthlyTotalRow[] = []
+
+            if (monthKeys.length > 0) {
+                totals = await database.getAllAsync<MonthlyTotalRow>(
+                    `SELECT strftime('%Y-%m', date) as monthKey, SUM(value) as totalValue
+                    FROM transactions
+                    WHERE flow = 'outflow' AND strftime('%Y-%m', date) IN (${placeholders})
+                    GROUP BY monthKey`,
+                    monthKeys
+                )
+            }
+
+            const totalsMap = new Map<string, number>()
+
+            totals.forEach((row) => {
+                if (!row?.monthKey) {
+                    return
+                }
+
+                const rawTotal = typeof row.totalValue === "number" ? row.totalValue : Number(row.totalValue ?? 0)
+                totalsMap.set(row.monthKey, Math.abs(rawTotal))
+            })
+
+            const convertBudgetToMonthly = (period: BudgetPeriod, amountCents: number) => {
+                if (amountCents <= 0) {
+                    return 0
+                }
+
+                if (period === "monthly") {
+                    return amountCents
+                }
+
+                if (period === "biweekly") {
+                    return Math.round((amountCents * 26) / 12)
+                }
+
+                return Math.round((amountCents * 52) / 12)
+            }
+
+            const monthlyBudgetCents = convertBudgetToMonthly(budgetState.period, budgetState.amountCents)
+
+            return monthKeys.map((monthKey) => {
+                const spentCents = totalsMap.get(monthKey) ?? 0
+                const differenceCents = monthlyBudgetCents - spentCents
+
+                return {
+                    monthKey,
+                    budgetCents: monthlyBudgetCents,
+                    spentCents,
+                    differenceCents,
+                }
+            })
+        },
+        [database]
+    )
+
     const getPaginatedFilteredTransactions = useCallback(async (page: number, pageSize: number, filterOptions: SearchFilters = {}) => {
         const offset = page*pageSize
 
@@ -850,6 +932,7 @@ export function useTransactionDatabase() {
         getTransactionsFromMonth,
         getSummaryFromDB,
         getMonthlyCategoryDistribution,
+        getBudgetMonthlyPerformance,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
         createAndSyncInstallmentPurchases,
@@ -870,6 +953,7 @@ export function useTransactionDatabase() {
         getTransactionsFromMonth,
         getSummaryFromDB,
         getMonthlyCategoryDistribution,
+        getBudgetMonthlyPerformance,
         getPaginatedFilteredTransactions,
         createAndSyncRecurringTransactions,
         createAndSyncInstallmentPurchases,

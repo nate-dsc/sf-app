@@ -28,6 +28,7 @@
         "recurring": "Configure a recorrência",
         "back": "Voltar"
     },
+    "loading": "Carregando...",
     "planningScreens": {
         "budget": {
             "title": "Monte e acompanhe seu orçamento",
@@ -166,6 +167,13 @@
             "weekly": "Semanal",
             "biweekly": "Quinzenal",
             "monthly": "Mensal"
+        },
+        "monthlyPerformance": {
+            "title": "Desempenho mensal",
+            "under": "{{amount}} abaixo da meta",
+            "over": "{{amount}} acima da meta",
+            "onTrack": "Dentro do orçamento",
+            "budgetVsSpent": "Meta {{budget}} · Gasto {{spent}}"
         }
     },
     "recurring": {

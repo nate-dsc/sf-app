@@ -28,6 +28,7 @@
         "recurring": "Set recurrence",
         "back": "Return"
     },
+    "loading": "Loading...",
     "planningScreens": {
         "budget": {
             "title": "Build and monitor your budget",
@@ -162,6 +163,13 @@
             "weekly": "Weekly",
             "biweekly": "Every two weeks",
             "monthly": "Monthly"
+        },
+        "monthlyPerformance": {
+            "title": "Monthly performance",
+            "under": "{{amount}} under budget",
+            "over": "{{amount}} over budget",
+            "onTrack": "On budget",
+            "budgetVsSpent": "Budget {{budget}} · Spent {{spent}}"
         }
     },
     "recurring": {
