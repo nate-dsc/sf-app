@@ -130,39 +130,40 @@ export default function BudgetEditScreen() {
         <View
             style={{
                 flex: 1,
-                paddingTop: headerHeight + 24,
                 paddingHorizontal: layout.margin.contentArea,
-                paddingBottom: Math.max(insets.bottom, 24),
                 gap: 16,
             }}
         >
             <ScrollView
                 style={{ flex: 1 }}
                 contentContainerStyle={{
+                    paddingTop: headerHeight + layout.margin.contentArea,
                     paddingBottom: 32,
-                    gap: 32,
+                    gap: 16,
                 }}
                 keyboardShouldPersistTaps="handled"
             >
-                <View style={{ gap: 8 }}>
-                    <Text style={[FontStyles.title2, { color: theme.text.label }]}>
-                        {t("budget.form.heading")}
-                    </Text>
-                    <Text style={[FontStyles.body, { color: theme.text.secondaryLabel }]}>
-                        {t("budget.form.description")}
-                    </Text>
-                </View>
+                {storedBudget ? (
+                    <DestructiveButton
+                        label={t("budget.form.removeButton")}
+                        onPress={handleRemove}
+                        disabled={submitting}
+                    />
+                ) : null}
 
-                <View style={{ gap: layout.margin.innerSectionGap }}>
+                {formError ? (
+                    <Text style={[FontStyles.footnote, { color: theme.colors.red }]}>{formError}</Text>
+                ) : null}
+
+                <View style={{ marginTop: 30, gap: layout.margin.innerSectionGap }}>
                     <Text
                         style={{
-                            lineHeight: 22,
                             fontSize: 17,
                             paddingHorizontal: layout.margin.contentArea,
                             color: theme.text.label,
                         }}
                     >
-                        {t("budget.form.frequency")}
+                        {t("budget.form.period")}
                     </Text>
                     <SegmentedControlCompact
                         options={frequencyOptions}
@@ -182,40 +183,28 @@ export default function BudgetEditScreen() {
                                 setFormError(null)
                             }
                         }}
-                        flowType="outflow"
+                        flowType="inflow"
                         valueInCents={amountCents}
                         labelFlex={2}
                         fieldFlex={2}
                     />
                 </GroupView>
 
-                {formError ? (
-                    <Text style={[FontStyles.footnote, { color: theme.colors.red }]}>{formError}</Text>
-                ) : null}
-            </ScrollView>
-
-            <View style={{ gap: 10 }}>
-                <View style={{ flexDirection: "row", gap: 16 }}>
-                    <LabeledButton
-                        label={t("buttons.cancel")}
-                        onPress={handleClose}
-                        disabled={submitting}
-                    />
-                    <PrimaryButton
-                        label={t("buttons.save")}
-                        onPress={handleSave}
-                        disabled={!canSave}
-                    />
+                <View style={{ marginTop: 30, gap: 10 }}>
+                    <View style={{ flexDirection: "row", gap: 16 }}>
+                        <LabeledButton
+                            label={t("buttons.cancel")}
+                            onPress={handleClose}
+                            disabled={submitting}
+                        />
+                        <PrimaryButton
+                            label={t("buttons.save")}
+                            onPress={handleSave}
+                            disabled={!canSave}
+                        />
+                    </View>
                 </View>
-
-                {storedBudget ? (
-                    <DestructiveButton
-                        label={t("budget.form.removeButton")}
-                        onPress={handleRemove}
-                        disabled={submitting}
-                    />
-                ) : null}
-            </View>
+            </ScrollView>
         </View>
     )
 }

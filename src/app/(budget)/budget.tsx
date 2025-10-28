@@ -114,9 +114,21 @@ export default function BudgetScreen() {
                         />
 
                         <View style={{ gap: 8 }}>
-                            <Text style={[FontStyles.title2, { color: theme.text.label, textAlign: "center" }]}>{t("budget.form.heading")}</Text>
-                            <Text style={[FontStyles.body, { color: theme.text.secondaryLabel, textAlign: "center" }]}>
-                                {t("budget.form.description")}
+                            <Text
+                                style={[FontStyles.title2,
+                                    {color: theme.text.label,
+                                    textAlign: "center"}
+                                ]}
+                            >
+                                {t("budget.empty.title")}
+                            </Text>
+                            <Text 
+                                style={[FontStyles.body,
+                                    {color: theme.text.secondaryLabel,
+                                    textAlign: "center"}
+                                ]}
+                            >
+                                {t("budget.empty.description")}
                             </Text>
                         </View>
                     </View>

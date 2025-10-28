@@ -133,6 +133,10 @@
         "retry": "Tentar novamente"
     },
     "budget": {
+        "empty": {
+            "title": "Defina seu orçamento",
+            "description": "Registre um valor como meta de gastos e veja seu progresso ao longo do período que você definir."
+        },
         "tile": {
             "noBudget": "Nenhum orçamento configurado ainda.",
             "periodLabel": "Período"
@@ -140,7 +144,7 @@
         "form": {
             "heading": "Defina seu orçamento",
             "description": "Escolha com que frequência deseja acompanhar os gastos e quanto deseja reservar.",
-            "frequency": "Frequência do orçamento",
+            "period": "Período do orçamento",
             "amountLabel": "Valor do orçamento",
             "weekly": "Semanal",
             "biweekly": "Quinzenal",
