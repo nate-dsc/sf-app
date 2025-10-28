@@ -159,8 +159,8 @@ export default function BudgetListItem({ performance, formatCurrency, formatMont
                                     width: `${Math.abs(percentage)}%`,
                                     height: 10,
                                     backgroundColor: theme.colors.green,
-                                    borderTopLeftRadius: 10,
-                                    borderBottomLeftRadius: 10,
+                                    borderTopLeftRadius: 2,
+                                    borderBottomLeftRadius: 2,
                                 }}
                                 />
                             )}
@@ -189,8 +189,8 @@ export default function BudgetListItem({ performance, formatCurrency, formatMont
                                         width: `${Math.abs(percentage)}%`,
                                         height: 10,
                                         backgroundColor: theme.colors.red,
-                                        borderTopRightRadius: 10,
-                                        borderBottomRightRadius: 10,
+                                        borderTopRightRadius: 2,
+                                        borderBottomRightRadius: 2,
                                     }}
                                 />
                             )}

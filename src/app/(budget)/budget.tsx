@@ -11,11 +11,12 @@ import { useTranslation } from "react-i18next"
 import { View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
+import BudgetDisplay from "@/components/budget-screen-items/BudgetDisplay"
 import BudgetList from "@/components/budget-screen-items/BudgetList"
 import EmptyView from "@/components/EmptyView"
 
 import BlurredListView from "@/components/BlurredListView"
-import { BudgetDisplay as BudgetDisplay2 } from "@/components/budget"
+
 
 export default function BudgetScreen() {
     const headerHeight = useHeaderHeight()
@@ -85,11 +86,11 @@ export default function BudgetScreen() {
                     style={{
                         flex: 1,
                         paddingTop: headerHeight + layout.margin.contentArea,
-                        gap: 32,
+                        gap: 24,
                     }}
                 >
                     
-                    <BudgetDisplay2 budget={storedBudget} />
+                    <BudgetDisplay budget={storedBudget} />
 
                     <BlurredListView
                         title={t("budget.monthlyPerformance.title", { defaultValue: "Monthly performance" })}
