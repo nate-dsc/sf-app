@@ -136,7 +136,11 @@
     "budget": {
         "tile": {
             "noBudget": "No budget configured yet.",
-            "periodLabel": "Period"
+            "periodLabel": "Period",
+            "estimatedBalanceTitle": "Estimated balance this month",
+            "estimatedBalanceRemaining": "Money left after expenses",
+            "estimatedBalanceInflow": "Income this month",
+            "estimatedBalanceOutflow": "Expenses this month"
         },
         "form": {
             "heading": "Set your budget",

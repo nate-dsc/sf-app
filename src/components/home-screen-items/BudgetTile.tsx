@@ -1,13 +1,15 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
+import { useBudgetStore } from "@/stores/useBudgetStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { useMemo } from "react"
+import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
 import { TileStyles } from "./TileStyles"
 
 export default function BudgetTile() {
     const { data, loading, error } = useSummaryStore()
+    const { budgetTileMode } = useBudgetStore()
     const { theme } = useStyle()
     const { t, i18n } = useTranslation()
     const tileStyles = TileStyles(theme)
@@ -20,7 +22,46 @@ export default function BudgetTile() {
         return <Text>{error}</Text>
     }
 
-    const budget = data?.budget ?? null
+    const budget = data?.budget && data.budget.amountCents > 0 ? data.budget : null
+    const locale = i18n.language
+    const currency = locale === "pt-BR" ? "BRL" : "USD"
+
+    const formatCurrency = useCallback(
+        (valueInCents: number) =>
+            (valueInCents / 100).toLocaleString(locale, {
+                style: "currency",
+                currency,
+                currencySign: "standard",
+            }),
+        [currency, locale],
+    )
+
+    const mode = budget
+        ? budgetTileMode === "expensesVsBudget"
+            ? "expensesVsBudget"
+            : "balance"
+        : "balance"
+
+    const shouldShowBalance = !budget || mode === "balance"
+
+    const inflowCents = data?.inflowCurrentMonth ?? 0
+    const outflowCents = data?.outflowCurrentMonth ?? 0
+
+    const { balanceLabel, inflowLabel, outflowLabel, balanceColor } = useMemo(() => {
+        const balanceCents = inflowCents - outflowCents
+
+        return {
+            balanceLabel: formatCurrency(balanceCents),
+            inflowLabel: formatCurrency(inflowCents),
+            outflowLabel: formatCurrency(outflowCents),
+            balanceColor:
+                balanceCents > 0
+                    ? theme.colors.green
+                    : balanceCents < 0
+                        ? theme.colors.red
+                        : theme.text.label,
+        }
+    }, [formatCurrency, inflowCents, outflowCents, theme.colors.green, theme.colors.red, theme.text.label])
 
     const {
         plannedLabel,
@@ -30,7 +71,7 @@ export default function BudgetTile() {
         spentOverLimit,
         periodLabel,
     } = useMemo(() => {
-        if (!budget || budget.amountCents <= 0) {
+        if (!budget) {
             return {
                 plannedLabel: "-",
                 spentLabel: "-",
@@ -41,17 +82,8 @@ export default function BudgetTile() {
             }
         }
 
-        const locale = i18n.language
-        const currency = locale === "pt-BR" ? "BRL" : "USD"
-        const toCurrency = (valueInCents: number) =>
-            (valueInCents / 100).toLocaleString(locale, {
-                style: "currency",
-                currency,
-                currencySign: "standard",
-            })
-
-        const planned = toCurrency(budget.amountCents)
-        const spent = toCurrency(budget.spentCents)
+        const planned = formatCurrency(budget.amountCents)
+        const spent = formatCurrency(budget.spentCents)
 
         const percentValue = budget.amountCents > 0 ? (budget.spentCents / budget.amountCents) * 100 : 0
         const safePercent = Number.isFinite(percentValue) ? percentValue : 0
@@ -66,9 +98,7 @@ export default function BudgetTile() {
             spentOverLimit: budget.amountCents > 0 && budget.spentCents > budget.amountCents,
             periodLabel: t(`budget.periods.${budget.period}`),
         }
-    }, [budget, i18n.language, t])
-
-    const hasBudget = !!budget && budget.amountCents > 0
+    }, [budget, formatCurrency, t])
 
     return (
         <View style={{ gap: 6 }}>
@@ -85,8 +115,41 @@ export default function BudgetTile() {
                     gap: 12,
                 }}
             >
-                {!hasBudget ? (
-                    <Text style={[tileStyles.textUnfocused, FontStyles.body]}>{t("budget.tile.noBudget")}</Text>
+                {shouldShowBalance ? (
+                    <View style={{ gap: 16 }}>
+                        <View style={{ gap: 4 }}>
+                            <Text style={[tileStyles.textUnfocused, FontStyles.subhead]}>
+                                {t("budget.tile.estimatedBalanceTitle")}
+                            </Text>
+                            <Text style={[FontStyles.numTitle1, { color: balanceColor }]}>{balanceLabel}</Text>
+                            <Text style={[tileStyles.textUnfocused, FontStyles.footnote]}>
+                                {t("budget.tile.estimatedBalanceRemaining")}
+                            </Text>
+                        </View>
+                        <View style={{ gap: 8 }}>
+                            <View
+                                style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+                            >
+                                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>
+                                    {t("budget.tile.estimatedBalanceInflow")}
+                                </Text>
+                                <Text style={[tileStyles.text, FontStyles.numBody]}>{inflowLabel}</Text>
+                            </View>
+                            <View
+                                style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}
+                            >
+                                <Text style={[tileStyles.textUnfocused, FontStyles.body]}>
+                                    {t("budget.tile.estimatedBalanceOutflow")}
+                                </Text>
+                                <Text style={[tileStyles.text, FontStyles.numBody]}>{outflowLabel}</Text>
+                            </View>
+                        </View>
+                        {!budget ? (
+                            <Text style={[tileStyles.textUnfocused, FontStyles.footnote]}>
+                                {t("budget.tile.noBudget")}
+                            </Text>
+                        ) : null}
+                    </View>
                 ) : (
                     <>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>

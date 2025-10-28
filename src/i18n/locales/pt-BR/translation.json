@@ -140,7 +140,11 @@
         },
         "tile": {
             "noBudget": "Nenhum orçamento configurado ainda.",
-            "periodLabel": "Período"
+            "periodLabel": "Período",
+            "estimatedBalanceTitle": "Saldo estimado do mês",
+            "estimatedBalanceRemaining": "Quanto ainda resta após as despesas",
+            "estimatedBalanceInflow": "Entradas no mês",
+            "estimatedBalanceOutflow": "Saídas no mês"
         },
         "form": {
             "heading": "Defina seu orçamento",
