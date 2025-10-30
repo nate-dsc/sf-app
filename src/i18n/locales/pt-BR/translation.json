@@ -193,7 +193,7 @@
     "categories": {
         "income": {
             "salary": "Salário",
-            "freelance" : "Ganho autônomo",
+            "freelance": "Ganho autônomo",
             "oncall": "Plantão",
             "overtime": "Hora extra",
             "perdiem": "Diária",
@@ -290,10 +290,8 @@
         "fifth": "quinto(a)",
         "penultimate": "penúltimo(a)",
         "last": "último(a)"
-        
     },
-    "modalRecurring":
-    {
+    "modalRecurring": {
         "frequency": "Frequência",
         "daily": "Diário",
         "weekly": "Semanal",
@@ -419,6 +417,44 @@
         "weekday": "dia de semana",
         "weekendDay": "sábado ou domingo",
         "indefinitely": "indefinidamente"
+    },
+    "credit": {
+        "add": "Adicionar cartão",
+        "installmentPurchase": "Compra parcelada",
+        "noCardsAvailable": "Nenhum cartão cadastrado",
+        "loadingCards": "Carregando cartões...",
+        "loadingCard": "Carregando cartão",
+        "cardNotFound": "Cartão não encontrado",
+        "cardNotFoundDescription": "Não foi possível localizar as informações deste cartão.",
+        "limit": "Limite",
+        "limitUsed": "Utilizado",
+        "availableLimit": "Disponível",
+        "closingDay": "Fechamento",
+        "dueDay": "Vencimento",
+        "ignoreWeekends": "Ignorar fins de semana",
+        "red": "Vermelho",
+        "orange": "Laranja",
+        "mint": "Menta",
+        "green": "Verde",
+        "cyan": "Ciano",
+        "purple": "Roxo",
+        "indigo": "Índigo",
+        "gray": "Cinza",
+        "form": {
+            "helpLink": "Precisa de ajuda com cartões de crédito?"
+        },
+        "errors": {
+            "title": "Não foi possível salvar o cartão",
+            "emptyName": "Informe um nome para o cartão.",
+            "invalidLimit": "Informe um limite maior que zero.",
+            "missingDay": "Selecione os dias de fechamento e vencimento.",
+            "duplicateName": "Já existe um cartão com este nome.",
+            "duplicateLimit": "Já existe um cartão com este limite.",
+            "generic": "Não foi possível salvar o cartão. Tente novamente."
+        },
+        "help": {
+            "title": "Cartões de crédito",
+            "body": "Limite: valor máximo de compras não pagas feitas com o cartão de crédito. Se seu limite for insuficiente para uma compra, ela não será registrada.\n\nDia de fechamento: data a partir da qual as compras feitas no cartão só serão pagas na próxima fatura.\n\nDia de vencimento: dia em que a fatura deve ser paga. Nesse dia o valor estimado da fatura será automaticamente descontado do seu saldo!\n\nIgnorar fins de semana: move o dia de fechamento e vencimento para o próximo dia útil. Ainda permite que esses dias sejam feriados e não contabilizados pelo seu banco/operadora."
+        }
     }
-    
 }

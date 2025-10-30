@@ -189,7 +189,7 @@
     "categories": {
         "income": {
             "salary": "Salary",
-            "freelance" : "Freelance",
+            "freelance": "Freelance",
             "oncall": "On-call pay",
             "overtime": "Overtime",
             "perdiem": "Per diem",
@@ -271,8 +271,7 @@
         "EveryPlural": "Every ",
         "On month": "On month"
     },
-    "modalRecurring":
-    {
+    "modalRecurring": {
         "frequency": "Frequency",
         "daily": "Daily",
         "weekly": "Weekly",
@@ -399,5 +398,44 @@
         "weekday": "weekday",
         "weekendDay": "weekend day",
         "indefinitely": "indefinitely"
+    },
+    "credit": {
+        "add": "Add card",
+        "installmentPurchase": "Installment purchase",
+        "noCardsAvailable": "No cards saved yet",
+        "loadingCards": "Loading cards...",
+        "loadingCard": "Loading card",
+        "cardNotFound": "Card not found",
+        "cardNotFoundDescription": "We couldn't find information for this card.",
+        "limit": "Limit",
+        "limitUsed": "Used",
+        "availableLimit": "Available",
+        "closingDay": "Closing day",
+        "dueDay": "Due day",
+        "ignoreWeekends": "Ignore weekends",
+        "red": "Red",
+        "orange": "Orange",
+        "mint": "Mint",
+        "green": "Green",
+        "cyan": "Cyan",
+        "purple": "Purple",
+        "indigo": "Indigo",
+        "gray": "Gray",
+        "form": {
+            "helpLink": "Need help understanding credit cards?"
+        },
+        "errors": {
+            "title": "We couldn't save the card",
+            "emptyName": "Enter a name for the card.",
+            "invalidLimit": "Enter a limit greater than zero.",
+            "missingDay": "Select the closing and due days.",
+            "duplicateName": "A card with this name already exists.",
+            "duplicateLimit": "A card with this limit already exists.",
+            "generic": "We couldn't save the card. Try again."
+        },
+        "help": {
+            "title": "Credit cards",
+            "body": "Limit: maximum amount of unpaid purchases you can make with the card. If the limit is insufficient, the purchase won't be recorded.\n\nClosing day: date after which purchases are billed on the next statement.\n\nDue day: the day the statement must be paid. On this date the estimated statement amount is automatically deducted from your balance.\n\nIgnore weekends: moves the closing and due days to the next business day. Holidays may still impact what your bank or operator considers."
+        }
     }
 }

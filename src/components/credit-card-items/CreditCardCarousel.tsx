@@ -9,11 +9,11 @@ type CreditCardCarouselSelectorProps = {
     cards: CCard[]
     selectedCard?: CCard | null
     onSelectCard?: (card: CCard) => void
+    onEditCard?: (card: CCard) => void
 }
 
-export default function CreditCardCarouselSelector({cards, selectedCard, onSelectCard}: CreditCardCarouselSelectorProps) {
-
-    const {theme} = useStyle()
+export default function CreditCardCarouselSelector({ cards, selectedCard, onSelectCard, onEditCard }: CreditCardCarouselSelectorProps) {
+    const { theme } = useStyle()
 
     const handleSelectCard = (card: CCard) => {
         if (onSelectCard && card.id !== selectedCard?.id) {
@@ -22,11 +22,7 @@ export default function CreditCardCarouselSelector({cards, selectedCard, onSelec
     }
 
     return (
-        <ScrollView
-            horizontal
-            contentContainerStyle={{}}
-            showsHorizontalScrollIndicator={false}
-        >
+        <ScrollView horizontal contentContainerStyle={{}} showsHorizontalScrollIndicator={false}>
             {cards.map((card, index) => {
                 const isSelected = selectedCard?.id === card.id
                 const isLastItem = index === cards.length - 1
@@ -35,19 +31,22 @@ export default function CreditCardCarouselSelector({cards, selectedCard, onSelec
                     <Pressable
                         key={card.id}
                         onPress={() => handleSelectCard(card)}
-                        style={[{
+                        onLongPress={onEditCard ? () => onEditCard(card) : undefined}
+                        android_ripple={onEditCard ? { color: theme.colors.blue, borderless: false } : undefined}
+                        style={[
+                            {
                                 marginRight: 16,
                                 borderRadius: 20,
                                 padding: 2,
                                 borderWidth: 2,
                                 borderColor: "transparent",
-                                borderCurve: "continuous"
+                                borderCurve: "continuous",
                             },
                             isSelected && {
                                 borderWidth: 2,
                                 borderColor: theme.colors.blue,
                             },
-                            isLastItem && {marginRight: 0},
+                            isLastItem && { marginRight: 0 },
                         ]}
                     >
                         <View pointerEvents="none">
