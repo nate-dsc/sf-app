@@ -267,8 +267,28 @@
         "category": "Categoria",
         "select": "Escolher",
         "recurring": "Repete",
+        "useCredit": "Usar cartão de crédito",
+        "loadingCards": "Carregando cartões...",
+        "noCardsAvailable": "Nenhum cartão disponível",
+        "noCardsAvailableTitle": "Nenhum cartão disponível",
+        "noCardsAvailableMessage": "Cadastre um cartão para usar esta opção.",
+        "availableLimit": "Limite disponível: {{value}}",
+        "creditLimitErrorTitle": "Limite insuficiente",
+        "creditLimitErrorMessage": "O cartão selecionado não possui limite disponível para esta compra.",
+        "cardNotFoundTitle": "Cartão não encontrado",
+        "cardNotFoundMessage": "O cartão selecionado não pôde ser localizado. Tente novamente.",
+        "creditLimitInlineError": "Limite insuficiente. Disponível: {{value}}.",
+        "cardNotFoundInline": "Não foi possível encontrar o cartão selecionado.",
         "Yes": "Sim",
         "No": "Não"
+    },
+    "notifications": {
+        "recurringCreditSkipped": {
+            "title": "Limite insuficiente no cartão",
+            "description": "Não foi possível lançar {{amount}} no cartão {{card}}. Limite disponível: {{available}}.",
+            "dismiss": "Entendi",
+            "unknownCard": "selecionado"
+        }
     },
     "RRULEtoText": {
         "EverySingular": "Todo ",

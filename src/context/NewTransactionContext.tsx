@@ -1,7 +1,9 @@
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction, Transaction } from "@/types/transaction"
-import { createContext, ReactNode, useContext, useMemo, useState } from "react"
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
+import { type RecurringCreditWarning } from "@/stores/useCreditNotificationStore"
 
 type NewTransaction = {
     flowType?: "inflow" | "outflow",
@@ -28,9 +30,40 @@ type NewTransactionContextType = {
     isValid: boolean
     saveInstallmentPurchase: () => Promise<void>
     isInstallmentValid: boolean
+    ensureCardLimit: (overrides?: EnsureCardLimitOverrides) => Promise<EnsureCardLimitResult>
+    recurringCreditWarning?: RecurringCreditWarning
+    clearRecurringCreditWarning: () => void
 }
 
 const NewTransactionContext = createContext<NewTransactionContextType | undefined>(undefined)
+
+export type EnsureCardLimitOverrides = {
+    cardId?: number
+    valueCents?: number
+}
+
+export type EnsureCardLimitResult = {
+    cardId: number
+    cardName?: string | null
+    availableLimit: number
+    requiredAmount: number
+}
+
+export class InsufficientCreditLimitError extends Error {
+    cardId: number
+    cardName?: string | null
+    availableLimit: number
+    requiredAmount: number
+
+    constructor({ cardId, cardName, availableLimit, requiredAmount }: EnsureCardLimitResult) {
+        super("INSUFFICIENT_CREDIT_LIMIT")
+        this.name = "InsufficientCreditLimitError"
+        this.cardId = cardId
+        this.cardName = cardName ?? undefined
+        this.availableLimit = availableLimit
+        this.requiredAmount = requiredAmount
+    }
+}
 
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
@@ -44,6 +77,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         getSummaryFromDB,
         getCard
     } = useTransactionDatabase();
+
+    const { warning: recurringCreditWarning, clearNotification: clearRecurringCreditWarning } = useRecurringCreditLimitNotification()
 
     // 2. Acesso à ação de recarregar dados do store do sumário
     const loadSummaryData = useSummaryStore((state) => state.loadData);
@@ -136,27 +171,42 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
     }
 
+    const ensureCardLimit = useCallback(async (overrides?: EnsureCardLimitOverrides): Promise<EnsureCardLimitResult> => {
+        const cardId = overrides?.cardId ?? newTransaction.cardId
+        const valueCents = overrides?.valueCents ?? newTransaction.value
+
+        if (!cardId || !valueCents || valueCents <= 0) {
+            throw new Error("Tentativa de usar cartão sem cartão selecionado ou valor definido.")
+        }
+
+        const card = await getCard(cardId)
+
+        if (!card) {
+            throw new Error("CARD_NOT_FOUND")
+        }
+
+        const availableLimit = card.limit - card.limitUsed
+        const requiredAmount = Math.abs(valueCents)
+
+        if (requiredAmount > availableLimit) {
+            throw new InsufficientCreditLimitError({
+                cardId,
+                cardName: card.name,
+                availableLimit,
+                requiredAmount,
+            })
+        }
+
+        return {
+            cardId,
+            cardName: card.name,
+            availableLimit,
+            requiredAmount,
+        }
+    }, [getCard, newTransaction.cardId, newTransaction.value])
+
     const saveTransaction = async () => {
         const shouldUseCreditCard = !!newTransaction.useCreditCard && !!newTransaction.cardId
-
-        const ensureCardLimit = async () => {
-            if (!newTransaction.cardId || !newTransaction.value) {
-                throw new Error("Tentativa de usar cartão sem cartão selecionado ou valor definido.")
-            }
-
-            const card = await getCard(newTransaction.cardId)
-
-            if (!card) {
-                throw new Error("CARD_NOT_FOUND")
-            }
-
-            const availableLimit = card.limit - card.limitUsed
-            const purchaseValue = newTransaction.value
-
-            if (purchaseValue > availableLimit) {
-                throw new Error("INSUFFICIENT_CREDIT_LIMIT")
-            }
-        }
 
         if(newTransaction.rrule) {
             try {
@@ -241,7 +291,16 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
     return(
         <NewTransactionContext.Provider value={{
-            newTransaction, setNewTransaction, updateNewTransaction, saveTransaction, isValid, saveInstallmentPurchase, isInstallmentValid
+            newTransaction,
+            setNewTransaction,
+            updateNewTransaction,
+            saveTransaction,
+            isValid,
+            saveInstallmentPurchase,
+            isInstallmentValid,
+            ensureCardLimit,
+            recurringCreditWarning,
+            clearRecurringCreditWarning,
         }}>
             {children}
         </NewTransactionContext.Provider>

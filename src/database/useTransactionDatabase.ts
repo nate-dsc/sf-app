@@ -1,4 +1,5 @@
 import { useStyle } from "@/context/StyleContext"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CardStatementCycleSummary, CardStatementHistoryOptions, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction, UpdateCardInput } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
@@ -12,6 +13,7 @@ import { useDatabase } from "./useDatabase"
 export function useTransactionDatabase() {
     const {theme} = useStyle()
     const { database } = useDatabase()
+    const { notifyRecurringChargeSkipped } = useRecurringCreditLimitNotification()
 
     type CategoryDistributionRow = {
         categoryId: number
@@ -47,7 +49,7 @@ export function useTransactionDatabase() {
         } finally {
             statement.finalizeAsync()
         }
-    }, [database])
+    }, [database, notifyRecurringChargeSkipped])
 
     const createTransactionWithCard = useCallback(async (data: Transaction, cardId: number) => {
         try {
@@ -746,9 +748,40 @@ export function useTransactionDatabase() {
                 if(pendingOccurrences.length > 0) {
                     console.log(`${pendingOccurrences.length} ocorrências pendentes`)
 
+                    let cardSnapshot: { limit: number; limit_used: number; name: string | null } | null = null
+                    if (blueprint.card_id) {
+                        cardSnapshot = await database.getFirstAsync<{ limit: number; limit_used: number; name: string | null }>(
+                            "SELECT limit, limit_used, name FROM cards WHERE id = ?",
+                            [blueprint.card_id]
+                        )
+
+                        if (!cardSnapshot) {
+                            console.warn(`Cartão ${blueprint.card_id} não encontrado para recorrência ${blueprint.id}`)
+                            continue
+                        }
+                    }
+
                     await database.withTransactionAsync(async () => {
+                        let processedAny = false
+                        let availableLimit = cardSnapshot ? cardSnapshot.limit - cardSnapshot.limit_used : null
+                        const computedFlow = blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow")
+
                         for(const occurrence of pendingOccurrences) {
                             occurrence.setHours(0,0,0)
+
+                            const shouldCheckLimit = Boolean(blueprint.card_id && availableLimit !== null && computedFlow === "outflow")
+                            const requiredAmount = Math.abs(blueprint.value)
+
+                            if (shouldCheckLimit && availableLimit !== null && requiredAmount > availableLimit) {
+                                notifyRecurringChargeSkipped({
+                                    cardId: blueprint.card_id!,
+                                    cardName: cardSnapshot?.name ?? null,
+                                    attemptedAmount: requiredAmount,
+                                    availableLimit,
+                                })
+                                break
+                            }
+
                             await database.runAsync(
                                 "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                                 [
@@ -760,10 +793,12 @@ export function useTransactionDatabase() {
                                     blueprint.card_id ?? null,
                                     blueprint.account_id ?? null,
                                     blueprint.payee_id ?? null,
-                                    blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow"),
+                                    computedFlow,
                                     blueprint.notes ?? null,
                                 ]
                             )
+
+                            processedAny = true
 
                             if (blueprint.card_id) {
                                 const limitAdjustment = blueprint.value < 0 ? Math.abs(blueprint.value) : -Math.abs(blueprint.value)
@@ -773,14 +808,26 @@ export function useTransactionDatabase() {
                                         "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
                                         [limitAdjustment, blueprint.card_id]
                                     )
+
+                                    if (availableLimit !== null) {
+                                        if (limitAdjustment > 0) {
+                                            availableLimit -= limitAdjustment
+                                        } else {
+                                            availableLimit += Math.abs(limitAdjustment)
+                                        }
+                                    }
                                 }
                             }
 
                             console.log(`Criada transação da transação recorrente ${blueprint.id} no dia ${occurrence.toISOString().slice(0, 16)}`)
                         }
-                        await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
-                            [newEndOfDayStr, blueprint.id]
-                        )
+
+                        if (processedAny) {
+                            await database.runAsync(
+                                "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
+                                [newEndOfDayStr, blueprint.id]
+                            )
+                        }
                     })
                 }
 
