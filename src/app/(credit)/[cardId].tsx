@@ -1,13 +1,14 @@
+import { AppIcon } from "@/components/AppIcon"
 import CreditCardView from "@/components/credit-card-items/CreditCardView"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import { useNavigation, useLocalSearchParams } from "expo-router"
-import { useEffect, useMemo, useState } from "react"
+import { useNavigation, useLocalSearchParams, useFocusEffect, useRouter } from "expo-router"
+import { useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, ScrollView, Text, View } from "react-native"
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat("pt-BR", {
@@ -21,6 +22,7 @@ export default function CreditCardDetailsScreen() {
     const { theme, layout } = useStyle()
     const { t } = useTranslation()
     const navigation = useNavigation()
+    const router = useRouter()
     const { cardId } = useLocalSearchParams<{ cardId?: string | string[] }>()
     const { getCard } = useTransactionDatabase()
 
@@ -38,60 +40,94 @@ export default function CreditCardDetailsScreen() {
     const [card, setCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        let isMounted = true
+    useFocusEffect(
+        useCallback(() => {
+            let isMounted = true
 
-        async function loadCard() {
-            if (!Number.isFinite(resolvedCardId)) {
-                if (isMounted) {
-                    setLoading(false)
-                    setCard(null)
+            async function loadCard() {
+                if (!Number.isFinite(resolvedCardId)) {
+                    if (isMounted) {
+                        setLoading(false)
+                        setCard(null)
+                    }
+                    return
                 }
-                return
+
+                if (isMounted) {
+                    setLoading(true)
+                }
+
+                try {
+                    const data = await getCard(resolvedCardId)
+                    if (isMounted) {
+                        setCard(data)
+                    }
+                } catch (error) {
+                    console.error("Erro ao carregar cartão", error)
+                    if (isMounted) {
+                        setCard(null)
+                    }
+                } finally {
+                    if (isMounted) {
+                        setLoading(false)
+                    }
+                }
             }
 
-            if (isMounted) {
-                setLoading(true)
+            loadCard()
+
+            return () => {
+                isMounted = false
             }
-
-            try {
-                const data = await getCard(resolvedCardId)
-                if (isMounted) {
-                    setCard(data)
-                }
-            } catch (error) {
-                console.error("Erro ao carregar cartão", error)
-                if (isMounted) {
-                    setCard(null)
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false)
-                }
-            }
-        }
-
-        loadCard()
-
-        return () => {
-            isMounted = false
-        }
-    }, [resolvedCardId])
-
-    useEffect(() => {
-        if (card) {
-            navigation.setOptions({ title: card.name })
-        }
-    }, [card, navigation])
+        }, [getCard, resolvedCardId])
+    )
 
     const headerHeight = useHeaderHeight()
 
-    const contentStyle = {
-        paddingTop: headerHeight + layout.margin.contentArea,
-        paddingHorizontal: layout.margin.contentArea,
-        paddingBottom: layout.margin.sectionGap * 2,
-        gap: layout.margin.sectionGap,
-    }
+    const handleEditCard = useCallback(() => {
+        if (!Number.isFinite(resolvedCardId)) {
+            return
+        }
+
+        router.push({
+            pathname: "/(credit)/editCreditCard",
+            params: { cardId: resolvedCardId.toString() },
+        })
+    }, [resolvedCardId, router])
+
+    useFocusEffect(
+        useCallback(() => {
+            if (!Number.isFinite(resolvedCardId)) {
+                navigation.setOptions({ headerRight: undefined })
+                return
+            }
+
+            navigation.setOptions({
+                headerRight: () => (
+                    <TouchableOpacity style={{ paddingLeft: 7 }} onPress={handleEditCard}>
+                        <AppIcon
+                            name={"square.and.pencil"}
+                            androidName={"edit"}
+                            size={22}
+                            tintColor={"rgba(255,255,255,0.9)"}
+                        />
+                    </TouchableOpacity>
+                ),
+            })
+
+            return () => {
+                navigation.setOptions({ headerRight: undefined })
+            }
+        }, [handleEditCard, navigation, resolvedCardId])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            if (card) {
+                navigation.setOptions({ title: card.name })
+            }
+        }, [card, navigation])
+    )
 
     if (loading) {
         return (
@@ -123,10 +159,10 @@ export default function CreditCardDetailsScreen() {
                     gap: 12,
                 }}
             >
-                <Text style={[FontStyles.title3, { color: theme.text.label }]}> 
+                <Text style={[FontStyles.title3, { color: theme.text.label }]}>
                     {t("credit.cardNotFound", { defaultValue: "Cartão não encontrado" })}
                 </Text>
-                <Text style={[FontStyles.body, { color: theme.text.secondaryLabel, textAlign: "center" }]}>
+                <Text style={[FontStyles.body, { color: theme.text.secondaryLabel, textAlign: "center" }]}> 
                     {t("credit.cardNotFoundDescription", {
                         defaultValue: "Não foi possível localizar as informações deste cartão.",
                     })}
@@ -165,7 +201,14 @@ export default function CreditCardDetailsScreen() {
     ]
 
     return (
-        <ScrollView contentContainerStyle={contentStyle}>
+        <ScrollView
+            contentContainerStyle={{
+                paddingTop: headerHeight + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: layout.margin.sectionGap * 2,
+                gap: layout.margin.sectionGap,
+            }}
+        >
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <CreditCardView color={card.color} name={card.name} />
             </View>
