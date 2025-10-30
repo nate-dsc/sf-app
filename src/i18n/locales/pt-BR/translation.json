@@ -472,9 +472,35 @@
             "duplicateLimit": "Já existe um cartão com este limite.",
             "generic": "Não foi possível salvar o cartão. Tente novamente."
         },
+        "installmentsSection": {
+            "title": "Parcelamentos",
+            "empty": "Nenhuma compra parcelada registrada para este cartão.",
+            "remaining": "Restam {{remaining}} de {{total}}",
+            "installmentValue": "{{amount}} por parcela",
+            "nextDue": "Próxima parcela em {{date}}",
+            "unnamed": "Compra parcelada"
+        },
         "help": {
             "title": "Cartões de crédito",
             "body": "Limite: valor máximo de compras não pagas feitas com o cartão de crédito. Se seu limite for insuficiente para uma compra, ela não será registrada.\n\nDia de fechamento: data a partir da qual as compras feitas no cartão só serão pagas na próxima fatura.\n\nDia de vencimento: dia em que a fatura deve ser paga. Nesse dia o valor estimado da fatura será automaticamente descontado do seu saldo!\n\nIgnorar fins de semana: move o dia de fechamento e vencimento para o próximo dia útil. Ainda permite que esses dias sejam feriados e não contabilizados pelo seu banco/operadora."
+        }
+    },
+    "installmentModal": {
+        "installmentValue": "Valor da parcela",
+        "installments": "Número de parcelas",
+        "description": "Descrição da compra",
+        "category": "Categoria",
+        "purchaseDay": "Dia da compra",
+        "selectCard": "Selecione um cartão de crédito",
+        "toastSuccess": "Compra parcelada salva com sucesso!",
+        "toastFailure": "Não foi possível salvar a compra parcelada.",
+        "validation": {
+            "valueRequired": "Informe o valor da parcela.",
+            "installmentsRequired": "Informe o número de parcelas.",
+            "descriptionRequired": "Informe uma descrição.",
+            "categoryRequired": "Selecione uma categoria.",
+            "purchaseDayRequired": "Selecione o dia da compra.",
+            "cardRequired": "Selecione um cartão."
         }
     }
 }

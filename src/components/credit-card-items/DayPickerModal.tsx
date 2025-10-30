@@ -9,9 +9,10 @@ type DayPickerModalProps = {
     selectedDay: number,
     onDayPress: (day: number) => void,
     onBackgroundPress: () => void,
+    availableDays?: number[],
 }
 
-export default function DayPickerModal({title, selectedDay, onDayPress, onBackgroundPress}: DayPickerModalProps) {
+export default function DayPickerModal({title, selectedDay, onDayPress, onBackgroundPress, availableDays}: DayPickerModalProps) {
 
     const {t} = useTranslation()
     const {theme} = useStyle()
@@ -65,8 +66,9 @@ export default function DayPickerModal({title, selectedDay, onDayPress, onBackgr
                 <SingleDayPicker
                     selectedDay={selectedDay}
                     onDayPress={handleDayPress}
+                    availableDays={availableDays}
                 />
-               
+
             </View>
             </TouchableWithoutFeedback>
         </Pressable>

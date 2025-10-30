@@ -3,19 +3,23 @@ import { Text, TouchableOpacity, View } from "react-native"
 
 type SingleDayPickerProps = {
     selectedDay: number,
-    onDayPress: (day: number) => void
+    onDayPress: (day: number) => void,
+    availableDays?: number[],
 }
 
-export default function SingleDayPicker({selectedDay, onDayPress}: SingleDayPickerProps) {
+export default function SingleDayPicker({selectedDay, onDayPress, availableDays}: SingleDayPickerProps) {
 
     const {theme, layout} = useStyle()
 
-    const days = Array.from({ length: 31 }, (_, i) => i + 1)
+    const days = (availableDays && availableDays.length > 0
+        ? [...availableDays]
+        : Array.from({ length: 31 }, (_, i) => i + 1)
+    ).sort((a, b) => a - b)
     const rows: number[][] = []
     for (let i = 0; i < days.length; i += 7) rows.push(days.slice(i, i + 7))
 
     return(
-        <View 
+        <View
             style={{
                 //backgroundColor: theme.fill.secondary,
                 //borderRadius: layout.radius.groupedView

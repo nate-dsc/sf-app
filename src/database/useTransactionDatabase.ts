@@ -1,9 +1,10 @@
 import { useStyle } from "@/context/StyleContext"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useBudgetStore } from "@/stores/useBudgetStore"
-import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CardStatementCycleSummary, CardStatementHistoryOptions, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction, UpdateCardInput } from "@/types/transaction"
+import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CardStatementCycleSummary, CardStatementHistoryOptions, CategoryDistributionFilters, InstallmentPurchaseInput, InstallmentSchedule, InstallmentScheduleWithStatus, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction, UpdateCardInput } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
+import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
 import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 import { deleteCardRecord, getCardStatementForDate as fetchCardStatementForDate, getCardStatementHistory as fetchCardStatementHistory, getCardsStatementForDate as fetchCardsStatementForDate, type RawCardStatementSummary, updateCardRecord } from "./cardRepository"
@@ -86,54 +87,65 @@ export function useTransactionDatabase() {
     }, [database])
 
     const createInstallmentPurchase = useCallback(async (data: InstallmentPurchaseInput) => {
-        const resolveFirstOccurrence = (purchaseDay: number) => {
-            const now = new Date()
-            now.setHours(0, 0, 0, 0)
-
-            const currentMonthDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-
-            if (purchaseDay <= currentMonthDays) {
-                return new Date(now.getFullYear(), now.getMonth(), purchaseDay, 0, 0, 0, 0)
-            }
-
-            let year = now.getFullYear()
-            let month = now.getMonth() - 1
-
-            while (true) {
-                if (month < 0) {
-                    month = 11
-                    year -= 1
-                }
-
-                const daysInMonth = new Date(year, month + 1, 0).getDate()
-
-                if (purchaseDay <= daysInMonth) {
-                    return new Date(year, month, purchaseDay, 0, 0, 0, 0)
-                }
-
-                month -= 1
-            }
-        }
-
         try {
-            await database.withTransactionAsync(async () => {
-                const firstOccurrence = resolveFirstOccurrence(data.purchaseDay)
-                const firstOccurrenceStr = firstOccurrence.toISOString().slice(0, 16)
+            const schedule = await database.withTransactionAsync(async () => {
+                const cardSnapshot = await database.getFirstAsync<{
+                    limit_value: number | null
+                    limit_used: number | null
+                    closing_day: number | null
+                    due_day: number | null
+                    ignore_weekends: number | null
+                }>(
+                    "SELECT \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
+                    [data.cardId],
+                )
+
+                if (!cardSnapshot) {
+                    throw new Error("CARD_NOT_FOUND")
+                }
+
+                const limitValue = Number(cardSnapshot.limit_value ?? 0)
+                const limitUsed = Number(cardSnapshot.limit_used ?? 0)
+                const normalizedInstallmentValue = Math.abs(data.installmentValue)
+                const totalValue = normalizedInstallmentValue * data.installmentsCount
+                const availableLimit = limitValue - limitUsed
+
+                if (totalValue > availableLimit) {
+                    throw new Error("INSUFFICIENT_CREDIT_LIMIT")
+                }
+
+                const firstPurchaseDate = computeInitialPurchaseDate(data.purchaseDay, cardSnapshot.closing_day ?? null)
+                const normalizedPurchaseDay = clampPurchaseDay(data.purchaseDay, cardSnapshot.closing_day)
+                const dueDay = typeof cardSnapshot.due_day === "number" ? cardSnapshot.due_day : normalizedPurchaseDay
+                const ignoreWeekends = Boolean(cardSnapshot.ignore_weekends)
+
+                const description = data.description.trim()
+                const baseSchedule = buildInstallmentSchedule({
+                    blueprintId: 0,
+                    cardId: data.cardId,
+                    description,
+                    categoryId: Number(data.category),
+                    installmentValue: normalizedInstallmentValue,
+                    installmentsCount: data.installmentsCount,
+                    purchaseDay: normalizedPurchaseDay,
+                    dueDay,
+                    ignoreWeekends,
+                    firstPurchaseDate,
+                })
 
                 const rrule = new RRule({
                     freq: RRule.MONTHLY,
+                    dtstart: firstPurchaseDate,
                     count: data.installmentsCount,
                 })
-
-                const description = data.description.trim()
 
                 await database.runAsync(
                     "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
-                        -Math.abs(data.installmentValue),
+                        -normalizedInstallmentValue,
                         description,
                         Number(data.category),
-                        firstOccurrenceStr,
+                        baseSchedule.occurrences[0]?.purchaseDate ?? formatDateTimeForSQLite(firstPurchaseDate),
                         rrule.toString(),
                         null,
                         data.cardId,
@@ -142,22 +154,97 @@ export function useTransactionDatabase() {
                         null,
                         "outflow",
                         null,
-                    ]
+                    ],
                 )
 
-                const totalValue = data.installmentValue * data.installmentsCount
+                const insertedIdRow = await database.getFirstAsync<{ id: number }>("SELECT last_insert_rowid() as id")
+                const blueprintId = insertedIdRow?.id ?? 0
 
                 await database.runAsync(
                     "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
-                    [totalValue, data.cardId]
+                    [totalValue, data.cardId],
                 )
+
+                return {
+                    ...baseSchedule,
+                    id: blueprintId,
+                }
             })
 
             console.log("Compra parcelada registrada com sucesso")
+            return schedule
         } catch (error) {
             console.error("Falha ao registrar compra parcelada", error)
             throw error
         }
+    }, [database])
+
+    const getCardInstallmentSchedules = useCallback(async (cardId: number): Promise<InstallmentScheduleWithStatus[]> => {
+        const blueprints = await database.getAllAsync<{
+            id: number
+            value: number
+            description: string
+            category: number
+            date_start: string
+            rrule: string
+            due_day: number | null
+            closing_day: number | null
+            ignore_weekends: number | null
+            category_name: string | null
+        }>(
+            `SELECT tr.id, tr.value, tr.description, tr.category, tr.date_start, tr.rrule, c.due_day, c.closing_day, c.ignore_weekends, cat.name as category_name
+             FROM transactions_recurring tr
+             JOIN cards c ON c.id = tr.card_id
+             LEFT JOIN categories cat ON cat.id = tr.category
+             WHERE tr.card_id = ? AND tr.is_installment = 1`,
+            [cardId],
+        )
+
+        if (blueprints.length === 0) {
+            return []
+        }
+
+        const schedules: InstallmentScheduleWithStatus[] = []
+
+        for (const blueprint of blueprints) {
+            const firstPurchaseDate = new Date(`${blueprint.date_start}:00Z`)
+            const options = RRule.parseString(blueprint.rrule)
+            options.dtstart = firstPurchaseDate
+            const rule = new RRule(options)
+            const installmentsCount = options.count ?? rule.all().length
+            const purchaseDay = clampPurchaseDay(firstPurchaseDate.getUTCDate(), blueprint.closing_day)
+            const dueDay = typeof blueprint.due_day === "number" ? blueprint.due_day : purchaseDay
+            const ignoreWeekends = Boolean(blueprint.ignore_weekends)
+
+            const baseSchedule: InstallmentSchedule = buildInstallmentSchedule({
+                blueprintId: blueprint.id,
+                cardId,
+                description: blueprint.description ?? "",
+                categoryId: Number(blueprint.category),
+                installmentValue: Math.abs(blueprint.value),
+                installmentsCount,
+                purchaseDay,
+                dueDay,
+                ignoreWeekends,
+                firstPurchaseDate,
+            })
+
+            const realizedRows = await database.getAllAsync<{ date: string }>(
+                "SELECT date FROM transactions WHERE id_recurring = ? AND card_id = ?",
+                [blueprint.id, cardId],
+            )
+
+            const realizedDates = new Set(realizedRows.map((row) => row.date))
+            const merged = mergeScheduleWithRealized({
+                schedule: baseSchedule,
+                realizedDates,
+                categoryName: blueprint.category_name ?? null,
+            })
+
+            schedules.push(merged)
+        }
+
+        return schedules
     }, [database])
 
     const createRecurringTransaction = useCallback(async (data: RecurringTransaction) => {
@@ -923,7 +1010,7 @@ export function useTransactionDatabase() {
                             break
                         }
 
-                        const dueDateStr = dueDate.toISOString().slice(0, 16)
+                        const dueDateStr = formatDateTimeForSQLite(dueDate)
 
                         await database.runAsync(
                             "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -1036,6 +1123,7 @@ export function useTransactionDatabase() {
         createTransactionWithCard,
         createRecurringTransactionWithCard,
         createInstallmentPurchase,
+        getCardInstallmentSchedules,
         createCard,
         getCards,
         getCard,
@@ -1062,6 +1150,7 @@ export function useTransactionDatabase() {
         createTransactionWithCard,
         createRecurringTransactionWithCard,
         createInstallmentPurchase,
+        getCardInstallmentSchedules,
         createCard,
         getCards,
         getCard,

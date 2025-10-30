@@ -99,6 +99,32 @@ export type InstallmentPurchaseInput = {
     cardId: number,
 }
 
+export type InstallmentOccurrence = {
+    sequence: number
+    purchaseDate: string
+    dueDate: string
+    amount: number
+}
+
+export type InstallmentSchedule = {
+    id: number
+    cardId: number
+    description: string
+    categoryId: number
+    installmentValue: number
+    installmentsCount: number
+    purchaseDay: number
+    occurrences: InstallmentOccurrence[]
+}
+
+export type InstallmentScheduleWithStatus = InstallmentSchedule & {
+    categoryName: string | null
+    realizedCount: number
+    remainingCount: number
+    nextDueDate: string | null
+    occurrences: (InstallmentOccurrence & { status: "posted" | "pending" })[]
+}
+
 export type TransactionTypeFilter = "inflow" | "outflow" | "all"
 
 export type FilterSortBy = "date" | "value"

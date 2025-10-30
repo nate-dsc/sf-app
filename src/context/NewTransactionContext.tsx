@@ -2,10 +2,16 @@ import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction, Transaction } from "@/types/transaction"
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { type RecurringCreditWarning } from "@/stores/useCreditNotificationStore"
+import {
+    InstallmentFormValues,
+    validateInstallmentForm,
+} from "@/utils/installments"
+import { showToast } from "@/utils/toast"
 
-type NewTransaction = {
+export type NewTransaction = {
     flowType?: "inflow" | "outflow",
     value?: number,
     description?: string,
@@ -67,6 +73,7 @@ export class InsufficientCreditLimitError extends Error {
 
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
+    const { t } = useTranslation()
 
     const {
         createTransaction,
@@ -105,35 +112,20 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         return true
     }, [newTransaction]);
 
-    const isInstallmentValid = useMemo(() => {
-        const { value, description, category, installmentsCount, purchaseDay, cardId } = newTransaction
-
-        if (!(value && value > 0)) {
-            return false
+    const installmentValidation = useMemo(() => {
+        const values: InstallmentFormValues = {
+            installmentValue: newTransaction.value,
+            description: newTransaction.description,
+            categoryId: newTransaction.category?.id ?? null,
+            installmentsCount: newTransaction.installmentsCount,
+            purchaseDay: newTransaction.purchaseDay,
+            cardId: newTransaction.cardId,
         }
 
-        if (!(installmentsCount && installmentsCount > 0)) {
-            return false
-        }
+        return validateInstallmentForm(values)
+    }, [newTransaction.cardId, newTransaction.category?.id, newTransaction.description, newTransaction.installmentsCount, newTransaction.purchaseDay, newTransaction.value])
 
-        if (!description || description.trim().length === 0) {
-            return false
-        }
-
-        if (!category?.id) {
-            return false
-        }
-
-        if (!(purchaseDay && purchaseDay >= 1 && purchaseDay <= 31)) {
-            return false
-        }
-
-        if (!cardId) {
-            return false
-        }
-
-        return true
-    }, [newTransaction])
+    const isInstallmentValid = installmentValidation.isValid
 
     const getTransactionForDB = (): Transaction => {
         if (!isValid) {
@@ -247,30 +239,25 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }
 
     const saveInstallmentPurchase = async () => {
-        if (!isInstallmentValid) {
-            throw new Error("Tentativa de criar compra parcelada com dados inválidos.")
-        }
-
         const { value, description, category, installmentsCount, purchaseDay, cardId } = newTransaction
 
-        if (!cardId || !value || !installmentsCount || !purchaseDay || !category?.id) {
+        const validationValues: InstallmentFormValues = {
+            installmentValue: value,
+            description,
+            categoryId: category?.id ?? null,
+            installmentsCount,
+            purchaseDay,
+            cardId,
+        }
+
+        const validation = validateInstallmentForm(validationValues)
+
+        if (!validation.isValid || !cardId || !value || !installmentsCount || !purchaseDay || !category?.id) {
+            showToast(t("installmentModal.toastFailure", { defaultValue: "Não foi possível salvar a compra parcelada." }), "error")
             throw new Error("Tentativa de criar compra parcelada com dados inválidos.")
         }
 
         try {
-            const card = await getCard(cardId)
-
-            if (!card) {
-                throw new Error("CARD_NOT_FOUND")
-            }
-
-            const totalValue = value * installmentsCount
-            const availableLimit = card.limit - card.limitUsed
-
-            if (totalValue > availableLimit) {
-                throw new Error("INSUFFICIENT_CREDIT_LIMIT")
-            }
-
             await createInstallmentPurchase({
                 description: description?.trim() ?? "",
                 category: category.id,
@@ -283,8 +270,10 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             await loadSummaryData({ getSummaryFromDB })
             triggerRefresh()
             setNewTransaction({})
+            showToast(t("installmentModal.toastSuccess", { defaultValue: "Compra parcelada salva com sucesso!" }), "success")
         } catch (error) {
             console.error("Erro ao salvar compra parcelada:", error)
+            showToast(t("installmentModal.toastFailure", { defaultValue: "Não foi possível salvar a compra parcelada." }), "error")
             throw error
         }
     }
