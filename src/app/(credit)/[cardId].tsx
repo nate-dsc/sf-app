@@ -4,7 +4,7 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { CCard } from "@/types/transaction"
+import { CCard, InstallmentScheduleWithStatus } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useLocalSearchParams, useFocusEffect, useRouter } from "expo-router"
 import { useCallback, useMemo, useState } from "react"
@@ -21,11 +21,11 @@ function formatCurrency(value: number) {
 
 export default function CreditCardDetailsScreen() {
     const { theme, layout } = useStyle()
-    const { t } = useTranslation()
+    const { t, i18n } = useTranslation()
     const navigation = useNavigation()
     const router = useRouter()
     const { cardId } = useLocalSearchParams<{ cardId?: string | string[] }>()
-    const { getCard } = useTransactionDatabase()
+    const { getCard, getCardInstallmentSchedules } = useTransactionDatabase()
     const { warning: recurringCreditWarning, clearNotification: clearRecurringNotification } = useRecurringCreditLimitNotification()
 
     const resolvedCardId = useMemo(() => {
@@ -41,6 +41,8 @@ export default function CreditCardDetailsScreen() {
 
     const [card, setCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
+    const [schedulesLoading, setSchedulesLoading] = useState(true)
+    const [installmentSchedules, setInstallmentSchedules] = useState<InstallmentScheduleWithStatus[]>([])
 
     useFocusEffect(
         useCallback(() => {
@@ -82,6 +84,48 @@ export default function CreditCardDetailsScreen() {
                 isMounted = false
             }
         }, [getCard, resolvedCardId])
+    )
+
+    useFocusEffect(
+        useCallback(() => {
+            let isMounted = true
+
+            async function loadSchedules() {
+                if (!Number.isFinite(resolvedCardId)) {
+                    if (isMounted) {
+                        setInstallmentSchedules([])
+                        setSchedulesLoading(false)
+                    }
+                    return
+                }
+
+                if (isMounted) {
+                    setSchedulesLoading(true)
+                }
+
+                try {
+                    const data = await getCardInstallmentSchedules(resolvedCardId)
+                    if (isMounted) {
+                        setInstallmentSchedules(data)
+                    }
+                } catch (error) {
+                    console.error("Erro ao carregar compras parceladas", error)
+                    if (isMounted) {
+                        setInstallmentSchedules([])
+                    }
+                } finally {
+                    if (isMounted) {
+                        setSchedulesLoading(false)
+                    }
+                }
+            }
+
+            loadSchedules()
+
+            return () => {
+                isMounted = false
+            }
+        }, [getCardInstallmentSchedules, resolvedCardId])
     )
 
     const headerHeight = useHeaderHeight()
@@ -267,6 +311,83 @@ export default function CreditCardDetailsScreen() {
                         <Text style={[FontStyles.title3, { color: theme.text.label }]}>{row.value}</Text>
                     </View>
                 ))}
+            </View>
+
+            <View
+                style={{
+                    backgroundColor: theme.background.group.secondaryBg,
+                    borderRadius: layout.radius.groupedView,
+                    paddingVertical: layout.spacing.lg,
+                    paddingHorizontal: layout.spacing.lg,
+                    gap: layout.spacing.md,
+                }}
+            >
+                <Text style={[FontStyles.subhead, { color: theme.text.secondaryLabel }]}>
+                    {t("credit.installmentsSection.title", { defaultValue: "Parcelamentos" })}
+                </Text>
+
+                {schedulesLoading ? (
+                    <View style={{ paddingVertical: layout.spacing.md }}>
+                        <ActivityIndicator color={theme.text.secondaryLabel} />
+                    </View>
+                ) : installmentSchedules.length === 0 ? (
+                    <Text style={{ color: theme.text.secondaryLabel }}>
+                        {t("credit.installmentsSection.empty", { defaultValue: "Nenhuma compra parcelada registrada para este cartão." })}
+                    </Text>
+                ) : (
+                    installmentSchedules.map((schedule) => {
+                        const nextDueLabel = schedule.nextDueDate
+                            ? new Intl.DateTimeFormat(i18n.language ?? "pt-BR", {
+                                  day: "2-digit",
+                                  month: "short",
+                              }).format(new Date(`${schedule.nextDueDate}:00Z`))
+                            : null
+
+                        const remainingLabel = t("credit.installmentsSection.remaining", {
+                            defaultValue: "Restam {{remaining}} de {{total}}",
+                            remaining: schedule.remainingCount,
+                            total: schedule.installmentsCount,
+                        })
+
+                        const formattedInstallment = new Intl.NumberFormat(i18n.language ?? "pt-BR", {
+                            style: "currency",
+                            currency: i18n.language === "pt-BR" ? "BRL" : "USD",
+                        }).format(schedule.installmentValue / 100)
+
+                        return (
+                            <View
+                                key={schedule.id}
+                                style={{
+                                    paddingVertical: layout.spacing.sm,
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: theme.background.tertiaryBg,
+                                    gap: 4,
+                                }}
+                            >
+                                <Text style={[FontStyles.body, { color: theme.text.label, fontWeight: "600" }]}> 
+                                    {schedule.description || t("credit.installmentsSection.unnamed", { defaultValue: "Compra parcelada" })}
+                                </Text>
+                                <Text style={{ color: theme.text.secondaryLabel, fontSize: 13 }}>
+                                    {remainingLabel}
+                                </Text>
+                                <Text style={{ color: theme.text.secondaryLabel, fontSize: 13 }}>
+                                    {t("credit.installmentsSection.installmentValue", {
+                                        defaultValue: "{{amount}} por parcela",
+                                        amount: formattedInstallment,
+                                    })}
+                                </Text>
+                                {nextDueLabel ? (
+                                    <Text style={{ color: theme.text.secondaryLabel, fontSize: 13 }}>
+                                        {t("credit.installmentsSection.nextDue", {
+                                            defaultValue: "Próxima parcela em {{date}}",
+                                            date: nextDueLabel,
+                                        })}
+                                    </Text>
+                                ) : null}
+                            </View>
+                        )
+                    })
+                )}
             </View>
         </ScrollView>
     )
