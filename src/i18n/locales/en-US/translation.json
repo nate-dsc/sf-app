@@ -433,6 +433,9 @@
         "closingDay": "Closing day",
         "dueDay": "Due day",
         "ignoreWeekends": "Ignore weekends",
+        "cardDetails": {
+            "unnamed": "Card"
+        },
         "red": "Red",
         "orange": "Orange",
         "mint": "Mint",
@@ -452,6 +455,53 @@
             "duplicateName": "A card with this name already exists.",
             "duplicateLimit": "A card with this limit already exists.",
             "generic": "We couldn't save the card. Try again."
+        },
+        "installmentsSection": {
+            "title": "Installments",
+            "empty": "No installment purchases recorded for this card.",
+            "remaining": "{{remaining}} of {{total}} remaining",
+            "installmentValue": "{{amount}} per installment",
+            "nextDue": "Next installment on {{date}}",
+            "unnamed": "Installment purchase"
+        },
+        "statement": {
+            "currentTitle": "Current statement",
+            "status": {
+                "open": "Open statement",
+                "closed": "Closed statement",
+                "overdue": "Overdue statement"
+            },
+            "period": "Period: {{start}} to {{end}}",
+            "due": "Due on {{date}}",
+            "transactionsCount": "{{count}} purchases",
+            "projectedTotal": "Projected total",
+            "projectedRecurringTotal": "Projected recurring",
+            "projectedInstallmentTotal": "Projected installments",
+            "realizedTotal": "Posted purchases",
+            "unavailable": "We couldn't load this statement summary.",
+            "viewPurchases": "View purchases",
+            "viewPurchasesDescription": "See every purchase recorded for this card."
+        },
+        "history": {
+            "title": "Statement history",
+            "loading": "Loading statements",
+            "empty": "No previous statements found.",
+            "collapsedSummary": "{{count}} previous statements",
+            "transactionsCount": "{{count}} purchases"
+        },
+        "purchases": {
+            "title": "Purchases",
+            "titleWithName": "Purchases from {{name}}",
+            "heading": "Card purchases",
+            "description": "Filter and review every recorded purchase.",
+            "filters": {
+                "all": "All",
+                "installments": "Installments",
+                "recurring": "Recurring",
+                "single": "Single"
+            },
+            "invalidCard": "We couldn't load the purchases.",
+            "invalidCardDescription": "Check the selected card and try again."
         },
         "help": {
             "title": "Credit cards",

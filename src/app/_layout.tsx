@@ -254,6 +254,18 @@ function RootLayoutNav() {
                                 },
                             }}
                         />
+                        <Stack.Screen
+                            name="(credit)/cardPurchases"
+                            options={{
+                                headerBackButtonDisplayMode: "minimal",
+                                title: t("credit.purchases.title", { defaultValue: "Compras" }),
+                                headerTitleStyle: { color: theme.text.label },
+                                presentation: "formSheet",
+                                contentStyle: {
+                                    backgroundColor: theme.background.group.secondaryBg,
+                                },
+                            }}
+                        />
                         {/* Modais de nova transação*/}
                         <Stack.Screen
                             name="modalAdd"

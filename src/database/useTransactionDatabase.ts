@@ -774,6 +774,23 @@ export function useTransactionDatabase() {
             }
         }
 
+        if (filterOptions.cardId !== undefined) {
+            whereClauses.push("card_id = ?")
+            params.push(filterOptions.cardId)
+        }
+
+        if (filterOptions.cardChargeType === "installments") {
+            whereClauses.push(
+                "id_recurring IN (SELECT id FROM transactions_recurring WHERE is_installment = 1)"
+            )
+        } else if (filterOptions.cardChargeType === "recurring") {
+            whereClauses.push(
+                "id_recurring IN (SELECT id FROM transactions_recurring WHERE is_installment = 0)"
+            )
+        } else if (filterOptions.cardChargeType === "single") {
+            whereClauses.push("id_recurring IS NULL")
+        }
+
         if (filterOptions.dateFilterActive && filterOptions.initialDate && filterOptions.finalDate) {
             whereClauses.push("date BETWEEN ? AND ?");
             params.push(

@@ -452,6 +452,9 @@
         "closingDay": "Fechamento",
         "dueDay": "Vencimento",
         "ignoreWeekends": "Ignorar fins de semana",
+        "cardDetails": {
+            "unnamed": "Cartão"
+        },
         "red": "Vermelho",
         "orange": "Laranja",
         "mint": "Menta",
@@ -479,6 +482,45 @@
             "installmentValue": "{{amount}} por parcela",
             "nextDue": "Próxima parcela em {{date}}",
             "unnamed": "Compra parcelada"
+        },
+        "statement": {
+            "currentTitle": "Fatura atual",
+            "status": {
+                "open": "Fatura em aberto",
+                "closed": "Fatura fechada",
+                "overdue": "Fatura vencida"
+            },
+            "period": "Período: {{start}} a {{end}}",
+            "due": "Vence em {{date}}",
+            "transactionsCount": "{{count}} compras",
+            "projectedTotal": "Total projetado",
+            "projectedRecurringTotal": "Recorrentes previstas",
+            "projectedInstallmentTotal": "Parcelas previstas",
+            "realizedTotal": "Compras lançadas",
+            "unavailable": "Não foi possível carregar o resumo desta fatura.",
+            "viewPurchases": "Ver compras",
+            "viewPurchasesDescription": "Veja todas as compras registradas para este cartão."
+        },
+        "history": {
+            "title": "Histórico de faturas",
+            "loading": "Carregando extratos",
+            "empty": "Nenhum extrato anterior encontrado.",
+            "collapsedSummary": "{{count}} faturas anteriores",
+            "transactionsCount": "{{count}} compras"
+        },
+        "purchases": {
+            "title": "Compras",
+            "titleWithName": "Compras de {{name}}",
+            "heading": "Compras do cartão",
+            "description": "Filtre e veja todas as compras registradas.",
+            "filters": {
+                "all": "Todas",
+                "installments": "Parceladas",
+                "recurring": "Recorrentes",
+                "single": "Avulsas"
+            },
+            "invalidCard": "Não foi possível carregar as compras.",
+            "invalidCardDescription": "Verifique o cartão selecionado e tente novamente."
         },
         "help": {
             "title": "Cartões de crédito",

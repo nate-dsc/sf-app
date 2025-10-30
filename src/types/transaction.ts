@@ -131,6 +131,8 @@ export type FilterSortBy = "date" | "value"
 
 export type FilterOrderBy = "asc" | "desc"
 
+export type CardPurchaseTypeFilter = "all" | "installments" | "recurring" | "single"
+
 export type SearchFilters = {
     textSearch?: string,
     category?: number[],
@@ -141,7 +143,9 @@ export type SearchFilters = {
     finalDate?: Date,
     sortBy?: FilterSortBy,
     orderBy?: FilterOrderBy,
-    type?: TransactionTypeFilter
+    type?: TransactionTypeFilter,
+    cardId?: number,
+    cardChargeType?: Exclude<CardPurchaseTypeFilter, "all">
 }
 
 export type BudgetPeriod = "weekly" | "biweekly" | "monthly"
