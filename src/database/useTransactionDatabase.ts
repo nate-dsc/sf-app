@@ -1,10 +1,11 @@
 import { useStyle } from "@/context/StyleContext"
 import { useBudgetStore } from "@/stores/useBudgetStore"
-import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction } from "@/types/transaction"
+import { BudgetMonthlyPerformance, BudgetPeriod, CCard, CardStatementCycleSummary, CardStatementHistoryOptions, CategoryDistributionFilters, InstallmentPurchaseInput, MonthlyCategoryAggregate, NewCard, RecurringTransaction, SearchFilters, Summary, Transaction, UpdateCardInput } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 import { localToUTC } from "@/utils/DateUtils"
 import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
+import { deleteCardRecord, getCardStatementForDate as fetchCardStatementForDate, getCardStatementHistory as fetchCardStatementHistory, getCardsStatementForDate as fetchCardsStatementForDate, type RawCardStatementSummary, updateCardRecord } from "./cardRepository"
 import { useDatabase } from "./useDatabase"
 
 
@@ -219,9 +220,17 @@ export function useTransactionDatabase() {
     }, [database])
 
     const createCard = useCallback(async (data: NewCard) => {
-        const statement = "INSERT INTO cards (name, color, card_limit, limit_used, closing_day, due_day, ign_wknd) VALUES (?,?,?,?,?,?,?)"
+        const statement = "INSERT INTO cards (name, color, \"limit\", limit_used, closing_day, due_day, ignore_weekends) VALUES (?,?,?,?,?,?,?)"
 
-        const params = [data.name, data.color, data.limit, 0, data.closingDay, data.dueDay, data.ignoreWeekends]
+        const params = [
+            data.name,
+            data.color,
+            data.limit,
+            0,
+            data.closingDay,
+            data.dueDay,
+            data.ignoreWeekends ? 1 : 0,
+        ]
 
         try {
             await database.runAsync(statement, params)
@@ -236,23 +245,23 @@ export function useTransactionDatabase() {
             const cards = await database.getAllAsync<{
                 id: number
                 name: string
-                color: number
-                card_limit: number
-                limit_used: number
-                closing_day: number
-                due_day: number
-                ign_wknd: number
-            }>("SELECT * FROM cards")
+                color: number | null
+                limit_value: number | null
+                limit_used: number | null
+                closing_day: number | null
+                due_day: number | null
+                ignore_weekends: number | null
+            }>("SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards")
 
             return cards.map((card) => ({
                 id: card.id,
                 name: card.name,
-                limit: card.card_limit,
-                limitUsed: card.limit_used,
-                color: getColorFromID(card.color, theme),
-                closingDay: card.closing_day,
-                dueDay: card.due_day,
-                ignoreWeekends: !!card.ign_wknd
+                limit: Number(card.limit_value ?? 0),
+                limitUsed: Number(card.limit_used ?? 0),
+                color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
+                closingDay: card.closing_day ?? 1,
+                dueDay: card.due_day ?? 1,
+                ignoreWeekends: !!(card.ignore_weekends ?? 0)
             }))
         } catch (error) {
             console.error("Could not fetch cards", error)
@@ -265,13 +274,13 @@ export function useTransactionDatabase() {
             const card = await database.getFirstAsync<{
                 id: number
                 name: string
-                color: number
-                card_limit: number
-                limit_used: number
-                closing_day: number
-                due_day: number
-                ign_wknd: number
-            }>("SELECT * FROM cards WHERE id = ?", [cardId])
+                color: number | null
+                limit_value: number | null
+                limit_used: number | null
+                closing_day: number | null
+                due_day: number | null
+                ignore_weekends: number | null
+            }>("SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?", [cardId])
 
             if (!card) {
                 return null
@@ -280,12 +289,12 @@ export function useTransactionDatabase() {
             return {
                 id: card.id,
                 name: card.name,
-                limit: card.card_limit,
-                limitUsed: card.limit_used,
-                color: getColorFromID(card.color, theme),
-                closingDay: card.closing_day,
-                dueDay: card.due_day,
-                ignoreWeekends: !!card.ign_wknd,
+                limit: Number(card.limit_value ?? 0),
+                limitUsed: Number(card.limit_used ?? 0),
+                color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
+                closingDay: card.closing_day ?? 1,
+                dueDay: card.due_day ?? 1,
+                ignoreWeekends: !!(card.ignore_weekends ?? 0),
             }
         } catch (error) {
             console.error("Could not fetch card", error)
@@ -325,14 +334,71 @@ export function useTransactionDatabase() {
         }
     }, [database])
 
-    async function deleteCard(id: number) {
+    const updateCard = useCallback(async (cardId: number, updates: UpdateCardInput) => {
         try {
-            await database.runAsync("DELETE FROM cards WHERE id = ?", [id])
+            await updateCardRecord(database, cardId, updates)
+        } catch (error) {
+            console.error("Could not update card", error)
+            throw error
+        }
+    }, [database])
+
+    const deleteCard = useCallback(async (id: number) => {
+        try {
+            await deleteCardRecord(database, id)
         } catch (error) {
             console.error("Could not delete card", error)
             throw error
         }
-    }
+    }, [database])
+
+    const mapCardStatement = useCallback((raw: RawCardStatementSummary): CardStatementCycleSummary => {
+        const resolvedColorId = typeof raw.colorId === "number" ? raw.colorId : 7
+
+        return {
+            cardId: raw.cardId,
+            cardName: raw.cardName,
+            color: getColorFromID(resolvedColorId, theme),
+            colorId: raw.colorId ?? null,
+            closingDay: raw.closingDay,
+            dueDay: raw.dueDay,
+            cycleStart: raw.cycleStart,
+            cycleEnd: raw.cycleEnd,
+            dueDate: raw.dueDate,
+            referenceMonth: raw.referenceMonth,
+            limit: raw.limit,
+            limitUsed: raw.limitUsed,
+            availableCredit: raw.availableCredit,
+            realizedTotal: raw.realizedTotal,
+            projectedRecurringTotal: raw.projectedRecurringTotal,
+            projectedInstallmentTotal: raw.projectedInstallmentTotal,
+            projectedTotal: raw.projectedTotal,
+            transactionsCount: raw.transactionsCount,
+        }
+    }, [theme])
+
+    const getCardStatementForDate = useCallback(async (
+        cardId: number,
+        referenceDate?: Date,
+    ): Promise<CardStatementCycleSummary | null> => {
+        const raw = await fetchCardStatementForDate(database, cardId, referenceDate ?? new Date())
+        return raw ? mapCardStatement(raw) : null
+    }, [database, mapCardStatement])
+
+    const getCardStatementHistory = useCallback(async (
+        cardId: number,
+        options: CardStatementHistoryOptions = {},
+    ): Promise<CardStatementCycleSummary[]> => {
+        const rawHistory = await fetchCardStatementHistory(database, cardId, options)
+        return rawHistory.map(mapCardStatement)
+    }, [database, mapCardStatement])
+
+    const getCardsStatementSummaries = useCallback(async (
+        referenceDate?: Date,
+    ): Promise<CardStatementCycleSummary[]> => {
+        const rawSummaries = await fetchCardsStatementForDate(database, referenceDate ?? new Date())
+        return rawSummaries.map(mapCardStatement)
+    }, [database, mapCardStatement])
 
     const getTransactionsFromMonth = useCallback(async (YMString: string, orderBy: "day" | "id") => {
         const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
@@ -926,9 +992,14 @@ export function useTransactionDatabase() {
         createCard,
         getCards,
         getCard,
+        updateCard,
+        deleteCard,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,
+        getCardStatementForDate,
+        getCardStatementHistory,
+        getCardsStatementSummaries,
         getTransactionsFromMonth,
         getSummaryFromDB,
         getMonthlyCategoryDistribution,
@@ -947,9 +1018,14 @@ export function useTransactionDatabase() {
         createCard,
         getCards,
         getCard,
+        updateCard,
+        deleteCard,
         deleteTransaction,
         deleteRecurringTransaction,
         deleteRecurringTransactionCascade,
+        getCardStatementForDate,
+        getCardStatementHistory,
+        getCardsStatementSummaries,
         getTransactionsFromMonth,
         getSummaryFromDB,
         getMonthlyCategoryDistribution,
