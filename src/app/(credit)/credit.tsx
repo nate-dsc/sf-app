@@ -7,15 +7,25 @@ import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import { useFocusEffect, useRouter } from "expo-router"
-import { useCallback, useState } from "react"
+import { useRouter, useNavigation } from "expo-router"
+import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
+
+function formatCurrency(value: number) {
+    return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+        maximumFractionDigits: 2,
+    }).format(value)
+}
 
 export default function CreditScreen() {
     const router = useRouter()
+    const navigation = useNavigation()
     const { theme, layout } = useStyle()
     const { t } = useTranslation()
+    const headerHeight = useHeaderHeight()
 
     const { getCards } = useTransactionDatabase()
     const [cards, setCards] = useState<CCard[]>([])
@@ -35,31 +45,32 @@ export default function CreditScreen() {
         }
     }, [getCards])
 
-    useFocusEffect(
-        useCallback(() => {
-            loadCards()
-        }, [loadCards])
-    )
+    useEffect(() => {
+        loadCards()
+    }, [loadCards])
 
-    useFocusEffect(
-        useCallback(() => {
-            if (cards.length === 0) {
-                setSelectedCard(null)
-                return
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", loadCards)
+        return unsubscribe
+    }, [navigation, loadCards])
+
+    useEffect(() => {
+        if (cards.length === 0) {
+            setSelectedCard(null)
+            return
+        }
+
+        setSelectedCard((previous) => {
+            if (previous) {
+                const updated = cards.find((card) => card.id === previous.id)
+                if (updated) {
+                    return updated
+                }
             }
 
-            setSelectedCard((previous) => {
-                if (previous) {
-                    const updated = cards.find((card) => card.id === previous.id)
-                    if (updated) {
-                        return updated
-                    }
-                }
-
-                return cards[0]
-            })
-        }, [cards])
-    )
+            return cards[0]
+        })
+    }, [cards])
 
     const handleNavigateToCard = (card: CCard) => {
         setSelectedCard(card)
@@ -80,10 +91,28 @@ export default function CreditScreen() {
     const warningAmount = showRecurringWarning ? recurringCreditWarning.attemptedAmount / 100 : 0
     const warningAvailable = showRecurringWarning ? recurringCreditWarning.availableLimit / 100 : 0
 
+    if (loading) {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: theme.background.bg,
+                }}
+            >
+                <ActivityIndicator color={theme.colors.blue} size="large" />
+                <Text style={[FontStyles.body, { marginTop: 12, color: theme.text.secondaryLabel }]}> 
+                    {t("credit.loadingCards", { defaultValue: "Carregando cartões..." })}
+                </Text>
+            </View>
+        )
+    }
+
     return (
         <ScrollView
             contentContainerStyle={{
-                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingTop: headerHeight + layout.margin.contentArea,
                 paddingHorizontal: layout.margin.contentArea,
                 paddingBottom: 120,
                 gap: layout.margin.sectionGap,
