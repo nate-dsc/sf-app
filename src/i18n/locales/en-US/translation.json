@@ -263,8 +263,28 @@
         "category": "Category",
         "select": "Select",
         "recurring": "Recurring",
+        "useCredit": "Use credit card",
+        "loadingCards": "Loading cards...",
+        "noCardsAvailable": "No cards available",
+        "noCardsAvailableTitle": "No cards available",
+        "noCardsAvailableMessage": "Add a card to use this option.",
+        "availableLimit": "Available limit: {{value}}",
+        "creditLimitErrorTitle": "Insufficient limit",
+        "creditLimitErrorMessage": "The selected card doesn't have enough available limit for this purchase.",
+        "cardNotFoundTitle": "Card not found",
+        "cardNotFoundMessage": "We couldn't find the selected card. Try again.",
+        "creditLimitInlineError": "Insufficient limit. Available: {{value}}.",
+        "cardNotFoundInline": "We couldn't find the selected card.",
         "Yes": "Yes",
         "No": "No"
+    },
+    "notifications": {
+        "recurringCreditSkipped": {
+            "title": "Card charge skipped",
+            "description": "We couldn't post {{amount}} to card {{card}}. Available limit: {{available}}.",
+            "dismiss": "Got it",
+            "unknownCard": "selected card"
+        }
     },
     "RRULEtoText": {
         "EverySingular": "Every ",

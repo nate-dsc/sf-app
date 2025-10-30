@@ -2,6 +2,7 @@ import { AppIcon } from "@/components/AppIcon"
 import CreditCardCarousel from "@/components/credit-card-items/CreditCardCarousel"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/transaction"
@@ -9,7 +10,7 @@ import { useHeaderHeight } from "@react-navigation/elements"
 import { useFocusEffect, useRouter } from "expo-router"
 import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView, Text, View } from "react-native"
+import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 
 export default function CreditScreen() {
     const router = useRouter()
@@ -20,6 +21,7 @@ export default function CreditScreen() {
     const [cards, setCards] = useState<CCard[]>([])
     const [selectedCard, setSelectedCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
+    const { warning: recurringCreditWarning, clearNotification: clearRecurringNotification } = useRecurringCreditLimitNotification()
 
     const loadCards = useCallback(async () => {
         try {
@@ -74,6 +76,10 @@ export default function CreditScreen() {
         })
     }, [router])
 
+    const showRecurringWarning = recurringCreditWarning?.reason === "INSUFFICIENT_CREDIT_LIMIT"
+    const warningAmount = showRecurringWarning ? recurringCreditWarning.attemptedAmount / 100 : 0
+    const warningAvailable = showRecurringWarning ? recurringCreditWarning.availableLimit / 100 : 0
+
     return (
         <ScrollView
             contentContainerStyle={{
@@ -93,6 +99,40 @@ export default function CreditScreen() {
                     Recorrentes
                 </Text>
             </View>
+            {showRecurringWarning ? (
+                <View
+                    style={{
+                        marginHorizontal: layout.margin.contentArea,
+                        padding: 16,
+                        borderRadius: layout.radius.groupedView,
+                        backgroundColor: theme.background.group.secondaryBg,
+                        borderWidth: 1,
+                        borderColor: theme.colors.red,
+                        gap: 8,
+                    }}
+                >
+                    <Text style={{ color: theme.colors.red, fontSize: 15, fontWeight: "600" }}>
+                        {t("notifications.recurringCreditSkipped.title", { defaultValue: "Cobrança não lançada" })}
+                    </Text>
+                    <Text style={{ color: theme.text.label, fontSize: 13, lineHeight: 18 }}>
+                        {t("notifications.recurringCreditSkipped.description", {
+                            defaultValue: "Não foi possível lançar {{amount}} no cartão {{card}}. Limite disponível: {{available}}.",
+                            amount: formatCurrency(warningAmount),
+                            available: formatCurrency(warningAvailable),
+                            card: recurringCreditWarning?.cardName ?? t("notifications.recurringCreditSkipped.unknownCard", { defaultValue: "selecionado" }),
+                        })}
+                    </Text>
+                    <TouchableOpacity
+                        accessibilityRole="button"
+                        onPress={clearRecurringNotification}
+                        style={{ alignSelf: "flex-start" }}
+                    >
+                        <Text style={{ color: theme.colors.red, fontSize: 13, fontWeight: "600" }}>
+                            {t("notifications.recurringCreditSkipped.dismiss", { defaultValue: "Entendi" })}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            ) : null}
             <View
                 style={{
                     flexDirection: "row",

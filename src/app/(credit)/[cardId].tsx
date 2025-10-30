@@ -2,6 +2,7 @@ import { AppIcon } from "@/components/AppIcon"
 import CreditCardView from "@/components/credit-card-items/CreditCardView"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -25,6 +26,7 @@ export default function CreditCardDetailsScreen() {
     const router = useRouter()
     const { cardId } = useLocalSearchParams<{ cardId?: string | string[] }>()
     const { getCard } = useTransactionDatabase()
+    const { warning: recurringCreditWarning, clearNotification: clearRecurringNotification } = useRecurringCreditLimitNotification()
 
     const resolvedCardId = useMemo(() => {
         if (!cardId) {
@@ -172,6 +174,9 @@ export default function CreditCardDetailsScreen() {
     }
 
     const availableLimit = card.limit - card.limitUsed
+    const showRecurringWarning = recurringCreditWarning?.reason === "INSUFFICIENT_CREDIT_LIMIT" && recurringCreditWarning.cardId === card.id
+    const warningAmount = showRecurringWarning ? recurringCreditWarning.attemptedAmount / 100 : 0
+    const warningAvailable = showRecurringWarning ? recurringCreditWarning.availableLimit / 100 : 0
 
     const infoRows = [
         {
@@ -212,6 +217,40 @@ export default function CreditCardDetailsScreen() {
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <CreditCardView color={card.color} name={card.name} />
             </View>
+
+            {showRecurringWarning ? (
+                <View
+                    style={{
+                        backgroundColor: theme.background.group.secondaryBg,
+                        borderRadius: layout.radius.groupedView,
+                        borderWidth: 1,
+                        borderColor: theme.colors.red,
+                        padding: layout.spacing.lg,
+                        gap: 8,
+                    }}
+                >
+                    <Text style={{ color: theme.colors.red, fontSize: 15, fontWeight: "600" }}>
+                        {t("notifications.recurringCreditSkipped.title", { defaultValue: "Cobrança não lançada" })}
+                    </Text>
+                    <Text style={{ color: theme.text.label, fontSize: 13, lineHeight: 18 }}>
+                        {t("notifications.recurringCreditSkipped.description", {
+                            defaultValue: "Não foi possível lançar {{amount}} no cartão {{card}}. Limite disponível: {{available}}.",
+                            amount: formatCurrency(warningAmount),
+                            available: formatCurrency(warningAvailable),
+                            card: recurringCreditWarning?.cardName ?? card.name,
+                        })}
+                    </Text>
+                    <TouchableOpacity
+                        accessibilityRole="button"
+                        onPress={clearRecurringNotification}
+                        style={{ alignSelf: "flex-start" }}
+                    >
+                        <Text style={{ color: theme.colors.red, fontSize: 13, fontWeight: "600" }}>
+                            {t("notifications.recurringCreditSkipped.dismiss", { defaultValue: "Entendi" })}
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            ) : null}
 
             <View
                 style={{
