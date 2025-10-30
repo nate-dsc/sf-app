@@ -52,6 +52,44 @@ export type CCard = {
     ignoreWeekends: boolean
 }
 
+export type UpdateCardInput = {
+    name?: string,
+    color?: number,
+    limit?: number,
+    limitUsed?: number,
+    closingDay?: number,
+    dueDay?: number,
+    ignoreWeekends?: boolean,
+    issuer?: string | null,
+    lastFour?: string | null,
+}
+
+export type CardStatementCycleSummary = {
+    cardId: number,
+    cardName: string,
+    color: string,
+    colorId: number | null,
+    closingDay: number,
+    dueDay: number,
+    cycleStart: string,
+    cycleEnd: string,
+    dueDate: string,
+    referenceMonth: string,
+    limit: number,
+    limitUsed: number,
+    availableCredit: number,
+    realizedTotal: number,
+    projectedRecurringTotal: number,
+    projectedInstallmentTotal: number,
+    projectedTotal: number,
+    transactionsCount: number,
+}
+
+export type CardStatementHistoryOptions = {
+    months?: number,
+    referenceDate?: Date,
+}
+
 export type InstallmentPurchaseInput = {
     description: string,
     category: string,
