@@ -79,7 +79,8 @@
     "buttons": {
         "cancel": "Cancel",
         "save": "Save",
-        "delete": "Delete"
+        "delete": "Delete",
+        "return": "Return"
     },
     "tiles": {
         "budget": "Budget",

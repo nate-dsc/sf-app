@@ -192,16 +192,20 @@ export default function BudgetEditScreen() {
 
                 <View style={{ marginTop: 30, gap: 10 }}>
                     <View style={{ flexDirection: "row", gap: 16 }}>
-                        <LabeledButton
-                            label={t("buttons.cancel")}
-                            onPress={handleClose}
-                            disabled={submitting}
-                        />
-                        <PrimaryButton
-                            label={t("buttons.save")}
-                            onPress={handleSave}
-                            disabled={!canSave}
-                        />
+                        <View style={{flex: 1}}>
+                            <LabeledButton
+                                label={t("buttons.cancel")}
+                                onPress={handleClose}
+                                disabled={submitting}
+                            />
+                        </View>
+                        <View style={{flex: 1}}>
+                            <PrimaryButton
+                                label={t("buttons.save")}
+                                onPress={handleSave}
+                                disabled={!canSave}
+                            />
+                        </View>
                     </View>
                 </View>
             </ScrollView>

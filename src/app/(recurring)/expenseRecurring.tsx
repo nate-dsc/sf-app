@@ -1,6 +1,7 @@
 import { AppIcon } from "@/components/AppIcon"
 import BlurredModalView from "@/components/BlurredModalView"
 import LabeledButton from "@/components/buttons/LabeledButton"
+import PrimaryButton from "@/components/buttons/PrimaryButton"
 import EmptyView from "@/components/EmptyView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
@@ -162,6 +163,7 @@ export default function ExpenseRecurringScreen() {
             >
                 <BlurredModalView onBackgroundPress={handleChartModalClose}>
                     <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="outflow" />
+                    <PrimaryButton label={t("button.return")} onPress={handleChartModalClose}/>
                 </BlurredModalView>
             </Modal>
         </View>

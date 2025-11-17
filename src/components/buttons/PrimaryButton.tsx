@@ -16,7 +16,6 @@ export default function PrimaryButton({label, onPress, disabled = false}: Primar
             onPress={onPress}
             disabled={disabled}
             style={{
-                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 100,
