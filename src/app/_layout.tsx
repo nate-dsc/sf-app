@@ -107,7 +107,7 @@ function RootLayoutNav() {
                         />
                         {/* Telas de planejamento */}
                         <Stack.Screen
-                            name="incomeRecurring"
+                            name="(recurring)/incomeRecurring"
                             options={{
                                 title: t("nav.planning.incomeRecurring"),
                                 headerBackButtonDisplayMode: "minimal",
@@ -117,7 +117,7 @@ function RootLayoutNav() {
                             }}
                         />
                         <Stack.Screen
-                            name="expenseRecurring"
+                            name="(recurring)/expenseRecurring"
                             options={{
                                 title: t("nav.planning.expenseRecurring"),
                                 headerBackButtonDisplayMode: "minimal",

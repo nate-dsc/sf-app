@@ -3,9 +3,9 @@ import { useStyle } from "@/context/StyleContext"
 import { Flow } from "@/types/transaction"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import React, { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { Text, View } from "react-native"
 import { PieChart } from "react-native-gifted-charts"
-import { useTranslation } from "react-i18next"
 
 type RecurringCategoryBreakdownChartProps = {
     categoryTotals: Record<number, number>
@@ -140,16 +140,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
 
     if (totalValue <= 0 || pieSegments.length === 0) {
         return (
-            <View
-                style={{
-                    backgroundColor: theme.background.group.secondaryBg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    padding: 16,
-                    gap: 8,
-                }}
-            >
+            <View>
                 <Text style={[FontStyles.title3, { color: theme.text.label }]}>{chartTitle}</Text>
                 <Text style={{ color: theme.text.secondaryLabel }}>
                     {t("recurring.categoryBreakdown.noData")}
@@ -159,16 +150,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
     }
 
     return (
-        <View
-            style={{
-                backgroundColor: theme.background.group.secondaryBg,
-                borderWidth: 1,
-                borderColor: theme.background.tertiaryBg,
-                borderRadius: 24,
-                padding: 16,
-                gap: 12,
-            }}
-        >
+        <View>
             <Text style={[FontStyles.title3, { color: theme.text.label }]}>{chartTitle}</Text>
             <View style={{ flexDirection: "row", gap: 16, flexWrap: "wrap", alignItems: "center" }}>
                 <PieChart
@@ -177,6 +159,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
                     innerRadius={50}
                     radius={70}
                     centerLabelComponent={() => centerLabel}
+                    innerCircleColor={theme.background.group.secondaryBg}
                     sectionAutoFocus
                 />
                 <View style={{ flex: 1, gap: 12 }}>

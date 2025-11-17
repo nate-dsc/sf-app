@@ -3,11 +3,11 @@ import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CreditCardView from "@/components/credit-card-items/CreditCardView"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { CCard, CardStatementCycleSummary, InstallmentScheduleWithStatus } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import { useNavigation, useLocalSearchParams, useFocusEffect, useRouter } from "expo-router"
+import { useFocusEffect, useLocalSearchParams, useNavigation, useRouter } from "expo-router"
 import { useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, FlatList, ListRenderItem, Text, TouchableOpacity, View } from "react-native"
@@ -846,4 +846,4 @@ export default function CreditCardDetailsScreen() {
         />
     )
 }
-}
+

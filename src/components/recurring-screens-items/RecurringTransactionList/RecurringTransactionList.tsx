@@ -24,7 +24,7 @@ export default function RecurringTransactionList({ data, onItemPress}: Recurring
             keyExtractor={(item) => item.id.toString()}
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 16, paddingHorizontal: 16 }}
+            contentContainerStyle={{ paddingBottom: 16 }}
         />
     )
 }

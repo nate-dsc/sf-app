@@ -1,6 +1,7 @@
+import { AppIcon } from "@/components/AppIcon"
 import BlurredModalView from "@/components/BlurredModalView"
-import GPopup from "@/components/grouped-list-components/GroupedPopup"
-import GroupView from "@/components/grouped-list-components/GroupView"
+import LabeledButton from "@/components/buttons/LabeledButton"
+import EmptyView from "@/components/EmptyView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
@@ -12,21 +13,25 @@ import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Modal, Text, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function ExpenseRecurringScreen() {
     const { getRecurringSummaryThisMonth } = useTransactionDatabase()
     const [loading, setLoading] = useState(true)
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
-    const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
+    const [totalRecurringExpenses, setTotalRecurringExpenses] = useState<number>(0)
     const [rTModalVisible, setRTModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [chartModalVisible, setChartModalVisible] = useState(false)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
-    const {theme} = useStyle()
+    const insets = useSafeAreaInsets()
+    const {theme, layout} = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     const hasLoadedRef = useRef(false)
+    const {t} = useTranslation()
 
     const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
         const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
@@ -37,7 +42,7 @@ export default function ExpenseRecurringScreen() {
 
         try {
             const { totalRecurring, recurringTransactions, categoryTotals } = await getRecurringSummaryThisMonth("outflow")
-            setTotalRecurringIncome(totalRecurring)
+            setTotalRecurringExpenses(totalRecurring)
             setRecurringTransactions(recurringTransactions)
             setCategoryTotals(categoryTotals)
         } catch (err) {
@@ -82,24 +87,59 @@ export default function ExpenseRecurringScreen() {
     }
 
     return (
-        <View style={{ flex: 1, paddingTop: headerHeight, gap: 10}}>
-            <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
+        <View 
+            style={{
+                flex: 1,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: insets.bottom,
+                gap: 16,
+            }}
+        >
+            {totalRecurringExpenses != 0? (
+                <View
+                    style={{
+                        flex: 1,
+                        paddingTop: headerHeight + layout.margin.contentArea,
+                        gap: 16
+                    }}
+                >
 
-            <GroupView>
-                <GPopup
-                    separator={"none"}
-                    label={"Ver distribuição das categorias"}
-                    onPress={() => setChartModalVisible(true)}
+                    <MonthlyRecurringSummaryDisplay
+                        monthlyTotal={totalRecurringExpenses}
+                    />
+
+                    <LabeledButton
+                        label={t("recurring.expenses.showDistribution")}
+                        onPress={() => setChartModalVisible(true)}
+                        tinted={false}
+                    />
+
+                    <View style={{paddingHorizontal: 16}}>
+                        <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                            {t("recurring.expenses.allTransactions")}
+                        </Text>
+                    </View>
+                    
+                    <RecurringTransactionList
+                        data={recurringTransactions}
+                        onItemPress={handleItemPress}
+                    />
+
+                </View>
+            ) : (
+                <EmptyView
+                    icon={
+                        <AppIcon
+                            name={"arrow.trianglehead.counterclockwise"}
+                            androidName={"loop"}
+                            size={70}
+                            tintColor={theme.colors.red}
+                        />
+                    }
+                    title={t("recurring.expenses.empty.title")}
+                    subtitle={t("recurring.expenses.empty.description")}
                 />
-            </GroupView>
-
-            <View style={{paddingHorizontal: 16}}>
-                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
-                    Todas as despesas recorrentes
-                </Text>
-            </View>
-
-            <RecurringTransactionList data={recurringTransactions} onItemPress={handleItemPress} />
+            )}
 
             <Modal
                 animationType={"fade"}

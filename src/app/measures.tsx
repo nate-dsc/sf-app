@@ -1,4 +1,4 @@
-import GRedir from "@/components/grouped-list-components/GroupedRedirect";
+import GButton from "@/components/grouped-list-components/GroupedLabeledButton";
 import GroupView from "@/components/grouped-list-components/GroupView";
 import { SStyles } from "@/components/styles/ScreenStyles";
 import { useStyle } from "@/context/StyleContext";
@@ -24,8 +24,8 @@ export default function MeasuresScreen() {
 
     // The handler function's parameter is typed to match the child's output
     const handleSelectionChange = useCallback((days: number | number[]) => {
-      console.log('Selection changed:', days);
-      setPickedDays(days);
+        console.log('Selection changed:', days);
+        setPickedDays(days);
     },[]);
 
     const {theme, layout} = useStyle()
@@ -35,17 +35,13 @@ export default function MeasuresScreen() {
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
                 <GroupView>
-                    <GRedir
-                        separator={"translucent"}
-                        icon={"hammer"}
-                        label={"Teste 1"}
-                        onPress={() => {router.push("/experiment")}}
-                    />
-                    <GRedir
+                    <GButton
                         separator={"none"}
-                        icon={"hammer"}
-                        label={"Teste 2"}
-                        onPress={() => {router.push("/experiment2")}}
+                        label={"Teste"}
+                        onPress={() => {console.log("botao apertado")}}
+                        buttonLabel="Label"
+                        buttonIcon="chevron-forward"
+                        isAccented={false}
                     />
                 </GroupView>
             </View>
@@ -79,3 +75,19 @@ const styles = StyleSheet.create({
     color: "red"
   },
 });
+
+/**
+ * 
+ * <GRedir
+                        separator={"translucent"}
+                        icon={"hammer"}
+                        label={"Teste 1"}
+                        onPress={() => {router.push("/experiment")}}
+                    />
+                    <GRedir
+                        separator={"none"}
+                        icon={"hammer"}
+                        label={"Teste 2"}
+                        onPress={() => {router.push("/experiment2")}}
+                    />
+ */

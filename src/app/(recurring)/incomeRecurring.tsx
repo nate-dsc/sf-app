@@ -1,6 +1,7 @@
+import { AppIcon } from "@/components/AppIcon"
 import BlurredModalView from "@/components/BlurredModalView"
-import GPopup from "@/components/grouped-list-components/GroupedPopup"
-import GroupView from "@/components/grouped-list-components/GroupView"
+import LabeledButton from "@/components/buttons/LabeledButton"
+import EmptyView from "@/components/EmptyView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
@@ -12,7 +13,9 @@ import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import React, { useCallback, useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Modal, Text, View } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function IncomeRecurringScreen() {
     const { getRecurringSummaryThisMonth } = useTransactionDatabase()
@@ -24,9 +27,11 @@ export default function IncomeRecurringScreen() {
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
-    const { theme } = useStyle()
+    const insets = useSafeAreaInsets()
+    const { theme, layout } = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     const hasLoadedRef = useRef(false)
+    const {t} = useTranslation()
 
     const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
         const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
@@ -82,28 +87,59 @@ export default function IncomeRecurringScreen() {
     }
 
     return (
-        <View style={{ flex: 1, paddingTop: headerHeight, gap: 10}}>
-            
-            <MonthlyRecurringSummaryDisplay monthlyTotal={totalRecurringIncome}/>
+        <View 
+            style={{
+                flex: 1,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: insets.bottom,
+                gap: 16,
+            }}
+        >
+            {totalRecurringIncome != 0? (
+                <View
+                    style={{
+                        flex: 1,
+                        paddingTop: headerHeight + layout.margin.contentArea,
+                        gap: 16
+                    }}
+                >
 
-            <GroupView>
-                <GPopup
-                    separator={"none"}
-                    label={"Ver distribuição das categorias"}
-                    onPress={() => setChartModalVisible(true)}
+                    <MonthlyRecurringSummaryDisplay
+                        monthlyTotal={totalRecurringIncome}
+                    />
+
+                    <LabeledButton
+                        label={t("recurring.income.showDistribution")}
+                        onPress={() => setChartModalVisible(true)}
+                        tinted={false}
+                    />
+
+                    <View style={{paddingHorizontal: 16}}>
+                        <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                            {t("recurring.income.allTransactions")}
+                        </Text>
+                    </View>
+                    
+                    <RecurringTransactionList
+                        data={recurringTransactions}
+                        onItemPress={handleItemPress}
+                    />
+
+                </View>
+            ) : (
+                <EmptyView
+                    icon={
+                        <AppIcon
+                            name={"arrow.trianglehead.clockwise"}
+                            androidName={"autorenew"}
+                            size={70}
+                            tintColor={theme.colors.green}
+                        />
+                    }
+                    title={t("recurring.income.empty.title")}
+                    subtitle={t("recurring.income.empty.description")}
                 />
-            </GroupView>
-
-            <View style={{paddingHorizontal: 16}}>
-                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
-                    Todas as receitas recorrentes
-                </Text>
-            </View>
-            
-            <RecurringTransactionList
-                data={recurringTransactions}
-                onItemPress={handleItemPress}
-            />
+            )}
 
             <Modal
                 animationType={"fade"}

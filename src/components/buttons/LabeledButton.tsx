@@ -17,24 +17,22 @@ export default function LabeledButton({label, onPress, disabled = false, tinted 
             onPress={onPress}
             disabled={disabled}
             style={{
-                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 100,
-                paddingVertical: 13,
-                backgroundColor: theme.fill.tertiary
+                backgroundColor: theme.fill.tertiary,
+                minHeight: 48
             }}
         >
-            <Text
-                style={{
-                    lineHeight: 22,
-                    fontSize: 17,
-                    fontWeight: "500",
-                    color: disabled ? theme.text.tertiaryLabel : tinted ? theme.colors.blue : theme.text.label
-                }}
-            >
-                {label}
-            </Text>
+                <Text
+                    style={{
+                        fontSize: 17,
+                        fontWeight: "500",
+                        color: disabled ? theme.text.tertiaryLabel : tinted ? theme.colors.blue : theme.text.label
+                    }}
+                >
+                    {label}
+                </Text>
         </TouchableOpacity>
     )
     
