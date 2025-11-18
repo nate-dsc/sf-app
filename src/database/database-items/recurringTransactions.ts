@@ -3,8 +3,8 @@ import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
 import type { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
-import { localToUTC } from "@/utils/DateUtils"
 import { RecurringTransaction } from "@/types/transaction"
+import { localToUTC } from "@/utils/DateUtils"
 
 export type NotifyRecurringChargeSkipped = ReturnType<
     typeof useRecurringCreditLimitNotification
@@ -16,10 +16,10 @@ export function useRecurringTransactionsModule(
 ) {
     const createRecurringTransaction = useCallback(async (data: RecurringTransaction) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $flow, $notes, $is_installment)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, type, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $type, $is_installment)"
         )
 
-        const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
+        const type = data.type ?? (data.value >= 0 ? "in" : "out")
 
         try {
             await statement.executeAsync({
@@ -30,23 +30,21 @@ export function useRecurringTransactionsModule(
                 $rrule: data.rrule,
                 $date_last_processed: null,
                 $card_id: data.card_id ?? null,
-                $account_id: data.account_id ?? null,
-                $flow: flow,
-                $notes: data.notes ?? null,
+                $type: type,
                 $is_installment: data.is_installment ?? 0,
             })
 
-            console.log(`Transação recorrente inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}\nFluxo: ${flow}`)
+            console.log(`Recurring transaction inserted:\nValue: ${data.value}\nDescription: ${data.description}\nCategory: ${data.category}\nStart date: ${data.date_start}\nRRULE: ${data.rrule}\nType: ${type}`)
         } catch (error) {
             throw error
         } finally {
-            statement.finalizeAsync()
+            await statement.finalizeAsync()
         }
     }, [database])
 
     const createRecurringTransactionWithCard = useCallback(async (data: RecurringTransaction, cardId: number) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $flow, $notes, $is_installment)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, type, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $type, $is_installment)"
         )
 
         try {
@@ -58,17 +56,15 @@ export function useRecurringTransactionsModule(
                 $rrule: data.rrule,
                 $date_last_processed: null,
                 $card_id: cardId,
-                $account_id: data.account_id ?? null,
-                $flow: data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
-                $notes: data.notes ?? null,
+                $type: data.type,
                 $is_installment: data.is_installment ?? 0,
             })
 
-            console.log(`Transação recorrente com cartão inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData início: ${data.date_start}\nRRULE: ${data.rrule}\nCartão: ${cardId}`)
+            console.log(`Recurring transaction with card inserted:\nValue: ${data.value}\nDescription: ${data.description}\nCategory: ${data.category}\nStart date: ${data.date_start}\nRRULE: ${data.rrule}\nCard: ${cardId}`)
         } catch (error) {
             throw error
         } finally {
-            statement.finalizeAsync()
+            await statement.finalizeAsync()
         }
     }, [database])
 
@@ -94,7 +90,7 @@ export function useRecurringTransactionsModule(
     }, [database])
 
     const createAndSyncRecurringTransactions = useCallback(async () => {
-        console.log("Iniciando criação e sincronização de transações recorrentes")
+        console.log("Syncing recurring transactions")
         const newEndOfDay = new Date()
         newEndOfDay.setHours(23, 59, 59)
         const newEndOfDayStr = newEndOfDay.toISOString().slice(0, 16)
@@ -118,28 +114,28 @@ export function useRecurringTransactionsModule(
                 const pendingOccurrences = rrule.between(startDateForCheck, newEndOfDay, true)
 
                 if (pendingOccurrences.length > 0) {
-                    let cardSnapshot: { limit: number; limit_used: number; name: string | null } | null = null
+                    let cardSnapshot: { max_limit: number; limit_used: number; name: string | null } | null = null
                     if (blueprint.card_id) {
-                        cardSnapshot = await database.getFirstAsync<{ limit: number; limit_used: number; name: string | null }>(
-                            "SELECT limit, limit_used, name FROM cards WHERE id = ?",
+                        cardSnapshot = await database.getFirstAsync<{ max_limit: number; limit_used: number; name: string | null }>(
+                            "SELECT max_limit, limit_used, name FROM cards WHERE id = ?",
                             [blueprint.card_id]
                         )
 
                         if (!cardSnapshot) {
-                            console.warn(`Cartão ${blueprint.card_id} não encontrado para recorrência ${blueprint.id}`)
+                            console.warn(`Card ${blueprint.card_id} not found for recurrence ${blueprint.id}`)
                             continue
                         }
                     }
 
                     await database.withTransactionAsync(async () => {
                         let processedAny = false
-                        let availableLimit = cardSnapshot ? cardSnapshot.limit - cardSnapshot.limit_used : null
-                        const computedFlow = blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow")
+                        let availableLimit = cardSnapshot ? cardSnapshot.max_limit - cardSnapshot.limit_used : null
+                        const computedType = blueprint.type ?? (blueprint.value >= 0 ? "in" : "out")
 
                         for (const occurrence of pendingOccurrences) {
                             occurrence.setHours(0, 0, 0)
 
-                            const shouldCheckLimit = Boolean(blueprint.card_id && availableLimit !== null && computedFlow === "outflow")
+                            const shouldCheckLimit = Boolean(blueprint.card_id && availableLimit !== null && computedType === "out")
                             const requiredAmount = Math.abs(blueprint.value)
 
                             if (shouldCheckLimit && availableLimit !== null && requiredAmount > availableLimit) {
@@ -153,7 +149,7 @@ export function useRecurringTransactionsModule(
                             }
 
                             await database.runAsync(
-                                "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
                                 [
                                     blueprint.value,
                                     blueprint.description,
@@ -161,9 +157,7 @@ export function useRecurringTransactionsModule(
                                     occurrence.toISOString().slice(0, 16),
                                     blueprint.id,
                                     blueprint.card_id ?? null,
-                                    blueprint.account_id ?? null,
-                                    computedFlow,
-                                    blueprint.notes ?? null,
+                                    computedType
                                 ]
                             )
 
@@ -188,7 +182,7 @@ export function useRecurringTransactionsModule(
                                 }
                             }
 
-                            console.log(`Criada transação da transação recorrente ${blueprint.id} no dia ${occurrence.toISOString().slice(0, 16)}`)
+                            console.log(`Recurring transaction created ${blueprint.id} on day ${occurrence.toISOString().slice(0, 16)}`)
                         }
 
                         if (processedAny) {
@@ -201,9 +195,9 @@ export function useRecurringTransactionsModule(
                 }
             }
 
-            console.log("Sincronização concluída.")
+            console.log("Syncing complete")
         } catch (error) {
-            console.error("Erro fatal durante a sincronização de transações recorrentes:", error)
+            console.error("Fatal error during recurring transactions syncing:", error)
             throw error
         }
     }, [database, notifyRecurringChargeSkipped])
@@ -213,12 +207,12 @@ export function useRecurringTransactionsModule(
             const parentTransaction = await database.getAllAsync<RecurringTransaction>("SELECT * FROM transactions_recurring WHERE id = ?", [id])
             return parentTransaction[0].rrule
         } catch (error) {
-            console.error("Erro na busca por transação recorrente:", error)
+            console.error("Recurring transaction search error:", error)
             throw error
         }
     }, [database])
 
-    const getRecurringSummaryThisMonth = useCallback(async (flowType: "inflow" | "outflow") => {
+    const getRecurringSummaryThisMonth = useCallback(async function getRecurringSummaryThisMonth(type: "in" | "out") {
         const now = new Date()
 
         const startLocal = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0)
@@ -230,7 +224,7 @@ export function useRecurringTransactionsModule(
         let totalRecurring = 0
         const categoryTotalsMap = new Map<number, number>()
 
-        const query = flowType === "outflow" ? "SELECT * FROM transactions_recurring WHERE flow = 'outflow'" : "SELECT * FROM transactions_recurring WHERE flow = 'inflow'"
+        const query = type === "out" ? "SELECT * FROM transactions_recurring WHERE type = 'out'" : "SELECT * FROM transactions_recurring WHERE type = 'in'"
 
         try {
             const recurringTransactions = await database.getAllAsync<RecurringTransaction>(query)
@@ -259,7 +253,7 @@ export function useRecurringTransactionsModule(
 
             return { totalRecurring, recurringTransactions, categoryTotals }
         } catch (error) {
-            console.log("Não foi possível recuperar o sumário das transações recorrentes")
+            console.log("Could not fetch recurring transactions summary")
             throw error
         }
     }, [database])
