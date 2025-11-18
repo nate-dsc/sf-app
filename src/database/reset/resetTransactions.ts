@@ -5,7 +5,6 @@ import { initializeAppDatabase } from "./useDatabase"
 const TRANSACTION_TABLES = [
     "card_statement_transactions",
     "transaction_tags",
-    "attachments",
     "transactions",
 ]
 

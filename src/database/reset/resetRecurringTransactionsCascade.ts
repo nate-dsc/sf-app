@@ -5,7 +5,6 @@ import { initializeAppDatabase } from "../useDatabase"
 const DEPENDENT_TABLES = [
     "card_statement_transactions",
     "transaction_tags",
-    "attachments",
 ]
 
 function quoteIdentifier(value: string) {

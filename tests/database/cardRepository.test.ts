@@ -57,9 +57,9 @@ describe("card repository helpers", () => {
         )
 
         await database.runAsync(
-            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, payee_id, flow, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [1, -500, "Subscription", 1, "2024-01-10T00:00", "FREQ=MONTHLY", null, 1, 0, null, null, "outflow", null],
+            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [1, -500, "Subscription", 1, "2024-01-10T00:00", "FREQ=MONTHLY", null, 1, 0, null, "outflow", null],
         )
 
         await database.runAsync(
@@ -68,9 +68,9 @@ describe("card repository helpers", () => {
         )
 
         await database.runAsync(
-            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, payee_id, flow, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [2, -1000, "Laptop", 1, "2024-03-01T00:00", "FREQ=MONTHLY;COUNT=4", null, 1, 1, null, null, "outflow", null],
+            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [2, -1000, "Laptop", 1, "2024-03-01T00:00", "FREQ=MONTHLY;COUNT=4", null, 1, 1, null, "outflow", null],
         )
 
         await database.runAsync(

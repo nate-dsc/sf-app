@@ -44,12 +44,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     is_archived INTEGER NOT NULL DEFAULT 0,
                     created_at TEXT NOT NULL DEFAULT (datetime('now'))
                 );`,
-                `CREATE TABLE IF NOT EXISTS payees (
-                    id INTEGER PRIMARY KEY,
-                    name TEXT NOT NULL UNIQUE,
-                    type TEXT NOT NULL DEFAULT 'generic',
-                    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-                );`,
                 `CREATE TABLE IF NOT EXISTS tags (
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL UNIQUE,
@@ -95,14 +89,12 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     card_id INTEGER,
                     is_installment INTEGER NOT NULL DEFAULT 0,
                     account_id INTEGER,
-                    payee_id INTEGER,
                     flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
                     notes TEXT,
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
                     FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL,
-                    FOREIGN KEY (payee_id) REFERENCES payees(id) ON DELETE SET NULL
+                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
                 );`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_recurring_next_run ON transactions_recurring(date_start);`,
                 `CREATE TABLE IF NOT EXISTS transactions (
@@ -114,7 +106,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     id_recurring INTEGER,
                     card_id INTEGER,
                     account_id INTEGER,
-                    payee_id INTEGER,
                     flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
                     notes TEXT,
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -122,8 +113,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
                     FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
                     FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL,
-                    FOREIGN KEY (payee_id) REFERENCES payees(id) ON DELETE SET NULL
+                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
                 );`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category);`,
@@ -145,14 +135,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     PRIMARY KEY (transaction_id, tag_id),
                     FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE,
                     FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-                );`,
-                `CREATE TABLE IF NOT EXISTS attachments (
-                    id INTEGER PRIMARY KEY,
-                    transaction_id INTEGER NOT NULL,
-                    uri TEXT NOT NULL,
-                    type TEXT NOT NULL,
-                    uploaded_at TEXT NOT NULL DEFAULT (datetime('now')),
-                    FOREIGN KEY (transaction_id) REFERENCES transactions(id) ON DELETE CASCADE
                 );`,
                 `CREATE TABLE IF NOT EXISTS savings_goals (
                     id INTEGER PRIMARY KEY,
@@ -178,14 +160,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     key TEXT PRIMARY KEY,
                     value TEXT NOT NULL,
                     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-                );`,
-                `CREATE TABLE IF NOT EXISTS audit_trail (
-                    id INTEGER PRIMARY KEY,
-                    entity TEXT NOT NULL,
-                    entity_id INTEGER NOT NULL,
-                    change_type TEXT NOT NULL,
-                    payload TEXT,
-                    created_at TEXT NOT NULL DEFAULT (datetime('now'))
                 );`,
                 `DROP TABLE IF EXISTS installment_purchases;`
             ],
@@ -223,7 +197,110 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     (29, 'Outros (entrada)', 'other-income', 'inflow', '#94A3B8', 'ellipsis-horizontal', 0, datetime('now'));`
             ],
         },
+        {
+            id: 3,
+            name: "drop-unused-tables",
+            statements: [
+                `DROP TABLE IF EXISTS attachments;`,
+                `DROP TABLE IF EXISTS payees;`,
+                `DROP TABLE IF EXISTS audit_trail;`,
+            ],
+        },
     ]
+
+    const createTransactionsTableStatement = `CREATE TABLE IF NOT EXISTS transactions (
+        id INTEGER PRIMARY KEY,
+        value INTEGER NOT NULL,
+        description TEXT,
+        category INTEGER NOT NULL,
+        date TEXT,
+        id_recurring INTEGER,
+        card_id INTEGER,
+        account_id INTEGER,
+        flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
+        notes TEXT,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
+        FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
+        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+    );`
+
+    const createTransactionsRecurringTableStatement = `CREATE TABLE IF NOT EXISTS transactions_recurring (
+        id INTEGER PRIMARY KEY,
+        value INTEGER NOT NULL,
+        description TEXT,
+        category INTEGER NOT NULL,
+        date_start TEXT NOT NULL,
+        rrule TEXT NOT NULL,
+        date_last_processed TEXT,
+        card_id INTEGER,
+        is_installment INTEGER NOT NULL DEFAULT 0,
+        account_id INTEGER,
+        flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
+        notes TEXT,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
+        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
+        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+    );`
+
+    const ensureTransactionsRecurringSchema = async () => {
+        const columns = await database.getAllAsync<{ name: string }>("PRAGMA table_info(transactions_recurring)")
+
+        const hasPayee = columns.some((column) => column.name === "payee_id")
+
+        if (hasPayee) {
+            await database.withTransactionAsync(async () => {
+                await database.execAsync("ALTER TABLE transactions_recurring RENAME TO transactions_recurring_legacy")
+                await database.execAsync(createTransactionsRecurringTableStatement)
+
+                await database.execAsync(`
+                    INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes, created_at)
+                    SELECT id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes, created_at
+                    FROM transactions_recurring_legacy;
+                `)
+
+                await database.execAsync("DROP TABLE transactions_recurring_legacy")
+            })
+        } else {
+            await database.execAsync(createTransactionsRecurringTableStatement)
+        }
+
+        await database.execAsync(
+            "CREATE INDEX IF NOT EXISTS idx_transactions_recurring_next_run ON transactions_recurring(date_start);"
+        )
+    }
+
+    const ensureTransactionsSchema = async () => {
+        const columns = await database.getAllAsync<{ name: string }>("PRAGMA table_info(transactions)")
+
+        const hasPayee = columns.some((column) => column.name === "payee_id")
+
+        if (hasPayee) {
+            await database.withTransactionAsync(async () => {
+                await database.execAsync("ALTER TABLE transactions RENAME TO transactions_legacy")
+                await database.execAsync(createTransactionsTableStatement)
+
+                await database.execAsync(`
+                    INSERT INTO transactions (id, value, description, category, date, id_recurring, card_id, account_id, flow, notes, created_at, updated_at)
+                    SELECT id, value, description, category, date, id_recurring, card_id, account_id, flow, notes, created_at, updated_at
+                    FROM transactions_legacy;
+                `)
+
+                await database.execAsync("DROP TABLE transactions_legacy")
+            })
+        } else {
+            await database.execAsync(createTransactionsTableStatement)
+        }
+
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);")
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category);")
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_card ON transactions(card_id);")
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_card_date ON transactions(card_id, date);")
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_account ON transactions(account_id);")
+    }
 
     const ensureCardSchema = async () => {
         const existingTable = await database.getFirstAsync<{ name: string }>(
@@ -303,7 +380,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
 
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_cards_limit_usage ON cards(\"limit\", limit_used);")
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_cards_cycle_days ON cards(closing_day, due_day);")
-        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_card_date ON transactions(card_id, date);")
         await database.execAsync(
             "CREATE INDEX IF NOT EXISTS idx_card_statements_card_cycle ON card_statements(card_id, cycle_start, cycle_end);"
         )
@@ -319,6 +395,8 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
         }
     }
 
+    await ensureTransactionsRecurringSchema()
+    await ensureTransactionsSchema()
     await ensureCardSchema()
 
     console.log("✅ Banco inicializado com sucesso!")

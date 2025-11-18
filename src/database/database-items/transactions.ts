@@ -6,7 +6,7 @@ import { SearchFilters, type Transaction } from "@/types/transaction"
 export function useTransactionsModule(database: SQLiteDatabase) {
     const createTransaction = useCallback(async (data: Transaction) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions (value, description, category, date, flow, account_id, payee_id, notes) VALUES ($value, $description, $category, $date, $flow, $account_id, $payee_id, $notes)"
+            "INSERT INTO transactions (value, description, category, date, flow, account_id, notes) VALUES ($value, $description, $category, $date, $flow, $account_id, $notes)"
         )
 
         const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
@@ -19,7 +19,6 @@ export function useTransactionsModule(database: SQLiteDatabase) {
                 $date: data.date,
                 $flow: flow,
                 $account_id: data.account_id ?? null,
-                $payee_id: data.payee_id ?? null,
                 $notes: data.notes ?? null,
             })
 

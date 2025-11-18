@@ -16,7 +16,7 @@ export function useRecurringTransactionsModule(
 ) {
     const createRecurringTransaction = useCallback(async (data: RecurringTransaction) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $flow, $notes, $is_installment)"
         )
 
         const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
@@ -31,7 +31,6 @@ export function useRecurringTransactionsModule(
                 $date_last_processed: null,
                 $card_id: data.card_id ?? null,
                 $account_id: data.account_id ?? null,
-                $payee_id: data.payee_id ?? null,
                 $flow: flow,
                 $notes: data.notes ?? null,
                 $is_installment: data.is_installment ?? 0,
@@ -47,7 +46,7 @@ export function useRecurringTransactionsModule(
 
     const createRecurringTransactionWithCard = useCallback(async (data: RecurringTransaction, cardId: number) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, payee_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $payee_id, $flow, $notes, $is_installment)"
+            "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, account_id, flow, notes, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $account_id, $flow, $notes, $is_installment)"
         )
 
         try {
@@ -60,7 +59,6 @@ export function useRecurringTransactionsModule(
                 $date_last_processed: null,
                 $card_id: cardId,
                 $account_id: data.account_id ?? null,
-                $payee_id: data.payee_id ?? null,
                 $flow: data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
                 $notes: data.notes ?? null,
                 $is_installment: data.is_installment ?? 0,
@@ -155,7 +153,7 @@ export function useRecurringTransactionsModule(
                             }
 
                             await database.runAsync(
-                                "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                                 [
                                     blueprint.value,
                                     blueprint.description,
@@ -164,7 +162,6 @@ export function useRecurringTransactionsModule(
                                     blueprint.id,
                                     blueprint.card_id ?? null,
                                     blueprint.account_id ?? null,
-                                    blueprint.payee_id ?? null,
                                     computedFlow,
                                     blueprint.notes ?? null,
                                 ]
