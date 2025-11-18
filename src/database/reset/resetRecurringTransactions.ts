@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import { initializeAppDatabase } from "../useDatabase"
+import { initializeDatabase } from "@/database/useDatabase"
 
 function quoteIdentifier(value: string) {
     return `"${value.replace(/"/g, '""')}"`
@@ -11,7 +11,7 @@ export async function resetRecurringTransactions(database: SQLiteDatabase) {
         await database.execAsync(`DELETE FROM ${quoteIdentifier("transactions_recurring")}`)
     })
 
-    await initializeAppDatabase(database)
+    await initializeDatabase(database)
 
     console.log("Transações recorrentes resetadas")
 }

@@ -2,7 +2,7 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useSQLiteContext } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 
-export { initializeAppDatabase } from "./bootstrap"
+export { initializeDatabase } from "@/database/initializeDatabase"
 
 export type DatabaseHelpers = {
     database: SQLiteDatabase

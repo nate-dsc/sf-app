@@ -1,4 +1,4 @@
-import { dropAll } from "@/database/useDatabaseReset";
+import { dropAll } from "@/database/reset/resetDatabase";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function initializeDatabase(database: SQLiteDatabase) {

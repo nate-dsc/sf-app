@@ -1,43 +1,31 @@
-import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite"
+import { useSQLiteContext } from "expo-sqlite"
 import { useMemo } from "react"
 
-import { resetBudgets } from "./reset/resetBudgets"
-import { resetCreditCards } from "./reset/resetCreditCards"
-import { resetDatabase } from "./reset/resetDatabase"
-import { resetRecurringTransactions } from "./reset/resetRecurringTransactions"
-import { resetRecurringTransactionsCascade } from "./reset/resetRecurringTransactionsCascade"
-import { resetCCDatabase } from "./ResetCCDatabase"
-import { resetTransactions } from "./resetTransactions"
+import { resetBudgets } from "@/database/reset/resetBudgets"
+import { resetCreditCards } from "@/database/reset/resetCreditCards"
+import { resetDatabase } from "@/database/reset/resetDatabase"
+import { resetRecurringTransactions } from "@/database/reset/resetRecurringTransactions"
+import { resetRecurringTransactionsCascade } from "@/database/reset/resetRecurringTransactionsCascade"
+import { resetTransactions } from "@/database/reset/resetTransactions"
 
 export function useDatabaseReset() {
     const database = useSQLiteContext()
 
     return useMemo(
         () => ({
-            resetTransactions: () => resetTransactions(database),
-            resetRecurringTransactions: () => resetRecurringTransactions(database),
-            resetRecurringTransactionsCascade: () => resetRecurringTransactionsCascade(database),
-            resetCreditCards: () => resetCreditCards(database),
-            resetBudgets: () => resetBudgets(database),
-            resetDatabase: () => resetDatabase(database),
-            resetCCDatabase: () => resetCCDatabase(database),
+            resetTransactionsDB: () => resetTransactions(database),
+            resetRecurringTransactionsDB: () => resetRecurringTransactions(database),
+            resetRecurringTransactionsCascadeDB: () => resetRecurringTransactionsCascade(database),
+            resetCreditCardsDB: () => resetCreditCards(database),
+            resetBudgetsDB: () => resetBudgets(database),
+            resetDatabaseDB: () => resetDatabase(database),
         }),
         [database]
     )
 }
 
 export {
-    resetBudgets, resetCCDatabase, resetCreditCards, resetDatabase, resetRecurringTransactions,
+    resetBudgets, resetCreditCards, resetDatabase, resetRecurringTransactions,
     resetRecurringTransactionsCascade, resetTransactions
 }
 
-export async function dropAll(database: SQLiteDatabase) {
-    const tables = await database.getAllAsync<{name: string}>(`
-        SELECT name FROM sqlite_master 
-        WHERE type='table' AND name NOT LIKE 'sqlite_%'
-    `);
-
-    for (const { name } of tables) {
-        await database.execAsync(`DROP TABLE IF EXISTS "${name}"`);
-    }
-}

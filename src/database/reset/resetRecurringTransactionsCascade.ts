@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import { initializeAppDatabase } from "../useDatabase"
+import { initializeDatabase } from "@/database/useDatabase"
 
 const DEPENDENT_TABLES = [
     "card_statement_transactions",
@@ -28,7 +28,7 @@ export async function resetRecurringTransactionsCascade(database: SQLiteDatabase
         await database.execAsync(`DELETE FROM ${quoteIdentifier("transactions_recurring")}`)
     })
 
-    await initializeAppDatabase(database)
+    await initializeDatabase(database)
 
     console.log("Transações recorrentes e geradas resetadas")
 }

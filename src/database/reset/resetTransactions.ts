@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import { initializeAppDatabase } from "./useDatabase"
+import { initializeDatabase } from "@/database/useDatabase"
 
 const TRANSACTION_TABLES = [
     "card_statement_transactions",
@@ -19,7 +19,7 @@ export async function resetTransactions(database: SQLiteDatabase) {
         }
     })
 
-    await initializeAppDatabase(database)
+    await initializeDatabase(database)
 
     console.log("Transações resetadas")
 }
