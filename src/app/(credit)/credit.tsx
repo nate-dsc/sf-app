@@ -8,9 +8,10 @@ import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditL
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import type { ScrollView as RNScrollView } from "react-native"
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat("pt-BR", {
@@ -31,6 +32,8 @@ export default function CreditScreen() {
     const [cards, setCards] = useState<CCard[]>([])
     const [selectedCard, setSelectedCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
+    const scrollRef = useRef<RNScrollView | null>(null)
+    const wasEmptyRef = useRef(true)
     const { warning: recurringCreditWarning, clearNotification: clearRecurringNotification } = useRecurringCreditLimitNotification()
 
     const loadCards = useCallback(async () => {
@@ -72,6 +75,17 @@ export default function CreditScreen() {
         })
     }, [cards])
 
+    useEffect(() => {
+        const wasEmpty = wasEmptyRef.current
+        const isEmpty = cards.length === 0
+
+        if (wasEmpty && !isEmpty) {
+            scrollRef.current?.scrollTo({ y: 0, animated: false })
+        }
+
+        wasEmptyRef.current = isEmpty
+    }, [cards])
+
     const handleNavigateToCard = (card: CCard) => {
         router.push({
             pathname: "/(credit)/[cardId]",
@@ -93,6 +107,7 @@ export default function CreditScreen() {
 
     return (
         <ScrollView
+            ref={scrollRef}
             contentContainerStyle={{
                 paddingTop: headerHeight + layout.margin.contentArea,
                 paddingHorizontal: layout.margin.contentArea,
@@ -212,7 +227,7 @@ export default function CreditScreen() {
                     />
                 ) : null}
 
-                {loading ? (
+                {shouldShowInlineLoader ? (
                     <View
                         pointerEvents="none"
                         style={{
