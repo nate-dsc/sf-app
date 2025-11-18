@@ -73,7 +73,6 @@ export default function CreditScreen() {
     }, [cards])
 
     const handleNavigateToCard = (card: CCard) => {
-        setSelectedCard(card)
         router.push({
             pathname: "/(credit)/[cardId]",
             params: { cardId: card.id.toString() },
