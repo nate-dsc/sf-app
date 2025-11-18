@@ -1,4 +1,4 @@
-import { initializeDatabase } from "@/database/InitializeDatabase"
+import { initializeDatabase } from "@/database/initializeDatabase"
 import { SQLiteDatabase } from "expo-sqlite"
 
 function quoteIdentifier(value: string) {
