@@ -24,7 +24,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
         try {
             await database.withTransactionAsync(async () => {
                 await database.runAsync(
-                    "INSERT INTO transactions (value, description, category, date, card_id, flow, account_id, payee_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO transactions (value, description, category, date, card_id, flow, account_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                         data.value,
                         data.description,
@@ -33,7 +33,6 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                         cardId,
                         data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
                         data.account_id ?? null,
-                        data.payee_id ?? null,
                         data.notes ?? null,
                     ]
                 )
@@ -108,7 +107,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 })
 
                 await database.runAsync(
-                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                         -normalizedInstallmentValue,
                         description,
@@ -118,7 +117,6 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                         null,
                         data.cardId,
                         1,
-                        null,
                         null,
                         "outflow",
                         null,
@@ -449,7 +447,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                         const dueDateStr = formatDateTimeForSQLite(dueDate)
 
                         await database.runAsync(
-                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, payee_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                             [
                                 blueprint.value,
                                 blueprint.description,
@@ -458,7 +456,6 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                                 blueprint.id,
                                 blueprint.card_id ?? null,
                                 blueprint.account_id ?? null,
-                                blueprint.payee_id ?? null,
                                 blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow"),
                                 blueprint.notes ?? null,
                             ]
