@@ -5,8 +5,7 @@ import SegmentedControlCompact from "@/components/recurrence-modal-items/Segment
 import { FontStyles } from "@/components/styles/FontStyles"
 import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
-import { resetDatabase } from "@/database/reset/resetDatabase"
-import { resetCCDatabase } from "@/database/ResetCCDatabase"
+import { useDatabaseReset } from "@/database/useDatabaseReset"
 import i18n from "@/i18n"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { SCOption } from "@/types/components"
@@ -123,14 +122,38 @@ export default function SettingsScreen() {
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
-                    label="Resetar banco de dados"
-                    onPress={() => { resetDatabase(database) }}
+                    label="Resetar Banco de Dados"
+                    onPress={() => { useDatabaseReset().resetDatabaseDB() }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="trash-outline"
+                    label="Resetar Transações"
+                    onPress={() => { useDatabaseReset().resetTransactionsDB() }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="trash-outline"
+                    label="Resetar Transações Recorrentes"
+                    onPress={() => { useDatabaseReset().resetRecurringTransactionsDB() }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="trash-outline"
+                    label="Resetar Transações Recorrentes em Cascata"
+                    onPress={() => { useDatabaseReset().resetRecurringTransactionsCascadeDB() }}
+                />
+                <GRedir
+                    separator="translucent"
+                    icon="trash-outline"
+                    label="Resetar Cartões"
+                    onPress={() => { useDatabaseReset().resetCreditCardsDB() }}
                 />
                 <GRedir
                     separator="none"
                     icon="trash-outline"
-                    label="Resetar cartões"
-                    onPress={() => { resetCCDatabase(database) }}
+                    label="Resetar Orçamentos"
+                    onPress={() => { useDatabaseReset().resetBudgetsDB() }}
                 />
             </GroupView>
 

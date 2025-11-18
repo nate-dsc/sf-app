@@ -1,4 +1,4 @@
-export type Flow = "inflow" | "outflow"
+export type TransactionType = "in" | "out"
 
 export type Transaction = {
     id: number,
@@ -8,9 +8,7 @@ export type Transaction = {
     date: string,
     id_recurring?: number | null,
     card_id?: number | null,
-    account_id?: number | null,
-    flow: Flow,
-    notes?: string | null,
+    type: TransactionType,
     created_at?: string,
     updated_at?: string,
 }
@@ -24,9 +22,7 @@ export type RecurringTransaction = {
     rrule: string,
     date_last_processed: string | null,
     card_id?: number | null,
-    account_id?: number | null,
-    flow: Flow,
-    notes?: string | null,
+    type: TransactionType,
     is_installment?: number,
 }
 
@@ -165,13 +161,13 @@ export type MonthlyCategoryAggregate = {
     categoryId: number,
     name: string,
     color: string | null,
-    flow: Flow,
+    type: TransactionType,
     total: number,
 }
 
 export type CategoryDistributionFilters = {
     month?: Date,
-    flow?: Flow,
+    type?: TransactionType,
 }
 
 export type Summary = {

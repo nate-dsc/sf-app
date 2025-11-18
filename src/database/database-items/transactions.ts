@@ -4,12 +4,13 @@ import { useCallback, useMemo } from "react"
 import { SearchFilters, type Transaction } from "@/types/transaction"
 
 export function useTransactionsModule(database: SQLiteDatabase) {
+
     const createTransaction = useCallback(async (data: Transaction) => {
         const statement = await database.prepareAsync(
-            "INSERT INTO transactions (value, description, category, date, flow, account_id, notes) VALUES ($value, $description, $category, $date, $flow, $account_id, $notes)"
+            "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
         )
 
-        const flow = data.flow ?? (data.value >= 0 ? "inflow" : "outflow")
+        const type = data.type ?? (data.value >= 0 ? "in" : "out")
 
         try {
             await statement.executeAsync({
@@ -17,12 +18,10 @@ export function useTransactionsModule(database: SQLiteDatabase) {
                 $description: data.description,
                 $category: Number(data.category),
                 $date: data.date,
-                $flow: flow,
-                $account_id: data.account_id ?? null,
-                $notes: data.notes ?? null,
+                $type: type,
             })
 
-            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nFluxo: ${flow}`)
+            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nTipo: ${type}`)
         } catch (error) {
             throw error
         } finally {

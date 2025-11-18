@@ -100,6 +100,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         await database.execAsync(statement)
     }
 
+    console.log("Banco inicializado")
+
 }
 
 
