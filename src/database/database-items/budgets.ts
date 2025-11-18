@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import {
@@ -11,7 +12,56 @@ import {
     type Transaction,
 } from "@/types/transaction"
 
+type CategoryInfo = {
+    color: string
+    translationKey: string
+}
+
+const CATEGORY_DETAILS: Record<number, CategoryInfo> = {
+    1: { color: "#0EA5E9", translationKey: "categories.expenses.home" },
+    2: { color: "#FB7185", translationKey: "categories.expenses.eating" },
+    3: { color: "#F97316", translationKey: "categories.expenses.groceries" },
+    4: { color: "#10B981", translationKey: "categories.expenses.transport" },
+    5: { color: "#8B5CF6", translationKey: "categories.expenses.services" },
+    6: { color: "#F59E0B", translationKey: "categories.expenses.leisure" },
+    7: { color: "#22D3EE", translationKey: "categories.expenses.education" },
+    8: { color: "#EC4899", translationKey: "categories.expenses.shopping" },
+    9: { color: "#22C55E", translationKey: "categories.expenses.investment" },
+    10: { color: "#EF4444", translationKey: "categories.expenses.health" },
+    11: { color: "#FACC15", translationKey: "categories.expenses.emergency" },
+    12: { color: "#38BDF8", translationKey: "categories.expenses.traveling" },
+    13: { color: "#D946EF", translationKey: "categories.expenses.pet" },
+    14: { color: "#4ADE80", translationKey: "categories.expenses.gaming" },
+    15: { color: "#FB923C", translationKey: "categories.expenses.gambling" },
+    16: { color: "#94A3B8", translationKey: "categories.expenses.other" },
+    21: { color: "#22C55E", translationKey: "categories.income.salary" },
+    22: { color: "#14B8A6", translationKey: "categories.income.freelance" },
+    23: { color: "#6366F1", translationKey: "categories.income.oncall" },
+    24: { color: "#E879F9", translationKey: "categories.income.overtime" },
+    25: { color: "#F97316", translationKey: "categories.income.perdiem" },
+    26: { color: "#0EA5E9", translationKey: "categories.income.sales" },
+    27: { color: "#FBBF24", translationKey: "categories.income.roi" },
+    28: { color: "#A855F7", translationKey: "categories.income.gambling" },
+    29: { color: "#94A3B8", translationKey: "categories.income.other" },
+}
+
 export function useBudgetsModule(database: SQLiteDatabase) {
+    const { t } = useTranslation()
+
+    const getCategoryInfo = useCallback(
+        (categoryId: number, type: "in" | "out"): { name: string; color: string | null } => {
+            const details = CATEGORY_DETAILS[categoryId]
+
+            if (!details) {
+                const fallbackKey = type === "out" ? "categories.expenses.other" : "categories.income.other"
+                return { name: t(fallbackKey), color: null }
+            }
+
+            return { name: t(details.translationKey), color: details.color }
+        },
+        [t],
+    )
+
     const calculateBudgetSpent = useCallback(async (period: BudgetPeriod) => {
         const now = new Date()
         const end = new Date(now)
@@ -106,21 +156,17 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         try {
             const rows = await database.getAllAsync<{
                 categoryId: number
-                categoryName: string
                 type: string
-                color: string | null
                 totalValue: number | null
             }>(
                 `SELECT
                     c.id AS categoryId,
-                    c.name AS categoryName,
                     c.type AS type,
-                    c.color AS color,
                     SUM(t.value) AS totalValue
                 FROM transactions t
                 INNER JOIN categories c ON c.id = t.category
                 ${whereStatement}
-                GROUP BY c.id, c.name, c.type, c.color`,
+                GROUP BY c.id, c.type`,
                 params
             )
 
@@ -130,11 +176,14 @@ export function useBudgetsModule(database: SQLiteDatabase) {
                     const normalizedTotal = row.type === "out" ? Math.abs(rawTotal) : rawTotal
                     const safeTotal = Number.isFinite(normalizedTotal) ? normalizedTotal : 0
 
+                    const normalizedType = row.type === "out" ? "out" : "in"
+                    const categoryInfo = getCategoryInfo(row.categoryId, normalizedType)
+
                     return {
                         categoryId: row.categoryId,
-                        name: row.categoryName,
-                        color: row.color ?? null,
-                        type: row.type === "out" ? "out" : "in",
+                        name: categoryInfo.name,
+                        color: categoryInfo.color,
+                        type: normalizedType,
                         total: safeTotal,
                     } satisfies MonthlyCategoryAggregate
                 })
@@ -143,7 +192,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             console.error("Falha ao buscar distribuição mensal por categoria:", error)
             throw error
         }
-    }, [database])
+    }, [database, getCategoryInfo])
 
     const getBudgetMonthlyPerformance = useCallback(async (options: { months?: number } = {}): Promise<BudgetMonthlyPerformance[]> => {
         const budgetState = useBudgetStore.getState().budget
