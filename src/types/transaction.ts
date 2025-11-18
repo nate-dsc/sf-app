@@ -38,7 +38,7 @@ export type NewCard = {
 export type CCard = {
     id: number,
     name: string,
-    limit: number,
+    maxLimit: number,
     limitUsed: number,
     color: string,
     closingDay: number,
@@ -49,13 +49,11 @@ export type CCard = {
 export type UpdateCardInput = {
     name?: string,
     color?: number,
-    limit?: number,
+    maxLimit?: number,
     limitUsed?: number,
     closingDay?: number,
     dueDay?: number,
     ignoreWeekends?: boolean,
-    issuer?: string | null,
-    lastFour?: string | null,
 }
 
 export type CardStatementCycleSummary = {
@@ -69,7 +67,7 @@ export type CardStatementCycleSummary = {
     cycleEnd: string,
     dueDate: string,
     referenceMonth: string,
-    limit: number,
+    maxLimit: number,
     limitUsed: number,
     availableCredit: number,
     realizedTotal: number,
@@ -160,7 +158,6 @@ export type BudgetMonthlyPerformance = {
 export type MonthlyCategoryAggregate = {
     categoryId: number,
     name: string,
-    color: string | null,
     type: TransactionType,
     total: number,
 }
