@@ -160,6 +160,7 @@ export type BudgetMonthlyPerformance = {
 export type MonthlyCategoryAggregate = {
     categoryId: number,
     name: string,
+    color: string,
     type: TransactionType,
     total: number,
 }

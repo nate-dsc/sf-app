@@ -1,9 +1,8 @@
-import { dropAll } from "@/database/reset/resetDatabase";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function initializeDatabase(database: SQLiteDatabase) {
     
-    await dropAll(database)
+    //await dropAll(database)
 
     const pragmaForeignKeysOn = `PRAGMA foreign_keys = ON;`
 
@@ -104,4 +103,16 @@ export async function initializeDatabase(database: SQLiteDatabase) {
 
 }
 
+function quoteIdentifier(value: string) {
+    return `"${value.replace(/"/g, '""')}"`
+}
 
+async function dropAll(database: SQLiteDatabase) {
+    const tables = await database.getAllAsync<{ name: string }>(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+    )
+
+    for (const table of tables) {
+        await database.execAsync(`DROP TABLE IF EXISTS ${quoteIdentifier(table.name)}`)
+    }
+}
