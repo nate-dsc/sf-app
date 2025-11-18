@@ -107,7 +107,7 @@ export default function CreditScreen() {
                         { color: theme.text.label, paddingHorizontal: layout.margin.contentArea },
                     ]}
                 >
-                    Recorrentes
+                    Ações com cartão de crédito
                 </Text>
             </View>
             {showRecurringWarning ? (
@@ -182,6 +182,16 @@ export default function CreditScreen() {
                 </View>
             </View>
 
+            <View>
+                <Text
+                    style={[
+                        FontStyles.title3,
+                        { color: theme.text.label, paddingHorizontal: layout.margin.contentArea },
+                    ]}
+                >
+                    Carteira
+                </Text>
+            </View>
             <View
                 style={{
                     position: "relative",
