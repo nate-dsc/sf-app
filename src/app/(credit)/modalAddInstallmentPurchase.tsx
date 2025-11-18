@@ -1,5 +1,5 @@
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
-import CreditCardCarousel from "@/components/credit-card-items/CreditCardCarousel"
+import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
 import DayPickerModal from "@/components/credit-card-items/DayPickerModal"
 import GPopup from "@/components/grouped-list-components/GroupedPopup"
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
@@ -9,11 +9,6 @@ import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/transaction"
-import { useHeaderHeight } from "@react-navigation/elements"
-import { useRouter } from "expo-router"
-import { useEffect, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { Alert, Modal, ScrollView, Text, View } from "react-native"
 import {
     derivePurchaseDayForCard,
     getAllowedPurchaseDays,
@@ -21,6 +16,11 @@ import {
     normalizePurchaseDay,
     validateInstallmentForm,
 } from "@/utils/installments"
+import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
+import { useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { Alert, Modal, ScrollView, Text, View } from "react-native"
 
 export default function AddInstallmentPurchaseModal() {
     const router = useRouter()
@@ -351,7 +351,7 @@ export default function AddInstallmentPurchaseModal() {
                             {t("modalAdd.noCardsAvailable", { defaultValue: "Nenhum cartão disponível" })}
                         </Text>
                     ) : (
-                        <CreditCardCarousel
+                        <CreditCardPicker
                             cards={cards}
                             selectedCard={selectedCard}
                             onSelectCard={(card) => {

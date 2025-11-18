@@ -1,5 +1,5 @@
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo";
-import CreditCardCarousel from "@/components/credit-card-items/CreditCardCarousel";
+import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker";
 import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
 import GPopup from "@/components/grouped-list-components/GroupedPopup";
 import GSwitch from "@/components/grouped-list-components/GroupedSwitch";
@@ -13,12 +13,12 @@ import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
 import { CCard, Flow } from "@/types/transaction";
+import { trackAnalyticsEvent } from "@/utils/analytics";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, ScrollView, Text, View } from "react-native";
-import { trackAnalyticsEvent } from "@/utils/analytics";
 
 
 
@@ -368,7 +368,7 @@ export default function AddModal() {
                             </Text>
                         ) : (
                             <>
-                                <CreditCardCarousel
+                                <CreditCardPicker
                                     cards={cards}
                                     selectedCard={selectedCard}
                                     onSelectCard={(card) => updateNewTransaction({ cardId: card.id })}

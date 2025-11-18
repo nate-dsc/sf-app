@@ -1,13 +1,13 @@
 import { AppIcon } from "@/components/AppIcon"
-import CreditCardCarousel from "@/components/credit-card-items/CreditCardCarousel"
+import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
-import { useRouter, useNavigation } from "expo-router"
+import { useNavigation, useRouter } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
@@ -210,11 +210,9 @@ export default function CreditScreen() {
                         {t("credit.noCardsAvailable", { defaultValue: "Nenhum cartão cadastrado" })}
                     </Text>
                 ) : (
-                    <CreditCardCarousel
+                    <CreditCardPicker
                         cards={cards}
-                        selectedCard={selectedCard}
                         onSelectCard={handleNavigateToCard}
-                        onEditCard={handleEditCard}
                     />
                 )}
             </View>
