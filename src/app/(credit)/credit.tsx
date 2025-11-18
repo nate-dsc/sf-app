@@ -89,24 +89,7 @@ export default function CreditScreen() {
     const showRecurringWarning = recurringCreditWarning?.reason === "INSUFFICIENT_CREDIT_LIMIT"
     const warningAmount = showRecurringWarning ? recurringCreditWarning.attemptedAmount / 100 : 0
     const warningAvailable = showRecurringWarning ? recurringCreditWarning.availableLimit / 100 : 0
-
-    if (loading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: theme.background.bg,
-                }}
-            >
-                <ActivityIndicator color={theme.colors.blue} size="large" />
-                <Text style={[FontStyles.body, { marginTop: 12, color: theme.text.secondaryLabel }]}> 
-                    {t("credit.loadingCards", { defaultValue: "Carregando cartões..." })}
-                </Text>
-            </View>
-        )
-    }
+    const shouldShowInlineLoader = loading && cards.length === 0
 
     return (
         <ScrollView
@@ -199,21 +182,48 @@ export default function CreditScreen() {
                 </View>
             </View>
 
-            <View>
-                {loading ? (
-                    <Text style={{ color: theme.text.secondaryLabel }}>
-                        {t("credit.loadingCards", { defaultValue: "Carregando cartões..." })}
-                    </Text>
-                ) : cards.length === 0 ? (
+            <View
+                style={{
+                    position: "relative",
+                    minHeight: 200,
+                    justifyContent: cards.length === 0 ? "center" : undefined,
+                }}
+            >
+                {cards.length === 0 && !shouldShowInlineLoader ? (
                     <Text style={{ color: theme.text.secondaryLabel }}>
                         {t("credit.noCardsAvailable", { defaultValue: "Nenhum cartão cadastrado" })}
                     </Text>
-                ) : (
+                ) : null}
+
+                {cards.length > 0 ? (
                     <CreditCardPicker
                         cards={cards}
                         onSelectCard={handleNavigateToCard}
                     />
-                )}
+                ) : null}
+
+                {loading ? (
+                    <View
+                        pointerEvents="none"
+                        style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            backgroundColor: theme.background.bg + "cc",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: layout.radius.groupedView,
+                            gap: 8,
+                        }}
+                    >
+                        <ActivityIndicator color={theme.colors.blue} size="large" />
+                        <Text style={{ color: theme.text.secondaryLabel }}>
+                            {t("credit.loadingCards", { defaultValue: "Carregando cartões..." })}
+                        </Text>
+                    </View>
+                ) : null}
             </View>
         </ScrollView>
     )
