@@ -52,7 +52,7 @@ export default function CardPurchasesScreen() {
 
     const filters = useMemo<SearchFilters>(() => {
         const base: SearchFilters = {
-            type: "outflow",
+            type: "out",
         }
 
         if (!Number.isFinite(resolvedCardId)) {

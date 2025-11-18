@@ -56,14 +56,14 @@ export default function FilterModal({onBackgroundPress}: FilterModalProps) {
                             label={"Máximo"}
                             acViewKey={"max"}
                             onChangeNumValue={(numValue: number) => updateFilters({maxValue: numValue})}
-                            flowType={"inflow"}
+                            transactionType="in"
                         />
                         <GValueInput
                             separator="none"
                             label="Mínimo"
                             acViewKey={"min"}
                             onChangeNumValue={(numValue: number) => updateFilters({minValue: numValue})}
-                            flowType={"inflow"}
+                            transactionType="in"
                         />
                     </View>
                 </View>

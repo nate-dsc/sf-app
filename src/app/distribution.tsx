@@ -4,7 +4,7 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { DistributionCategory, useDistributionStore } from "@/stores/useDistributionStore"
-import { Flow } from "@/types/transaction"
+import { type TransactionType } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -12,7 +12,7 @@ import { ActivityIndicator, RefreshControl, ScrollView, Text, TouchableOpacity, 
 import { PieChart } from "react-native-gifted-charts"
 
 type DistributionBreakdownChartProps = {
-    flow: Flow
+    type: TransactionType
     entries: DistributionCategory[]
     title: string
     totalLabel: string
@@ -63,7 +63,7 @@ function SummaryCard({ label, valueInCents, valueColor, formatCurrency }: Summar
 }
 
 function DistributionBreakdownChart({
-    flow,
+    type,
     entries,
     title,
     totalLabel,
@@ -205,7 +205,7 @@ function DistributionBreakdownChart({
 
                         return (
                             <View
-                                key={`${flow}-${entry.id}-${entry.label}`}
+                                key={`${type}-${entry.id}-${entry.label}`}
                                 style={{ flexDirection: "row", gap: 12, alignItems: "center" }}
                             >
                                 <View
@@ -260,7 +260,7 @@ function DistributionCategoryList({
                         const percentageWidth = Math.min(Math.max(entry.percentage * 100, 4), 100)
 
                         return (
-                            <View key={`${entry.flow}-${entry.categoryId}`} style={{ gap: 8 }}>
+                            <View key={`${entry.type}-${entry.categoryId}`} style={{ gap: 8 }}>
                                 <View
                                     style={{
                                         flexDirection: "row",
@@ -327,7 +327,7 @@ export default function DistributionScreen() {
     const filters = useDistributionStore((state) => state.filters)
     const loadDistributionData = useDistributionStore((state) => state.loadData)
 
-    const [selectedFlow, setSelectedFlow] = useState<Flow>("outflow")
+    const [selectedType, setSelectedType] = useState<TransactionType>("out")
     const [refreshing, setRefreshing] = useState(false)
 
     const locale = i18n.language || "pt-BR"
@@ -432,10 +432,10 @@ export default function DistributionScreen() {
 
     const hasAnyData = Boolean((data?.inflow?.length ?? 0) > 0 || (data?.outflow?.length ?? 0) > 0)
 
-    const selectedEntries = selectedFlow === "outflow" ? data?.outflow ?? [] : data?.inflow ?? []
+    const selectedEntries = selectedType === "out" ? data?.outflow ?? [] : data?.inflow ?? []
 
-    const chartTitle = selectedFlow === "outflow" ? t("distribution.chart.outflowTitle") : t("distribution.chart.inflowTitle")
-    const listTitle = selectedFlow === "outflow" ? t("distribution.list.outflowTitle") : t("distribution.list.inflowTitle")
+    const chartTitle = selectedType === "out" ? t("distribution.chart.outflowTitle") : t("distribution.chart.inflowTitle")
+    const listTitle = selectedType === "out" ? t("distribution.list.outflowTitle") : t("distribution.list.inflowTitle")
     const listEmptyMessage = t("distribution.list.empty")
     const totalLabel = t("distribution.chart.totalLabel")
     const chartEmptyMessage = t("distribution.chart.empty")
@@ -443,8 +443,8 @@ export default function DistributionScreen() {
 
     const flowOptions = useMemo(
         () => [
-            { label: t("distribution.filters.outflow"), value: "outflow" as Flow },
-            { label: t("distribution.filters.inflow"), value: "inflow" as Flow },
+            { label: t("distribution.filters.outflow"), value: "out" as TransactionType },
+            { label: t("distribution.filters.inflow"), value: "in" as TransactionType },
         ],
         [t]
     )
@@ -580,7 +580,7 @@ export default function DistributionScreen() {
                     </TouchableOpacity>
                 </View>
 
-                <SegmentedControlCompact options={flowOptions} selectedValue={selectedFlow} onChange={setSelectedFlow} />
+                <SegmentedControlCompact options={flowOptions} selectedValue={selectedType} onChange={setSelectedType} />
 
                 <View style={{ gap: 12 }}>
                     <Text style={[FontStyles.title3, { color: theme.text.label }]}>
@@ -617,7 +617,7 @@ export default function DistributionScreen() {
                 ) : hasAnyData ? (
                     <View style={{ gap: 24 }}>
                         <DistributionBreakdownChart
-                            flow={selectedFlow}
+                            type={selectedType}
                             entries={selectedEntries}
                             title={chartTitle}
                             totalLabel={totalLabel}

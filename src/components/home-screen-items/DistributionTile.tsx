@@ -47,7 +47,7 @@ export default function DistributionTile({ style }: DistributionProps) {
                             const color = entry.color ?? theme.colors.blue
 
                             return (
-                                <View key={`${entry.flow}-${entry.categoryId}`} style={{ gap: 6 }}>
+                                <View key={`${entry.type}-${entry.categoryId}`} style={{ gap: 6 }}>
                                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                                             <View

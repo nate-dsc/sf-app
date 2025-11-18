@@ -11,7 +11,7 @@ export type CardRow = {
     id: number
     name: string
     color: number | null
-    limit_value: number | null
+    max_limit: number | null
     limit_used: number | null
     closing_day: number | null
     due_day: number | null
@@ -29,7 +29,7 @@ export type RawCardStatementSummary = {
     cycleEnd: string
     dueDate: string
     referenceMonth: string
-    limit: number
+    maxLimit: number
     limitUsed: number
     availableCredit: number
     realizedTotal: number
@@ -134,7 +134,7 @@ export function computeDueDate(cycleEnd: Date, dueDay: number, ignoreWeekends: b
 
 async function fetchCard(database: SQLiteExecutor, cardId: number): Promise<CardRow | null> {
     const row = await database.getFirstAsync<CardRow>(
-        "SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
+        "SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
         [cardId],
     )
 
@@ -228,7 +228,7 @@ function buildSummary(
     projectedRecurring: number,
     projectedInstallments: number,
 ): RawCardStatementSummary {
-    const limit = Number(card.limit_value ?? 0)
+    const limit = Number(card.max_limit ?? 0)
     const limitUsed = Number(card.limit_used ?? 0)
     const projectedTotal = projectedRecurring + projectedInstallments
 
@@ -243,7 +243,7 @@ function buildSummary(
         cycleEnd: cycle.endKey,
         dueDate: formatISODate(dueDate),
         referenceMonth: cycle.referenceMonth,
-        limit,
+        maxLimit: limit,
         limitUsed,
         availableCredit: Math.max(limit - limitUsed, 0),
         realizedTotal,
@@ -297,7 +297,7 @@ export async function getCardsStatementForDate(
     referenceDate: Date = new Date(),
 ): Promise<RawCardStatementSummary[]> {
     const cards = await database.getAllAsync<CardRow>(
-        "SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards",
+        "SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards",
     )
 
     const summaries: RawCardStatementSummary[] = []
@@ -353,9 +353,9 @@ export async function updateCardRecord(database: SQLiteExecutor, cardId: number,
         values.push(input.color)
     }
 
-    if (input.limit !== undefined) {
-        fields.push('"limit" = ?')
-        values.push(input.limit)
+    if (input.maxLimit !== undefined) {
+        fields.push('max_limit = ?')
+        values.push(input.maxLimit)
     }
 
     if (input.limitUsed !== undefined) {

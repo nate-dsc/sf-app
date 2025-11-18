@@ -54,9 +54,9 @@ export function CategoryPickerCompact({ type, onChangeSelected, initialSelected 
     ];
 
     const filteredList = useMemo(() => {
-        if(type === "outflow") {
+        if(type === "out") {
             return categoryList.slice(0,15)
-        } else if (type === "inflow") {
+        } else if (type === "in") {
             return categoryList.slice(16, 24)
         } else {
             return categoryList

@@ -37,9 +37,9 @@ export default function TransactionHistoryScreen() {
 
     const typeOptions: SCOption<TransactionTypeFilter>[] = [
         {label: "Todas", value: "all"},
-        {label: "Entradas", value: "inflow"},
-        {label: "Saídas", value: "outflow"}
-    ] 
+        {label: "Entradas", value: "in"},
+        {label: "Saídas", value: "out"}
+    ]
 
     const handleItemPress = (item: Transaction) => {
         setSelectedTransaction(item)

@@ -29,7 +29,7 @@ export type RecurringTransaction = {
 export type NewCard = {
     name: string,
     color: number,
-    limit: number,
+    maxLimit: number,
     closingDay: number,
     dueDay: number,
     ignoreWeekends: boolean
@@ -54,6 +54,8 @@ export type UpdateCardInput = {
     closingDay?: number,
     dueDay?: number,
     ignoreWeekends?: boolean,
+    issuer?: string,
+    lastFour?: string,
 }
 
 export type CardStatementCycleSummary = {

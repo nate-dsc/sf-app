@@ -1,6 +1,6 @@
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { RecurringTransaction, Transaction } from "@/types/transaction"
+import { RecurringTransaction, Transaction, type TransactionType } from "@/types/transaction"
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
@@ -12,7 +12,7 @@ import {
 import { showToast } from "@/utils/toast"
 
 export type NewTransaction = {
-    flowType?: "inflow" | "outflow",
+    type?: TransactionType,
     value?: number,
     description?: string,
     date?: Date,
@@ -99,9 +99,9 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }
 
     const isValid = useMemo(() => {
-        const { flowType, value, date, category, useCreditCard, cardId } = newTransaction;
+        const { type, value, date, category, useCreditCard, cardId } = newTransaction;
 
-        if (!(flowType && value && value > 0 && date && category?.id)) {
+        if (!(type && value && value > 0 && date && category?.id)) {
             return false
         }
 
@@ -135,12 +135,12 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
         return {
             id: 0,
-            value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
+            value: newTransaction.type === "in" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
             category: Number.isNaN(categoryId) ? 0 : categoryId,
             date: newTransaction.date?.toISOString().slice(0, 16)!,
             card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
-            flow: newTransaction.flowType === "inflow" ? "inflow" : "outflow",
+            type: newTransaction.type ?? "out",
         }
     }
 
@@ -152,14 +152,14 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
         return {
             id: 0,
-            value: newTransaction.flowType === "inflow" ? newTransaction.value! : -newTransaction.value!,
+            value: newTransaction.type === "in" ? newTransaction.value! : -newTransaction.value!,
             description: newTransaction.description || "",
             category: Number.isNaN(categoryId) ? 0 : categoryId,
             date_start: newTransaction.date?.toISOString().slice(0, 16)!,
             rrule: newTransaction.rrule!,
             date_last_processed: null,
             card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
-            flow: newTransaction.flowType === "inflow" ? "inflow" : "outflow",
+            type: newTransaction.type ?? "out",
         }
     }
 
@@ -177,7 +177,7 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             throw new Error("CARD_NOT_FOUND")
         }
 
-        const availableLimit = card.limit - card.limitUsed
+        const availableLimit = card.maxLimit - card.limitUsed
         const requiredAmount = Math.abs(valueCents)
 
         if (requiredAmount > availableLimit) {

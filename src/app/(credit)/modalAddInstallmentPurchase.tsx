@@ -52,7 +52,7 @@ export default function AddInstallmentPurchaseModal() {
 
     useEffect(() => {
         setNewTransaction({
-            flowType: "outflow",
+            type: "out",
             value: undefined,
             description: "",
             category: undefined,
@@ -289,7 +289,7 @@ export default function AddInstallmentPurchaseModal() {
                         updateNewTransaction({ value })
                     }}
                     valueInCents={newTransaction.value}
-                    flowType="outflow"
+                    transactionType="out"
                 />
                 {renderErrorText(valueError)}
                 <GTextInput
@@ -321,7 +321,7 @@ export default function AddInstallmentPurchaseModal() {
                     displayValue={newTransaction.category?.label}
                     onPress={() => {
                         setTouched((prev) => ({ ...prev, category: true }))
-                        updateNewTransaction({ flowType: "outflow" })
+                        updateNewTransaction({ type: "out" })
                         router.push("/modalCategoryPicker")
                     }}
                 />

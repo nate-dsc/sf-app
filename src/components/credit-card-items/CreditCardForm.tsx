@@ -16,7 +16,7 @@ import { useRouter } from "expo-router"
 export type CreditCardFormValues = {
     name: string
     color: string
-    limit: number
+    maxLimit: number
     closingDay: number
     dueDay: number
     ignoreWeekends: boolean
@@ -72,7 +72,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
     const [dueDayModalVisible, setDueDayModalVisible] = useState(false)
     const [selectedClosingDay, setSelectedClosingDay] = useState(resolvedInitialClosingDay)
     const [selectedDueDay, setSelectedDueDay] = useState(resolvedInitialDueDay)
-    const [limit, setLimit] = useState(initialValues?.limit ?? 0)
+    const [maxLimit, setMaxLimit] = useState(initialValues?.maxLimit ?? 0)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [submitting, setSubmitting] = useState(false)
 
@@ -107,7 +107,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
             return
         }
 
-        if (!limit || limit <= 0) {
+        if (!maxLimit || maxLimit <= 0) {
             handleShowError(t("credit.errors.invalidLimit", { defaultValue: "Informe um limite maior que zero." }))
             return
         }
@@ -120,7 +120,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
         const values: CreditCardFormValues = {
             name: trimmedName,
             color: selectedColor,
-            limit,
+            maxLimit,
             closingDay: selectedClosingDay,
             dueDay: selectedDueDay,
             ignoreWeekends,
@@ -147,7 +147,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
         }
     }
 
-    const isPrimaryActive = !submitting && name.trim().length > 0 && limit > 0 && selectedClosingDay > 0 && selectedDueDay > 0
+    const isPrimaryActive = !submitting && name.trim().length > 0 && maxLimit > 0 && selectedClosingDay > 0 && selectedDueDay > 0
 
     return (
         <ScrollView
@@ -182,9 +182,9 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                     separator={"translucent"}
                     label={t("credit.limit", { defaultValue: "Limite" })}
                     acViewKey={"credit-card-limit"}
-                    onChangeNumValue={setLimit}
-                    flowType={"inflow"}
-                    valueInCents={limit}
+                    onChangeNumValue={setMaxLimit}
+                    transactionType="in"
+                    valueInCents={maxLimit}
                 />
                 <GPopup
                     separator={"translucent"}

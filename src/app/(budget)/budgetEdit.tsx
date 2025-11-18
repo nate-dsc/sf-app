@@ -183,7 +183,7 @@ export default function BudgetEditScreen() {
                                 setFormError(null)
                             }
                         }}
-                        flowType="inflow"
+                        transactionType="in"
                         valueInCents={amountCents}
                         labelFlex={2}
                         fieldFlex={2}
