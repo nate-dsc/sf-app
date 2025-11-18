@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import { initializeAppDatabase } from "./useDatabase"
+import { initializeAppDatabase } from "../useDatabase"
 
 const DEPENDENT_TABLES = [
     "card_statement_transactions",

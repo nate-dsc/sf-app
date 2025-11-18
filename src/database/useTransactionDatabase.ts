@@ -2,10 +2,10 @@ import { useStyle } from "@/context/StyleContext"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useMemo } from "react"
 
-import { useBudgetsModule } from "./budgets"
-import { useCreditCardTransactionsModule } from "./creditCardTransactions"
-import { useRecurringTransactionsModule } from "./recurringTransactions"
-import { useTransactionsModule } from "./transactions"
+import { useBudgetsModule } from "./database-items/budgets"
+import { useCreditCardTransactionsModule } from "./database-items/creditCardTransactions"
+import { useRecurringTransactionsModule } from "./database-items/recurringTransactions"
+import { useTransactionsModule } from "./database-items/transactions"
 import { useDatabase } from "./useDatabase"
 
 export function useTransactionDatabase() {

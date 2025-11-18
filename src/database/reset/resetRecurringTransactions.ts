@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import { initializeAppDatabase } from "./useDatabase"
+import { initializeAppDatabase } from "../useDatabase"
 
 function quoteIdentifier(value: string) {
     return `"${value.replace(/"/g, '""')}"`

@@ -3,8 +3,6 @@ import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
 import type { CustomTheme } from "@/types/theme"
-import { getColorFromID } from "@/utils/CardUtils"
-import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
 import {
     CCard,
     CardStatementCycleSummary,
@@ -17,7 +15,9 @@ import {
     Transaction,
     UpdateCardInput,
 } from "@/types/transaction"
-import { deleteCardRecord, getCardStatementForDate as fetchCardStatementForDate, getCardStatementHistory as fetchCardStatementHistory, getCardsStatementForDate as fetchCardsStatementForDate, type RawCardStatementSummary, updateCardRecord } from "./cardRepository"
+import { getColorFromID } from "@/utils/CardUtils"
+import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
+import { deleteCardRecord, getCardStatementForDate as fetchCardStatementForDate, getCardStatementHistory as fetchCardStatementHistory, getCardsStatementForDate as fetchCardsStatementForDate, updateCardRecord, type RawCardStatementSummary } from "../repositories/cardRepository"
 
 export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme: CustomTheme) {
     const createTransactionWithCard = useCallback(async (data: Transaction, cardId: number) => {

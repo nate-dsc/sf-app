@@ -1,8 +1,8 @@
 import assert from "node:assert/strict"
 import { afterEach, beforeEach, describe, it } from "node:test"
 
-import { computeDueDate, getCardStatementForDate, getCardStatementHistory, resolveCycleBoundaries, updateCardRecord } from "../../src/database/cardRepository"
 import { initializeAppDatabase } from "../../src/database/bootstrap"
+import { computeDueDate, getCardStatementForDate, getCardStatementHistory, resolveCycleBoundaries, updateCardRecord } from "../../src/database/repositories/cardRepository"
 import { TestSQLiteDatabase } from "../utils/createTestDatabase"
 
 let database: TestSQLiteDatabase
