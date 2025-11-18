@@ -5,7 +5,8 @@ import { SearchFilters, type Transaction } from "@/types/transaction"
 
 export function useTransactionsModule(database: SQLiteDatabase) {
 
-    const createTransaction = useCallback(async (data: Transaction) => {
+    const createTransaction = useCallback(async function createTransaction(data: Transaction) {
+
         const statement = await database.prepareAsync(
             "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
         )
@@ -21,15 +22,15 @@ export function useTransactionsModule(database: SQLiteDatabase) {
                 $type: type,
             })
 
-            console.log(`Transação única inserida:\nValor: ${data.value}\nDescrição: ${data.description}\nCategoria: ${data.category}\nData: ${data.date}\nTipo: ${type}`)
+            console.log(`Single transaction inserted:\nValue: ${data.value}\nDescription: ${data.description}\nCategory: ${data.category}\nDate: ${data.date}\nType: ${type}`)
         } catch (error) {
             throw error
         } finally {
-            statement.finalizeAsync()
+            await statement.finalizeAsync()
         }
     }, [database])
 
-    const deleteTransaction = useCallback(async (id: number) => {
+    const deleteTransaction = useCallback(async function deleteTransaction(id: number) {
         try {
             await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
         } catch (error) {
@@ -38,7 +39,7 @@ export function useTransactionsModule(database: SQLiteDatabase) {
         }
     }, [database])
 
-    const getTransactionsFromMonth = useCallback(async (YMString: string, orderBy: "day" | "id") => {
+    const getTransactionsFromMonth = useCallback(async function getTransactionsFromMonth(YMString: string, orderBy: "day" | "id") {
         const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
 
         try {
@@ -51,7 +52,7 @@ export function useTransactionsModule(database: SQLiteDatabase) {
         }
     }, [database])
 
-    const getPaginatedFilteredTransactions = useCallback(async (page: number, pageSize: number, filterOptions: SearchFilters = {}) => {
+    const getPaginatedFilteredTransactions = useCallback(async function getPaginatedFilteredTransactions(page: number, pageSize: number, filterOptions: SearchFilters = {}) {
         const offset = page * pageSize
 
         const whereClauses: string[] = []
@@ -68,17 +69,17 @@ export function useTransactionsModule(database: SQLiteDatabase) {
             params.push(...filterOptions.category)
         }
 
-        if (filterOptions.type === "inflow") {
-            whereClauses.push("flow = 'inflow'")
-        } else if (filterOptions.type === "outflow") {
-            whereClauses.push("flow = 'outflow'")
+        if (filterOptions.type === "in") {
+            whereClauses.push("type = 'in'")
+        } else if (filterOptions.type === "out") {
+            whereClauses.push("type = 'out'")
         }
 
         if (filterOptions.minValue !== undefined) {
-            if (filterOptions.type === "inflow") {
+            if (filterOptions.type === "in") {
                 whereClauses.push("value >= ?")
                 params.push(filterOptions.minValue)
-            } else if (filterOptions.type === "outflow") {
+            } else if (filterOptions.type === "out") {
                 whereClauses.push("value <= ?")
                 params.push(-filterOptions.minValue)
             } else {
@@ -88,10 +89,10 @@ export function useTransactionsModule(database: SQLiteDatabase) {
         }
 
         if (filterOptions.maxValue !== undefined) {
-            if (filterOptions.type === "inflow") {
+            if (filterOptions.type === "in") {
                 whereClauses.push("value <= ?")
                 params.push(filterOptions.maxValue)
-            } else if (filterOptions.type === "outflow") {
+            } else if (filterOptions.type === "out") {
                 whereClauses.push("value >= ?")
                 params.push(-filterOptions.maxValue)
             } else {

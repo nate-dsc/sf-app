@@ -119,7 +119,7 @@ export type InstallmentScheduleWithStatus = InstallmentSchedule & {
     occurrences: (InstallmentOccurrence & { status: "posted" | "pending" })[]
 }
 
-export type TransactionTypeFilter = "inflow" | "outflow" | "all"
+export type TransactionTypeFilter = "in" | "out" | "all"
 
 export type FilterSortBy = "date" | "value"
 
