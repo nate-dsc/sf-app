@@ -182,7 +182,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
                     return {
                         categoryId: row.categoryId,
                         name: categoryInfo.name,
-                        color: categoryInfo.color,
+                        color: categoryInfo.color!,
                         type: normalizedType,
                         total: safeTotal,
                     } satisfies MonthlyCategoryAggregate
