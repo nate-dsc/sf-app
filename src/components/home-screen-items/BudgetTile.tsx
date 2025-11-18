@@ -14,14 +14,6 @@ export default function BudgetTile() {
     const { t, i18n } = useTranslation()
     const tileStyles = TileStyles(theme)
 
-    if (loading && !data) {
-        return <ActivityIndicator size="large" />
-    }
-
-    if (error) {
-        return <Text>{error}</Text>
-    }
-
     const budget = data?.budget && data.budget.amountCents > 0 ? data.budget : null
     const locale = i18n.language
     const currency = locale === "pt-BR" ? "BRL" : "USD"
@@ -99,6 +91,15 @@ export default function BudgetTile() {
             periodLabel: t(`budget.periods.${budget.period}`),
         }
     }, [budget, formatCurrency, t])
+
+
+    if (loading && !data) {
+        return <ActivityIndicator size="large" />
+    }
+
+    if (error) {
+        return <Text>{error}</Text>
+    }
 
     return (
         <View style={{ gap: 6 }}>
