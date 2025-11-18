@@ -21,13 +21,14 @@ describe("card repository helpers", () => {
         const columns = await database.getAllAsync<{ name: string }>("PRAGMA table_info(cards)")
         const columnNames = columns.map((column) => column.name)
 
-        assert(columnNames.includes("limit"))
+        assert(columnNames.includes("max_limit"))
         assert(columnNames.includes("limit_used"))
         assert(columnNames.includes("closing_day"))
         assert(columnNames.includes("due_day"))
         assert(columnNames.includes("ignore_weekends"))
         assert(columnNames.includes("updated_at"))
         assert(!columnNames.includes("card_limit"))
+        assert(!columnNames.includes("limit"))
         assert(!columnNames.includes("ign_wknd"))
 
         const cardIndexes = await database.getAllAsync<{ name: string }>("PRAGMA index_list(cards)")
@@ -43,43 +44,43 @@ describe("card repository helpers", () => {
 
     it("calculates cycle boundaries and statement totals", async () => {
         await database.runAsync(
-            "INSERT INTO cards (id, name, color, \"limit\", limit_used, closing_day, due_day, ignore_weekends) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO cards (id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             [1, "Primary", 2, 100000, 45000, 20, 10, 1],
         )
 
         await database.runAsync(
-            "INSERT INTO transactions (value, description, category, date, card_id, flow) VALUES (?, ?, ?, ?, ?, ?)",
-            [-1000, "Groceries", 1, "2024-04-25", 1, "outflow"],
+            "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
+            [-1000, "Groceries", 1, "2024-04-25", 1, "out"],
         )
         await database.runAsync(
-            "INSERT INTO transactions (value, description, category, date, card_id, flow) VALUES (?, ?, ?, ?, ?, ?)",
-            [-2000, "Electronics", 1, "2024-05-18", 1, "outflow"],
-        )
-
-        await database.runAsync(
-            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [1, -500, "Subscription", 1, "2024-01-10T00:00", "FREQ=MONTHLY", null, 1, 0, null, "outflow", null],
+            "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
+            [-2000, "Electronics", 1, "2024-05-18", 1, "out"],
         )
 
         await database.runAsync(
-            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, flow) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [-500, "Subscription", 1, "2024-05-10", 1, 1, "outflow"],
+            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [1, -500, "Subscription", 1, "2024-01-10T00:00", "FREQ=MONTHLY", null, 1, 0, "out"],
         )
 
         await database.runAsync(
-            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [2, -1000, "Laptop", 1, "2024-03-01T00:00", "FREQ=MONTHLY;COUNT=4", null, 1, 1, null, "outflow", null],
+            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [-500, "Subscription", 1, "2024-05-10", 1, 1, "out"],
         )
 
         await database.runAsync(
-            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, flow) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [-1000, "Laptop", 1, "2024-03-01", 2, 1, "outflow"],
+            `INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [2, -1000, "Laptop", 1, "2024-03-01T00:00", "FREQ=MONTHLY;COUNT=4", null, 1, 1, "out"],
+        )
+
+        await database.runAsync(
+            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [-1000, "Laptop", 1, "2024-03-01", 2, 1, "out"],
         )
         await database.runAsync(
-            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, flow) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            [-1000, "Laptop", 1, "2024-04-01", 2, 1, "outflow"],
+            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            [-1000, "Laptop", 1, "2024-04-01", 2, 1, "out"],
         )
 
         const referenceDate = new Date("2024-05-15T00:00:00")
@@ -107,7 +108,7 @@ describe("card repository helpers", () => {
 
     it("adjusts due dates on weekends and updates cards", async () => {
         await database.runAsync(
-            "INSERT INTO cards (id, name, color, \"limit\", limit_used, closing_day, due_day, ignore_weekends) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO cards (id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             [1, "Primary", 2, 100000, 50000, 20, 10, 1],
         )
 
@@ -118,20 +119,20 @@ describe("card repository helpers", () => {
 
         await new Promise((resolve) => setTimeout(resolve, 1100))
 
-        await updateCardRecord(database, 1, { limit: 120000, limitUsed: 20000, ignoreWeekends: false, dueDay: 7 })
+        await updateCardRecord(database, 1, { maxLimit: 120000, limitUsed: 20000, ignoreWeekends: false, dueDay: 7 })
 
         const updatedRow = await database.getFirstAsync<{
-            limit_value: number
+            max_limit: number
             limit_used: number
             ignore_weekends: number
             due_day: number
             updated_at: string
         }>(
-            "SELECT \"limit\" as limit_value, limit_used, ignore_weekends, due_day, updated_at FROM cards WHERE id = ?",
+            "SELECT max_limit, limit_used, ignore_weekends, due_day, updated_at FROM cards WHERE id = ?",
             [1],
         )
 
-        assert.equal(updatedRow?.limit_value, 120000)
+        assert.equal(updatedRow?.max_limit, 120000)
         assert.equal(updatedRow?.limit_used, 20000)
         assert.equal(updatedRow?.ignore_weekends, 0)
         assert.equal(updatedRow?.due_day, 7)

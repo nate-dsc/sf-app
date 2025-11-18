@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build:test": "tsc --project tsconfig.test.json",
-    "test": "npm run build:test && node --test build/tests/**/*.test.js"
+    "test": "npm run build:test && node scripts/run-tests.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

@@ -38,7 +38,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
                     slug TEXT NOT NULL UNIQUE,
-                    flow TEXT NOT NULL CHECK (flow IN ('inflow','outflow')),
+                    type TEXT NOT NULL CHECK (type IN ('in','out')),
                     color TEXT,
                     icon TEXT,
                     is_archived INTEGER NOT NULL DEFAULT 0,
@@ -54,7 +54,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     id INTEGER PRIMARY KEY,
                     name TEXT NOT NULL,
                     color INT,
-                    "limit" INT NOT NULL DEFAULT 0,
+                    max_limit INT NOT NULL DEFAULT 0,
                     limit_used INT NOT NULL DEFAULT 0,
                     closing_day INT,
                     due_day INT,
@@ -64,7 +64,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
                 );`,
-                `CREATE INDEX IF NOT EXISTS idx_cards_limit_usage ON cards("limit", limit_used);`,
+                `CREATE INDEX IF NOT EXISTS idx_cards_limit_usage ON cards(max_limit, limit_used);`,
                 `CREATE INDEX IF NOT EXISTS idx_cards_cycle_days ON cards(closing_day, due_day);`,
                 `CREATE TABLE IF NOT EXISTS card_statements (
                     id INTEGER PRIMARY KEY,
@@ -88,13 +88,10 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     date_last_processed TEXT,
                     card_id INTEGER,
                     is_installment INTEGER NOT NULL DEFAULT 0,
-                    account_id INTEGER,
-                    flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
-                    notes TEXT,
+                    type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
-                    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+                    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
                 );`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_recurring_next_run ON transactions_recurring(date_start);`,
                 `CREATE TABLE IF NOT EXISTS transactions (
@@ -105,15 +102,12 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     date TEXT,
                     id_recurring INTEGER,
                     card_id INTEGER,
-                    account_id INTEGER,
-                    flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
-                    notes TEXT,
+                    type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
                     created_at TEXT NOT NULL DEFAULT (datetime('now')),
                     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
                     FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
                     FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
-                    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-                    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+                    FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
                 );`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_date ON transactions(date);`,
                 `CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category);`,
@@ -121,7 +115,6 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                 `CREATE INDEX IF NOT EXISTS idx_transactions_card_date ON transactions(card_id, date);`,
                 `CREATE INDEX IF NOT EXISTS idx_card_statements_card_cycle ON card_statements(card_id, cycle_start, cycle_end);`,
                 `CREATE INDEX IF NOT EXISTS idx_card_statements_card_due ON card_statements(card_id, due_date);`,
-                `CREATE INDEX IF NOT EXISTS idx_transactions_account ON transactions(account_id);`,
                 `CREATE TABLE IF NOT EXISTS card_statement_transactions (
                     statement_id INTEGER NOT NULL,
                     transaction_id INTEGER NOT NULL,
@@ -168,33 +161,33 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
             id: 2,
             name: "seed-default-categories",
             statements: [
-                `INSERT OR IGNORE INTO categories (id, name, slug, flow, color, icon, is_archived, created_at)
+                `INSERT OR IGNORE INTO categories (id, name, slug, type, color, icon, is_archived, created_at)
                 VALUES
-                    (1, 'Moradia', 'housing', 'outflow', '#0EA5E9', 'home', 0, datetime('now')),
-                    (2, 'Alimentação', 'eating-out', 'outflow', '#FB7185', 'restaurant', 0, datetime('now')),
-                    (3, 'Mercado', 'groceries', 'outflow', '#F97316', 'cart', 0, datetime('now')),
-                    (4, 'Transporte', 'transport', 'outflow', '#10B981', 'car', 0, datetime('now')),
-                    (5, 'Serviços', 'services', 'outflow', '#8B5CF6', 'construct', 0, datetime('now')),
-                    (6, 'Lazer', 'leisure', 'outflow', '#F59E0B', 'ticket', 0, datetime('now')),
-                    (7, 'Educação', 'education', 'outflow', '#22D3EE', 'school', 0, datetime('now')),
-                    (8, 'Compras', 'shopping', 'outflow', '#EC4899', 'bag-handle', 0, datetime('now')),
-                    (9, 'Investimentos', 'investments', 'outflow', '#22C55E', 'trending-up', 0, datetime('now')),
-                    (10, 'Saúde', 'health', 'outflow', '#EF4444', 'fitness', 0, datetime('now')),
-                    (11, 'Emergências', 'emergency', 'outflow', '#FACC15', 'medical', 0, datetime('now')),
-                    (12, 'Viagens', 'travel', 'outflow', '#38BDF8', 'airplane', 0, datetime('now')),
-                    (13, 'Pets', 'pets', 'outflow', '#D946EF', 'paw', 0, datetime('now')),
-                    (14, 'Games', 'gaming', 'outflow', '#4ADE80', 'game-controller', 0, datetime('now')),
-                    (15, 'Apostas', 'gambling', 'outflow', '#FB923C', 'dice', 0, datetime('now')),
-                    (16, 'Outros', 'other-expenses', 'outflow', '#94A3B8', 'ellipsis-horizontal', 0, datetime('now')),
-                    (21, 'Salário', 'salary', 'inflow', '#22C55E', 'cash', 0, datetime('now')),
-                    (22, 'Freelance', 'freelance', 'inflow', '#14B8A6', 'hammer', 0, datetime('now')),
-                    (23, 'Plantão', 'on-call', 'inflow', '#6366F1', 'id-card', 0, datetime('now')),
-                    (24, 'Hora extra', 'overtime', 'inflow', '#E879F9', 'time', 0, datetime('now')),
-                    (25, 'Per diem', 'per-diem', 'inflow', '#F97316', 'today', 0, datetime('now')),
-                    (26, 'Vendas', 'sales', 'inflow', '#0EA5E9', 'pricetag', 0, datetime('now')),
-                    (27, 'Retorno investimentos', 'roi', 'inflow', '#FBBF24', 'trending-up', 0, datetime('now')),
-                    (28, 'Apostas (entrada)', 'gambling-income', 'inflow', '#A855F7', 'dice', 0, datetime('now')),
-                    (29, 'Outros (entrada)', 'other-income', 'inflow', '#94A3B8', 'ellipsis-horizontal', 0, datetime('now'));`
+                    (1, 'Moradia', 'housing', 'out', '#0EA5E9', 'home', 0, datetime('now')),
+                    (2, 'Alimentação', 'eating-out', 'out', '#FB7185', 'restaurant', 0, datetime('now')),
+                    (3, 'Mercado', 'groceries', 'out', '#F97316', 'cart', 0, datetime('now')),
+                    (4, 'Transporte', 'transport', 'out', '#10B981', 'car', 0, datetime('now')),
+                    (5, 'Serviços', 'services', 'out', '#8B5CF6', 'construct', 0, datetime('now')),
+                    (6, 'Lazer', 'leisure', 'out', '#F59E0B', 'ticket', 0, datetime('now')),
+                    (7, 'Educação', 'education', 'out', '#22D3EE', 'school', 0, datetime('now')),
+                    (8, 'Compras', 'shopping', 'out', '#EC4899', 'bag-handle', 0, datetime('now')),
+                    (9, 'Investimentos', 'investments', 'out', '#22C55E', 'trending-up', 0, datetime('now')),
+                    (10, 'Saúde', 'health', 'out', '#EF4444', 'fitness', 0, datetime('now')),
+                    (11, 'Emergências', 'emergency', 'out', '#FACC15', 'medical', 0, datetime('now')),
+                    (12, 'Viagens', 'travel', 'out', '#38BDF8', 'airplane', 0, datetime('now')),
+                    (13, 'Pets', 'pets', 'out', '#D946EF', 'paw', 0, datetime('now')),
+                    (14, 'Games', 'gaming', 'out', '#4ADE80', 'game-controller', 0, datetime('now')),
+                    (15, 'Apostas', 'gambling', 'out', '#FB923C', 'dice', 0, datetime('now')),
+                    (16, 'Outros', 'other-expenses', 'out', '#94A3B8', 'ellipsis-horizontal', 0, datetime('now')),
+                    (21, 'Salário', 'salary', 'in', '#22C55E', 'cash', 0, datetime('now')),
+                    (22, 'Freelance', 'freelance', 'in', '#14B8A6', 'hammer', 0, datetime('now')),
+                    (23, 'Plantão', 'on-call', 'in', '#6366F1', 'id-card', 0, datetime('now')),
+                    (24, 'Hora extra', 'overtime', 'in', '#E879F9', 'time', 0, datetime('now')),
+                    (25, 'Per diem', 'per-diem', 'in', '#F97316', 'today', 0, datetime('now')),
+                    (26, 'Vendas', 'sales', 'in', '#0EA5E9', 'pricetag', 0, datetime('now')),
+                    (27, 'Retorno investimentos', 'roi', 'in', '#FBBF24', 'trending-up', 0, datetime('now')),
+                    (28, 'Apostas (entrada)', 'gambling-income', 'in', '#A855F7', 'dice', 0, datetime('now')),
+                    (29, 'Outros (entrada)', 'other-income', 'in', '#94A3B8', 'ellipsis-horizontal', 0, datetime('now'));`
             ],
         },
         {
@@ -216,15 +209,12 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
         date TEXT,
         id_recurring INTEGER,
         card_id INTEGER,
-        account_id INTEGER,
-        flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
-        notes TEXT,
+        type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at TEXT NOT NULL DEFAULT (datetime('now')),
         FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
         FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
-        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
     );`
 
     const createTransactionsRecurringTableStatement = `CREATE TABLE IF NOT EXISTS transactions_recurring (
@@ -237,13 +227,10 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
         date_last_processed TEXT,
         card_id INTEGER,
         is_installment INTEGER NOT NULL DEFAULT 0,
-        account_id INTEGER,
-        flow TEXT NOT NULL DEFAULT 'outflow' CHECK (flow IN ('inflow','outflow')),
-        notes TEXT,
+        type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
-        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL,
-        FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE SET NULL
+        FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
     );`
 
     const ensureTransactionsRecurringSchema = async () => {
@@ -257,8 +244,10 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                 await database.execAsync(createTransactionsRecurringTableStatement)
 
                 await database.execAsync(`
-                    INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes, created_at)
-                    SELECT id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes, created_at
+                    INSERT INTO transactions_recurring (id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type, created_at)
+                    SELECT id, value, description, category, date_start, rrule, date_last_processed, card_id, is_installment,
+                        CASE flow WHEN 'inflow' THEN 'in' ELSE 'out' END AS type,
+                        created_at
                     FROM transactions_recurring_legacy;
                 `)
 
@@ -284,8 +273,10 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                 await database.execAsync(createTransactionsTableStatement)
 
                 await database.execAsync(`
-                    INSERT INTO transactions (id, value, description, category, date, id_recurring, card_id, account_id, flow, notes, created_at, updated_at)
-                    SELECT id, value, description, category, date, id_recurring, card_id, account_id, flow, notes, created_at, updated_at
+                    INSERT INTO transactions (id, value, description, category, date, id_recurring, card_id, type, created_at, updated_at)
+                    SELECT id, value, description, category, date, id_recurring, card_id,
+                        CASE flow WHEN 'inflow' THEN 'in' ELSE 'out' END AS type,
+                        created_at, updated_at
                     FROM transactions_legacy;
                 `)
 
@@ -299,7 +290,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_category ON transactions(category);")
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_card ON transactions(card_id);")
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_card_date ON transactions(card_id, date);")
-        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_transactions_account ON transactions(account_id);")
+        // No account-specific index needed after removing account references from transactions
     }
 
     const ensureCardSchema = async () => {
@@ -311,7 +302,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
             id INTEGER PRIMARY KEY,
             name TEXT NOT NULL,
             color INT,
-            "limit" INT NOT NULL DEFAULT 0,
+            max_limit INT NOT NULL DEFAULT 0,
             limit_used INT NOT NULL DEFAULT 0,
             closing_day INT,
             due_day INT,
@@ -329,8 +320,8 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
 
             const columnNames = new Set(columns.map((column) => column.name))
 
-            const hasLegacyLimit = columnNames.has("card_limit")
-            const missingLimit = !columnNames.has("limit")
+            const hasLegacyLimit = columnNames.has("card_limit") || columnNames.has("limit")
+            const missingLimit = !columnNames.has("max_limit")
             const hasLegacyWeekend = columnNames.has("ign_wknd")
             const missingWeekend = !columnNames.has("ignore_weekends")
             const missingUpdatedAt = !columnNames.has("updated_at")
@@ -346,11 +337,13 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                         )
                     )
 
-                    const selectLimit = legacyColumns.has("limit")
-                        ? '"limit"'
-                        : legacyColumns.has("card_limit")
-                            ? "card_limit"
-                            : "0"
+                    const selectLimit = legacyColumns.has("max_limit")
+                        ? "max_limit"
+                        : legacyColumns.has("limit")
+                            ? '"limit"'
+                            : legacyColumns.has("card_limit")
+                                ? "card_limit"
+                                : "0"
                     const selectIgnoreWeekends = legacyColumns.has("ignore_weekends")
                         ? "ignore_weekends"
                         : legacyColumns.has("ign_wknd")
@@ -366,7 +359,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
                     const selectUpdatedAt = legacyColumns.has("updated_at") ? "updated_at" : selectCreatedAt
 
                     await database.execAsync(`
-                        INSERT INTO cards (id, name, color, "limit", limit_used, closing_day, due_day, ignore_weekends, issuer, last_four, created_at, updated_at)
+                        INSERT INTO cards (id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends, issuer, last_four, created_at, updated_at)
                         SELECT id, name, ${selectColor}, ${selectLimit}, ${selectLimitUsed}, ${selectClosing}, ${selectDue}, COALESCE(${selectIgnoreWeekends}, 0), ${selectIssuer}, ${selectLastFour}, ${selectCreatedAt}, COALESCE(${selectUpdatedAt}, ${selectCreatedAt})
                         FROM cards_legacy;
                     `)
@@ -378,7 +371,7 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
             await database.execAsync(createCardsTableStatement)
         }
 
-        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_cards_limit_usage ON cards(\"limit\", limit_used);")
+        await database.execAsync("CREATE INDEX IF NOT EXISTS idx_cards_limit_usage ON cards(max_limit, limit_used);")
         await database.execAsync("CREATE INDEX IF NOT EXISTS idx_cards_cycle_days ON cards(closing_day, due_day);")
         await database.execAsync(
             "CREATE INDEX IF NOT EXISTS idx_card_statements_card_cycle ON card_statements(card_id, cycle_start, cycle_end);"

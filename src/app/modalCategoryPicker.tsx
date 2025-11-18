@@ -17,8 +17,8 @@ export default function CategoryPicker() {
     const router = useRouter()
     const { t } = useTranslation()
     const { newTransaction, updateNewTransaction } = useNewTransaction()
-    
-    const type = newTransaction.flowType
+
+    const type = newTransaction.type
     const selectedCategory = newTransaction.category?.id
 
     const [selected, setSelected] = useState<string | undefined>(selectedCategory);
@@ -64,7 +64,7 @@ export default function CategoryPicker() {
             showsVerticalScrollIndicator={false}
         >
             <GSelectionList
-                items={type === "inflow" ? incomeList : expenseList}
+                items={type === "in" ? incomeList : expenseList}
                 singleSelect
                 selectedIds={selected ? [selected] : undefined}
                 onSelect={(id, label) => {

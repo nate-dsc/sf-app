@@ -83,7 +83,7 @@ export default function EditCreditCardModal() {
             return t("credit.errors.duplicateName", { defaultValue: "Já existe um cartão com este nome." })
         }
 
-        const duplicatedLimit = cards.some((existingCard) => existingCard.id !== card.id && existingCard.limit === values.limit)
+        const duplicatedLimit = cards.some((existingCard) => existingCard.id !== card.id && existingCard.maxLimit === values.maxLimit)
         if (duplicatedLimit) {
             return t("credit.errors.duplicateLimit", { defaultValue: "Já existe um cartão com este limite." })
         }
@@ -99,7 +99,7 @@ export default function EditCreditCardModal() {
         await updateCard(card.id, {
             name: values.name,
             color: getIDfromColor(values.color, theme),
-            limit: values.limit,
+            maxLimit: values.maxLimit,
             closingDay: values.closingDay,
             dueDay: values.dueDay,
             ignoreWeekends: values.ignoreWeekends,
@@ -170,7 +170,7 @@ export default function EditCreditCardModal() {
             initialValues={{
                 name: card.name,
                 color: card.color,
-                limit: card.limit,
+                maxLimit: card.maxLimit,
                 closingDay: card.closingDay,
                 dueDay: card.dueDay,
                 ignoreWeekends: card.ignoreWeekends,

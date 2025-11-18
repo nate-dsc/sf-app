@@ -1,6 +1,7 @@
 
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
+import { type TransactionType } from "@/types/transaction"
 import { useEffect, useState } from "react"
 import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
 import { TypographyProps } from "../styles/TextStyles"
@@ -15,13 +16,13 @@ type GValueInputProps = GroupedComponentsProps & {
     //value: string,
     //onChangeText: (value: string) => void,
     onChangeNumValue: (numValue: number) => void,
-    flowType: "inflow" | "outflow",
+    transactionType: TransactionType,
     valueInCents?: number,
     labelFlex?: number,
     fieldFlex?: number
 }
 
-export default function GValueInput({separator, label, acViewKey, onChangeNumValue, flowType, valueInCents, labelFlex, fieldFlex}: GValueInputProps) {
+export default function GValueInput({separator, label, acViewKey, onChangeNumValue, transactionType, valueInCents, labelFlex, fieldFlex}: GValueInputProps) {
 
     const {theme} = useStyle()
     const text = TypographyProps(theme)
@@ -46,7 +47,7 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
         // Se não for um número válido (ex: se o usuário digitar apenas "."), retorna vazio
         if (isNaN(numericValue)) return "";
 
-        const valueToFormat = flowType === "inflow" ? numericValue : -numericValue
+        const valueToFormat = transactionType === "in" ? numericValue : -numericValue
 
         return new Intl.NumberFormat(i18n.language, {
             style: "currency",

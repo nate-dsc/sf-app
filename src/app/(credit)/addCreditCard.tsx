@@ -22,7 +22,7 @@ export default function AddCardModal() {
             return t("credit.errors.duplicateName", { defaultValue: "Já existe um cartão com este nome." })
         }
 
-        const duplicatedLimit = cards.some((card) => card.limit === values.limit)
+        const duplicatedLimit = cards.some((card) => card.maxLimit === values.maxLimit)
         if (duplicatedLimit) {
             return t("credit.errors.duplicateLimit", { defaultValue: "Já existe um cartão com este limite." })
         }
@@ -34,7 +34,7 @@ export default function AddCardModal() {
         const newCard: NewCard = {
             name: values.name,
             color: getIDfromColor(values.color, theme),
-            limit: values.limit,
+            maxLimit: values.maxLimit,
             closingDay: values.closingDay,
             dueDay: values.dueDay,
             ignoreWeekends: values.ignoreWeekends,

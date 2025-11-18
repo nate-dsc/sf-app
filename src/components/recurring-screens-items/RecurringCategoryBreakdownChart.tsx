@@ -1,6 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { Flow } from "@/types/transaction"
+import { type TransactionType } from "@/types/transaction"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import React, { useMemo } from "react"
 import { useTranslation } from "react-i18next"
@@ -9,7 +9,7 @@ import { PieChart } from "react-native-gifted-charts"
 
 type RecurringCategoryBreakdownChartProps = {
     categoryTotals: Record<number, number>
-    flowType: Flow
+    flowType: TransactionType
 }
 
 type ChartEntry = {
@@ -31,7 +31,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
     const { t, i18n } = useTranslation()
 
     const locale = i18n.language || "pt-BR"
-    const chartTitle = flowType === "inflow"
+    const chartTitle = flowType === "in"
         ? t("recurring.categoryBreakdown.incomeTitle")
         : t("recurring.categoryBreakdown.expenseTitle")
 
@@ -81,7 +81,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
         if (othersMagnitude > 0) {
             normalizedEntries.push({
                 categoryId: -1,
-                total: flowType === "outflow" ? -othersMagnitude : othersMagnitude,
+                total: flowType === "out" ? -othersMagnitude : othersMagnitude,
                 magnitude: othersMagnitude,
             })
         }
@@ -91,7 +91,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
             const color = palette[index % palette.length]
 
             const label = entry.categoryId === -1
-                ? (flowType === "inflow"
+                ? (flowType === "in"
                     ? t("recurring.categoryBreakdown.othersIncome")
                     : t("recurring.categoryBreakdown.othersExpense"))
                 : findCategoryByID(entry.categoryId, t).label

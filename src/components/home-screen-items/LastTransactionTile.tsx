@@ -30,7 +30,7 @@ export default function LastTransactionTile() {
         description: "",
         date: new Date().toISOString(),
         category: 0,
-        flow: "outflow",
+        type: "out" as const,
     }
 
     const value = (transaction.value)/100

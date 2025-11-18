@@ -31,7 +31,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         const endISO = end.toISOString().slice(0, 10)
 
         const result = await database.getFirstAsync<{ total: number | null }>(
-            "SELECT SUM(value) as total FROM transactions WHERE flow = 'outflow' AND date(date) BETWEEN ? AND ?",
+            "SELECT SUM(value) as total FROM transactions WHERE type = 'out' AND date(date) BETWEEN ? AND ?",
             [startISO, endISO]
         )
 
@@ -47,12 +47,12 @@ export function useBudgetsModule(database: SQLiteDatabase) {
 
         try {
             const inflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE flow = 'inflow' AND strftime('%Y-%m', date) = ?",
+                "SELECT SUM(value) as total FROM transactions WHERE type = 'in' AND strftime('%Y-%m', date) = ?",
                 [currentMonthStr]
             )
 
             const outflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE flow = 'outflow' AND strftime('%Y-%m', date) = ?",
+                "SELECT SUM(value) as total FROM transactions WHERE type = 'out' AND strftime('%Y-%m', date) = ?",
                 [currentMonthStr]
             )
 
@@ -96,9 +96,9 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         const whereClauses = ["strftime('%Y-%m', t.date) = ?"]
         const params: (string | number)[] = [monthKey]
 
-        if (filters.flow) {
-            whereClauses.push("c.flow = ?")
-            params.push(filters.flow)
+        if (filters.type) {
+            whereClauses.push("c.type = ?")
+            params.push(filters.type)
         }
 
         const whereStatement = `WHERE ${whereClauses.join(" AND ")}`
@@ -107,34 +107,34 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             const rows = await database.getAllAsync<{
                 categoryId: number
                 categoryName: string
-                flow: string
+                type: string
                 color: string | null
                 totalValue: number | null
             }>(
                 `SELECT
                     c.id AS categoryId,
                     c.name AS categoryName,
-                    c.flow AS flow,
+                    c.type AS type,
                     c.color AS color,
                     SUM(t.value) AS totalValue
                 FROM transactions t
                 INNER JOIN categories c ON c.id = t.category
                 ${whereStatement}
-                GROUP BY c.id, c.name, c.flow, c.color`,
+                GROUP BY c.id, c.name, c.type, c.color`,
                 params
             )
 
             return rows
                 .map((row) => {
                     const rawTotal = typeof row.totalValue === "number" ? row.totalValue : Number(row.totalValue ?? 0)
-                    const normalizedTotal = row.flow === "outflow" ? Math.abs(rawTotal) : rawTotal
+                    const normalizedTotal = row.type === "out" ? Math.abs(rawTotal) : rawTotal
                     const safeTotal = Number.isFinite(normalizedTotal) ? normalizedTotal : 0
 
                     return {
                         categoryId: row.categoryId,
                         name: row.categoryName,
                         color: row.color ?? null,
-                        flow: row.flow === "outflow" ? "outflow" : "inflow",
+                        type: row.type === "out" ? "out" : "in",
                         total: safeTotal,
                     } satisfies MonthlyCategoryAggregate
                 })
@@ -176,7 +176,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             totals = await database.getAllAsync<MonthlyTotalRow>(
                 `SELECT strftime('%Y-%m', date) as monthKey, SUM(value) as totalValue
                 FROM transactions
-                WHERE flow = 'outflow' AND strftime('%Y-%m', date) IN (${placeholders})
+                WHERE type = 'out' AND strftime('%Y-%m', date) IN (${placeholders})
                 GROUP BY monthKey`,
                 monthKeys
             )

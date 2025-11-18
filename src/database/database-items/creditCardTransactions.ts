@@ -24,16 +24,14 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
         try {
             await database.withTransactionAsync(async () => {
                 await database.runAsync(
-                    "INSERT INTO transactions (value, description, category, date, card_id, flow, account_id, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
                     [
                         data.value,
                         data.description,
                         Number(data.category),
                         data.date,
                         cardId,
-                        data.flow ?? (data.value >= 0 ? "inflow" : "outflow"),
-                        data.account_id ?? null,
-                        data.notes ?? null,
+                        data.type ?? (data.value >= 0 ? "in" : "out"),
                     ]
                 )
 
@@ -57,13 +55,13 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
         try {
             const schedule = await database.withTransactionAsync(async () => {
                 const cardSnapshot = await database.getFirstAsync<{
-                    limit_value: number | null
+                    max_limit: number | null
                     limit_used: number | null
                     closing_day: number | null
                     due_day: number | null
                     ignore_weekends: number | null
                 }>(
-                    "SELECT \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
+                    "SELECT max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
                     [data.cardId],
                 )
 
@@ -71,7 +69,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                     throw new Error("CARD_NOT_FOUND")
                 }
 
-                const limitValue = Number(cardSnapshot.limit_value ?? 0)
+                const limitValue = Number(cardSnapshot.max_limit ?? 0)
                 const limitUsed = Number(cardSnapshot.limit_used ?? 0)
                 const normalizedInstallmentValue = Math.abs(data.installmentValue)
                 const totalValue = normalizedInstallmentValue * data.installmentsCount
@@ -107,7 +105,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 })
 
                 await database.runAsync(
-                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                         -normalizedInstallmentValue,
                         description,
@@ -117,9 +115,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                         null,
                         data.cardId,
                         1,
-                        null,
-                        "outflow",
-                        null,
+                        "out",
                     ],
                 )
 
@@ -214,12 +210,12 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
     }, [database])
 
     const createCard = useCallback(async (data: NewCard) => {
-        const statement = "INSERT INTO cards (name, color, \"limit\", limit_used, closing_day, due_day, ignore_weekends) VALUES(?,?,?,?,?,?,?)"
+        const statement = "INSERT INTO cards (name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends) VALUES(?,?,?,?,?,?,?)"
 
         const params = [
             data.name,
             data.color,
-            data.limit,
+            data.maxLimit,
             0,
             data.closingDay,
             data.dueDay,
@@ -240,17 +236,17 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 id: number
                 name: string
                 color: number | null
-                limit_value: number | null
+                max_limit: number | null
                 limit_used: number | null
                 closing_day: number | null
                 due_day: number | null
                 ignore_weekends: number | null
-            }>("SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards")
+            }>("SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards")
 
             return cards.map((card) => ({
                 id: card.id,
                 name: card.name,
-                limit: Number(card.limit_value ?? 0),
+                maxLimit: Number(card.max_limit ?? 0),
                 limitUsed: Number(card.limit_used ?? 0),
                 color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
                 closingDay: card.closing_day ?? 1,
@@ -269,12 +265,12 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 id: number
                 name: string
                 color: number | null
-                limit_value: number | null
+                max_limit: number | null
                 limit_used: number | null
                 closing_day: number | null
                 due_day: number | null
                 ignore_weekends: number | null
-            }>("SELECT id, name, color, \"limit\" as limit_value, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?", [cardId])
+            }>("SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?", [cardId])
 
             if (!card) {
                 return null
@@ -283,7 +279,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
             return {
                 id: card.id,
                 name: card.name,
-                limit: Number(card.limit_value ?? 0),
+                maxLimit: Number(card.max_limit ?? 0),
                 limitUsed: Number(card.limit_used ?? 0),
                 color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
                 closingDay: card.closing_day ?? 1,
@@ -328,7 +324,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
             cycleEnd: raw.cycleEnd,
             dueDate: raw.dueDate,
             referenceMonth: raw.referenceMonth,
-            limit: raw.limit,
+            maxLimit: raw.maxLimit,
             limitUsed: raw.limitUsed,
             availableCredit: raw.availableCredit,
             realizedTotal: raw.realizedTotal,
@@ -447,7 +443,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                         const dueDateStr = formatDateTimeForSQLite(dueDate)
 
                         await database.runAsync(
-                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, account_id, flow, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
                             [
                                 blueprint.value,
                                 blueprint.description,
@@ -455,9 +451,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                                 dueDateStr,
                                 blueprint.id,
                                 blueprint.card_id ?? null,
-                                blueprint.account_id ?? null,
-                                blueprint.flow ?? (blueprint.value >= 0 ? "inflow" : "outflow"),
-                                blueprint.notes ?? null,
+                                blueprint.type ?? (blueprint.value >= 0 ? "in" : "out"),
                             ]
                         )
 

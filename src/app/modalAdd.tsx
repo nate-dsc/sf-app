@@ -12,7 +12,7 @@ import { useStyle } from "@/context/StyleContext";
 import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
-import { CCard, Flow } from "@/types/transaction";
+import { CCard, type TransactionType } from "@/types/transaction";
 import { trackAnalyticsEvent } from "@/utils/analytics";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -38,14 +38,14 @@ export default function AddModal() {
     const [cardLimitError, setCardLimitError] = useState<string | null>(null)
     const lastReportedLimitErrorRef = useRef<string | null>(null)
 
-    const flowOptions = useMemo<SCOption<Flow>[]>(() => [
-        {label: t("modalAdd.inflow"), value: "inflow"},
-        {label: t("modalAdd.outflow"), value: "outflow"}
+    const flowOptions = useMemo<SCOption<TransactionType>[]>(() => [
+        {label: t("modalAdd.inflow"), value: "in"},
+        {label: t("modalAdd.outflow"), value: "out"}
     ], [t])
 
     useEffect(() => {
         // Limpa para garantir que não estamos editando uma transação antiga
-        setNewTransaction({ flowType: "outflow", date: newDate, useCreditCard: false }); // Define um valor inicial
+        setNewTransaction({ type: "out", date: newDate, useCreditCard: false }); // Define um valor inicial
 
         return () => {
             // Limpa ao sair da tela para não sujar a próxima abertura do modal
@@ -144,7 +144,7 @@ export default function AddModal() {
                 updateNewTransaction({
                     useCreditCard: true,
                     cardId: defaultCardId ?? undefined,
-                    flowType: "outflow"
+                    type: "out"
                 })
 
             } catch (error) {
@@ -267,7 +267,7 @@ export default function AddModal() {
             return null
         }
 
-        const available = (selectedCard.limit - selectedCard.limitUsed) / 100
+        const available = (selectedCard.maxLimit - selectedCard.limitUsed) / 100
 
         return new Intl.NumberFormat(i18n.language, {
             style: "currency",
@@ -288,15 +288,15 @@ export default function AddModal() {
         >
             <SegmentedControlCompact
                 options={flowOptions}
-                selectedValue={newTransaction.flowType || "outflow"}
+                selectedValue={newTransaction.type || "out"}
                 onChange={(optionValue) => {
                     updateNewTransaction({
-                        flowType: optionValue,
+                        type: optionValue,
                         category: undefined
                     })
-                    if(optionValue === "inflow") { updateNewTransaction({useCreditCard: false})}
+                    if(optionValue === "in") { updateNewTransaction({useCreditCard: false})}
                 }}
-                disabledOptions={newTransaction.useCreditCard ? ["inflow" as Flow] : []}
+                disabledOptions={newTransaction.useCreditCard ? ["in" as TransactionType] : []}
             />
 
             <GroupView>   
@@ -305,7 +305,7 @@ export default function AddModal() {
                     label={t("modalAdd.value")}
                     acViewKey={"lim"}
                     onChangeNumValue={(numValue) => updateNewTransaction({value: numValue})}
-                    flowType={newTransaction.flowType || "outflow"}
+                    transactionType={newTransaction.type || "out"}
                 />
                 <GTextInput
                     separator={"translucent"}
@@ -354,7 +354,7 @@ export default function AddModal() {
                     label={t("modalAdd.useCredit")}
                     value={!!newTransaction.useCreditCard}
                     onValueChange={handleToggleCredit}
-                    disabled={newTransaction.flowType === "inflow"}
+                    disabled={newTransaction.type === "in"}
                 />
                 {newTransaction.useCreditCard ? (
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>

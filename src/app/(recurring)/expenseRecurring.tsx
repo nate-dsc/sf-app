@@ -42,7 +42,7 @@ export default function ExpenseRecurringScreen() {
         }
 
         try {
-            const { totalRecurring, recurringTransactions, categoryTotals } = await getRecurringSummaryThisMonth("outflow")
+            const { totalRecurring, recurringTransactions, categoryTotals } = await getRecurringSummaryThisMonth("out")
             setTotalRecurringExpenses(totalRecurring)
             setRecurringTransactions(recurringTransactions)
             setCategoryTotals(categoryTotals)
@@ -162,7 +162,7 @@ export default function ExpenseRecurringScreen() {
                 onRequestClose={handleChartModalClose}
             >
                 <BlurredModalView onBackgroundPress={handleChartModalClose}>
-                    <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="outflow" />
+                    <RecurringCategoryBreakdownChart categoryTotals={categoryTotals} flowType="out" />
                     <PrimaryButton label={t("button.return")} onPress={handleChartModalClose}/>
                 </BlurredModalView>
             </Modal>

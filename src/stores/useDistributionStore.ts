@@ -1,10 +1,10 @@
-import { CategoryDistributionFilters, Flow, MonthlyCategoryAggregate } from "@/types/transaction"
+import { CategoryDistributionFilters, MonthlyCategoryAggregate, type TransactionType } from "@/types/transaction"
 import { create } from "zustand"
 
 export type DistributionCategory = {
     categoryId: number
     name: string
-    flow: Flow
+    type: TransactionType
     value: number
     percentage: number
     color: string | null
@@ -31,9 +31,9 @@ type DistributionStore = {
     }) => Promise<void>
 }
 
-const normalizeFlow = (
+const normalizeByType = (
     aggregates: MonthlyCategoryAggregate[],
-    flow: Flow
+    type: TransactionType
 ): { total: number; entries: DistributionCategory[] } => {
     const validEntries = aggregates
         .map((aggregate) => ({
@@ -49,7 +49,7 @@ const normalizeFlow = (
     const entries: DistributionCategory[] = sorted.map((aggregate) => ({
         categoryId: aggregate.categoryId,
         name: aggregate.name,
-        flow,
+        type,
         value: aggregate.total,
         percentage: total > 0 ? aggregate.total / total : 0,
         color: aggregate.color ?? null,
@@ -77,7 +77,7 @@ export const useDistributionStore = create<DistributionStore>()((set, get) => ({
         const previousFilters = get().filters
         const normalizedFilters = cloneFilters({
             month: filters?.month ?? previousFilters.month ?? new Date(),
-            flow: filters?.flow ?? previousFilters.flow,
+            type: filters?.type ?? previousFilters.type,
         })
 
         if (!get().data) {
@@ -88,11 +88,11 @@ export const useDistributionStore = create<DistributionStore>()((set, get) => ({
 
         try {
             const aggregates = await getMonthlyCategoryDistribution(normalizedFilters)
-            const inflowAggregates = aggregates.filter((aggregate) => aggregate.flow === "inflow")
-            const outflowAggregates = aggregates.filter((aggregate) => aggregate.flow === "outflow")
+            const inflowAggregates = aggregates.filter((aggregate) => aggregate.type === "in")
+            const outflowAggregates = aggregates.filter((aggregate) => aggregate.type === "out")
 
-            const { total: inflowTotal, entries: inflow } = normalizeFlow(inflowAggregates, "inflow")
-            const { total: outflowTotal, entries: outflow } = normalizeFlow(outflowAggregates, "outflow")
+            const { total: inflowTotal, entries: inflow } = normalizeByType(inflowAggregates, "in")
+            const { total: outflowTotal, entries: outflow } = normalizeByType(outflowAggregates, "out")
 
             set({
                 data: {
