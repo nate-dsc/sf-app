@@ -64,17 +64,25 @@ export function useBudgetsModule(database: SQLiteDatabase) {
 
     const calculateBudgetSpent = useCallback(async (period: BudgetPeriod) => {
         const now = new Date()
-        const end = new Date(now)
-        end.setHours(0, 0, 0, 0)
+        const referenceDate = new Date(now)
+        referenceDate.setHours(0, 0, 0, 0)
 
-        const start = new Date(end)
+        let start = new Date(referenceDate)
+        let end = new Date(referenceDate)
 
         if (period === "weekly") {
-            start.setDate(start.getDate() - 6)
-        } else if (period === "biweekly") {
-            start.setDate(start.getDate() - 13)
+            const dayOfWeek = referenceDate.getDay()
+            start = new Date(referenceDate)
+            start.setDate(referenceDate.getDate() - dayOfWeek)
+
+            end = new Date(start)
+            end.setDate(start.getDate() + 6)
         } else {
-            start.setDate(1)
+            start = new Date(referenceDate.getFullYear(), referenceDate.getMonth(), 1)
+            start.setHours(0, 0, 0, 0)
+
+            end = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0)
+            end.setHours(0, 0, 0, 0)
         }
 
         const startISO = start.toISOString().slice(0, 10)
@@ -249,10 +257,6 @@ export function useBudgetsModule(database: SQLiteDatabase) {
 
             if (period === "monthly") {
                 return amountCents
-            }
-
-            if (period === "biweekly") {
-                return Math.round((amountCents * 26) / 12)
             }
 
             return Math.round((amountCents * 52) / 12)

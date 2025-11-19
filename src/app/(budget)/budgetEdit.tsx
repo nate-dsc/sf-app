@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next"
 import { Alert, ScrollView, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-const allowedPeriods: BudgetPeriod[] = ["weekly", "biweekly", "monthly"]
+const allowedPeriods: BudgetPeriod[] = ["weekly", "monthly"]
 
 export default function BudgetEditScreen() {
     const headerHeight = useHeaderHeight()
@@ -35,20 +35,23 @@ export default function BudgetEditScreen() {
     const setBudget = useBudgetStore((state) => state.setBudget)
     const clearBudget = useBudgetStore((state) => state.clearBudget)
 
-    const [period, setPeriod] = useState<BudgetPeriod>(storedBudget?.period ?? "monthly")
+    const getSafePeriod = useCallback((value?: BudgetPeriod | null): BudgetPeriod => {
+        return value === "weekly" ? "weekly" : "monthly"
+    }, [])
+
+    const [period, setPeriod] = useState<BudgetPeriod>(getSafePeriod(storedBudget?.period))
     const [amountCents, setAmountCents] = useState<number>(storedBudget?.amountCents ?? 0)
     const [submitting, setSubmitting] = useState(false)
     const [formError, setFormError] = useState<string | null>(null)
 
     useEffect(() => {
-        setPeriod(storedBudget?.period ?? "monthly")
+        setPeriod(getSafePeriod(storedBudget?.period))
         setAmountCents(storedBudget?.amountCents ?? 0)
-    }, [storedBudget])
+    }, [getSafePeriod, storedBudget])
 
     const frequencyOptions: SCOption<string>[] = useMemo(
         () => [
             { label: t("budget.form.weekly"), value: "weekly" },
-            { label: t("budget.form.biweekly"), value: "biweekly" },
             { label: t("budget.form.monthly"), value: "monthly" },
         ],
         [t]
