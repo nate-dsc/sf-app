@@ -19,15 +19,13 @@ type RecurringTransactionModalProps = {
 
 export default function RecurringTransactionModal({transaction, onBackgroundPress, onDeleteSuccess}: RecurringTransactionModalProps) {
 
-    if(!transaction) return null
-
     const {t} = useTranslation()
     const {theme} = useStyle()
-    const value = transaction.value/100
+    const value = transaction!.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
 
-    const category = findCategoryByID(transaction.category, t)
+    const category = findCategoryByID(transaction!.category, t)
 
     const { deleteRecurringTransaction, deleteRecurringTransactionCascade } = useTransactionDatabase()
 
@@ -38,12 +36,12 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
         [
             {
             text: "Excluir",
-            onPress: () => handleDeletion(transaction.id),
+            onPress: () => handleDeletion(transaction!.id),
             style: "destructive"
             },
             {
             text: "Excluir recorrência",
-            onPress: () => handleCascadeDeletion(transaction.id),
+            onPress: () => handleCascadeDeletion(transaction!.id),
             },
             {
             text: "Cancelar",
@@ -57,7 +55,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
 
     const handleDeletion = async (id: number) => {
         try {
-            await deleteRecurringTransaction(transaction.id);
+            await deleteRecurringTransaction(transaction!.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
             onDeleteSuccess?.(id)
@@ -68,7 +66,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
 
     const handleCascadeDeletion = async (id: number) => {
         try {
-            await deleteRecurringTransactionCascade(transaction.id);
+            await deleteRecurringTransactionCascade(transaction!.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
             onDeleteSuccess?.(id)
@@ -76,6 +74,8 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
             console.log("Falha ao deletar em cascata. Tente novamente.");
         }
     }
+
+    if(!transaction) return null
 
     return(
         <Pressable

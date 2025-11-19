@@ -19,23 +19,21 @@ type TransactionModalProps = {
 
 export default function TransactionModal({transaction, onBackgroundPress}: TransactionModalProps) {
 
-    if(!transaction) return null
-
     const {t} = useTranslation()
     const {theme} = useStyle()
-    const value = transaction.value/100
+    const value = transaction!.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
 
     const [rruleDescription, setRruleDescription] = useState<string | null>(null)
 
-    const category = findCategoryByID(transaction.category, t)
+    const category = findCategoryByID(transaction!.category, t)
 
     const { deleteTransaction, getRRULE } = useTransactionDatabase()
 
     const handleDeletion = async (id: number) => {
         try {
-            await deleteTransaction(transaction.id);
+            await deleteTransaction(transaction!.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
         } catch (error) {
@@ -60,6 +58,8 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             fetchRruleDescription()
         }
     },[])
+
+    if(!transaction) return null
 
     return(
         <Pressable

@@ -3,7 +3,6 @@ import GSwitch from "@/components/grouped-list-components/GroupedSwitch"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
-import { SStyles } from "@/components/styles/ScreenStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabaseReset } from "@/database/useDatabaseReset"
 import i18n from "@/i18n"
@@ -13,7 +12,6 @@ import { ThemePreference } from "@/types/theme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
-import { useSQLiteContext } from "expo-sqlite"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ScrollView, Text } from "react-native"
@@ -23,7 +21,8 @@ export default function SettingsScreen() {
     const {t} = useTranslation()
 
     const router = useRouter()
-    const {theme, preference, setPreference} = useStyle()
+    const {theme, layout, preference, setPreference} = useStyle()
+    const headerHeight = useHeaderHeight()
 
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)
@@ -55,10 +54,24 @@ export default function SettingsScreen() {
         i18n.changeLanguage(lang);
     }
 
-    const database = useSQLiteContext()
+    const {
+        resetDatabaseDB,
+        resetTransactionsDB,
+        resetRecurringTransactionsDB,
+        resetRecurringTransactionsCascadeDB,
+        resetCreditCardsDB,
+        resetBudgetsDB
+    } = useDatabaseReset()
 
     return(
-        <ScrollView contentContainerStyle={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer, {gap: 10}]}>
+        <ScrollView
+            contentContainerStyle={{
+                paddingTop: headerHeight + layout.margin.contentArea,
+                paddingHorizontal: layout.margin.contentArea,
+                paddingBottom: 120,
+                gap: layout.margin.sectionGap,
+            }}
+        >
 
             <Text style={[{color: theme.text.label}, FontStyles.title2]}> Debug </Text>
 
@@ -74,20 +87,6 @@ export default function SettingsScreen() {
                     icon={"hammer"}
                     label={"Teste 2"}
                     onPress={() => {router.push("/experiment2")}}
-                />
-            </GroupView>
-
-            <Text style={[{color: theme.text.label}, FontStyles.headline]}>
-                {t("settings.database.sectionTitle", { defaultValue: "Banco de dados" })}
-            </Text>
-            <GroupView>
-                <GRedir
-                    separator="none"
-                    icon="grid-outline"
-                    label={t("settings.database.inspectTables", { defaultValue: "Visualizar tabelas" })}
-                    onPress={() => {
-                        router.push("/settingsDatabase")
-                    }}
                 />
             </GroupView>
 
@@ -118,42 +117,56 @@ export default function SettingsScreen() {
                 />
             </GroupView>
 
+            <Text style={[{color: theme.text.label}, FontStyles.headline]}>
+                {t("settings.database.sectionTitle", { defaultValue: "Banco de dados" })}
+            </Text>
+            <GroupView>
+                <GRedir
+                    separator="none"
+                    icon="grid-outline"
+                    label={t("settings.database.inspectTables", { defaultValue: "Visualizar tabelas" })}
+                    onPress={() => {
+                        router.push("/settingsDatabase")
+                    }}
+                />
+            </GroupView>
+
             <GroupView>
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
                     label="Resetar Banco de Dados"
-                    onPress={() => { useDatabaseReset().resetDatabaseDB() }}
+                    onPress={resetDatabaseDB}
                 />
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
                     label="Resetar Transações"
-                    onPress={() => { useDatabaseReset().resetTransactionsDB() }}
+                    onPress={resetTransactionsDB}
                 />
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
                     label="Resetar Transações Recorrentes"
-                    onPress={() => { useDatabaseReset().resetRecurringTransactionsDB() }}
+                    onPress={resetRecurringTransactionsDB}
                 />
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
                     label="Resetar Transações Recorrentes em Cascata"
-                    onPress={() => { useDatabaseReset().resetRecurringTransactionsCascadeDB() }}
+                    onPress={resetRecurringTransactionsCascadeDB}
                 />
                 <GRedir
                     separator="translucent"
                     icon="trash-outline"
                     label="Resetar Cartões"
-                    onPress={() => { useDatabaseReset().resetCreditCardsDB() }}
+                    onPress={resetCreditCardsDB}
                 />
                 <GRedir
                     separator="none"
                     icon="trash-outline"
                     label="Resetar Orçamentos"
-                    onPress={() => { useDatabaseReset().resetBudgetsDB() }}
+                    onPress={resetBudgetsDB}
                 />
             </GroupView>
 

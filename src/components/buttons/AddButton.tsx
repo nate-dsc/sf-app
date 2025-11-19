@@ -4,15 +4,14 @@ import { useRouter } from "expo-router";
 import { TouchableOpacity } from "react-native";
 import { AppIcon } from "../AppIcon";
 
-const router = useRouter()
-
 type AddButtonProps = {
     size?: number,
-    onPress?: () => void
+    //onPress?: () => void
 }
 
-export default function AddButton({ size=40, onPress=()=>router.navigate("/modalAdd") }: AddButtonProps) {
+export default function AddButton({ size=40}: AddButtonProps) {
 
+    const router = useRouter()
     const theme = useStyle()
     const buttonStyles = ButtonStyles(theme.theme)
     const iconSize = size - 2
@@ -25,7 +24,7 @@ export default function AddButton({ size=40, onPress=()=>router.navigate("/modal
     }
     
     return(
-        <TouchableOpacity style={[buttonSize, buttonStyles.addButton]} onPress={onPress} >
+        <TouchableOpacity style={[buttonSize, buttonStyles.addButton]} onPress={() => router.navigate("/modalAdd")} >
             <AppIcon name="plus" androidName="add" size={iconSize} tintColor={"#F5F5F5"} />
         </TouchableOpacity>
     )
