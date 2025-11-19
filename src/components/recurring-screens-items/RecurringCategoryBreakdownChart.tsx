@@ -94,7 +94,7 @@ export default function RecurringCategoryBreakdownChart({ categoryTotals, flowTy
                 ? (flowType === "in"
                     ? t("recurring.categoryBreakdown.othersIncome")
                     : t("recurring.categoryBreakdown.othersExpense"))
-                : findCategoryByID(entry.categoryId, t).label
+                : t(findCategoryByID(entry.categoryId, flowType).translationKey)
 
             return {
                 categoryId: entry.categoryId,

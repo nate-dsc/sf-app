@@ -5,7 +5,6 @@ import { Transaction } from "@/types/transaction";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
 import { Ionicons } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 
 type TransactionListItemProps = {
@@ -14,14 +13,12 @@ type TransactionListItemProps = {
 }
 
 export default function TransactionListItem({item, onItemPress}: TransactionListItemProps) {
-
-    const {t} = useTranslation()
     const {theme} = useStyle()
     const tileStyles = TileStyles(theme)
     const value = item.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
-    const category = findCategoryByID(item.category, t)
+    const category = findCategoryByID(item.category, item.type)
 
 
     return(
