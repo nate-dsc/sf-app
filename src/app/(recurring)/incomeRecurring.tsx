@@ -38,10 +38,11 @@ export default function IncomeRecurringScreen() {
     //Modal visibility states
     const [rTModalVisible, setRTModalVisible] = useState(false)
     const [chartModalVisible, setChartModalVisible] = useState(false)
-    
+    //Ref for first loading
     const hasLoadedRef = useRef(false)
 
     const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
+        //Shows loading only on first mount or when told to do so via showLoading param
         const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
 
         if (shouldShowLoading) {
@@ -49,18 +50,31 @@ export default function IncomeRecurringScreen() {
         }
 
         try {
+
             const { totalRecurring, recurringTransactions, categoryTotals } = await getRecurringSummaryThisMonth("in")
             setTotalRecurringIncome(totalRecurring)
             setRecurringTransactions(recurringTransactions)
             setCategoryTotals(categoryTotals)
+
         } catch (err) {
-            console.error("Erro ao carregar transações recorrentes:", err)
+
+            console.error("Error trying to fetch the monthly summary of recurring transactions:", {
+                path: "src/app/(recurring)/incomeRecurring",
+                function: "getRecurringSummaryThisMonth",
+                params: { type: "in" },
+                rawError: err,
+            });
+
         } finally {
+
+            //Registers the first mount has occurred
             hasLoadedRef.current = true
 
+            //If it was loading, then it stops the loading view
             if (shouldShowLoading) {
                 setLoading(false)
             }
+
         }
     }, [getRecurringSummaryThisMonth])
 
@@ -85,10 +99,12 @@ export default function IncomeRecurringScreen() {
         void loadData({ showLoading: false })
     }, [loadData])
 
+
     useEffect(() => {
         void loadData()
     }, [loadData, refreshKey])
 
+    //Loading indicator
     if (loading) {
         return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
