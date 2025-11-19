@@ -54,3 +54,16 @@ export function datesToIntervalStrings(initialDate: Date, finalDate: Date): stri
 export function localToUTC(date: Date) {
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
 }
+
+export function getMonthBoundaries(date = new Date()) {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+
+    const start = new Date(year, month, 1)
+    const end = new Date(year, month + 1, 0)
+
+    return {
+        startISO: start.toISOString(),
+        endISO: end.toISOString(),
+    }
+}

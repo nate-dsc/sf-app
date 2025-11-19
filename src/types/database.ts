@@ -5,7 +5,7 @@ export type SQLitePreparedStatement = {
 
 export type SQLiteExecutor = {
     prepareAsync(sql: string): Promise<SQLitePreparedStatement>
-    runAsync(sql: string, params?: any[]): Promise<void>
+    runAsync(sql: string, params?: any): Promise<any>
     getFirstAsync<T>(sql: string, params?: any[]): Promise<T | undefined | null>
     getAllAsync<T>(sql: string, params?: any[]): Promise<T[]>
     withTransactionAsync(callback: () => Promise<void>): Promise<void>

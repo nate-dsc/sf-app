@@ -1,13 +1,11 @@
-import type { SQLiteExecutor } from "@/types/database"
+import type { SQLiteDatabase } from "expo-sqlite"
 
-import type { SearchFilters, Transaction } from "@/types/transaction"
+import type { SearchFilters, Transaction, TransactionType } from "@/types/transaction"
 
-export async function insertTransaction(database: SQLiteExecutor, data: Transaction) {
+export async function insertTransaction(database: SQLiteDatabase, data: Transaction) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
     )
-
-    const type = data.type ?? (data.value >= 0 ? "in" : "out")
 
     try {
         await statement.executeAsync({
@@ -15,30 +13,25 @@ export async function insertTransaction(database: SQLiteExecutor, data: Transact
             $description: data.description,
             $category: Number(data.category),
             $date: data.date,
-            $type: type,
+            $type: data.type,
         })
     } finally {
         await statement.finalizeAsync()
     }
 }
 
-export async function deleteTransaction(database: SQLiteExecutor, id: number) {
+export async function deleteTransaction(database: SQLiteDatabase, id: number) {
     await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
 }
 
-export async function fetchTransactionsFromMonth(database: SQLiteExecutor, YMString: string, orderBy: "day" | "id") {
+export async function fetchTransactionsFromMonth(database: SQLiteDatabase, YMString: string, orderBy: "day" | "id") {
     const orderStr = orderBy === "id" ? "id" : "CAST(strftime('%d', date) AS INTEGER)"
     const query = `SELECT * FROM transactions WHERE strftime('%Y-%m', date) = ? ORDER BY ${orderStr}`
 
     return database.getAllAsync<Transaction>(query, [YMString])
 }
 
-export async function fetchPaginatedFilteredTransactions(
-    database: SQLiteExecutor,
-    page: number,
-    pageSize: number,
-    filterOptions: SearchFilters = {},
-) {
+export async function fetchPaginatedFilteredTransactions(database: SQLiteDatabase, page: number, pageSize: number, filterOptions: SearchFilters = {}) {
     const offset = page * pageSize
 
     const whereClauses: string[] = []
@@ -117,4 +110,20 @@ export async function fetchPaginatedFilteredTransactions(
     params.push(pageSize, offset)
 
     return database.getAllAsync<Transaction>(query, params)
+}
+
+export async function fetchTotalBetween(database: SQLiteDatabase, type: TransactionType, startDateISO: string, endDateISO: string) {
+    const startISO = startDateISO.slice(0, 10)
+    const endISO = endDateISO.slice(0, 10)
+
+    const result = await database.getFirstAsync<{ total: number | null }>(
+        "SELECT SUM(value) as total FROM transactions WHERE type = ? AND date(date) BETWEEN ? AND ?",
+        [type, startISO, endISO]
+    )
+
+    return result
+}
+
+export async function fetchLastTransaction(database: SQLiteDatabase) {
+    return database.getFirstAsync<Transaction>("SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1")
 }

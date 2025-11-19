@@ -1,11 +1,6 @@
 import type { CardStatementHistoryOptions, UpdateCardInput } from "@/types/transaction"
+import type { SQLiteDatabase } from "expo-sqlite"
 import { RRule } from "rrule"
-
-export type SQLiteExecutor = {
-    getFirstAsync<T>(sql: string, params?: any[]): Promise<T | undefined | null>
-    getAllAsync<T>(sql: string, params?: any[]): Promise<T[]>
-    runAsync(sql: string, params?: any[]): Promise<void>
-}
 
 export type CardRow = {
     id: number
@@ -132,7 +127,7 @@ export function computeDueDate(cycleEnd: Date, dueDay: number, ignoreWeekends: b
     return dueDate
 }
 
-async function fetchCard(database: SQLiteExecutor, cardId: number): Promise<CardRow | null> {
+async function fetchCard(database: SQLiteDatabase, cardId: number): Promise<CardRow | null> {
     const row = await database.getFirstAsync<CardRow>(
         "SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
         [cardId],
@@ -142,7 +137,7 @@ async function fetchCard(database: SQLiteExecutor, cardId: number): Promise<Card
 }
 
 async function computeProjectedTotals(
-    database: SQLiteExecutor,
+    database: SQLiteDatabase,
     cardId: number,
     cycleStartKey: string,
     cycleEndKey: string,
@@ -255,7 +250,7 @@ function buildSummary(
 }
 
 export async function getCardStatementForDate(
-    database: SQLiteExecutor,
+    database: SQLiteDatabase,
     cardId: number,
     referenceDate: Date = new Date(),
 ): Promise<RawCardStatementSummary | null> {
@@ -293,7 +288,7 @@ export async function getCardStatementForDate(
 }
 
 export async function getCardsStatementForDate(
-    database: SQLiteExecutor,
+    database: SQLiteDatabase,
     referenceDate: Date = new Date(),
 ): Promise<RawCardStatementSummary[]> {
     const cards = await database.getAllAsync<CardRow>(
@@ -313,7 +308,7 @@ export async function getCardsStatementForDate(
 }
 
 export async function getCardStatementHistory(
-    database: SQLiteExecutor,
+    database: SQLiteDatabase,
     cardId: number,
     options: CardStatementHistoryOptions = {},
 ): Promise<RawCardStatementSummary[]> {
@@ -339,7 +334,7 @@ export async function getCardStatementHistory(
     return results
 }
 
-export async function updateCardRecord(database: SQLiteExecutor, cardId: number, input: UpdateCardInput) {
+export async function updateCardRecord(database: SQLiteDatabase, cardId: number, input: UpdateCardInput) {
     const fields: string[] = []
     const values: any[] = []
 
@@ -399,6 +394,6 @@ export async function updateCardRecord(database: SQLiteExecutor, cardId: number,
     await database.runAsync(`UPDATE cards SET ${fields.join(", ")} WHERE id = ?`, values)
 }
 
-export async function deleteCardRecord(database: SQLiteExecutor, cardId: number) {
+export async function deleteCardRecord(database: SQLiteDatabase, cardId: number) {
     await database.runAsync("DELETE FROM cards WHERE id = ?", [cardId])
 }

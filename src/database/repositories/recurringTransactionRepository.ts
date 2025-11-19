@@ -1,12 +1,9 @@
-import type { CardSnapshot, SQLiteExecutor } from "@/types/database"
+import type { CardSnapshot } from "@/types/database"
+import type { SQLiteDatabase } from "expo-sqlite"
 
 import type { RecurringTransaction } from "@/types/transaction"
 
-export async function insertRecurringTransaction(
-    database: SQLiteExecutor,
-    data: RecurringTransaction,
-    cardId?: number,
-) {
+export async function insertRecurringTransaction(database: SQLiteDatabase, data: RecurringTransaction, cardId?: number) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, type, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $type, $is_installment)"
     )
@@ -30,24 +27,24 @@ export async function insertRecurringTransaction(
     }
 }
 
-export async function removeRecurringTransaction(database: SQLiteExecutor, id: number) {
+export async function removeRecurringTransaction(database: SQLiteDatabase, id: number) {
     await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
 }
 
-export async function removeRecurringTransactionCascade(database: SQLiteExecutor, id: number) {
+export async function removeRecurringTransactionCascade(database: SQLiteDatabase, id: number) {
     await database.withTransactionAsync?.(async () => {
         await database.runAsync("DELETE FROM transactions WHERE id_recurring = ?", [id])
         await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
     })
 }
 
-export async function fetchActiveRecurringTransactions(database: SQLiteExecutor) {
+export async function fetchActiveRecurringTransactions(database: SQLiteDatabase) {
     return database.getAllAsync<RecurringTransaction>(
         "SELECT * FROM transactions_recurring WHERE is_installment = 0 OR is_installment IS NULL",
     )
 }
 
-export async function fetchRecurringRule(database: SQLiteExecutor, id: number) {
+export async function fetchRecurringRule(database: SQLiteDatabase, id: number) {
     const parentTransaction = await database.getFirstAsync<RecurringTransaction>(
         "SELECT * FROM transactions_recurring WHERE id = ?",
         [id],
@@ -56,7 +53,7 @@ export async function fetchRecurringRule(database: SQLiteExecutor, id: number) {
     return parentTransaction?.rrule ?? null
 }
 
-export async function fetchCardSnapshot(database: SQLiteExecutor, cardId: number) {
+export async function fetchCardSnapshot(database: SQLiteDatabase, cardId: number) {
     const snapshot = await database.getFirstAsync<CardSnapshot>(
         "SELECT max_limit, limit_used, name FROM cards WHERE id = ?",
         [cardId],
@@ -66,7 +63,7 @@ export async function fetchCardSnapshot(database: SQLiteExecutor, cardId: number
 }
 
 export async function insertRecurringOccurrence(
-    database: SQLiteExecutor,
+    database: SQLiteDatabase,
     payload: {
         value: number
         description: string
@@ -91,18 +88,18 @@ export async function insertRecurringOccurrence(
     )
 }
 
-export async function updateCardLimitUsed(database: SQLiteExecutor, cardId: number, limitAdjustment: number) {
+export async function updateCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
     await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
 }
 
-export async function updateRecurringLastProcessed(database: SQLiteExecutor, recurringId: number, processedDate: string) {
+export async function updateRecurringLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
     await database.runAsync(
         "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
         [processedDate, recurringId],
     )
 }
 
-export async function fetchRecurringTransactionsByType(database: SQLiteExecutor, type: "in" | "out") {
+export async function fetchRecurringTransactionsByType(database: SQLiteDatabase, type: "in" | "out") {
     const query = type === "out"
         ? "SELECT * FROM transactions_recurring WHERE type = 'out'"
         : "SELECT * FROM transactions_recurring WHERE type = 'in'"

@@ -2,15 +2,16 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
+import { fetchLastTransaction, fetchTotalBetween } from "@/database/repositories/transactionRepository"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import {
     BudgetMonthlyPerformance,
     BudgetPeriod,
     CategoryDistributionFilters,
     MonthlyCategoryAggregate,
-    Summary,
-    type Transaction,
+    Summary
 } from "@/types/transaction"
+import { getMonthBoundaries } from "@/utils/DateUtils"
 
 type CategoryInfo = {
     color: string
@@ -62,7 +63,8 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         [t],
     )
 
-    const calculateBudgetSpent = useCallback(async (period: BudgetPeriod) => {
+    const calculateBudgetSpent = useCallback(async function calculateBudgetSpent(period: BudgetPeriod) {
+
         const now = new Date()
         const referenceDate = new Date(now)
         referenceDate.setHours(0, 0, 0, 0)
@@ -84,39 +86,23 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             end = new Date(referenceDate.getFullYear(), referenceDate.getMonth() + 1, 0)
             end.setHours(0, 0, 0, 0)
         }
-
-        const startISO = start.toISOString().slice(0, 10)
-        const endISO = end.toISOString().slice(0, 10)
-
-        const result = await database.getFirstAsync<{ total: number | null }>(
-            "SELECT SUM(value) as total FROM transactions WHERE type = 'out' AND date(date) BETWEEN ? AND ?",
-            [startISO, endISO]
-        )
-
+        
+        const startISO = start.toISOString()
+        const endISO = end.toISOString()
+        
+        const result = await fetchTotalBetween(database, "out", startISO, endISO)
         const rawTotal = result?.total ?? 0
+
         return Math.abs(rawTotal)
     }, [database])
 
     const getSummaryFromDB = useCallback(async (): Promise<Summary> => {
-        const today = new Date()
-        const year = today.getFullYear()
-        const month = (today.getMonth() + 1).toString().padStart(2, '0')
-        const currentMonthStr = `${year}-${month}`
+        const {startISO, endISO} = getMonthBoundaries()
 
         try {
-            const inflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE type = 'in' AND strftime('%Y-%m', date) = ?",
-                [currentMonthStr]
-            )
-
-            const outflowResult = await database.getFirstAsync<{ total: number }>(
-                "SELECT SUM(value) as total FROM transactions WHERE type = 'out' AND strftime('%Y-%m', date) = ?",
-                [currentMonthStr]
-            )
-
-            const lastTransactionResult = await database.getFirstAsync<Transaction>(
-                "SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1"
-            )
+            const inResult = await fetchTotalBetween(database, "in", startISO, endISO)
+            const outResult = await fetchTotalBetween(database, "out", startISO, endISO)
+            const lastTransactionResult = await fetchLastTransaction(database)
 
             const budgetState = useBudgetStore.getState().budget
 
@@ -132,8 +118,8 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             }
 
             return {
-                inflowCurrentMonth: inflowResult?.total ?? 0,
-                outflowCurrentMonth: (outflowResult?.total ?? 0) * -1,
+                inflowCurrentMonth: inResult?.total ?? 0,
+                outflowCurrentMonth: (outResult?.total ?? 0) * -1,
                 lastTransaction: lastTransactionResult || null,
                 budget: budgetSnapshot,
             }

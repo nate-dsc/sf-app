@@ -1,4 +1,4 @@
-export type DatabaseExecutor = {
+/* export type DatabaseExecutor = {
     execAsync: (statement: string) => Promise<void>
     runAsync?: (statement: string, params?: unknown[]) => Promise<void>
     getFirstAsync: <T>(statement: string, params?: unknown[]) => Promise<T | undefined | null>
@@ -394,3 +394,4 @@ export async function initializeAppDatabase(database: DatabaseExecutor) {
 
     console.log("✅ Banco inicializado com sucesso!")
 }
+ */

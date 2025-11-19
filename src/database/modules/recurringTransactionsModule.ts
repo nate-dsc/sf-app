@@ -2,10 +2,6 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
-import type { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
-import { CardSnapshot } from "@/types/database"
-import { RecurringTransaction } from "@/types/transaction"
-import { localToUTC } from "@/utils/DateUtils"
 import {
     fetchActiveRecurringTransactions,
     fetchCardSnapshot,
@@ -17,7 +13,11 @@ import {
     removeRecurringTransactionCascade,
     updateCardLimitUsed,
     updateRecurringLastProcessed,
-} from "../repositories/recurringTransactionRepository"
+} from "@/database/repositories/recurringTransactionRepository"
+import type { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
+import { CardSnapshot } from "@/types/database"
+import { RecurringTransaction } from "@/types/transaction"
+import { localToUTC } from "@/utils/DateUtils"
 
 export type NotifyRecurringChargeSkipped = ReturnType<
     typeof useRecurringCreditLimitNotification
