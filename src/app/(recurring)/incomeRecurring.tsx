@@ -19,20 +19,27 @@ import { ActivityIndicator, Modal, Text, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function IncomeRecurringScreen() {
+    //Style hooks
+    const headerHeight = useHeaderHeight()
+    const insets = useSafeAreaInsets()
+    const {theme, layout} = useStyle()
+    //Translation
+    const {t} = useTranslation()
+    //Stores
+    const refreshKey = useSummaryStore((state) => state.refreshKey)
+    //Database hooks
     const { getRecurringSummaryThisMonth } = useTransactionDatabase()
+    //States
     const [loading, setLoading] = useState(true)
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
     const [totalRecurringIncome, setTotalRecurringIncome] = useState<number>(0)
-    const [rTModalVisible, setRTModalVisible] = useState(false)
-    const [chartModalVisible, setChartModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
-    const headerHeight = useHeaderHeight()
-    const insets = useSafeAreaInsets()
-    const { theme, layout } = useStyle()
-    const refreshKey = useSummaryStore((state) => state.refreshKey)
+    //Modal visibility states
+    const [rTModalVisible, setRTModalVisible] = useState(false)
+    const [chartModalVisible, setChartModalVisible] = useState(false)
+    
     const hasLoadedRef = useRef(false)
-    const {t} = useTranslation()
 
     const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
         const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
@@ -57,16 +64,19 @@ export default function IncomeRecurringScreen() {
         }
     }, [getRecurringSummaryThisMonth])
 
+    //Opens recurring transaction modal of the selected transaction
     const handleItemPress = (item: RecurringTransaction) => {
         setSelectedRT(item)
         setRTModalVisible(true)
     }
 
+    //Closes the recurring transaction modal and resets the selected recurring transaction
     const handleRTModalClose = () => {
         setRTModalVisible(false)
         setSelectedRT(null)
     }
 
+    //Closes the modal with the distribution chart
     const handleChartModalClose = () => {
         setChartModalVisible(false)
     }

@@ -19,15 +19,19 @@ import BlurredListView from "@/components/BlurredListView"
 
 
 export default function BudgetScreen() {
+    //Style hooks
     const headerHeight = useHeaderHeight()
-    const router = useRouter()
-    const { theme, layout } = useStyle()
-    const { t } = useTranslation()
     const insets = useSafeAreaInsets()
-    const { getBudgetMonthlyPerformance } = useTransactionDatabase()
-
+    const {theme, layout} = useStyle()
+    //Router
+    const router = useRouter()
+    //Translation
+    const {t} = useTranslation()
+    //Stores
     const storedBudget = useBudgetStore((state) => state.budget)
-
+    //Database hooks
+    const { getBudgetMonthlyPerformance } = useTransactionDatabase()
+    //States
     const [monthlyPerformance, setMonthlyPerformance] = useState<BudgetMonthlyPerformance[]>([])
     const [loadingPerformance, setLoadingPerformance] = useState(false)
 
@@ -122,14 +126,3 @@ export default function BudgetScreen() {
         </View>
     )
 }
-
-
-{/* <View style={{ gap: 16 }}>
-    <Text style={[FontStyles.title3, { color: theme.text.label }]}>
-        {t("budget.monthlyPerformance.title", { defaultValue: "Monthly performance" })}
-    </Text>
-
-    <View>
-        <BudgetList data={monthlyPerformance} loading={loadingPerformance} />
-    </View>
-</View> */}
