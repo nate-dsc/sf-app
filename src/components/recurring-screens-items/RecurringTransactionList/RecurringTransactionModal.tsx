@@ -8,6 +8,7 @@ import { timestampedYMDtoLocaleMonthShortDate } from "@/utils/DateUtils"
 import { describeRRule } from "@/utils/RRULEUtils"
 import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
+import { useTranslation } from "react-i18next"
 import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
 
 type RecurringTransactionModalProps = {
@@ -24,6 +25,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
     const value = transaction.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
     const {triggerRefresh} = useSummaryStore()
+    const {t} = useTranslation()
 
     const category = findCategoryByID(transaction.category, transaction.type)
 
