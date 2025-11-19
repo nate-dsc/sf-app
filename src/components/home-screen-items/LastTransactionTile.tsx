@@ -37,7 +37,7 @@ export default function LastTransactionTile() {
 
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
-    const category = findCategoryByID(transaction.category, t)
+    const category = findCategoryByID(transaction.category, transaction.type)
 
     return(
         <View style={{gap: 6}}>

@@ -1,49 +1,68 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons"
 
+import type { TransactionType, TransactionTypeFilter } from "@/types/transaction"
 
+type IoniconName = React.ComponentProps<typeof Ionicons>["name"]
 
-type IoniconName = React.ComponentProps<typeof Ionicons>['name']
-
-type Category = {
-    id: string,
-    label: string,
+export type CategoryDetail = {
+    id: number
+    translationKey: string
     iconName: IoniconName
+    color: string
+    type: TransactionType
 }
 
+const CATEGORY_DETAILS: CategoryDetail[] = [
+    { id: 1, translationKey: "categories.expenses.home", iconName: "home", color: "#0EA5E9", type: "out" },
+    { id: 2, translationKey: "categories.expenses.eating", iconName: "restaurant", color: "#FB7185", type: "out" },
+    { id: 3, translationKey: "categories.expenses.groceries", iconName: "cart", color: "#F97316", type: "out" },
+    { id: 4, translationKey: "categories.expenses.transport", iconName: "car", color: "#10B981", type: "out" },
+    { id: 5, translationKey: "categories.expenses.services", iconName: "construct", color: "#8B5CF6", type: "out" },
+    { id: 6, translationKey: "categories.expenses.leisure", iconName: "ticket", color: "#F59E0B", type: "out" },
+    { id: 7, translationKey: "categories.expenses.education", iconName: "school", color: "#22D3EE", type: "out" },
+    { id: 8, translationKey: "categories.expenses.shopping", iconName: "bag-handle", color: "#EC4899", type: "out" },
+    { id: 9, translationKey: "categories.expenses.investment", iconName: "trending-up", color: "#22C55E", type: "out" },
+    { id: 10, translationKey: "categories.expenses.health", iconName: "fitness", color: "#EF4444", type: "out" },
+    { id: 11, translationKey: "categories.expenses.emergency", iconName: "medical", color: "#FACC15", type: "out" },
+    { id: 12, translationKey: "categories.expenses.traveling", iconName: "airplane", color: "#38BDF8", type: "out" },
+    { id: 13, translationKey: "categories.expenses.pet", iconName: "paw", color: "#D946EF", type: "out" },
+    { id: 14, translationKey: "categories.expenses.gaming", iconName: "game-controller", color: "#4ADE80", type: "out" },
+    { id: 15, translationKey: "categories.expenses.gambling", iconName: "dice", color: "#FB923C", type: "out" },
+    { id: 16, translationKey: "categories.expenses.other", iconName: "ellipsis-horizontal", color: "#94A3B8", type: "out" },
+    { id: 21, translationKey: "categories.income.salary", iconName: "cash", color: "#22C55E", type: "in" },
+    { id: 22, translationKey: "categories.income.freelance", iconName: "hammer", color: "#14B8A6", type: "in" },
+    { id: 23, translationKey: "categories.income.oncall", iconName: "id-card", color: "#6366F1", type: "in" },
+    { id: 24, translationKey: "categories.income.overtime", iconName: "time", color: "#E879F9", type: "in" },
+    { id: 25, translationKey: "categories.income.perdiem", iconName: "today", color: "#F97316", type: "in" },
+    { id: 26, translationKey: "categories.income.sales", iconName: "pricetag", color: "#0EA5E9", type: "in" },
+    { id: 27, translationKey: "categories.income.roi", iconName: "trending-up", color: "#FBBF24", type: "in" },
+    { id: 28, translationKey: "categories.income.gambling", iconName: "dice", color: "#A855F7", type: "in" },
+    { id: 29, translationKey: "categories.income.other", iconName: "ellipsis-horizontal", color: "#94A3B8", type: "in" },
+]
 
+const CATEGORY_DETAIL_MAP = new Map<number, CategoryDetail>(
+    CATEGORY_DETAILS.map((category) => [category.id, category]),
+)
 
-export function findCategoryByID(id: string|number, t: (key: string) => string){
+const CATEGORY_FALLBACK: Record<TransactionType, CategoryDetail> = {
+    in: CATEGORY_DETAIL_MAP.get(29)!,
+    out: CATEGORY_DETAIL_MAP.get(16)!,
+}
 
-    const categoryList: Category[] = [
-        { id: "0", label: "undefined", iconName: "help-circle-outline"},
-        { id: "1", label: t("categories.expenses.home"), iconName: "home" },
-        { id: "2", label: t("categories.expenses.eating"), iconName: "restaurant" },
-        { id: "3", label: t("categories.expenses.groceries"), iconName: "cart" },
-        { id: "4", label: t("categories.expenses.transport"), iconName: "car" },
-        { id: "5", label: t("categories.expenses.services"), iconName: "construct" },
-        { id: "6", label: t("categories.expenses.leisure"), iconName: "ticket" },
-        { id: "7", label: t("categories.expenses.education"), iconName: "school" },
-        { id: "8", label: t("categories.expenses.shopping"), iconName: "bag-handle" },
-        { id: "9", label: t("categories.expenses.investment"), iconName: "trending-up" },
-        { id: "10", label: t("categories.expenses.health"), iconName: "fitness" },
-        { id: "11", label: t("categories.expenses.emergency"), iconName: "medical" },
-        { id: "12", label: t("categories.expenses.traveling"), iconName: "airplane" },
-        { id: "13", label: t("categories.expenses.pet"), iconName: "paw" },
-        { id: "14", label: t("categories.expenses.gaming"), iconName: "game-controller" },
-        { id: "15", label: t("categories.expenses.gambling"), iconName: "dice" },
-        { id: "16", label: t("categories.expenses.other"), iconName: "ellipsis-horizontal" },
-        { id: "21", label: t("categories.income.salary"), iconName: "cash" },
-        { id: "22", label: t("categories.income.freelance"), iconName: "hammer" },
-        { id: "23", label: t("categories.income.oncall"), iconName: "id-card" },
-        { id: "24", label: t("categories.income.overtime"), iconName: "time" },
-        { id: "25", label: t("categories.income.perdiem"), iconName: "today" },
-        { id: "26", label: t("categories.income.sales"), iconName: "pricetag" },
-        { id: "27", label: t("categories.income.roi"), iconName: "trending-up" },
-        { id: "28", label: t("categories.income.gambling"), iconName: "dice" },
-        { id: "29", label: t("categories.income.other"), iconName: "ellipsis-horizontal" }
-    ];
+export function findCategoryByID(id: string | number, fallbackType: TransactionType = "out"): CategoryDetail {
+    const category = CATEGORY_DETAIL_MAP.get(Number(id))
 
-    const category = categoryList.find(item => item.id === String(id))
-    
-    return category ? category : categoryList[0]
+    return category ?? CATEGORY_FALLBACK[fallbackType]
+}
+
+export function getCategoriesByType(type: TransactionTypeFilter = "all"): CategoryDetail[] {
+    if (type === "all") {
+        return CATEGORY_DETAILS
+    }
+
+    return CATEGORY_DETAILS.filter((category) => category.type === type)
+}
+
+export function getAllCategories(): CategoryDetail[] {
+    return CATEGORY_DETAILS
 }
