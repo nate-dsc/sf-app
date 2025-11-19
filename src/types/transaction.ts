@@ -142,7 +142,7 @@ export type SearchFilters = {
     cardChargeType?: Exclude<CardPurchaseTypeFilter, "all">
 }
 
-export type BudgetPeriod = "weekly" | "biweekly" | "monthly"
+export type BudgetPeriod = "weekly" | "monthly"
 
 export type BudgetSnapshot = {
     period: BudgetPeriod,

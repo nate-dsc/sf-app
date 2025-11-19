@@ -19,6 +19,8 @@ type TransactionModalProps = {
 
 export default function TransactionModal({transaction, onBackgroundPress}: TransactionModalProps) {
 
+    if(!transaction) return null
+
     const {t} = useTranslation()
     const {theme} = useStyle()
     const value = transaction!.value/100
@@ -58,8 +60,6 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
             fetchRruleDescription()
         }
     },[])
-
-    if(!transaction) return null
 
     return(
         <Pressable

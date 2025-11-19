@@ -35,19 +35,15 @@ export default function BudgetEditScreen() {
     const setBudget = useBudgetStore((state) => state.setBudget)
     const clearBudget = useBudgetStore((state) => state.clearBudget)
 
-    const getSafePeriod = useCallback((value?: BudgetPeriod | null): BudgetPeriod => {
-        return value === "weekly" ? "weekly" : "monthly"
-    }, [])
-
-    const [period, setPeriod] = useState<BudgetPeriod>(getSafePeriod(storedBudget?.period))
+    const [period, setPeriod] = useState<BudgetPeriod>(storedBudget?.period ?? "monthly")
     const [amountCents, setAmountCents] = useState<number>(storedBudget?.amountCents ?? 0)
     const [submitting, setSubmitting] = useState(false)
     const [formError, setFormError] = useState<string | null>(null)
 
     useEffect(() => {
-        setPeriod(getSafePeriod(storedBudget?.period))
+        setPeriod(storedBudget?.period ?? "monthly")
         setAmountCents(storedBudget?.amountCents ?? 0)
-    }, [getSafePeriod, storedBudget])
+    }, [storedBudget])
 
     const frequencyOptions: SCOption<string>[] = useMemo(
         () => [
