@@ -2,6 +2,7 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { formatCurrency as formatCurrencyUtil } from "@/utils/currencyUtils"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
@@ -20,10 +21,9 @@ export default function BudgetTile() {
 
     const formatCurrency = useCallback(
         (valueInCents: number) =>
-            (valueInCents / 100).toLocaleString(locale, {
-                style: "currency",
+            formatCurrencyUtil(valueInCents, {
+                locale,
                 currency,
-                currencySign: "standard",
             }),
         [currency, locale],
     )
