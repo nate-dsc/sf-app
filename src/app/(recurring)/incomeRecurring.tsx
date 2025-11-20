@@ -1,4 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
+import BlurredListView from "@/components/BlurredListView"
 import BlurredModalView from "@/components/BlurredModalView"
 import LabeledButton from "@/components/buttons/LabeledButton"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
@@ -7,7 +8,6 @@ import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items
 import RecurringCategoryBreakdownChart from "@/components/recurring-screens-items/RecurringCategoryBreakdownChart"
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
 import RecurringTransactionModal from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionModal"
-import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
@@ -15,7 +15,7 @@ import { RecurringTransaction } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, Modal, Text, View } from "react-native"
+import { ActivityIndicator, Modal, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function IncomeRecurringScreen() {
@@ -140,17 +140,15 @@ export default function IncomeRecurringScreen() {
                         onPress={() => setChartModalVisible(true)}
                         tinted={false}
                     />
-
-                    <View style={{paddingHorizontal: 16}}>
-                        <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
-                            {t("recurring.income.allTransactions")}
-                        </Text>
-                    </View>
                     
-                    <RecurringTransactionList
-                        data={recurringTransactions}
-                        onItemPress={handleItemPress}
-                    />
+                    <BlurredListView
+                        title={t("recurring.income.allTransactions")}
+                    >
+                        <RecurringTransactionList
+                            data={recurringTransactions}
+                            onItemPress={handleItemPress}
+                        />
+                    </BlurredListView>
 
                 </View>
             ) : (

@@ -28,7 +28,7 @@ export default function RecurringTransactionListItem({item, onItemPress}: Transa
                     borderColor: theme.background.tertiaryBg,
                     borderRadius: 24,
                     borderCurve: "continuous",
-                    marginBottom: 12
+                    //marginBottom: 12
                 }}
             >
                 <View

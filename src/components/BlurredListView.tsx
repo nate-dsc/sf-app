@@ -23,8 +23,7 @@ export default function BlurredListView({title, children}: BlurredListViewProps)
             {title ? (
                 <Text
                     style={{
-                        fontSize: 17,
-                        fontWeight: "500",
+                        fontSize: 20,
                         paddingHorizontal: 16,
                         color: theme.text.label
                     }}
