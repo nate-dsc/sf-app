@@ -1,45 +1,43 @@
-import { FontStyles } from "@/components/styles/FontStyles"
 import { light } from "@/styles/colors"
 import { CustomTheme } from "@/types/theme"
 import React, { createContext, useContext, useMemo } from "react"
-import { StyleSheet, TextStyle } from "react-native"
+import { TextStyle } from "react-native"
 
 export type PaletteColorName = keyof typeof light.colors
 
 export type HeaderConfig = {
-    headerColor: PaletteColorName,
-    titleColor: PaletteColorName,
+    headerBackgroundColor?: PaletteColorName,
     titleStyle: TextStyle,
-    isModal?: boolean,
 }
 
 const defaultConfig: HeaderConfig = {
-    headerColor: "indigo",
-    titleColor: "white",
-    titleStyle: StyleSheet.flatten(FontStyles.headline),
-    isModal: false,
+    headerBackgroundColor: "indigo",
+    titleStyle: {
+        fontSize: 18,
+        fontWeight: "600",
+    },
 }
 
 const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
-    settings: { headerColor: "blue" },
-    settingsDatabase: { headerColor: "blue" },
-    settingsDatabaseTable: { headerColor: "blue" },
-    "(recurring)/incomeRecurring": { headerColor: "green" },
-    "(recurring)/expenseRecurring": { headerColor: "red" },
-    "(budget)/budget": { headerColor: "indigo" },
-    "(budget)/budgetEdit": { headerColor: "gray6", titleColor: "black", isModal: true },
-    distribution: { headerColor: "purple" },
-    planPurchase: { headerColor: "orange" },
-    next12Months: { headerColor: "indigo" },
-    retirement: { headerColor: "cyan" },
-    "(credit)/credit": { headerColor: "brown" },
-    "(credit)/[cardId]": { headerColor: "brown" },
-    "(credit)/addCreditCard": { headerColor: "gray6", titleColor: "black", isModal: true },
-    "(credit)/modalAddInstallmentPurchase": { headerColor: "gray6", titleColor: "black", isModal: true },
-    "(credit)/cardPurchases": { headerColor: "gray6", titleColor: "black", isModal: true },
-    modalAdd: { headerColor: "gray6", titleColor: "black", isModal: true },
-    modalRecurring: { headerColor: "gray6", titleColor: "black", isModal: true },
-    modalCategoryPicker: { headerColor: "gray6", titleColor: "black", isModal: true },
+    settings: { headerBackgroundColor: "blue" },
+    settingsDatabase: { headerBackgroundColor: "blue" },
+    settingsDatabaseTable: { headerBackgroundColor: "blue" },
+    "(recurring)/incomeRecurring": { headerBackgroundColor: "green" },
+    "(recurring)/expenseRecurring": { headerBackgroundColor: "red" },
+    "(budget)/budget": { headerBackgroundColor: "indigo" },
+    "(budget)/budgetEdit": { headerBackgroundColor: undefined },
+    distribution: { headerBackgroundColor: "purple" },
+    planPurchase: { headerBackgroundColor: "orange" },
+    next12Months: { headerBackgroundColor: "indigo" },
+    retirement: { headerBackgroundColor: "cyan" },
+    "(credit)/credit": { headerBackgroundColor: "brown" },
+    "(credit)/[cardId]": { headerBackgroundColor: "brown" },
+    "(credit)/addCreditCard": { headerBackgroundColor: undefined },
+    "(credit)/modalAddInstallmentPurchase": { headerBackgroundColor: undefined },
+    "(credit)/cardPurchases": { headerBackgroundColor: undefined },
+    modalAdd: { headerBackgroundColor: undefined },
+    modalRecurring: { headerBackgroundColor: undefined },
+    modalCategoryPicker: { headerBackgroundColor: undefined },
 }
 
 export const resolveHeaderConfig = (routeName?: string): HeaderConfig => {
@@ -60,7 +58,11 @@ const HeaderConfigContext = createContext<HeaderConfig>(defaultConfig)
 export const HeaderConfigProvider = ({ children, value }: { children: React.ReactNode, value?: Partial<HeaderConfig> }) => {
     const mergedValue = useMemo(() => ({
         ...defaultConfig,
-        ...value
+        ...value,
+        titleStyle: {
+            ...defaultConfig.titleStyle,
+            ...(value?.titleStyle ?? {}),
+        },
     }), [value])
 
     return (
@@ -74,14 +76,15 @@ export const useHeaderConfig = () => useContext(HeaderConfigContext);
 
 export const getHeaderScreenOptions = (theme: CustomTheme, routeName?: string) => {
     const headerConfig = resolveHeaderConfig(routeName)
-    const headerTitleColor = headerConfig.isModal ? theme.text.label : theme.colors[headerConfig.titleColor]
-    const headerBackgroundColor = headerConfig.isModal ? undefined : theme.colors[headerConfig.headerColor]
+    const isModal = !headerConfig.headerBackgroundColor
+    const headerTitleColor = isModal ? theme.text.label : theme.colors.white
+    const headerBackgroundColor = headerConfig.headerBackgroundColor ? theme.colors[headerConfig.headerBackgroundColor] : undefined
 
     return {
         headerTitleAlign: "center" as const,
         headerShadowVisible: false,
-        headerTransparent: headerConfig.isModal ? false : true,
-        headerStyle: headerConfig.isModal ? undefined : { backgroundColor: headerBackgroundColor },
+        headerTransparent: true,
+        headerStyle: isModal ? undefined : { backgroundColor: headerBackgroundColor },
         headerTitleStyle: {
             ...headerConfig.titleStyle,
             color: headerTitleColor,
