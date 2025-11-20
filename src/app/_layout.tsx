@@ -1,5 +1,6 @@
 import { AppIcon } from "@/components/AppIcon"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
+import { HeaderConfig, HeaderConfigProvider } from "@/context/HeaderConfigContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
 import { initializeDatabase } from "@/database/useDatabase"
@@ -8,13 +9,47 @@ import "@/i18n"
 import { useDistributionStore } from "@/stores/useDistributionStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
-import { Stack, useRouter } from "expo-router"
+import { Stack, usePathname, useRouter } from "expo-router"
 import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { TouchableOpacity } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+
+
+const defaultHeaderConfig: HeaderConfig = {
+    headerColor: "indigo",
+    titleColor: "white",
+    titleStyle: { fontSize: 18, fontWeight: "600" },
+}
+
+const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
+    settings: { headerColor: "blue" },
+    settingsDatabase: { headerColor: "blue" },
+    settingsDatabaseTable: { headerColor: "blue" },
+    "(recurring)/incomeRecurring": { headerColor: "green" },
+    "(recurring)/expenseRecurring": { headerColor: "red" },
+    "(budget)/budget": { headerColor: "indigo" },
+    "(budget)/budgetEdit": { headerColor: "gray6", titleColor: "black" },
+    distribution: { headerColor: "purple" },
+    planPurchase: { headerColor: "orange" },
+    next12Months: { headerColor: "indigo" },
+    retirement: { headerColor: "cyan" },
+    "(credit)/credit": { headerColor: "brown" },
+    "(credit)/[cardId]": { headerColor: "brown" },
+    "(credit)/addCreditCard": { headerColor: "gray6", titleColor: "black" },
+    "(credit)/modalAddInstallmentPurchase": { headerColor: "gray6", titleColor: "black" },
+    "(credit)/cardPurchases": { headerColor: "gray6", titleColor: "black" },
+    modalAdd: { headerColor: "gray6", titleColor: "black" },
+    modalRecurring: { headerColor: "gray6", titleColor: "black" },
+    modalCategoryPicker: { headerColor: "gray6", titleColor: "black" },
+}
+
+const resolveHeaderConfig = (routeName?: string): HeaderConfig => ({
+    ...defaultHeaderConfig,
+    ...(routeName ? headerConfigByRoute[routeName] : {}),
+})
 
 
 function RootLayoutNav() {
@@ -28,6 +63,11 @@ function RootLayoutNav() {
     const distributionRefreshKey = useDistributionStore((state) => state.refreshKey);
 
     const router = useRouter()
+    const pathname = usePathname()
+    const currentHeaderConfig = useMemo(
+        () => resolveHeaderConfig(pathname?.replace(/^\//, "")),
+        [pathname],
+    )
 
     useEffect(() => {
         // Dispara o carregamento dos dados do sumário assim que o app é montado
@@ -61,14 +101,27 @@ function RootLayoutNav() {
             <NavigationThemeProvider value={theme.navigationTheme}>
                 <SafeAreaProvider>
                     <StatusBar style={'light'}/>
-                    <Stack 
-                        screenOptions={{
-                            headerTitleAlign: "center",
-                            headerShadowVisible: false,
-                            headerTransparent: true,
-                            headerTitleStyle: { fontSize: 18, fontWeight: "600", color: theme.colors.white }
-                        }}
-                    >
+                    <HeaderConfigProvider value={currentHeaderConfig}>
+                        <Stack
+                            screenOptions={({ route }) => {
+                                const headerConfig = resolveHeaderConfig(route.name)
+                                const headerBackgroundColor = theme.colors[headerConfig.headerColor]
+                                const headerTitleColor = theme.colors[headerConfig.titleColor]
+
+                                return {
+                                    headerTitleAlign: "center",
+                                    headerShadowVisible: false,
+                                    headerTransparent: true,
+                                    headerStyle: { backgroundColor: headerBackgroundColor },
+                                    headerTitleStyle: {
+                                        ...defaultHeaderConfig.titleStyle,
+                                        color: headerTitleColor,
+                                        ...headerConfig.titleStyle,
+                                    },
+                                    headerTintColor: headerTitleColor,
+                                }
+                            }}
+                        >
                         {/* Tabs */}
                         <Stack.Screen
                             name="(tabs)"
@@ -84,7 +137,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: "Start",
-                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                         <Stack.Screen
@@ -93,7 +145,6 @@ function RootLayoutNav() {
                                 title: t("settings.database.tablesHeader", { defaultValue: "Tabelas do banco" }),
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
-                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                         <Stack.Screen
@@ -102,7 +153,6 @@ function RootLayoutNav() {
                                 title: t("settings.database.tableScreenTitle", { defaultValue: "Tabela" }),
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
-                                headerStyle: { backgroundColor: theme.colors.blue }
                             }}
                         />
                         {/* Telas de planejamento */}
@@ -113,7 +163,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.green }
                             }}
                         />
                         <Stack.Screen
@@ -123,7 +172,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.red }
                             }}
                         />
                         {/* Telas de orçamento */}
@@ -134,7 +182,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.indigo },
                             }}
                         />
                         <Stack.Screen
@@ -142,7 +189,6 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.planning.budget"),
-                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg
@@ -156,7 +202,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.purple },
                             }}
                         />
                         <Stack.Screen
@@ -166,7 +211,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.orange },
                             }}
                         />
                         <Stack.Screen
@@ -176,7 +220,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.indigo },
                             }}
                         />
                         <Stack.Screen
@@ -186,7 +229,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.cyan },
                             }}
                         />
                         {/* Telas de cartões de crédito */}
@@ -197,7 +239,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
-                                headerStyle: { backgroundColor: theme.colors.brown },
                                 headerRight: () => (
                                     <TouchableOpacity
                                         style={{paddingLeft: 7}}
@@ -228,14 +269,12 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.credit.index"),
-                                headerStyle: { backgroundColor: theme.colors.brown }
                             }}
                         />
                         <Stack.Screen
                             name="(credit)/addCreditCard"
                             options={{
                                 title: t("nav.credit.new"),
-                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg
@@ -247,7 +286,6 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.credit.installmentPurchase", { defaultValue: "Compra parcelada" }),
-                                headerTitleStyle: { color: theme.text.label },
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg,
@@ -259,7 +297,6 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("credit.purchases.title", { defaultValue: "Compras" }),
-                                headerTitleStyle: { color: theme.text.label },
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg,
@@ -272,7 +309,6 @@ function RootLayoutNav() {
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.newTransaction"),
-                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg
@@ -285,7 +321,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.recurring"),
-                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg,
@@ -298,7 +333,6 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 title: t("nav.categories"),
-                                headerTitleStyle: {color: theme.text.label},
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.group.secondaryBg,
@@ -331,6 +365,7 @@ function RootLayoutNav() {
                             }}
                         />
                     </Stack>
+                    </HeaderConfigProvider>
                 </SafeAreaProvider>
             </NavigationThemeProvider>
         </NewTransactionProvider>
