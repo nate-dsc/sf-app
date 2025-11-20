@@ -83,6 +83,8 @@
     },
     "tiles": {
         "budget": "Orçamento",
+        "budgetEstimatedBalance": "Saldo estimado",
+        "budgetExpensesVsBudget": "Despesas x orçamento",
         "budgetPlanned": "Planejado",
         "budgetSpent": "Gasto",
         "budgetProgress": "Progresso",

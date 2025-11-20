@@ -101,10 +101,15 @@ export default function BudgetTile() {
         return <Text>{error}</Text>
     }
 
+    const tileHeaderLabelKey = useMemo(
+        () => (shouldShowBalance ? "tiles.budgetEstimatedBalance" : "tiles.budgetExpensesVsBudget"),
+        [shouldShowBalance],
+    )
+
     return (
         <View style={{ gap: 6 }}>
             <View style={{ paddingHorizontal: 16 }}>
-                <Text style={[FontStyles.title3, { color: theme.text.label }]}>{t("tiles.budget")}</Text>
+                <Text style={[FontStyles.title3, { color: theme.text.label }]}>{t(tileHeaderLabelKey)}</Text>
             </View>
             <View
                 style={{
