@@ -13,15 +13,11 @@ export type HeaderConfig = {
 const defaultConfig: HeaderConfig = {
     headerBackgroundColor: "indigo",
     titleStyle: {
-        fontSize: 18,
-        fontWeight: "600",
+        fontSize: 22, fontWeight: "600"
     },
 }
 
 const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
-    settings: { headerBackgroundColor: "blue" },
-    settingsDatabase: { headerBackgroundColor: "blue" },
-    settingsDatabaseTable: { headerBackgroundColor: "blue" },
     "(recurring)/incomeRecurring": { headerBackgroundColor: "green" },
     "(recurring)/expenseRecurring": { headerBackgroundColor: "red" },
     "(budget)/budget": { headerBackgroundColor: "indigo" },

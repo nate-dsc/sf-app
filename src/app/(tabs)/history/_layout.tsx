@@ -15,7 +15,6 @@ export default function HistoryLayout() {
                 headerShadowVisible: false,
                 headerStyle: { backgroundColor: theme.navigation.headerBackground },
                 headerTitleStyle: { fontSize: 22, fontWeight: "600", color: theme.navigation.headerText },
-                
             }}
         >
             <Stack.Screen
