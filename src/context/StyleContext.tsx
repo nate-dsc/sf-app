@@ -25,27 +25,54 @@ const StyleContext = createContext<StyleContextType>({
 
 export const StyleProvider = ({ children }: { children: React.ReactNode }) => {
     const systemScheme = useColorScheme()
-    const [preference, setPreference] = useState<ThemePreference>("system")
+    const [preference, setPreference] = useState<ThemePreference | null>(null)
     const [layoutType, setLayoutType] = useState<LayoutType>("normal")
+    const [hydrated, setHydrated] = useState(false)
 
     useEffect(() => {
-        AsyncStorage.getItem("theme-preference").then((value) => {
-        if (value === "system" || value === "light" || value === "dark") {
-            setPreference(value);
+        let mounted = true
+
+        AsyncStorage.getItem("theme-preference")
+            .then((value) => {
+                if (!mounted) {
+                    return
+                }
+
+                if (value === "system" || value === "light" || value === "dark") {
+                    setPreference(value)
+                } else {
+                    setPreference("system")
+                }
+                setHydrated(true)
+            })
+            .catch(() => {
+                if (mounted) {
+                    setPreference("system")
+                    setHydrated(true)
+                }
+            })
+
+        return () => {
+            mounted = false
         }
-        });
-    }, []);
+    }, [])
+
+    if (!hydrated) {
+        return null
+    }
 
     // Salvar sempre que mudar
     const setPreferenceState = (p: ThemePreference) => {
-        setPreference(p);
-        AsyncStorage.setItem("theme-preference", p);
-    };
+        setPreference(p)
+        AsyncStorage.setItem("theme-preference", p)
+    }
+
+    const resolvedPreference = preference ?? "system"
 
     const value = {
-        theme: preference === "system" ? (systemScheme === "dark" ? dark : light) : (preference === "dark" ? dark : light),
+        theme: resolvedPreference === "system" ? (systemScheme === "dark" ? dark : light) : (resolvedPreference === "dark" ? dark : light),
         layout: layoutType === "normal" ? Layout : LayoutBorderless,
-        preference: preference,
+        preference: resolvedPreference,
         layoutType: layoutType,
         setPreference: setPreferenceState,
         setLayout: setLayoutType
