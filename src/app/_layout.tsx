@@ -1,6 +1,6 @@
 import { AppIcon } from "@/components/AppIcon"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
-import { HeaderConfig, HeaderConfigProvider } from "@/context/HeaderConfigContext"
+import { HeaderConfigProvider, getHeaderScreenOptions, resolveHeaderConfig } from "@/context/HeaderConfigContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
 import { initializeDatabase } from "@/database/useDatabase"
@@ -14,51 +14,8 @@ import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { StyleSheet, TouchableOpacity } from "react-native"
+import { TouchableOpacity } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
-import { FontStyles } from "@/components/styles/FontStyles"
-
-
-const defaultHeaderConfig: HeaderConfig = {
-    headerColor: "indigo",
-    titleColor: "white",
-    titleStyle: StyleSheet.flatten(FontStyles.headline),
-}
-
-const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
-    settings: { headerColor: "blue" },
-    settingsDatabase: { headerColor: "blue" },
-    settingsDatabaseTable: { headerColor: "blue" },
-    "(recurring)/incomeRecurring": { headerColor: "green" },
-    "(recurring)/expenseRecurring": { headerColor: "red" },
-    "(budget)/budget": { headerColor: "indigo" },
-    "(budget)/budgetEdit": { headerColor: "gray6", titleColor: "black" },
-    distribution: { headerColor: "purple" },
-    planPurchase: { headerColor: "orange" },
-    next12Months: { headerColor: "indigo" },
-    retirement: { headerColor: "cyan" },
-    "(credit)/credit": { headerColor: "brown" },
-    "(credit)/[cardId]": { headerColor: "brown" },
-    "(credit)/addCreditCard": { headerColor: "gray6", titleColor: "black" },
-    "(credit)/modalAddInstallmentPurchase": { headerColor: "gray6", titleColor: "black" },
-    "(credit)/cardPurchases": { headerColor: "gray6", titleColor: "black" },
-    modalAdd: { headerColor: "gray6", titleColor: "black" },
-    modalRecurring: { headerColor: "gray6", titleColor: "black" },
-    modalCategoryPicker: { headerColor: "gray6", titleColor: "black" },
-}
-
-const resolveHeaderConfig = (routeName?: string): HeaderConfig => {
-    const routeConfig = routeName ? headerConfigByRoute[routeName] : undefined
-
-    return {
-        ...defaultHeaderConfig,
-        ...routeConfig,
-        titleStyle: {
-            ...defaultHeaderConfig.titleStyle,
-            ...(routeConfig?.titleStyle ?? {}),
-        },
-    }
-}
 
 
 function RootLayoutNav() {
@@ -112,23 +69,7 @@ function RootLayoutNav() {
                     <StatusBar style={'light'}/>
                     <HeaderConfigProvider value={currentHeaderConfig}>
                         <Stack
-                            screenOptions={({ route }) => {
-                                const headerConfig = resolveHeaderConfig(route.name)
-                                const headerBackgroundColor = theme.colors[headerConfig.headerColor]
-                                const headerTitleColor = theme.colors[headerConfig.titleColor]
-
-                                return {
-                                    headerTitleAlign: "center",
-                                    headerShadowVisible: false,
-                                    headerTransparent: true,
-                                    headerStyle: { backgroundColor: headerBackgroundColor },
-                                    headerTitleStyle: {
-                                        ...headerConfig.titleStyle,
-                                        color: headerTitleColor,
-                                    },
-                                    headerTintColor: headerTitleColor,
-                                }
-                            }}
+                            screenOptions={({ route }) => getHeaderScreenOptions(theme, route.name)}
                         >
                         {/* Tabs */}
                         <Stack.Screen
