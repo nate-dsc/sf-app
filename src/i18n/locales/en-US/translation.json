@@ -84,6 +84,8 @@
     },
     "tiles": {
         "budget": "Budget",
+        "budgetEstimatedBalance": "Estimated balance",
+        "budgetExpensesVsBudget": "Expenses vs budget",
         "budgetPlanned": "Planned",
         "budgetSpent": "Spent",
         "budgetProgress": "Progress",
