@@ -2,9 +2,9 @@
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
 import { type TransactionType } from "@/types/transaction"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { TypographyProps } from "../styles/TextStyles"
+import { formatCurrency } from "@/utils/currencyUtils"
 
 export type GroupedComponentsProps = {
     separator: "opaque" | "translucent" | "vibrant" | "none",
@@ -25,8 +25,9 @@ type GValueInputProps = GroupedComponentsProps & {
 export default function GValueInput({separator, label, acViewKey, onChangeNumValue, transactionType, valueInCents, labelFlex, fieldFlex}: GValueInputProps) {
 
     const {theme} = useStyle()
-    const text = TypographyProps(theme)
     const placeholder = 0.0
+    const locale = i18n.language
+    const currency = locale === "pt-BR" ? "BRL" : "USD"
 
     const [isFocused, setIsFocused] = useState(false)
     const [textValue, setTextValue] = useState("")
@@ -38,51 +39,35 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
         {separator: "translucent", color: "transparent"}
     ]
 
-    const formatCurrency = (rawText: string): string => {
-        // Se o valor estiver vazio, retornamos uma string vazia para mostrar o placeholder
-        if (!rawText) return "";
+    const parseRawTextToNumber = useCallback(
+        (text: string) => {
+            let cleaned = text.trim()
 
-        let numericValue = parseFloat(rawText.replace(',', '.'));
+            cleaned = locale === "en-US" ? cleaned.replace(/,/g, '') : cleaned.replace(/\./g, '').replace(',', '.')
 
-        // Se não for um número válido (ex: se o usuário digitar apenas "."), retorna vazio
-        if (isNaN(numericValue)) return "";
+            cleaned = cleaned.replace(",", ".")
+            cleaned = cleaned.replace(/[^0-9.]/g, "")
 
-        const valueToFormat = transactionType === "in" ? numericValue : -numericValue
+            const parts = cleaned.split(".")
+            if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("")
 
-        return new Intl.NumberFormat(i18n.language, {
-            style: "currency",
-            currency: i18n.language === "pt-BR" ? "BRL" : "USD",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(valueToFormat)
-    }
+            const num = parseFloat(cleaned)
+            return Number.isNaN(num) ? null : num
+        },
+        [locale],
+    )
 
     // Trata o texto digitado
     const handleTextChange = (text: string) => {
         setTextValue(text)
 
-        let cleaned = text.trim()
-
-        cleaned = i18n.language === "en-US" ? cleaned.replace(/,/g, '') 
-        : cleaned.replace(/\./g, '').replace(',', '.')
-
-        // Troca vírgula por ponto
-        cleaned = cleaned.replace(",", ".")
-
-        // Remove caracteres inválidos
-        cleaned = cleaned.replace(/[^0-9.]/g, "")
-
-        // Se tiver mais de um ponto, mantém só o primeiro
-        const parts = cleaned.split(".");
-        if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("")
-
-        // Converte para número
-        const num = parseFloat(cleaned)
-        if (!isNaN(num)) {
+        const num = parseRawTextToNumber(text)
+        if (num !== null) {
             onChangeNumValue(Math.round(num * 100))
-        } else {
-            onChangeNumValue(0)
+            return
         }
+
+        onChangeNumValue(0)
     }
 
     // Ao focar, mostra apenas o número cru (sem formatação)
@@ -101,46 +86,46 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
         }
 
         const absoluteValue = Math.abs(valueInCents) / 100
-        const formatted = i18n.language === "en-US"
+        const formatted = locale === "en-US"
             ? absoluteValue.toFixed(2)
             : absoluteValue.toFixed(2).replace(".", ",")
 
         setTextValue(formatted)
-    }, [valueInCents, isFocused])
+    }, [isFocused, locale, valueInCents])
 
     // Ao perder foco, formata como moeda
     const handleBlur = () => {
-        let cleaned = textValue.trim()
-
-        cleaned = i18n.language === "en-US" ? cleaned.replace(/,/g, '') 
-        : cleaned.replace(/\./g, '').replace(',', '.')
-
-        // Troca vírgula por ponto
-        cleaned = cleaned.replace(",", ".")
-
-        // Remove caracteres inválidos
-        cleaned = cleaned.replace(/[^0-9.]/g, "")
-
-        // Se tiver mais de um ponto, mantém só o primeiro
-        const parts = cleaned.split(".");
-        if (parts.length > 2) cleaned = parts[0] + "." + parts.slice(1).join("")
-
-        // Converte para número
-        const num = parseFloat(cleaned)
-        if (isNaN(num) || num === 0) {
+        const num = parseRawTextToNumber(textValue)
+        if (num === null || num === 0) {
             // Zera o campo
             //onChangeNumValue(0)
             setTextValue("")
         } else {
             const cents = Math.round(num * 100)
             onChangeNumValue(cents)
-            const numText = i18n.language === "en-US" ? num.toFixed(2) : num.toFixed(2).replace(".", ",")
+            const numText = locale === "en-US" ? num.toFixed(2) : num.toFixed(2).replace(".", ",")
             setTextValue(numText)
         }
         setIsFocused(false)
     }
 
-    const displayedValue = isFocused ? textValue : formatCurrency(textValue)
+    const displayedValue = useMemo(() => {
+        if (isFocused) return textValue
+
+        const parsedValue = parseRawTextToNumber(textValue)
+
+        if (parsedValue === null) return ""
+
+        const valueToFormat = transactionType === "in" ? parsedValue : -parsedValue
+
+        return formatCurrency(valueToFormat, {
+            locale,
+            currency,
+            fromCents: false,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        })
+    }, [currency, isFocused, locale, parseRawTextToNumber, textValue, transactionType])
 
     return(
         <View>
@@ -157,9 +142,9 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
                 >
                     {label}
                 </Text>
-                <TextInput 
+                <TextInput
                     style={{flex: fieldFlex ? fieldFlex : 3, lineHeight: 22, fontSize: 17, color: theme.text.label}}
-                    placeholder={placeholder.toLocaleString(i18n.language, {style: "currency", currency: i18n.language === "pt-BR" ? "BRL" : "USD", currencySign: "standard"})} 
+                    placeholder={formatCurrency(placeholder, { locale, currency, fromCents: false })}
                     placeholderTextColor={theme.text.secondaryLabel}
                     keyboardType="decimal-pad"
                     inputMode="decimal"
