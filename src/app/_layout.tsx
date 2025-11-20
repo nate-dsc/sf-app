@@ -14,14 +14,15 @@ import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { TouchableOpacity } from "react-native"
+import { StyleSheet, TouchableOpacity } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+import { FontStyles } from "@/components/styles/FontStyles"
 
 
 const defaultHeaderConfig: HeaderConfig = {
     headerColor: "indigo",
     titleColor: "white",
-    titleStyle: { fontSize: 18, fontWeight: "600" },
+    titleStyle: StyleSheet.flatten(FontStyles.headline),
 }
 
 const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
@@ -46,10 +47,18 @@ const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
     modalCategoryPicker: { headerColor: "gray6", titleColor: "black" },
 }
 
-const resolveHeaderConfig = (routeName?: string): HeaderConfig => ({
-    ...defaultHeaderConfig,
-    ...(routeName ? headerConfigByRoute[routeName] : {}),
-})
+const resolveHeaderConfig = (routeName?: string): HeaderConfig => {
+    const routeConfig = routeName ? headerConfigByRoute[routeName] : undefined
+
+    return {
+        ...defaultHeaderConfig,
+        ...routeConfig,
+        titleStyle: {
+            ...defaultHeaderConfig.titleStyle,
+            ...(routeConfig?.titleStyle ?? {}),
+        },
+    }
+}
 
 
 function RootLayoutNav() {
@@ -114,9 +123,8 @@ function RootLayoutNav() {
                                     headerTransparent: true,
                                     headerStyle: { backgroundColor: headerBackgroundColor },
                                     headerTitleStyle: {
-                                        ...defaultHeaderConfig.titleStyle,
-                                        color: headerTitleColor,
                                         ...headerConfig.titleStyle,
+                                        color: headerTitleColor,
                                     },
                                     headerTintColor: headerTitleColor,
                                 }
