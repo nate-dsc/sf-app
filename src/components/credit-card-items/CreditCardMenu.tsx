@@ -1,8 +1,8 @@
-import Carousel from "react-native-reanimated-carousel"
-import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated"
-import type { SharedValue } from "react-native-reanimated"
 import React, { useEffect, useMemo, useState } from "react"
 import { Pressable, useWindowDimensions, View } from "react-native"
+import type { SharedValue } from "react-native-reanimated"
+import Animated, { Extrapolate, interpolate, useAnimatedStyle } from "react-native-reanimated"
+import Carousel from "react-native-reanimated-carousel"
 
 import { useStyle } from "@/context/StyleContext"
 import { CCard } from "@/types/transaction"
@@ -89,16 +89,14 @@ export default function CreditCardMenu({ cards, selectedCard, onSelectCard, onEd
         <Carousel
             width={itemWidth}
             height={200}
-            loop
             style={{ alignSelf: "center" }}
-            autoPlay
-            autoPlayInterval={4500}
             data={cards}
             panGestureHandlerProps={{ activeOffsetX: [-10, 10] }}
             onSnapToItem={(index) => {
                 const card = cards[index]
                 setActiveCard(card)
             }}
+            mode="parallax"
             renderItem={({ item, animationValue }) => (
                 <CarouselItem
                     card={item}
