@@ -92,7 +92,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
                 budget: budgetSnapshot,
             }
         } catch (error) {
-            console.error("Falha ao buscar dados do sumário:", error)
+            console.error("Failed while fetching summary data:", error)
             throw error
         }
     }, [calculateBudgetSpent, database])
@@ -125,7 +125,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
                 })
                 .filter((entry) => entry.total > 0)
         } catch (error) {
-            console.error("Falha ao buscar distribuição mensal por categoria:", error)
+            console.error("Failed to fetch monthly distribution by category:", error)
             throw error
         }
     }, [database, getCategoryInfo])

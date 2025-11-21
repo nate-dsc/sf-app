@@ -136,11 +136,7 @@ export async function fetchLastTransaction(database: SQLiteDatabase) {
     return database.getFirstAsync<Transaction>("SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1")
 }
 
-export async function fetchMonthlyCategoryDistribution(
-    database: SQLiteDatabase,
-    monthKey: string,
-    options: { type?: TransactionType } = {},
-) {
+export async function fetchMonthlyCategoryDistribution(database: SQLiteDatabase, monthKey: string, options: { type?: TransactionType } = {}) {
     const whereClauses = ["strftime('%Y-%m', t.date) = ?"]
     const params: (string | number)[] = [monthKey]
 
