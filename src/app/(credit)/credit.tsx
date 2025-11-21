@@ -4,7 +4,6 @@ import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { CCard } from "@/types/transaction"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
@@ -34,7 +33,6 @@ export default function CreditScreen() {
     const [loading, setLoading] = useState(true)
     const scrollRef = useRef<RNScrollView | null>(null)
     const wasEmptyRef = useRef(true)
-    const { warning: recurringCreditWarning, clearNotification: clearRecurringNotification } = useRecurringCreditLimitNotification()
 
     const loadCards = useCallback(async () => {
         try {
@@ -105,9 +103,6 @@ export default function CreditScreen() {
         })
     }, [router])
 
-    const showRecurringWarning = recurringCreditWarning?.reason === "INSUFFICIENT_CREDIT_LIMIT"
-    const warningAmount = showRecurringWarning ? recurringCreditWarning.attemptedAmount / 100 : 0
-    const warningAvailable = showRecurringWarning ? recurringCreditWarning.availableLimit / 100 : 0
     const shouldShowInlineLoader = loading && cards.length === 0
 
     return (
