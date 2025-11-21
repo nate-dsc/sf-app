@@ -10,7 +10,7 @@ type CCListProps = {
 
 export default function CCList({ data, onItemPress }: CCListProps) {
     return (
-        <View style={{ flex: 1, gap: 16, paddingTop: 8, paddingBottom: 60 }}>
+        <View style={{ flex: 1, gap: 16, paddingBottom: 16 }}>
             {data.map((item) => (
                 <CCListItem
                     key={item.id}

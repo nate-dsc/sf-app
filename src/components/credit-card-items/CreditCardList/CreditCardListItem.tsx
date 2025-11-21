@@ -35,8 +35,15 @@ export default function CCListItem({item, onItemPress}: CCListItemProps) {
                         flexDirection: "row",
                         justifyContent: "flex-start",
                         alignItems: "center",
+                        gap: 8
                     }}
                 >
+                    <AppIcon
+                        name={"creditcard.fill"}
+                        androidName={"credit-card"}
+                        size={24}
+                        tintColor={theme.colors.white}
+                    />
                     <Text
                         style={{
                             fontSize: FONT_SIZE.TITLE3,
@@ -53,7 +60,7 @@ export default function CCListItem({item, onItemPress}: CCListItemProps) {
                     <AppIcon
                         name={"chevron.forward"}
                         androidName={"chevron-right"}
-                        size={24}
+                        size={18}
                         tintColor={theme.colors.white}
                     />
                 </View>
