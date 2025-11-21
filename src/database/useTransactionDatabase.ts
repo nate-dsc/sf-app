@@ -3,8 +3,8 @@ import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditL
 import { useMemo } from "react"
 
 import { useBudgetsModule } from "./modules/budgetModule"
+import { useCreditCardTransactionsModule } from "./modules/CCTransactionsModule"
 import { useCreditCardModule } from "./modules/creditCardModule"
-import { useCreditCardTransactionsModule } from "./modules/creditCardTransactions"
 import { useRecurringTransactionsModule } from "./modules/recurringTransactionsModule"
 import { useTransactionsModule } from "./modules/transactionsModule"
 import { useDatabase } from "./useDatabase"
