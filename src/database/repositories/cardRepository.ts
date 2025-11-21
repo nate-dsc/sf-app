@@ -1,7 +1,7 @@
 import type { NewCard, UpdateCardInput } from "@/types/transaction"
 import type { SQLiteDatabase } from "expo-sqlite"
 
-export type CardRow = {
+export type CCardDB = {
     id: number
     name: string
     color: number | null
@@ -99,8 +99,8 @@ export async function insertCardRecord(database: SQLiteDatabase, data: NewCard) 
     )
 }
 
-export async function fetchCard(database: SQLiteDatabase, cardId: number): Promise<CardRow | null> {
-    const row = await database.getFirstAsync<CardRow>(
+export async function fetchCard(database: SQLiteDatabase, cardId: number): Promise<CCardDB | null> {
+    const row = await database.getFirstAsync<CCardDB>(
         "SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
         [cardId],
     )
@@ -108,8 +108,8 @@ export async function fetchCard(database: SQLiteDatabase, cardId: number): Promi
     return row ?? null
 }
 
-export async function fetchCards(database: SQLiteDatabase): Promise<CardRow[]> {
-    return database.getAllAsync<CardRow>(
+export async function fetchCards(database: SQLiteDatabase): Promise<CCardDB[]> {
+    return database.getAllAsync<CCardDB>(
         "SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards",
     )
 }
@@ -127,4 +127,11 @@ export async function fetchCardInstallmentSnapshot(database: SQLiteDatabase, car
 
 export async function fetchCardDueDay(database: SQLiteDatabase, cardId: number) {
     return database.getFirstAsync<{ due_day: number }>("SELECT due_day FROM cards WHERE id = ?", [cardId])
+}
+
+export async function fetchByAvailableLimit(database: SQLiteDatabase, necessaryAmount: number): Promise<CCardDB[] | null> {
+    return database.getAllAsync<CCardDB>(
+        "SELECT * FROM cards WHERE (max_limit - limit_used) > ?",
+        [necessaryAmount]
+    )
 }

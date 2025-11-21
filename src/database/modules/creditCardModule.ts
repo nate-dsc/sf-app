@@ -3,24 +3,10 @@ import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
 import type { CustomTheme } from "@/types/theme"
-import {
-    CCard,
-    CardStatementCycleSummary,
-    CardStatementHistoryOptions,
-    NewCard,
-    UpdateCardInput,
-} from "@/types/transaction"
+import { CCard, CardStatementCycleSummary, CardStatementHistoryOptions, NewCard, UpdateCardInput } from "@/types/transaction"
 import { getColorFromID } from "@/utils/CardUtils"
 
-import {
-    CardRow,
-    deleteCardRecord,
-    fetchCard,
-    fetchCards,
-    insertCardRecord,
-    updateCardLimitUsed,
-    updateCardRecord,
-} from "../repositories/cardRepository"
+import { CCardDB, deleteCardRecord, fetchCard, fetchCards, insertCardRecord, updateCardLimitUsed, updateCardRecord } from "@/database/repositories/cardRepository"
 import { fetchRecurringTransactionsForCard } from "../repositories/recurringTransactionRepository"
 import {
     fetchCardCycleTotals,
@@ -212,7 +198,7 @@ async function computeProjectedTotals(
 }
 
 function buildSummary(
-    card: CardRow,
+    card: CCardDB,
     cycle: ReturnType<typeof resolveCycleBoundaries>,
     dueDate: Date,
     realizedTotal: number,
@@ -247,7 +233,7 @@ function buildSummary(
 }
 
 export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme) {
-    const mapCardRowToCard = useCallback((card: CardRow): CCard => ({
+    const mapCardRowToCard = useCallback((card: CCardDB): CCard => ({
         id: card.id,
         name: card.name,
         maxLimit: Number(card.max_limit ?? 0),
