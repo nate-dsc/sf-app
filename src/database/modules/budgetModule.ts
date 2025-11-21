@@ -92,9 +92,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         }
     }, [calculateBudgetSpent, database])
 
-    const getMonthlyCategoryDistribution = useCallback(async (
-        filters: CategoryDistributionFilters = {},
-    ): Promise<MonthlyCategoryAggregate[]> => {
+    const getMonthlyCategoryDistribution = useCallback(async (filters: CategoryDistributionFilters = {}): Promise<MonthlyCategoryAggregate[]> => {
         const targetDate = filters.month ? new Date(filters.month) : new Date()
         const year = targetDate.getFullYear()
         const month = (targetDate.getMonth() + 1).toString().padStart(2, "0")
