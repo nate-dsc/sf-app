@@ -17,13 +17,12 @@ type CreditCardMenuProps = {
 
 type CarouselItemProps = {
     card: CCard
-    isSelected: boolean
     onSelect?: (card: CCard) => void
     onEdit?: (card: CCard) => void
     animationValue: SharedValue<number>
 }
 
-function CarouselItem({ card, isSelected, onSelect, onEdit, animationValue }: CarouselItemProps) {
+function CarouselItem({ card, onSelect, onEdit, animationValue }: CarouselItemProps) {
     const { theme } = useStyle()
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -52,8 +51,6 @@ function CarouselItem({ card, isSelected, onSelect, onEdit, animationValue }: Ca
                     {
                         padding: 2,
                         borderRadius: 20,
-                        borderWidth: 2,
-                        borderColor: isSelected ? theme.colors.blue : "transparent",
                         borderCurve: "continuous",
                     },
                     animatedStyle,
@@ -70,6 +67,8 @@ function CarouselItem({ card, isSelected, onSelect, onEdit, animationValue }: Ca
 export default function CreditCardMenu({ cards, selectedCard, onSelectCard, onEditCard }: CreditCardMenuProps) {
     const { width } = useWindowDimensions()
     const [activeCard, setActiveCard] = useState(selectedCard ?? cards[0] ?? null)
+
+    const carouselHeight = 125
 
     const carouselWidth = useMemo(() => Math.min(width, 520), [width])
     const itemWidth = carouselWidth - 48
@@ -88,7 +87,7 @@ export default function CreditCardMenu({ cards, selectedCard, onSelectCard, onEd
     return (
         <Carousel
             width={itemWidth}
-            height={200}
+            height={carouselHeight}
             style={{ alignSelf: "center" }}
             data={cards}
             panGestureHandlerProps={{ activeOffsetX: [-10, 10] }}
@@ -100,7 +99,6 @@ export default function CreditCardMenu({ cards, selectedCard, onSelectCard, onEd
             renderItem={({ item, animationValue }) => (
                 <CarouselItem
                     card={item}
-                    isSelected={activeCard?.id === item.id || selectedCard?.id === item.id}
                     onSelect={(card) => {
                         setActiveCard(card)
                         onSelectCard?.(card)
