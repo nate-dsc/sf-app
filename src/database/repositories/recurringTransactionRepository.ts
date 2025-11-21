@@ -3,6 +3,13 @@ import type { SQLiteDatabase } from "expo-sqlite"
 
 import type { RecurringTransaction } from "@/types/transaction"
 
+type InstallmentBlueprintRow = RecurringTransaction & {
+    due_day: number | null
+    closing_day: number | null
+    ignore_weekends: number | null
+    category_name: string | null
+}
+
 export async function insertRecurringTransaction(database: SQLiteDatabase, data: RecurringTransaction, cardId?: number) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, type, is_installment) VALUES ($value, $description, $category, $date_start, $rrule, $date_last_processed, $card_id, $type, $is_installment)"
@@ -60,6 +67,56 @@ export async function fetchCardSnapshot(database: SQLiteDatabase, cardId: number
     )
 
     return snapshot ?? null
+}
+
+export async function fetchRecurringTransactionsForCard(database: SQLiteDatabase, cardId: number) {
+    return database.getAllAsync<RecurringTransaction>(
+        "SELECT id, value, rrule, date_start, is_installment FROM transactions_recurring WHERE card_id = ?",
+        [cardId],
+    )
+}
+
+export async function fetchInstallmentRecurringTransactions(database: SQLiteDatabase) {
+    return database.getAllAsync<RecurringTransaction>(
+        "SELECT * FROM transactions_recurring WHERE is_installment = 1",
+    )
+}
+
+export async function insertInstallmentRecurringTransaction(
+    database: SQLiteDatabase,
+    payload: { value: number; description: string; categoryId: number; dateStart: string; rrule: string; cardId: number },
+) {
+    await database.runAsync(
+        "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+            payload.value,
+            payload.description,
+            payload.categoryId,
+            payload.dateStart,
+            payload.rrule,
+            null,
+            payload.cardId,
+            1,
+            payload.value >= 0 ? "in" : "out",
+        ],
+    )
+}
+
+export async function fetchInstallmentBlueprintsWithCardDetails(database: SQLiteDatabase, cardId: number) {
+    return database.getAllAsync<InstallmentBlueprintRow>(
+        `SELECT tr.id, tr.value, tr.description, tr.category, tr.date_start, tr.rrule, tr.date_last_processed, tr.card_id, tr.type, tr.is_installment, c.due_day, c.closing_day, c.ignore_weekends, cat.name as category_name
+             FROM transactions_recurring tr
+             JOIN cards c ON c.id = tr.card_id
+             LEFT JOIN categories cat ON cat.id = tr.category
+             WHERE tr.card_id = ? AND tr.is_installment = 1`,
+        [cardId],
+    )
+}
+
+export async function fetchLastInsertedRecurringId(database: SQLiteDatabase) {
+    const insertedRow = await database.getFirstAsync<{ id: number }>("SELECT last_insert_rowid() as id")
+
+    return insertedRow?.id ?? 0
 }
 
 export async function insertRecurringOccurrence(
