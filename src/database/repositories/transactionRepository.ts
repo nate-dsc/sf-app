@@ -2,6 +2,14 @@ import type { SQLiteDatabase } from "expo-sqlite"
 
 import type { SearchFilters, Transaction, TransactionType } from "@/types/transaction"
 
+export type MonthlyCategoryDistributionRow = {
+    categoryId: number
+    type: TransactionType
+    totalValue: number | null
+}
+
+export type MonthlyTotalRow = { monthKey: string; totalValue: number | null }
+
 export async function insertTransaction(database: SQLiteDatabase, data: Transaction) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
@@ -126,4 +134,48 @@ export async function fetchTotalBetween(database: SQLiteDatabase, type: Transact
 
 export async function fetchLastTransaction(database: SQLiteDatabase) {
     return database.getFirstAsync<Transaction>("SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1")
+}
+
+export async function fetchMonthlyCategoryDistribution(
+    database: SQLiteDatabase,
+    monthKey: string,
+    options: { type?: TransactionType } = {},
+) {
+    const whereClauses = ["strftime('%Y-%m', t.date) = ?"]
+    const params: (string | number)[] = [monthKey]
+
+    if (options.type) {
+        whereClauses.push("c.type = ?")
+        params.push(options.type)
+    }
+
+    const whereStatement = `WHERE ${whereClauses.join(" AND ")}`
+
+    return database.getAllAsync<MonthlyCategoryDistributionRow>(
+        `SELECT
+            c.id AS categoryId,
+            c.type AS type,
+            SUM(t.value) AS totalValue
+        FROM transactions t
+        INNER JOIN categories c ON c.id = t.category
+        ${whereStatement}
+        GROUP BY c.id, c.type`,
+        params,
+    )
+}
+
+export async function fetchMonthlyOutflowTotals(database: SQLiteDatabase, monthKeys: string[]) {
+    if (monthKeys.length === 0) {
+        return []
+    }
+
+    const placeholders = monthKeys.map(() => "?").join(", ")
+
+    return database.getAllAsync<MonthlyTotalRow>(
+        `SELECT strftime('%Y-%m', date) as monthKey, SUM(value) as totalValue
+        FROM transactions
+        WHERE type = 'out' AND strftime('%Y-%m', date) IN (${placeholders})
+        GROUP BY monthKey`,
+        monthKeys,
+    )
 }

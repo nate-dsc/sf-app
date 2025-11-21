@@ -2,7 +2,12 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
-import { fetchLastTransaction, fetchTotalBetween } from "@/database/repositories/transactionRepository"
+import {
+    fetchLastTransaction,
+    fetchMonthlyCategoryDistribution,
+    fetchMonthlyOutflowTotals,
+    fetchTotalBetween,
+} from "@/database/repositories/transactionRepository"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import {
     BudgetMonthlyPerformance,
@@ -98,32 +103,8 @@ export function useBudgetsModule(database: SQLiteDatabase) {
         const month = (targetDate.getMonth() + 1).toString().padStart(2, "0")
         const monthKey = `${year}-${month}`
 
-        const whereClauses = ["strftime('%Y-%m', t.date) = ?"]
-        const params: (string | number)[] = [monthKey]
-
-        if (filters.type) {
-            whereClauses.push("c.type = ?")
-            params.push(filters.type)
-        }
-
-        const whereStatement = `WHERE ${whereClauses.join(" AND ")}`
-
         try {
-            const rows = await database.getAllAsync<{
-                categoryId: number
-                type: string
-                totalValue: number | null
-            }>(
-                `SELECT
-                    c.id AS categoryId,
-                    c.type AS type,
-                    SUM(t.value) AS totalValue
-                FROM transactions t
-                INNER JOIN categories c ON c.id = t.category
-                ${whereStatement}
-                GROUP BY c.id, c.type`,
-                params
-            )
+            const rows = await fetchMonthlyCategoryDistribution(database, monthKey, { type: filters.type })
 
             return rows
                 .map((row) => {
@@ -170,21 +151,7 @@ export function useBudgetsModule(database: SQLiteDatabase) {
             monthKeys.push(`${year}-${month}`)
         }
 
-        type MonthlyTotalRow = { monthKey: string; totalValue: number | null }
-
-        const placeholders = monthKeys.map(() => "?").join(", ")
-
-        let totals: MonthlyTotalRow[] = []
-
-        if (monthKeys.length > 0) {
-            totals = await database.getAllAsync<MonthlyTotalRow>(
-                `SELECT strftime('%Y-%m', date) as monthKey, SUM(value) as totalValue
-                FROM transactions
-                WHERE type = 'out' AND strftime('%Y-%m', date) IN (${placeholders})
-                GROUP BY monthKey`,
-                monthKeys
-            )
-        }
+        const totals = await fetchMonthlyOutflowTotals(database, monthKeys)
 
         const totalsMap = new Map<string, number>()
 
