@@ -1,5 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
-import CreditCardMenu from "@/components/credit-card-items/CreditCardMenu"
+import CCList from "@/components/credit-card-items/CreditCardList/CreditCardList"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
@@ -10,8 +10,8 @@ import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import type { ScrollView as RNScrollView } from "react-native"
+import { ActivityIndicator, ScrollView, Text, View } from "react-native"
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat("pt-BR", {
@@ -130,40 +130,6 @@ export default function CreditScreen() {
                     Ações com cartão de crédito
                 </Text>
             </View>
-            {showRecurringWarning ? (
-                <View
-                    style={{
-                        marginHorizontal: layout.margin.contentArea,
-                        padding: 16,
-                        borderRadius: layout.radius.groupedView,
-                        backgroundColor: theme.background.group.secondaryBg,
-                        borderWidth: 1,
-                        borderColor: theme.colors.red,
-                        gap: 8,
-                    }}
-                >
-                    <Text style={{ color: theme.colors.red, fontSize: 15, fontWeight: "600" }}>
-                        {t("notifications.recurringCreditSkipped.title", { defaultValue: "Cobrança não lançada" })}
-                    </Text>
-                    <Text style={{ color: theme.text.label, fontSize: 13, lineHeight: 18 }}>
-                        {t("notifications.recurringCreditSkipped.description", {
-                            defaultValue: "Não foi possível lançar {{amount}} no cartão {{card}}. Limite disponível: {{available}}.",
-                            amount: formatCurrency(warningAmount),
-                            available: formatCurrency(warningAvailable),
-                            card: recurringCreditWarning?.cardName ?? t("notifications.recurringCreditSkipped.unknownCard", { defaultValue: "selecionado" }),
-                        })}
-                    </Text>
-                    <TouchableOpacity
-                        accessibilityRole="button"
-                        onPress={clearRecurringNotification}
-                        style={{ alignSelf: "flex-start" }}
-                    >
-                        <Text style={{ color: theme.colors.red, fontSize: 13, fontWeight: "600" }}>
-                            {t("notifications.recurringCreditSkipped.dismiss", { defaultValue: "Entendi" })}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-            ) : null}
             <View
                 style={{
                     flexDirection: "row",
@@ -226,11 +192,9 @@ export default function CreditScreen() {
                 ) : null}
 
                 {cards.length > 0 ? (
-                    <CreditCardMenu
-                        cards={cards}
-                        selectedCard={selectedCard}
-                        onSelectCard={handleSelectCard}
-                        onEditCard={handleEditCard}
+                    <CCList
+                        data={cards}
+                        onItemPress={(item) => handleNavigateToCard(item)}
                     />
                 ) : null}
 
