@@ -1,21 +1,20 @@
-import type { SQLiteDatabase } from "expo-sqlite"
-import { useCallback, useMemo } from "react"
-import { RRule } from "rrule"
 import {
     InstallmentPurchaseInput,
     InstallmentSchedule,
     InstallmentScheduleWithStatus,
-    RecurringTransaction,
-    Transaction,
+    Transaction
 } from "@/types/transaction"
 import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
+import type { SQLiteDatabase } from "expo-sqlite"
+import { useCallback, useMemo } from "react"
+import { RRule } from "rrule"
 import { fetchCardDueDay, fetchCardInstallmentSnapshot, updateCardLimitUsed } from "../repositories/cardRepository"
 import {
     fetchInstallmentBlueprintsWithCardDetails,
     fetchInstallmentRecurringTransactions,
     fetchLastInsertedRecurringId,
-    updateRecurringLastProcessed,
     insertInstallmentRecurringTransaction,
+    updateRecurringLastProcessed,
 } from "../repositories/recurringTransactionRepository"
 import {
     fetchRecurringOccurrencesDates,
@@ -264,27 +263,10 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
         createTransactionWithCard,
         createInstallmentPurchase,
         getCardInstallmentSchedules,
-        createCard,
-        getCards,
-        getCard,
-        updateCard,
-        deleteCard,
-        getCardStatementForDate,
-        getCardStatementHistory,
-        getCardsStatementSummaries,
         createAndSyncInstallmentPurchases,
     }), [
         createAndSyncInstallmentPurchases,
-        createCard,
         createInstallmentPurchase,
         createTransactionWithCard,
-        deleteCard,
-        getCard,
-        getCardInstallmentSchedules,
-        getCardStatementForDate,
-        getCardStatementHistory,
-        getCards,
-        getCardsStatementSummaries,
-        updateCard,
     ])
 }
