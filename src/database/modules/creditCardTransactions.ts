@@ -9,23 +9,25 @@ import {
     Transaction,
 } from "@/types/transaction"
 import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
-import { updateCardLimitUsed } from "../repositories/cardRepository"
+import { fetchCardDueDay, fetchCardInstallmentSnapshot, updateCardLimitUsed } from "../repositories/cardRepository"
+import {
+    fetchInstallmentBlueprintsWithCardDetails,
+    fetchInstallmentRecurringTransactions,
+    fetchLastInsertedRecurringId,
+    updateRecurringLastProcessed,
+    insertInstallmentRecurringTransaction,
+} from "../repositories/recurringTransactionRepository"
+import {
+    fetchRecurringOccurrencesDates,
+    fetchRecurringTransactionsCount,
+    insertTransactionWithCard,
+} from "../repositories/transactionRepository"
 
 export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
     const createTransactionWithCard = useCallback(async (data: Transaction, cardId: number) => {
         try {
             await database.withTransactionAsync(async () => {
-                await database.runAsync(
-                    "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
-                    [
-                        data.value,
-                        data.description,
-                        Number(data.category),
-                        data.date,
-                        cardId,
-                        data.type ?? (data.value >= 0 ? "in" : "out"),
-                    ]
-                )
+                await insertTransactionWithCard(database, data, cardId)
 
                 const limitAdjustment = data.value < 0 ? Math.abs(data.value) : -Math.abs(data.value)
 
@@ -43,16 +45,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
     const createInstallmentPurchase = useCallback(async (data: InstallmentPurchaseInput) => {
         try {
             const schedule = await database.withTransactionAsync(async () => {
-                const cardSnapshot = await database.getFirstAsync<{
-                    max_limit: number | null
-                    limit_used: number | null
-                    closing_day: number | null
-                    due_day: number | null
-                    ignore_weekends: number | null
-                }>(
-                    "SELECT max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
-                    [data.cardId],
-                )
+                const cardSnapshot = await fetchCardInstallmentSnapshot(database, data.cardId)
 
                 if (!cardSnapshot) {
                     throw new Error("CARD_NOT_FOUND")
@@ -93,23 +86,16 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
                     count: data.installmentsCount,
                 })
 
-                await database.runAsync(
-                    "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, is_installment, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [
-                        -normalizedInstallmentValue,
-                        description,
-                        Number(data.category),
-                        baseSchedule.occurrences[0]?.purchaseDate ?? formatDateTimeForSQLite(firstPurchaseDate),
-                        rrule.toString(),
-                        null,
-                        data.cardId,
-                        1,
-                        "out",
-                    ],
-                )
+                await insertInstallmentRecurringTransaction(database, {
+                    value: -normalizedInstallmentValue,
+                    description,
+                    categoryId: Number(data.category),
+                    dateStart: baseSchedule.occurrences[0]?.purchaseDate ?? formatDateTimeForSQLite(firstPurchaseDate),
+                    rrule: rrule.toString(),
+                    cardId: data.cardId,
+                })
 
-                const insertedIdRow = await database.getFirstAsync<{ id: number }>("SELECT last_insert_rowid() as id")
-                const blueprintId = insertedIdRow?.id ?? 0
+                const blueprintId = await fetchLastInsertedRecurringId(database)
 
                 await updateCardLimitUsed(database, data.cardId, totalValue)
 
@@ -128,25 +114,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
     }, [database])
 
     const getCardInstallmentSchedules = useCallback(async (cardId: number): Promise<InstallmentScheduleWithStatus[]> => {
-        const blueprints = await database.getAllAsync<{
-            id: number
-            value: number
-            description: string
-            category: number
-            date_start: string
-            rrule: string
-            due_day: number | null
-            closing_day: number | null
-            ignore_weekends: number | null
-            category_name: string | null
-        }>(
-            `SELECT tr.id, tr.value, tr.description, tr.category, tr.date_start, tr.rrule, c.due_day, c.closing_day, c.ignore_weekends, cat.name as category_name
-             FROM transactions_recurring tr
-             JOIN cards c ON c.id = tr.card_id
-             LEFT JOIN categories cat ON cat.id = tr.category
-             WHERE tr.card_id = ? AND tr.is_installment = 1`,
-            [cardId],
-        )
+        const blueprints = await fetchInstallmentBlueprintsWithCardDetails(database, cardId)
 
         if (blueprints.length === 0) {
             return []
@@ -177,10 +145,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
                 firstPurchaseDate,
             })
 
-            const realizedRows = await database.getAllAsync<{ date: string }>(
-                "SELECT date FROM transactions WHERE id_recurring = ? AND card_id = ?",
-                [blueprint.id, cardId],
-            )
+            const realizedRows = await fetchRecurringOccurrencesDates(database, blueprint.id, cardId)
 
             const realizedDates = new Set(realizedRows.map((row) => row.date))
             const merged = mergeScheduleWithRealized({
@@ -227,9 +192,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
         }
 
         try {
-            const installmentBlueprints = await database.getAllAsync<RecurringTransaction>(
-                "SELECT * FROM transactions_recurring WHERE is_installment = 1"
-            )
+            const installmentBlueprints = await fetchInstallmentRecurringTransactions(database)
 
             if (installmentBlueprints.length === 0) {
                 return
@@ -241,9 +204,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
                     continue
                 }
 
-                const card = await database.getFirstAsync<{
-                    due_day: number
-                }>("SELECT due_day FROM cards WHERE id = ?", [blueprint.card_id])
+                const card = await fetchCardDueDay(database, blueprint.card_id)
 
                 if (!card) {
                     console.warn(`Cartão ${blueprint.card_id} não encontrado para compra parcelada ${blueprint.id}`)
@@ -255,12 +216,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
                 const rrule = new RRule(rruleOptions)
                 const allOccurrences = rrule.all()
 
-                const existingCountRow = await database.getFirstAsync<{ total: number }>(
-                    "SELECT COUNT(*) as total FROM transactions WHERE id_recurring = ?",
-                    [blueprint.id]
-                )
-
-                let generatedCount = existingCountRow?.total ?? 0
+                let generatedCount = await fetchRecurringTransactionsCount(database, blueprint.id)
 
                 if (generatedCount >= allOccurrences.length) {
                     continue
@@ -279,23 +235,18 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
 
                         const dueDateStr = formatDateTimeForSQLite(dueDate)
 
-                        await database.runAsync(
-                            "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                            [
-                                blueprint.value,
-                                blueprint.description,
-                                blueprint.category,
-                                dueDateStr,
-                                blueprint.id,
-                                blueprint.card_id ?? null,
-                                blueprint.type ?? (blueprint.value >= 0 ? "in" : "out"),
-                            ]
+                        await insertTransactionWithCard(
+                            database,
+                            {
+                                ...blueprint,
+                                date: dueDateStr,
+                                id_recurring: blueprint.id,
+                                card_id: blueprint.card_id,
+                            },
+                            blueprint.card_id as number,
                         )
 
-                        await database.runAsync(
-                            "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
-                            [dueDateStr, blueprint.id]
-                        )
+                        await updateRecurringLastProcessed(database, blueprint.id, dueDateStr)
 
                         generatedCount += 1
                     }

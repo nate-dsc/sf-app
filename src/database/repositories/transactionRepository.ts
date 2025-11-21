@@ -10,6 +10,25 @@ export type MonthlyCategoryDistributionRow = {
 
 export type MonthlyTotalRow = { monthKey: string; totalValue: number | null }
 
+export async function insertTransactionWithCard(
+    database: SQLiteDatabase,
+    data: Pick<Transaction, "value" | "description" | "category" | "date" | "type"> &
+        Partial<Pick<Transaction, "id_recurring" | "card_id">>,
+    cardId: number,
+) {
+    await database.runAsync(
+        "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
+        [
+            data.value,
+            data.description,
+            Number(data.category),
+            data.date,
+            cardId,
+            data.type ?? (data.value >= 0 ? "in" : "out"),
+        ],
+    )
+}
+
 export async function insertTransaction(database: SQLiteDatabase, data: Transaction) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
@@ -132,6 +151,17 @@ export async function fetchTotalBetween(database: SQLiteDatabase, type: Transact
     return result
 }
 
+export async function fetchCardCycleTotals(database: SQLiteDatabase, cardId: number, cycleStartKey: string, cycleEndKey: string) {
+    const totals = await database.getFirstAsync<{ total: number | null; count: number }>(
+        `SELECT COALESCE(SUM(CASE WHEN value < 0 THEN -value ELSE value END), 0) as total, COUNT(*) as count
+             FROM transactions
+             WHERE card_id = ? AND date(date) BETWEEN ? AND ?`,
+        [cardId, cycleStartKey, cycleEndKey],
+    )
+
+    return totals ?? { total: 0, count: 0 }
+}
+
 export async function fetchLastTransaction(database: SQLiteDatabase) {
     return database.getFirstAsync<Transaction>("SELECT * FROM transactions ORDER BY date DESC, id DESC LIMIT 1")
 }
@@ -174,4 +204,33 @@ export async function fetchMonthlyOutflowTotals(database: SQLiteDatabase, monthK
         GROUP BY monthKey`,
         monthKeys,
     )
+}
+
+export async function fetchRecurringOccurrencesDatesInCycle(
+    database: SQLiteDatabase,
+    recurringId: number,
+    cardId: number,
+    cycleStartKey: string,
+    cycleEndKey: string,
+) {
+    return database.getAllAsync<{ date: string }>(
+        "SELECT date FROM transactions WHERE id_recurring = ? AND card_id = ? AND date(date) BETWEEN ? AND ?",
+        [recurringId, cardId, cycleStartKey, cycleEndKey],
+    )
+}
+
+export async function fetchRecurringOccurrencesDates(database: SQLiteDatabase, recurringId: number, cardId: number) {
+    return database.getAllAsync<{ date: string }>(
+        "SELECT date FROM transactions WHERE id_recurring = ? AND card_id = ?",
+        [recurringId, cardId],
+    )
+}
+
+export async function fetchRecurringTransactionsCount(database: SQLiteDatabase, recurringId: number) {
+    const row = await database.getFirstAsync<{ total: number }>(
+        "SELECT COUNT(*) as total FROM transactions WHERE id_recurring = ?",
+        [recurringId],
+    )
+
+    return row?.total ?? 0
 }

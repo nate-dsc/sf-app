@@ -21,6 +21,11 @@ import {
     updateCardLimitUsed,
     updateCardRecord,
 } from "../repositories/cardRepository"
+import { fetchRecurringTransactionsForCard } from "../repositories/recurringTransactionRepository"
+import {
+    fetchCardCycleTotals,
+    fetchRecurringOccurrencesDatesInCycle,
+} from "../repositories/transactionRepository"
 
 const ISO_DATE_LENGTH = 10
 
@@ -142,18 +147,7 @@ async function computeProjectedTotals(
     cycleStartKey: string,
     cycleEndKey: string,
 ): Promise<{ projectedRecurring: number; projectedInstallments: number }> {
-    type RecurringRow = {
-        id: number
-        value: number
-        rrule: string
-        date_start: string
-        is_installment: number
-    }
-
-    const blueprints = await database.getAllAsync<RecurringRow>(
-        "SELECT id, value, rrule, date_start, is_installment FROM transactions_recurring WHERE card_id = ?",
-        [cardId],
-    )
+    const blueprints = await fetchRecurringTransactionsForCard(database, cardId)
 
     if (blueprints.length === 0) {
         return { projectedRecurring: 0, projectedInstallments: 0 }
@@ -178,9 +172,12 @@ async function computeProjectedTotals(
             continue
         }
 
-        const realizedRows = await database.getAllAsync<{ date: string }>(
-            "SELECT date FROM transactions WHERE id_recurring = ? AND card_id = ? AND date(date) BETWEEN ? AND ?",
-            [blueprint.id, cardId, cycleStartKey, cycleEndKey],
+        const realizedRows = await fetchRecurringOccurrencesDatesInCycle(
+            database,
+            blueprint.id,
+            cardId,
+            cycleStartKey,
+            cycleEndKey,
         )
 
         const realizedKeys = new Set(
@@ -355,15 +352,10 @@ export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme
         const cycle = resolveCycleBoundaries(referenceDate, closingDay)
         const dueDate = computeDueDate(cycle.end, dueDay, ignoreWeekends)
 
-        const realizedRow = await database.getFirstAsync<{ total: number | null; count: number }>(
-            `SELECT COALESCE(SUM(CASE WHEN value < 0 THEN -value ELSE value END), 0) as total, COUNT(*) as count
-             FROM transactions
-             WHERE card_id = ? AND date(date) BETWEEN ? AND ?`,
-            [cardId, cycle.startKey, cycle.endKey],
-        )
+        const realizedRow = await fetchCardCycleTotals(database, cardId, cycle.startKey, cycle.endKey)
 
-        const realizedTotal = Number(realizedRow?.total ?? 0)
-        const transactionsCount = Number(realizedRow?.count ?? 0)
+        const realizedTotal = Number(realizedRow.total ?? 0)
+        const transactionsCount = Number(realizedRow.count ?? 0)
 
         const { projectedRecurring, projectedInstallments } = await computeProjectedTotals(
             database,

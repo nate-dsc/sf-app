@@ -12,6 +12,14 @@ export type CardRow = {
     ignore_weekends: number | null
 }
 
+export type CardInstallmentSnapshot = {
+    max_limit: number | null
+    limit_used: number | null
+    closing_day: number | null
+    due_day: number | null
+    ignore_weekends: number | null
+}
+
 export async function updateCardRecord(database: SQLiteDatabase, cardId: number, input: UpdateCardInput) {
     const fields: string[] = []
     const values: any[] = []
@@ -108,4 +116,15 @@ export async function fetchCards(database: SQLiteDatabase): Promise<CardRow[]> {
 
 export async function updateCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
     await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
+}
+
+export async function fetchCardInstallmentSnapshot(database: SQLiteDatabase, cardId: number) {
+    return database.getFirstAsync<CardInstallmentSnapshot>(
+        "SELECT max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",
+        [cardId],
+    )
+}
+
+export async function fetchCardDueDay(database: SQLiteDatabase, cardId: number) {
+    return database.getFirstAsync<{ due_day: number }>("SELECT due_day FROM cards WHERE id = ?", [cardId])
 }
