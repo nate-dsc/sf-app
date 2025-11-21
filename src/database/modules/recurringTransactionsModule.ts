@@ -11,9 +11,9 @@ import {
     insertRecurringTransaction,
     removeRecurringTransaction,
     removeRecurringTransactionCascade,
-    updateCardLimitUsed,
     updateRecurringLastProcessed,
 } from "@/database/repositories/recurringTransactionRepository"
+import { updateCardLimitUsed } from "@/database/repositories/cardRepository"
 import type { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { CardSnapshot } from "@/types/database"
 import { RecurringTransaction } from "@/types/transaction"

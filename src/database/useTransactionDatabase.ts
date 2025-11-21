@@ -3,6 +3,7 @@ import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditL
 import { useMemo } from "react"
 
 import { useBudgetsModule } from "./modules/budgetModule"
+import { useCreditCardModule } from "./modules/creditCardModule"
 import { useCreditCardTransactionsModule } from "./modules/creditCardTransactions"
 import { useRecurringTransactionsModule } from "./modules/recurringTransactionsModule"
 import { useTransactionsModule } from "./modules/transactionsModule"
@@ -15,16 +16,18 @@ export function useTransactionDatabase() {
 
     const transactions = useTransactionsModule(database)
     const recurring = useRecurringTransactionsModule(database, notifyRecurringChargeSkipped)
-    const creditCard = useCreditCardTransactionsModule(database, theme)
+    const creditCards = useCreditCardModule(database, theme)
+    const creditCardTransactions = useCreditCardTransactionsModule(database)
     const budgets = useBudgetsModule(database)
 
     return useMemo(
         () => ({
             ...transactions,
             ...recurring,
-            ...creditCard,
+            ...creditCards,
+            ...creditCardTransactions,
             ...budgets,
         }),
-        [budgets, creditCard, recurring, transactions],
+        [budgets, creditCardTransactions, creditCards, recurring, transactions],
     )
 }

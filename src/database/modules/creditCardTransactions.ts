@@ -1,25 +1,17 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
-
-import type { CustomTheme } from "@/types/theme"
 import {
-    CCard,
-    CardStatementCycleSummary,
-    CardStatementHistoryOptions,
     InstallmentPurchaseInput,
     InstallmentSchedule,
     InstallmentScheduleWithStatus,
-    NewCard,
     RecurringTransaction,
     Transaction,
-    UpdateCardInput,
 } from "@/types/transaction"
-import { getColorFromID } from "@/utils/CardUtils"
 import { buildInstallmentSchedule, clampPurchaseDay, computeInitialPurchaseDate, formatDateTimeForSQLite, mergeScheduleWithRealized } from "@/utils/installments"
-import { deleteCardRecord, getCardStatementForDate as fetchCardStatementForDate, getCardStatementHistory as fetchCardStatementHistory, getCardsStatementForDate as fetchCardsStatementForDate, updateCardRecord, type RawCardStatementSummary } from "../repositories/cardRepository"
+import { updateCardLimitUsed } from "../repositories/cardRepository"
 
-export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme: CustomTheme) {
+export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
     const createTransactionWithCard = useCallback(async (data: Transaction, cardId: number) => {
         try {
             await database.withTransactionAsync(async () => {
@@ -38,10 +30,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 const limitAdjustment = data.value < 0 ? Math.abs(data.value) : -Math.abs(data.value)
 
                 if (limitAdjustment !== 0) {
-                    await database.runAsync(
-                        "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
-                        [limitAdjustment, cardId]
-                    )
+                    await updateCardLimitUsed(database, cardId, limitAdjustment)
                 }
             })
 
@@ -122,10 +111,7 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
                 const insertedIdRow = await database.getFirstAsync<{ id: number }>("SELECT last_insert_rowid() as id")
                 const blueprintId = insertedIdRow?.id ?? 0
 
-                await database.runAsync(
-                    "UPDATE cards SET limit_used = limit_used + ? WHERE id = ?",
-                    [totalValue, data.cardId],
-                )
+                await updateCardLimitUsed(database, data.cardId, totalValue)
 
                 return {
                     ...baseSchedule,
@@ -208,155 +194,6 @@ export function useCreditCardTransactionsModule(database: SQLiteDatabase, theme:
 
         return schedules
     }, [database])
-
-    const createCard = useCallback(async (data: NewCard) => {
-        const statement = "INSERT INTO cards (name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends) VALUES(?,?,?,?,?,?,?)"
-
-        const params = [
-            data.name,
-            data.color,
-            data.maxLimit,
-            0,
-            data.closingDay,
-            data.dueDay,
-            data.ignoreWeekends ? 1 : 0,
-        ]
-
-        try {
-            await database.runAsync(statement, params)
-        } catch (error) {
-            console.log("Não foi possivel adicionar o cartão")
-            throw error
-        }
-    }, [database])
-
-    const getCards = useCallback(async (): Promise<CCard[]> => {
-        try {
-            const cards = await database.getAllAsync<{
-                id: number
-                name: string
-                color: number | null
-                max_limit: number | null
-                limit_used: number | null
-                closing_day: number | null
-                due_day: number | null
-                ignore_weekends: number | null
-            }>("SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards")
-
-            return cards.map((card) => ({
-                id: card.id,
-                name: card.name,
-                maxLimit: Number(card.max_limit ?? 0),
-                limitUsed: Number(card.limit_used ?? 0),
-                color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
-                closingDay: card.closing_day ?? 1,
-                dueDay: card.due_day ?? 1,
-                ignoreWeekends: !!(card.ignore_weekends ?? 0)
-            }))
-        } catch (error) {
-            console.error("Could not fetch cards", error)
-            throw error
-        }
-    }, [database, theme])
-
-    const getCard = useCallback(async (cardId: number): Promise<CCard | null> => {
-        try {
-            const card = await database.getFirstAsync<{
-                id: number
-                name: string
-                color: number | null
-                max_limit: number | null
-                limit_used: number | null
-                closing_day: number | null
-                due_day: number | null
-                ignore_weekends: number | null
-            }>("SELECT id, name, color, max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?", [cardId])
-
-            if (!card) {
-                return null
-            }
-
-            return {
-                id: card.id,
-                name: card.name,
-                maxLimit: Number(card.max_limit ?? 0),
-                limitUsed: Number(card.limit_used ?? 0),
-                color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
-                closingDay: card.closing_day ?? 1,
-                dueDay: card.due_day ?? 1,
-                ignoreWeekends: !!(card.ignore_weekends ?? 0),
-            }
-        } catch (error) {
-            console.error("Could not fetch card", error)
-            throw error
-        }
-    }, [database, theme])
-
-    const updateCard = useCallback(async (cardId: number, updates: UpdateCardInput) => {
-        try {
-            await updateCardRecord(database, cardId, updates)
-        } catch (error) {
-            console.error("Could not update card", error)
-            throw error
-        }
-    }, [database])
-
-    const deleteCard = useCallback(async (id: number) => {
-        try {
-            await deleteCardRecord(database, id)
-        } catch (error) {
-            console.error("Could not delete card", error)
-            throw error
-        }
-    }, [database])
-
-    const mapCardStatement = useCallback((raw: RawCardStatementSummary): CardStatementCycleSummary => {
-        const resolvedColorId = typeof raw.colorId === "number" ? raw.colorId : 7
-
-        return {
-            cardId: raw.cardId,
-            cardName: raw.cardName,
-            color: getColorFromID(resolvedColorId, theme),
-            colorId: raw.colorId ?? null,
-            closingDay: raw.closingDay,
-            dueDay: raw.dueDay,
-            cycleStart: raw.cycleStart,
-            cycleEnd: raw.cycleEnd,
-            dueDate: raw.dueDate,
-            referenceMonth: raw.referenceMonth,
-            maxLimit: raw.maxLimit,
-            limitUsed: raw.limitUsed,
-            availableCredit: raw.availableCredit,
-            realizedTotal: raw.realizedTotal,
-            projectedRecurringTotal: raw.projectedRecurringTotal,
-            projectedInstallmentTotal: raw.projectedInstallmentTotal,
-            projectedTotal: raw.projectedTotal,
-            transactionsCount: raw.transactionsCount,
-        }
-    }, [theme])
-
-    const getCardStatementForDate = useCallback(async (
-        cardId: number,
-        referenceDate?: Date,
-    ): Promise<CardStatementCycleSummary | null> => {
-        const raw = await fetchCardStatementForDate(database, cardId, referenceDate ?? new Date())
-        return raw ? mapCardStatement(raw) : null
-    }, [database, mapCardStatement])
-
-    const getCardStatementHistory = useCallback(async (
-        cardId: number,
-        options: CardStatementHistoryOptions = {},
-    ): Promise<CardStatementCycleSummary[]> => {
-        const rawHistory = await fetchCardStatementHistory(database, cardId, options)
-        return rawHistory.map(mapCardStatement)
-    }, [database, mapCardStatement])
-
-    const getCardsStatementSummaries = useCallback(async (
-        referenceDate?: Date,
-    ): Promise<CardStatementCycleSummary[]> => {
-        const rawSummaries = await fetchCardsStatementForDate(database, referenceDate ?? new Date())
-        return rawSummaries.map(mapCardStatement)
-    }, [database, mapCardStatement])
 
     const createAndSyncInstallmentPurchases = useCallback(async () => {
         console.log("Sincronizando compras parceladas")
