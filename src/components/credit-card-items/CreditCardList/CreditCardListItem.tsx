@@ -26,7 +26,7 @@ export default function CCListItem({item, onItemPress}: CCListItemProps) {
                     borderCurve: "continuous",
                     padding: layout.spacingBl.md
                 }}
-                onPress={(item) => onItemPress}
+                onPress={() => onItemPress(item)}
             >
             
                 <View
