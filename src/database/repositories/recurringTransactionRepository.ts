@@ -88,10 +88,6 @@ export async function insertRecurringOccurrence(
     )
 }
 
-export async function updateCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
-    await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
-}
-
 export async function updateRecurringLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
     await database.runAsync(
         "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
