@@ -1,19 +1,96 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
-import { RRule } from "rrule"
 
 import type { CustomTheme } from "@/types/theme"
-import { CCard, CardStatementCycleSummary, CardStatementHistoryOptions, NewCard, UpdateCardInput } from "@/types/transaction"
+
+import { deleteCardDB, fetchCard, fetchCards, insertCard, updateCardDB, updateCardLimitUsed } from "@/database/repositories/cardRepository"
+import { CCard, CCardDB, NewCard, UpdateCardInput } from "@/types/CreditCards"
 import { getColorFromID } from "@/utils/CardUtils"
 
-import { CCardDB, deleteCardRecord, fetchCard, fetchCards, insertCardRecord, updateCardLimitUsed, updateCardRecord } from "@/database/repositories/cardRepository"
-import { fetchRecurringTransactionsForCard } from "../repositories/recurringTransactionRepository"
-import {
-    fetchCardCycleTotals,
-    fetchRecurringOccurrencesDatesInCycle,
-} from "../repositories/transactionRepository"
+export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme) {
 
-const ISO_DATE_LENGTH = 10
+    const createCard = useCallback(async function createCard(data: NewCard) {
+        try {
+            await insertCard(database, data)
+        } catch (error) {
+            console.log("[Credit Card Module] Could not insert new card into database")
+            throw error
+        }
+    }, [database])
+
+    const mapCCardDBToCCard = useCallback((card: CCardDB): CCard => ({
+        id: card.id,
+        name: card.name,
+        maxLimit: card.max_limit,
+        limitUsed: card.limit_used,
+        color: getColorFromID(card.color, theme),
+        closingDay: card.closing_day,
+        dueDay: card.due_day,
+        ignoreWeekends: card.ignore_weekends === 1,
+    }), [theme])
+
+    const getCard = useCallback(async (cardId: number): Promise<CCard | null> => {
+        try {
+            const card = await fetchCard(database, cardId)
+
+            if (!card) {
+                return null
+            }
+
+            return mapCCardDBToCCard(card)
+        } catch (error) {
+            console.error(`[Credit Card Module] Could not fetch card of id: ${cardId}`, error)
+            throw error
+        }
+    }, [database, mapCCardDBToCCard])
+
+    const getAllCards = useCallback(async (): Promise<CCard[]> => {
+        try {
+            const cards = await fetchCards(database)
+            return cards.map(mapCCardDBToCCard)
+
+        } catch (error) {
+            console.error("[Credit Card Module] Could not fetch all cards", error)
+            throw error
+        }
+    }, [database, mapCCardDBToCCard])
+
+    const updateCard = useCallback(async (cardId: number, updates: UpdateCardInput) => {
+        try {
+            await updateCardDB(database, cardId, updates)
+        } catch (error) {
+            console.error(`[Credit Card Module] Could not update card of id: ${cardId}`, error)
+            throw error
+        }
+    }, [database])
+
+    const deleteCard = useCallback(async (id: number) => {
+        try {
+            await deleteCardDB(database, id)
+        } catch (error) {
+            console.error(`[Credit Card Module] Could not update card of id: ${id}`, error)
+            throw error
+        }
+    }, [database])
+
+    return useMemo(() => ({
+        createCard,
+        getCard,
+        getAllCards,
+        updateCard,
+        deleteCard,
+        updateCardLimitUsed,
+    }), [
+        createCard,
+        getCard,
+        getAllCards,
+        updateCard,
+        deleteCard,
+    ])
+}
+
+/**
+ * const ISO_DATE_LENGTH = 10
 
 type RawCardStatementSummary = {
     cardId: number
@@ -106,8 +183,9 @@ function resolveCycleBoundaries(reference: Date, closingDay: number) {
         referenceMonth: cycleEndKey.slice(0, 7),
     }
 }
-
-function computeDueDate(cycleEnd: Date, dueDay: number, ignoreWeekends: boolean) {
+ * 
+ * 
+ * function computeDueDate(cycleEnd: Date, dueDay: number, ignoreWeekends: boolean) {
     const nextMonth = new Date(cycleEnd.getFullYear(), cycleEnd.getMonth() + 1, 1)
     const dueDayInMonth = Math.min(dueDay, daysInMonth(nextMonth.getFullYear(), nextMonth.getMonth()))
     const dueDate = new Date(nextMonth.getFullYear(), nextMonth.getMonth(), dueDayInMonth, 0, 0, 0, 0)
@@ -231,72 +309,7 @@ function buildSummary(
         transactionsCount,
     }
 }
-
-export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme) {
-    const mapCardRowToCard = useCallback((card: CCardDB): CCard => ({
-        id: card.id,
-        name: card.name,
-        maxLimit: Number(card.max_limit ?? 0),
-        limitUsed: Number(card.limit_used ?? 0),
-        color: getColorFromID(typeof card.color === "number" ? card.color : 7, theme),
-        closingDay: card.closing_day ?? 1,
-        dueDay: card.due_day ?? 1,
-        ignoreWeekends: !!(card.ignore_weekends ?? 0),
-    }), [theme])
-
-    const createCard = useCallback(async (data: NewCard) => {
-        try {
-            await insertCardRecord(database, data)
-        } catch (error) {
-            console.log("Não foi possivel adicionar o cartão")
-            throw error
-        }
-    }, [database])
-
-    const getCards = useCallback(async (): Promise<CCard[]> => {
-        try {
-            const cards = await fetchCards(database)
-            return cards.map(mapCardRowToCard)
-        } catch (error) {
-            console.error("Could not fetch cards", error)
-            throw error
-        }
-    }, [database, mapCardRowToCard])
-
-    const getCard = useCallback(async (cardId: number): Promise<CCard | null> => {
-        try {
-            const card = await fetchCard(database, cardId)
-
-            if (!card) {
-                return null
-            }
-
-            return mapCardRowToCard(card)
-        } catch (error) {
-            console.error("Could not fetch card", error)
-            throw error
-        }
-    }, [database, mapCardRowToCard])
-
-    const updateCard = useCallback(async (cardId: number, updates: UpdateCardInput) => {
-        try {
-            await updateCardRecord(database, cardId, updates)
-        } catch (error) {
-            console.error("Could not update card", error)
-            throw error
-        }
-    }, [database])
-
-    const deleteCard = useCallback(async (id: number) => {
-        try {
-            await deleteCardRecord(database, id)
-        } catch (error) {
-            console.error("Could not delete card", error)
-            throw error
-        }
-    }, [database])
-
-    const mapCardStatement = useCallback((raw: RawCardStatementSummary): CardStatementCycleSummary => {
+ * const mapCardStatement = useCallback((raw: RawCardStatementSummary): CardStatementCycleSummary => {
         const resolvedColorId = typeof raw.colorId === "number" ? raw.colorId : 7
 
         return {
@@ -397,25 +410,4 @@ export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme
 
         return summaries.sort((a, b) => a.dueDate.localeCompare(b.dueDate))
     }, [database, getCardStatementForDate])
-
-    return useMemo(() => ({
-        createCard,
-        getCards,
-        getCard,
-        updateCard,
-        deleteCard,
-        getCardStatementForDate,
-        getCardStatementHistory,
-        getCardsStatementSummaries,
-        updateCardLimitUsed,
-    }), [
-        createCard,
-        deleteCard,
-        getCard,
-        getCardStatementForDate,
-        getCardStatementHistory,
-        getCards,
-        getCardsStatementSummaries,
-        updateCard,
-    ])
-}
+ */

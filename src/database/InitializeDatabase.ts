@@ -42,12 +42,12 @@ export async function initializeDatabase(database: SQLiteDatabase) {
     const createCardsTableStatement = `CREATE TABLE IF NOT EXISTS cards (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
-        color INT,
-        max_limit INT NOT NULL DEFAULT 0,
-        limit_used INT NOT NULL DEFAULT 0,
-        closing_day INT,
-        due_day INT,
-        ignore_weekends INTEGER NOT NULL DEFAULT 0,
+        color INT NOT NULL,
+        max_limit INT NOT NULL,
+        limit_used INT NOT NULL,
+        closing_day INT NOT NULL,
+        due_day INT NOT NULL,
+        ignore_weekends INTEGER NOT NULL DEFAULT 1,
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );`

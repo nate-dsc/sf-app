@@ -26,37 +26,6 @@ export type RecurringTransaction = {
     is_installment?: number,
 }
 
-export type NewCard = {
-    name: string,
-    color: number,
-    maxLimit: number,
-    closingDay: number,
-    dueDay: number,
-    ignoreWeekends: boolean
-}
-
-export type CCard = {
-    id: number,
-    name: string,
-    maxLimit: number,
-    limitUsed: number,
-    color: string,
-    closingDay: number,
-    dueDay: number,
-    ignoreWeekends: boolean
-}
-
-export type UpdateCardInput = {
-    name?: string,
-    color?: number,
-    maxLimit?: number,
-    limitUsed?: number,
-    closingDay?: number,
-    dueDay?: number,
-    ignoreWeekends?: boolean,
-    issuer?: string,
-    lastFour?: string,
-}
 
 export type CardStatementCycleSummary = {
     cardId: number,
