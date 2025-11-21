@@ -1,5 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
-import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
+import CreditCardMenu from "@/components/credit-card-items/CreditCardMenu"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
@@ -86,12 +86,17 @@ export default function CreditScreen() {
         wasEmptyRef.current = isEmpty
     }, [cards])
 
-    const handleNavigateToCard = (card: CCard) => {
+    const handleNavigateToCard = useCallback((card: CCard) => {
         router.push({
             pathname: "/(credit)/[cardId]",
             params: { cardId: card.id.toString() },
         })
-    }
+    }, [router])
+
+    const handleSelectCard = useCallback((card: CCard) => {
+        setSelectedCard(card)
+        handleNavigateToCard(card)
+    }, [handleNavigateToCard])
 
     const handleEditCard = useCallback((card: CCard) => {
         router.push({
@@ -221,9 +226,11 @@ export default function CreditScreen() {
                 ) : null}
 
                 {cards.length > 0 ? (
-                    <CreditCardPicker
+                    <CreditCardMenu
                         cards={cards}
-                        onSelectCard={handleNavigateToCard}
+                        selectedCard={selectedCard}
+                        onSelectCard={handleSelectCard}
+                        onEditCard={handleEditCard}
                     />
                 ) : null}
 
