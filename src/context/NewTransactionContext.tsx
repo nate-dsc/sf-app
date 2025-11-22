@@ -1,12 +1,8 @@
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { InstallmentPurchase } from "@/types/CreditCards"
-import { RecurringTransaction, Transaction, type TransactionType } from "@/types/Transactions"
-import { computeInitialPurchaseDate, formatDateTimeForSQLite, InstallmentFormValues, validateInstallmentForm } from "@/utils/InstallmentUtils"
-import { showToast } from "@/utils/toast"
+import { type TransactionType } from "@/types/Transactions"
+import { formatAsInstallmentPurchase, formatAsRecurringTransaction, formatAsTransaction } from "@/utils/NewTransactionUtils"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { RRule } from "rrule"
 
 export type NewTransaction = {
     type?: TransactionType,
@@ -23,18 +19,16 @@ type NewTransactionContextType = {
     newTransaction: NewTransaction,
     setNewTransaction: (newTransaction: NewTransaction) => void,
     updateNewTransaction: (updates: Partial<NewTransaction>) => void
-    saveTransaction: () => Promise<void>
-    isValid: boolean
-    saveInstallmentPurchase: () => Promise<void>
-    isInstallmentValid: boolean
-    clearRecurringCreditWarning: () => void
+    saveAsTransaction: () => Promise<void>
+    isValidAsTransaction: boolean
+    saveAsInstallmentPurchase: () => Promise<void>
+    isValidAsInstallmentPurchase: boolean
 }
 
 const NewTransactionContext = createContext<NewTransactionContextType | undefined>(undefined)
 
 export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
-    const { t } = useTranslation()
 
     const {
         createTransaction,
@@ -43,10 +37,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         createRecurringTransactionWithCard,
         createInstallmentPurchase,
         getSummaryFromDB,
-        getCard
     } = useTransactionDatabase();
 
-    // 2. Acesso à ação de recarregar dados do store do sumário
     const loadSummaryData = useSummaryStore((state) => state.loadData);
     const triggerRefresh = useSummaryStore.getState().triggerRefresh
 
@@ -72,155 +64,74 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }, [newTransaction])
 
     const isValidAsInstallmentPurchase = useMemo(() => {
-        const { value, installmentsCount, date, category, cardId } = newTransaction
+        const { value, installmentsCount, date, category, rrule, cardId } = newTransaction
 
-        if (!(value && value > 0 && installmentsCount && date && category)) {
+        if (!(value && value > 0 && installmentsCount && date && category && rrule)) {
             return false
         }
 
         if (cardId) {
             //testar se tem limite
         }
+
+        return true
     }, [newTransaction])
 
-    const getTransactionForDB = (): Transaction => {
-        if (!isValid) {
-            throw new Error("Tentativa de criar transação com dados inválidos.");
-        }
-        const categoryId = Number(newTransaction.category?.id)
-
-        return {
-            id: 0,
-            value: newTransaction.type === "in" ? newTransaction.value! : -newTransaction.value!,
-            description: newTransaction.description || "",
-            category: Number.isNaN(categoryId) ? 0 : categoryId,
-            date: newTransaction.date?.toISOString().slice(0, 16)!,
-            card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
-            type: newTransaction.type ?? "out",
-        }
-    }
-
-    const getTransactionRecurringForDB = (): RecurringTransaction => {
-        if (!isValid && !newTransaction.rrule) {
-            throw new Error("Tentativa de criar transação recorrente com dados inválidos.");
-        }
-        const categoryId = Number(newTransaction.category?.id)
-
-        return {
-            id: 0,
-            value: newTransaction.type === "in" ? newTransaction.value! : -newTransaction.value!,
-            description: newTransaction.description || "",
-            category: Number.isNaN(categoryId) ? 0 : categoryId,
-            date_start: newTransaction.date?.toISOString().slice(0, 16)!,
-            rrule: newTransaction.rrule!,
-            date_last_processed: null,
-            card_id: newTransaction.useCreditCard ? newTransaction.cardId ?? null : null,
-            type: newTransaction.type ?? "out",
-        }
-    }
-
     const saveAsTransaction = async () => {
-        const shouldUseCreditCard = !!newTransaction.useCreditCard && !!newTransaction.cardId
+        if(!isValidAsTransaction) {
+            throw new Error("[New Transaction Context] Data is not valid as a transaction")
+        }
 
-        if(newTransaction.rrule) {
+        const usesCreditCard = !!newTransaction.cardId
+        const isRecurring = !!newTransaction.rrule
+
+        if(isRecurring) {
             try {
-                const transactionData = getTransactionRecurringForDB()
-                if (shouldUseCreditCard) {
-                    await ensureCardLimit()
-                    await createRecurringTransactionWithCard(transactionData, newTransaction.cardId!)
+                const recurringTransaction = formatAsRecurringTransaction(newTransaction)
+
+                if(usesCreditCard) {
+                    await createRecurringTransactionWithCard(recurringTransaction)
                 } else {
-                    await createRecurringTransaction(transactionData)
+                    await createRecurringTransaction(recurringTransaction)
                 }
-                await loadSummaryData({ getSummaryFromDB })
-                triggerRefresh()
-                console.log("Transação recorrente salva com sucesso!")
-                setNewTransaction({})
-            } catch (error) {
-                console.error("Erro ao salvar transação recorrente:", error)
-                throw error
+            } catch(err) {
+                console.error("[New Transaction Context] Could not save recurring transaction", err)
+                throw err
             }
         } else {
             try {
-                const transactionData = getTransactionForDB();
-                if (shouldUseCreditCard) {
-                    await ensureCardLimit()
-                    await createTransactionWithCard(transactionData, newTransaction.cardId!)
+                const transaction = formatAsTransaction(newTransaction)
+
+                if(usesCreditCard) {
+                    await createTransactionWithCard(transaction)
                 } else {
-                    await createTransaction(transactionData)
+                    await createTransaction(transaction)
                 }
-                await loadSummaryData({ getSummaryFromDB })
-                triggerRefresh()
-                console.log("Transação única salva com sucesso!")
-                setNewTransaction({})
-            } catch (error) {
-                console.error("Erro ao salvar transação única:", error);
-                // Aqui você pode mostrar um alerta para o usuário
-                throw error; // Re-lança o erro para o chamador, se necessário
+            } catch(err) {
+                console.error("[New Transaction Context] Could not save transaction", err)
+                throw err
             }
         }
+        
+        console.log("[New Transaction Context] Transaction successfully saved")
     }
 
-    const saveInstallmentPurchase = async () => {
-        const { value, description, category, installmentsCount, purchaseDay, cardId } = newTransaction
-
-        const validationValues: InstallmentFormValues = {
-            installmentValue: value,
-            description,
-            categoryId: category?.id ?? null,
-            installmentsCount,
-            purchaseDay,
-            cardId,
+    const saveAsInstallmentPurchase = async () => {
+        if(!isValidAsInstallmentPurchase) {
+            throw new Error("[New Transaction Context] Data is not valid as an installment purchase")
         }
 
-        const validation = validateInstallmentForm(validationValues)
-
-        if (!validation.isValid || !cardId || !value || !installmentsCount || !purchaseDay || !category?.id) {
-            showToast(t("installmentModal.toastFailure", { defaultValue: "Não foi possível salvar a compra parcelada." }), "error")
-            throw new Error("Tentativa de criar compra parcelada com dados inválidos.")
-        }
-
+        const installmentPurchase = formatAsInstallmentPurchase(newTransaction)
+        
         try {
-            const card = await getCard(cardId)
-
-            if (!card) {
-                throw new Error("CARD_NOT_FOUND")
-            }
-
-            const trimmedDescription = description?.trim() ?? ""
-            const installmentsRule = new RRule({
-                freq: RRule.MONTHLY,
-                dtstart: computeInitialPurchaseDate(purchaseDay, card.closingDay),
-                count: installmentsCount,
-            })
-
-            const transaction: RecurringTransaction = {
-                id: 0,
-                value: -Math.abs(value),
-                description: trimmedDescription,
-                category: Number(category.id),
-                date_start: formatDateTimeForSQLite(installmentsRule.options.dtstart as Date),
-                rrule: installmentsRule.toString(),
-                date_last_processed: null,
-                card_id: cardId,
-                type: "out",
-                is_installment: 1,
-            }
-
-            const installmentPurchase: InstallmentPurchase = {
-                transaction,
-                installmentCounts: installmentsCount,
-                purchaseDay,
-            }
 
             await createInstallmentPurchase(installmentPurchase)
-
             await loadSummaryData({ getSummaryFromDB })
             triggerRefresh()
             setNewTransaction({})
-            showToast(t("installmentModal.toastSuccess", { defaultValue: "Compra parcelada salva com sucesso!" }), "success")
         } catch (error) {
+
             console.error("Erro ao salvar compra parcelada:", error)
-            showToast(t("installmentModal.toastFailure", { defaultValue: "Não foi possível salvar a compra parcelada." }), "error")
             throw error
         }
     }
@@ -230,13 +141,10 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
             newTransaction,
             setNewTransaction,
             updateNewTransaction,
-            saveTransaction,
-            isValid,
-            saveInstallmentPurchase,
-            isInstallmentValid,
-            ensureCardLimit,
-            recurringCreditWarning,
-            clearRecurringCreditWarning,
+            saveAsTransaction,
+            isValidAsTransaction,
+            saveAsInstallmentPurchase,
+            isValidAsInstallmentPurchase,
         }}>
             {children}
         </NewTransactionContext.Provider>
