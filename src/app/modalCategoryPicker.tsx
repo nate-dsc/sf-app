@@ -19,7 +19,7 @@ export default function CategoryPicker() {
     const { newTransaction, updateNewTransaction } = useNewTransaction()
 
     const type = newTransaction.type
-    const selectedCategory = newTransaction.category?.id
+    const selectedCategory = newTransaction.category?.toString()
 
     const [selected, setSelected] = useState<string | undefined>(selectedCategory);
     
@@ -68,7 +68,7 @@ export default function CategoryPicker() {
                 singleSelect
                 selectedIds={selected ? [selected] : undefined}
                 onSelect={(id, label) => {
-                    updateNewTransaction({category: {id, label}})
+                    updateNewTransaction({category: Number(id)})
                     router.back()
                 }}
             />

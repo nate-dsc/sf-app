@@ -155,17 +155,6 @@ export default function AddInstallmentPurchaseModal() {
         }
     }
 
-    const renderErrorText = (message?: string) => {
-        if (!message) {
-            return null
-        }
-
-        return (
-            <Text style={{ color: theme.colors.red, fontSize: 13, marginTop: 4 }}>
-                {message}
-            </Text>
-        )
-    }
 
     return (
         <ScrollView
@@ -206,10 +195,7 @@ export default function AddInstallmentPurchaseModal() {
                     separator="translucent"
                     label={t("modalAddInstallment.description")}
                     acViewKey="description"
-                    onChangeText={(text) => {
-                        setTouched((prev) => ({ ...prev, description: true }))
-                        updateNewTransaction({ description: text })
-                    }}
+                    onChangeText={(text) => updateNewTransaction({ description: text })}
                     value={newTransaction.description}
                     maxLength={40}
                 />
@@ -220,7 +206,6 @@ export default function AddInstallmentPurchaseModal() {
                         newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
                     }
                     onPress={() => {
-                        setTouched((prev) => ({ ...prev, category: true }))
                         updateNewTransaction({ type: "out" })
                         router.push("/modalCategoryPicker")
                     }}
@@ -230,7 +215,6 @@ export default function AddInstallmentPurchaseModal() {
                     label={t("modalAddInstallment.date")}
                     value={newDate}
                     onDateChange={(date) => {
-                        setTouched((prev) => ({ ...prev, purchaseDay: true }))
                         setNewDate(date)
                         updateNewTransaction({ date })
                     }}
