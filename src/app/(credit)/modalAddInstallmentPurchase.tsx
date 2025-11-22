@@ -1,6 +1,5 @@
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
 import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
-import DayPickerModal from "@/components/credit-card-items/DayPickerModal"
 import GDateInput from "@/components/grouped-list-components/GroupedDateInput"
 import GPopup from "@/components/grouped-list-components/GroupedPopup"
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
@@ -11,17 +10,14 @@ import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/CreditCards"
 import {
-    derivePurchaseDayForCard,
-    getAllowedPurchaseDays,
     InstallmentFormValues,
-    normalizePurchaseDay,
     validateInstallmentForm,
 } from "@/utils/InstallmentUtils"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Alert, Modal, ScrollView, Text, View } from "react-native"
+import { Alert, ScrollView, Text, View } from "react-native"
 
 export default function AddInstallmentPurchaseModal() {
     const router = useRouter()
@@ -42,7 +38,6 @@ export default function AddInstallmentPurchaseModal() {
 
     const [cards, setCards] = useState<CCard[]>([])
     const [cardsLoading, setCardsLoading] = useState(true)
-    const [dayModalVisible, setDayModalVisible] = useState(false)
     const [installmentsInput, setInstallmentsInput] = useState("")
     const [touched, setTouched] = useState({
         value: false,
@@ -54,6 +49,7 @@ export default function AddInstallmentPurchaseModal() {
     })
 
     useEffect(() => {
+        const today = new Date()
         setNewTransaction({
             type: "out",
             value: undefined,
@@ -61,9 +57,11 @@ export default function AddInstallmentPurchaseModal() {
             category: undefined,
             cardId: undefined,
             installmentsCount: undefined,
-            purchaseDay: undefined,
+            purchaseDay: today.getDate(),
+            date: today,
         })
 
+        setNewDate(today)
         setInstallmentsInput("")
         setTouched({
             value: false,
@@ -124,37 +122,6 @@ export default function AddInstallmentPurchaseModal() {
 
         return cards.find((card) => card.id === newTransaction.cardId) ?? null
     }, [cards, newTransaction.cardId])
-
-    const allowedPurchaseDays = useMemo(() => {
-        const baseDays = getAllowedPurchaseDays(selectedCard?.closingDay)
-        const today = new Date().getDate()
-
-        if (baseDays.includes(today)) {
-            return baseDays
-        }
-
-        return [...baseDays, today].sort((a, b) => a - b)
-    }, [selectedCard?.closingDay])
-
-    useEffect(() => {
-        if (!selectedCard) {
-            return
-        }
-
-        const normalized = normalizePurchaseDay(newTransaction.purchaseDay, selectedCard)
-
-        if (normalized && normalized !== newTransaction.purchaseDay) {
-            updateNewTransaction({ purchaseDay: normalized })
-            return
-        }
-
-        if (!newTransaction.purchaseDay) {
-            const suggested = derivePurchaseDayForCard(selectedCard)
-            if (suggested) {
-                updateNewTransaction({ purchaseDay: suggested })
-            }
-        }
-    }, [newTransaction.purchaseDay, selectedCard, updateNewTransaction])
 
     const handleInstallmentsChange = (value: string) => {
         const digits = value.replace(/[^0-9]/g, "")
@@ -337,8 +304,9 @@ export default function AddInstallmentPurchaseModal() {
                     label={t("modalAddInstallment.date")}
                     value={newDate}
                     onDateChange={(date) => {
-                        updateNewTransaction({ date: date })
+                        setTouched((prev) => ({ ...prev, purchaseDay: true }))
                         setNewDate(date)
+                        updateNewTransaction({ date, purchaseDay: date.getDate() })
                     }}
                 />
             </GroupView>
@@ -375,24 +343,6 @@ export default function AddInstallmentPurchaseModal() {
                 primaryAction={handleSave}
                 isPrimaryActive={isInstallmentValid && !cardsLoading}
             />
-
-            <Modal
-                animationType="fade"
-                transparent
-                visible={dayModalVisible}
-                onRequestClose={() => setDayModalVisible(false)}
-            >
-                <DayPickerModal
-                    title={t("installmentModal.purchaseDay", { defaultValue: "Dia da compra" })}
-                    selectedDay={newTransaction.purchaseDay ?? 0}
-                    availableDays={allowedPurchaseDays}
-                    onDayPress={(day) => {
-                        setTouched((prev) => ({ ...prev, purchaseDay: true }))
-                        updateNewTransaction({ purchaseDay: day })
-                    }}
-                    onBackgroundPress={() => setDayModalVisible(false)}
-                />
-            </Modal>
         </ScrollView>
     )
 }
