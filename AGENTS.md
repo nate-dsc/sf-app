@@ -1,63 +1,297 @@
-# AGENTS – Simple Finance Repo Guidance
+# AGENTS.md
 
-## 1) Overview
-- Expo/React Native app for personal finance with tabs for Home, History, and Planning plus stack screens for settings, credit cards, recurring income/expense, budget, distribution, and projections. Navigation lives in `src/app/_layout.tsx` and `src/app/(tabs)/_layout.tsx` using Expo Router stacks/tabs and shared theme/header providers.
-- State and theming come from React context providers (`StyleContext`, `HeaderConfigContext`, `NewTransactionContext`, `SearchFiltersContext`) and Zustand stores (`useSummaryStore`, `useDistributionStore`, `useBudgetStore`). Summary and distribution stores hydrate from SQLite at startup and persist via AsyncStorage.
-- Data is stored locally in SQLite through `expo-sqlite`. `useTransactionDatabase` composes feature modules (transactions, recurring, credit cards, installment purchases, budgets) which delegate to repository functions that run SQL and enforce business rules.
+This document defines how **AI agents** (Codex, `/plan` assistants, Copilot Chat, etc.) MUST operate inside this repository.
 
-## 2) Architectural layers
-- **Screens & navigation (`src/app`)**: Expo Router folders `(tabs)/(home|history|planning)`, `(credit)`, `(recurring)`, `(budget)`, plus standalone screens (distribution, planPurchase, etc.). `src/app/_layout.tsx` wires providers, runs pending recurring/installment sync on mount, and refreshes summary/distribution stores.
-- **Context providers (`src/context`)**: Theme/header/search/new-transaction contexts configure UI theming and screen header metadata. Providers are expected to wrap the navigation tree in `_layout.tsx`.
-- **Stores (`src/stores`)**: Zustand stores hold derived data (summary, distribution, budget). Many use `persist` with AsyncStorage; refresh is controlled by toggling a `refreshKey` and calling `loadData` with DB helpers.
-- **Database layer (`src/database`)**:
-  - `initializeDatabase` and `useDatabase` set up the SQLite connection and helper utilities.
-  - `useTransactionDatabase` aggregates modules to expose a single API to the UI layer.
-  - **Modules (`src/database/modules`)** encapsulate business flows (transactions, recurring transactions, credit cards, credit-card transactions/recurrences, installment purchases, budgets). Each module wraps repository calls, performs credit limit validation, and may run multi-step transactions.
-  - **Repositories (`src/database/repositories`)** contain raw SQL operations for specific tables (transactions, recurring blueprints, credit cards, installment schedules) and utility queries (cycle totals, projections, RRULE fetches).
-- **Components (`src/components`)**: UI pieces for navigation, pickers, grouped lists, home/planning/history items, recurrence modals, credit card widgets, etc. Styling helpers live in `src/components/styles` and `src/styles`.
-- **Hooks/Utils (`src/hooks`, `src/utils`)**: Cross-cutting helpers (e.g., recurring credit limit notifications, date/category utilities) used by modules and UI.
+Agents must safely modify and evolve this **React Native + Expo** finance application **without breaking**:
 
-## 3) Data flow & database access
-- UI interactions invoke functions from `useTransactionDatabase` or module-specific hooks. Modules call repository functions with an open `SQLiteDatabase` instance from `useDatabase`/`SQLiteProvider`.
-- Recurring and installment sync is triggered on app mount in `src/app/_layout.tsx` and writes generated occurrences into `transactions`, updating card `limit_used` when applicable. Summary/distribution stores then reload from DB.
-- Credit card spending and installment logic run inside `database.withTransactionAsync` blocks when multiple writes are required (e.g., generating occurrences and updating `limit_used`). Respect these transactional boundaries to avoid inconsistent card limits or partial inserts.
+- SQLite architecture  
+- Transaction engine  
+- Recurring-transaction pipeline  
+- Context system  
+- React hook order  
+- i18n + theming  
+- Expo Router navigation  
 
-## 4) Rules for refactoring & safe behavior
-- Keep provider wiring in `_layout.tsx` intact (SQLiteProvider → Style/Header/NewTransaction/Search contexts → Navigation). Do not reorder providers unless you verify hook dependencies.
-- Preserve module boundaries: UI should call module functions; modules should call repositories; repositories are the only layer issuing SQL. Avoid bypassing modules when adding features because they contain validation, logging, and limit adjustments.
-- Maintain UTC/local date handling in recurring/installment logic (`localToUTC`, `toISOString().slice`, zeroed hours). Do not change date slicing formats without auditing RRULE computations and SQLite date columns.
-- When altering credit card flows, always adjust `limit_used` through provided helpers (`updateCardLimitUsed`) and ensure limits are checked before inserts.
-- Persisted stores rely on AsyncStorage keys (`@summary`, etc.). Changing keys or shapes requires migration code to avoid crashing hydration.
+**These rules are strict and non-negotiable.**
 
-## 5) Do’s and Don’ts
-- **Do** reuse existing hooks/utilities for date math, category lookup, and theme retrieval to keep UI consistent.
-- **Do** keep RRULE generation/parsing with the `rrule` library; validate recurrence options before persisting.
-- **Do** keep SQL changes inside repositories and update related docs under `docs/database` if schemas or queries change.
-- **Don’t** add try/catch around imports (project guideline) or silent-fail database writes—propagate or log errors consistently like existing modules.
-- **Don’t** bypass card limit checks when inserting recurring/transaction/installment rows.
-- **Don’t** break hook call order or move hooks inside conditionals; contexts/hooks follow React rules of hooks.
+---
 
-## 6) Fragile subsystems & warnings
-- **Recurring transaction sync (`recurringTransactionsModule`)**: Uses RRULE to find pending occurrences between `date_last_processed`/`date_start` and end-of-day. Adjusts card limits for expenses and updates `date_last_processed` only after successful inserts. Any refactor must preserve transaction boundaries and limit checks/notifications.
-- **Recurring credit card checks (`CCTransactionsRecurringModule`)**: Validates available limit before inserting a recurring card charge. Skipping this check can overrun credit limits.
-- **Installment purchases (`CCInstallmentsModule`)**: Compares available limit against total installment cost (`value * installmentCounts`) before inserting. Synchronization logic later generates occurrences and requires card metadata; ensure due-day calculations and card existence checks remain intact.
-- **Card statement calculations (`creditCardModule`)**: Cycle boundaries depend on `closing_day`, due-date adjustment for weekends, and projections combining realized totals with pending recurring/installment amounts. Changing date math can corrupt statements or limit usage.
-- **Budget/summary loading (`budgetModule`, stores)**: Summary store refresh depends on `refreshKey` toggling and AsyncStorage persistence. Avoid side effects that desynchronize the store from DB functions.
+# 1. Project Overview
 
-## 7) Safe use of /plan
-- When using `/plan`, keep steps concise and tied to modules/paths (e.g., specify repositories or modules to touch). Plans should honor the provider/module boundaries and the fragile subsystems noted above.
+This is a **TypeScript**, **Expo Router**, **SQLite-based** **personal-finance application** featuring:
 
-## 8) High-risk logic to understand before editing
-- **RRULE handling**: Recurrence rules are parsed with `RRule.parseString` and executed with date windows; start dates are set with UTC suffixes to avoid timezone drift.
-- **Credit limit validation**: Card flows compute `availableLimit = max_limit - limit_used` and block inserts when insufficient. `limit_used` is incremented/decremented inside transactions to stay in sync with generated occurrences.
-- **Installment generation**: Installment sync loops use purchase-day and due-day calculations and ignore blueprints without cards. Breaks here can create missing charges or orphaned records.
-- **Summary/distribution hydration**: Home dashboard relies on DB totals (`fetchTotalBetween`, `fetchMonthlyCategoryDistribution`) and must stay consistent with transaction inserts/removals.
+## Business logic
+- Single transactions  
+- Recurring transactions (RRULE-driven)  
+- Credit-card flows (single, recurring, installment)  
+- Monthly and category summaries  
 
-## 9) Legacy/deprecated notes
-- Comment blocks in `CCInstallmentsModule` and `creditCardModule` contain older/full implementations for installment scheduling and statement mapping. Treat them as historical references; do not revive or partially copy without reconciling with current simplified logic.
+## State management
+- React Context (`NewTransactionContext`, `StyleContext`, etc.)  
+- Zustand stores (summary, category distribution, etc.)
 
-## 10) Future guidance for AI development
-- Add new features by extending modules and repositories rather than embedding SQL in components.
-- Introduce new fragile logic (e.g., more recurrence types, card fees) behind dedicated helpers with unitable date/limit math to avoid regressions.
-- Update database docs under `docs/database` when schemas or repository behaviors change so future agents understand constraints.
-- Keep PR summaries specific: mention affected modules, data-layer changes, and any migration considerations.
+## UI system
+- iOS-inspired grouped lists, tiles, blur modals  
+- Custom icons (`AppIcon`, SF Symbols, Material Icons, Ionicons)  
+- Theme system (light/dark) via custom hooks (`useStyle`)
+
+## Localization
+- `react-i18next`
+
+## Database
+- SQLite with typed wrappers  
+  - `getFirstAsync`
+  - `getAllAsync`  
+  - recurring helpers  
+  - installment engine
+
+---
+
+# 2. Global Rules for All Agents
+
+## 2.1. NEVER Break React Hook Order
+This is a top-level invariant.
+
+You MUST NOT:
+- Move hooks across conditions  
+- Wrap hooks in `if`, `switch`, loops, or `try/catch`  
+- Insert early `return` before the hook block  
+- Modify dependency arrays unless fixing a confirmed bug
+
+---
+
+## 2.2. Respect Business Logic Boundaries
+
+### RRULE-based recurrence
+- DB stores: `date_start: string` , `rrule: string`  
+- RRULE library expects combined objects  
+- RRULE outputs strings → must be split again for DB storage  
+
+This pipeline is **fragile**. Modify only if explicitly requested.
+
+### Installments pipeline
+- Installments generate a recurrence  
+- Custom validation rules  
+- Modify only if explicitly requested  
+
+---
+
+## 2.3. Deprecated Files
+Agents MUST NOT reference or reuse any logic from these:
+- `src/components/styles/CategorySelectionStyles.tsx`
+- `src/components/styles/FontStyles.tsx`
+- `src/components/styles/ScreenStyles.tsx`
+- `src/components/styles/TextStyles.ts`
+- `src/context/HeaderConfigContext.tsx`
+- `src/hooks/usePlanningScreenCopy.ts`
+- `src/hooks/useRecurringCreditLimitNotification.ts`
+- `src/stores/useCreditNotificationStore.ts`
+
+---
+
+# 3. Architecture Model for Agents
+
+## 3.1. UI/UX Agent
+Focuses on screens, components, layouts, usability.
+
+### Instructions
+- Do not duplicate information in a single screen  
+- When showing charts/graphics, also show numeric values  
+- Avoid nested ScrollViews / FlatLists  
+- Use grouped lists for:
+  - forms (`modalAdd.tsx`)
+  - menu-like screens (`settings.tsx`)
+- Use lists for:
+  - DB-driven data (transactions)
+  - periodic data  
+- Use custom components for unique visual blocks 
+- Integrate theme via `useStyle`  
+- Avoid borders unless necessary  
+
+### Constraints
+- MUST NOT break Expo Router navigation
+- New screens MUST follow routing conventions
+
+---
+
+## 3.2. Database Agent (SQLite)
+
+### Instructions
+- Write SQL ONLY inside repository files
+- NEVER put business logic inside a repository
+- If a nullable variable is essential, require it explicitly as an argument
+- Repositories MUST be independent; do not chain repository functions
+- When writing new repo functions:
+    - check existing documentation
+    - if none exists, write documentation
+- Dates:
+    - ALWAYS stored in UTC
+    - ALWAYS stored as `YYYY-MM-DDTHH:MM`
+
+### Constraints
+- NEVER bypass the DB abstraction layer
+- NEVER write raw SQL outside repositories
+- Schema changes:
+    - Do NOT create migrations
+    - Update TS types only
+    - Assume database resets during development
+
+---
+
+## 3.3. Transactions & Logic Agent
+Handles the entire multi-step transaction creation process.
+
+### NewTransactionContext rules
+- Must handle:
+    - single transactions
+    - recurring
+    - credit card (single, recurring, installment)
+- Performs lightweight validation for UI state
+- Supplies data to modules that insert transactions into DB
+
+### Modules
+- Perform validation, generation, syncing
+- Use repository functions only
+- Refresh Zustand stores when required
+- Accessed via `useTransactionDatabase.ts`
+
+### Instructions
+- Avoid adding internal helper clutter → move pure helpers to utils
+- Dates from/to DB are UTC (`YYYY-MM-DDTHH:MM`)
+- Some logic uses local dates:
+    - e.g., syncing recurring transactions until local end-of-day
+- RRULE works in UTC only
+    - convert local deadlines → UTC when querying occurrences
+
+### Constraints
+- NEVER write SQL inside modules
+
+---
+
+## 3.5. Documentation Agent
+Used for explanations, README, AGENTS.md, comments.
+
+### Guidelines
+- Short and scoped
+- Avoid hallucinations
+- When helpful, reference files / contexts
+
+---
+
+# 4. `/plan` Workflow
+
+## 4.1. Step 1 — Produce a Structured Plan
+Include:
+- Target files
+- List of modifications
+- Risks (hook order, recurring logic, DB effects)
+- Testing/verification steps
+
+## 4.2. Step 2 — Apply Changes Incrementally
+- Modify ONLY listed files  
+- For screens: edit **below** the hook block whenever possible  
+
+## 4.3. Never switch to “QA mode”
+Always return:
+- actionable diffs  
+- proper code blocks  
+- specific edits  
+
+---
+
+# 5. Agent Personas
+
+## 5.1. ARCHITECT Agent
+For reorganizing code and structure.
+
+### Rules:
+- Maintain architectural stability
+- Warn user before cross-cutting refactors
+- Never break UI/Theming/Transaction flows
+
+## 5.2. DATA Agent
+For database work.
+
+### Rules:
+- Uses exported DB APIs only  
+- Does NOT modify DB helpers unless asked  
+- Ensures TS types match DB shape  
+
+## 5.3. UI Agent
+For screens and components.
+
+### Rules:
+- Respects theme + layout patterns  
+- Uses grouped lists where appropriate
+- Preserve segmented-control patterns
+
+## 5.4. REFACTOR Agent
+For cleanup and modularization.
+
+### Rules:
+- No behavior changes unless requested
+- One subsystem at a time
+- Warn if hook order is at risk
+
+## 5.5. DOCS Agent
+For comments, explanations, README, architecture docs.  
+
+---
+
+# 6. Critical Fragile Areas (⚠️)
+Agents MUST be extremely careful when touching:
+1. React hook order (contexts, screens)
+2. NewTransactionContext + recurrence logic
+3. Installment transaction creation
+4. RRULE recurrence engine
+5. Summary store refresh triggers
+6. Database abstraction layer (repositories only)
+
+---
+
+# 7. Safe Modifications Allowed
+Agents _may_:
+- Extract helper functions to utils
+- Create reusable UI components
+- Improve naming or TypeScript typings
+- Add JSDoc or comments
+- Simplify conditions without altering behavior
+- Create new screens following Expo Router patterns
+
+---
+
+# 8. Prohibited Autonomous Actions
+(Unless explicitly requested by the user)
+- DB schema changes
+- Editing core transaction logic
+- Modifying recurring/ installment pipelines
+- Creating new React Contexts
+- Removing i18n keys
+- Changing theme/layout structure
+- Altering navigation structure
+- Renaming foundational types/interfaces
+
+---
+
+# 9. Example Prompts Agents Should Handle Well
+
+**Architecture**  
+> Split my database hook into domain-based modules.
+
+**UI**  
+> Improve spacing in modalAdd.
+
+**Logic**  
+> Add a validation step before saving recurring transactions.
+
+**Database**  
+> Create a helper to fetch transactions between two dates.
+
+---
+
+# 10. Final Rule
+
+When in doubt:  
+**Ask for clarification — or choose the safest possible option.**  
+
+Never assume architectural changes unless explicitly stated.
