@@ -64,9 +64,9 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     }, [newTransaction])
 
     const isValidAsInstallmentPurchase = useMemo(() => {
-        const { value, installmentsCount, date, category, rrule, cardId } = newTransaction
+        const { value, installmentsCount, date, category, cardId } = newTransaction
 
-        if (!(value && value > 0 && installmentsCount && date && category && rrule)) {
+        if (!(value && value > 0 && installmentsCount && date && category)) {
             return false
         }
 
