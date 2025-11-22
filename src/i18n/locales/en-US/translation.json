@@ -281,6 +281,13 @@
         "Yes": "Yes",
         "No": "No"
     },
+    "modalAddInstallment": {
+        "value": "Installment value",
+        "count": "Installment count",
+        "description": "Description",
+        "date": "Date",
+        "category": "Category"
+    },
     "notifications": {
         "recurringCreditSkipped": {
             "title": "Card charge skipped",

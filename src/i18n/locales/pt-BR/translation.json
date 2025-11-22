@@ -284,6 +284,13 @@
         "Yes": "Sim",
         "No": "Não"
     },
+    "modalAddInstallment": {
+        "value": "Valor da parcela",
+        "count": "Número de parcelas",
+        "description": "Descrição",
+        "date": "Data",
+        "category": "Categoria"
+    },
     "notifications": {
         "recurringCreditSkipped": {
             "title": "Limite insuficiente no cartão",
