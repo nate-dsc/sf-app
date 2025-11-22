@@ -2,14 +2,18 @@ import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { type RecurringCreditWarning } from "@/stores/useCreditNotificationStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { InstallmentPurchase } from "@/types/CreditCards"
 import { RecurringTransaction, Transaction, type TransactionType } from "@/types/Transactions"
 import {
+    computeInitialPurchaseDate,
+    formatDateTimeForSQLite,
     InstallmentFormValues,
     validateInstallmentForm,
 } from "@/utils/installments"
 import { showToast } from "@/utils/toast"
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { RRule } from "rrule"
 
 export type NewTransaction = {
     type?: TransactionType,
@@ -258,14 +262,39 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
 
         try {
-            await createInstallmentPurchase({
-                description: description?.trim() ?? "",
-                category: category.id,
-                installmentValue: value,
-                installmentsCount,
-                purchaseDay,
-                cardId,
+            const card = await getCard(cardId)
+
+            if (!card) {
+                throw new Error("CARD_NOT_FOUND")
+            }
+
+            const trimmedDescription = description?.trim() ?? ""
+            const installmentsRule = new RRule({
+                freq: RRule.MONTHLY,
+                dtstart: computeInitialPurchaseDate(purchaseDay, card.closingDay),
+                count: installmentsCount,
             })
+
+            const transaction: RecurringTransaction = {
+                id: 0,
+                value: -Math.abs(value),
+                description: trimmedDescription,
+                category: Number(category.id),
+                date_start: formatDateTimeForSQLite(installmentsRule.options.dtstart as Date),
+                rrule: installmentsRule.toString(),
+                date_last_processed: null,
+                card_id: cardId,
+                type: "out",
+                is_installment: 1,
+            }
+
+            const installmentPurchase: InstallmentPurchase = {
+                transaction,
+                installmentCounts: installmentsCount,
+                purchaseDay,
+            }
+
+            await createInstallmentPurchase(installmentPurchase)
 
             await loadSummaryData({ getSummaryFromDB })
             triggerRefresh()

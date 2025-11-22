@@ -123,7 +123,14 @@ export default function AddInstallmentPurchaseModal() {
     }, [cards, newTransaction.cardId])
 
     const allowedPurchaseDays = useMemo(() => {
-        return getAllowedPurchaseDays(selectedCard?.closingDay)
+        const baseDays = getAllowedPurchaseDays(selectedCard?.closingDay)
+        const today = new Date().getDate()
+
+        if (baseDays.includes(today)) {
+            return baseDays
+        }
+
+        return [...baseDays, today].sort((a, b) => a - b)
     }, [selectedCard?.closingDay])
 
     useEffect(() => {
