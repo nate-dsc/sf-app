@@ -9,7 +9,7 @@ import {
     formatDateTimeForSQLite,
     InstallmentFormValues,
     validateInstallmentForm,
-} from "@/utils/installments"
+} from "@/utils/InstallmentUtils"
 import { showToast } from "@/utils/toast"
 import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"

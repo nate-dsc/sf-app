@@ -1,6 +1,7 @@
 import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
 import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
 import DayPickerModal from "@/components/credit-card-items/DayPickerModal"
+import GDateInput from "@/components/grouped-list-components/GroupedDateInput"
 import GPopup from "@/components/grouped-list-components/GroupedPopup"
 import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
@@ -15,7 +16,7 @@ import {
     InstallmentFormValues,
     normalizePurchaseDay,
     validateInstallmentForm,
-} from "@/utils/installments"
+} from "@/utils/InstallmentUtils"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useMemo, useState } from "react"
@@ -27,6 +28,8 @@ export default function AddInstallmentPurchaseModal() {
     const { t } = useTranslation()
     const { theme, layout } = useStyle()
     const headerHeight = useHeaderHeight()
+
+    const [newDate, setNewDate] = useState<Date>(new Date())
 
     const {
         newTransaction,
@@ -289,7 +292,7 @@ export default function AddInstallmentPurchaseModal() {
             <GroupView>
                 <GValueInput
                     separator="translucent"
-                    label={t("installmentModal.installmentValue", { defaultValue: "Valor da parcela" })}
+                    label={t("modalAddInstallment.value")}
                     acViewKey="installmentValue"
                     onChangeNumValue={(value) => {
                         setTouched((prev) => ({ ...prev, value: true }))
@@ -298,33 +301,30 @@ export default function AddInstallmentPurchaseModal() {
                     valueInCents={newTransaction.value}
                     transactionType="out"
                 />
-                {renderErrorText(valueError)}
                 <GTextInput
                     separator="translucent"
-                    label={t("installmentModal.installments", { defaultValue: "Número de parcelas" })}
-                    value={installmentsInput}
+                    label={t("modalAddInstallment.count")}
+                    acViewKey="installments"
                     onChangeText={handleInstallmentsChange}
+                    value={installmentsInput}
                     keyboardType="number-pad"
                     inputMode="numeric"
-                    acViewKey="installments"
                     maxLength={3}
                 />
-                {renderErrorText(installmentsError)}
                 <GTextInput
                     separator="translucent"
-                    label={t("installmentModal.description", { defaultValue: "Descrição da compra" })}
-                    value={newTransaction.description}
+                    label={t("modalAddInstallment.description")}
+                    acViewKey="description"
                     onChangeText={(text) => {
                         setTouched((prev) => ({ ...prev, description: true }))
                         updateNewTransaction({ description: text })
                     }}
-                    acViewKey="description"
+                    value={newTransaction.description}
                     maxLength={40}
                 />
-                {renderErrorText(descriptionError)}
                 <GPopup
                     separator="translucent"
-                    label={t("installmentModal.category", { defaultValue: "Categoria" })}
+                    label={t("modalAddInstallment.category")}
                     displayValue={newTransaction.category?.label}
                     onPress={() => {
                         setTouched((prev) => ({ ...prev, category: true }))
@@ -332,16 +332,15 @@ export default function AddInstallmentPurchaseModal() {
                         router.push("/modalCategoryPicker")
                     }}
                 />
-                {renderErrorText(categoryError)}
-                <GPopup
+                <GDateInput
                     separator="none"
-                    label={t("installmentModal.purchaseDay", { defaultValue: "Dia da compra" })}
-                    displayValue={
-                        newTransaction.purchaseDay ? newTransaction.purchaseDay.toString() : undefined
-                    }
-                    onPress={() => setDayModalVisible(true)}
+                    label={t("modalAddInstallment.date")}
+                    value={newDate}
+                    onDateChange={(date) => {
+                        updateNewTransaction({ date: date })
+                        setNewDate(date)
+                    }}
                 />
-                {renderErrorText(purchaseDayError)}
             </GroupView>
 
             <GroupView>

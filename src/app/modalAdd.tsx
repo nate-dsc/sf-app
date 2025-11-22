@@ -12,7 +12,8 @@ import { useStyle } from "@/context/StyleContext";
 import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
-import { CCard, type TransactionType } from "@/types/Transactions";
+import { CCard } from "@/types/CreditCards";
+import type { TransactionType } from "@/types/Transactions";
 import { trackAnalyticsEvent } from "@/utils/analytics";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
@@ -27,7 +28,7 @@ export default function AddModal() {
     const router = useRouter()
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid, ensureCardLimit} = useNewTransaction()
-    const { getCards } = useTransactionDatabase()
+    const { getAllCards } = useTransactionDatabase()
 
     const [newDate, setNewDate] = useState<Date>(new Date())
     const [cards, setCards] = useState<CCard[]>([])
@@ -126,7 +127,7 @@ export default function AddModal() {
             setCardsLoading(true)
 
             try {
-                const response = await getCards()
+                const response = await getAllCards()
                 setCards(response)
 
                 if (response.length === 0) {

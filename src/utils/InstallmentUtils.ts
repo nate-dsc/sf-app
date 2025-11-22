@@ -1,5 +1,9 @@
 import { CCard, InstallmentOccurrence, InstallmentSchedule, InstallmentScheduleWithStatus } from "@/types/Transactions"
 
+export function generateRRULE(purchaseDate: Date, installmentsCount: number) {
+    
+}
+
 const MAX_DAY = 31
 const MIN_DAY = 1
 
