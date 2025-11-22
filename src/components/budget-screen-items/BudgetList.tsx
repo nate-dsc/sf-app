@@ -4,7 +4,7 @@ import { ActivityIndicator, FlatList, View } from "react-native"
 import BudgetListItem from "./BudgetListItem"
 
 import i18n from "@/i18n"
-import { BudgetMonthlyPerformance } from "@/types/transaction"
+import { BudgetMonthlyPerformance } from "@/types/Transactions"
 
 type BudgetListProps = {
     data: BudgetMonthlyPerformance[]

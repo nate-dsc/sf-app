@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import type { SearchFilters, Transaction, TransactionType } from "@/types/transaction"
+import type { SearchFilters, Transaction, TransactionType } from "@/types/Transactions"
 
 export type MonthlyCategoryDistributionRow = {
     categoryId: number

@@ -1,6 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { type TransactionType } from "@/types/transaction"
+import { type TransactionType } from "@/types/Transactions"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import React, { useMemo } from "react"
 import { useTranslation } from "react-i18next"

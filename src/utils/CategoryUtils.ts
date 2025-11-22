@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons"
 
-import type { TransactionType, TransactionTypeFilter } from "@/types/transaction"
+import type { TransactionType, TransactionTypeFilter } from "@/types/Transactions"
 
 type IoniconName = React.ComponentProps<typeof Ionicons>["name"]
 

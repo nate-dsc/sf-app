@@ -1,7 +1,7 @@
 import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-items/CreditCardForm"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { NewCard } from "@/types/transaction"
+import { NewCard } from "@/types/Transactions"
 import { getIDfromColor } from "@/utils/CardUtils"
 import { useRouter } from "expo-router"
 import { useCallback } from "react"

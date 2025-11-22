@@ -11,7 +11,7 @@ import RecurringTransactionModal from "@/components/recurring-screens-items/Recu
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { RecurringTransaction } from "@/types/transaction"
+import { RecurringTransaction } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"

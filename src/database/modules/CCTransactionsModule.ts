@@ -1,10 +1,10 @@
-import { Transaction } from "@/types/transaction";
+import { Transaction } from "@/types/Transactions";
 import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback } from "react";
 
 import { useStyle } from "@/context/StyleContext";
-import { useCreditCardModule } from "@/database/modules/creditCardModule";
-import { insertCardTransaction } from "../repositories/CCTransactionsRepository";
+import { useCreditCardModule } from "@/database/modules/CreditCardModule";
+import { insertCardTransaction } from "@/database/repositories/CCTransactionsRepository";
 
 export function useCCTransactionsModule(database: SQLiteDatabase) {
     const { theme } = useStyle()
@@ -17,11 +17,13 @@ export function useCCTransactionsModule(database: SQLiteDatabase) {
                 if(!card) return
                 const availableLimit = card.maxLimit - card.limitUsed
                 if (availableLimit >= data.value) {
-                    await insertCardTransaction(database, data)
+                    await insertCardTransaction(database, data, data.card_id)
                 }
             } catch (err) {
                 console.error(`[CC Transactions Module] Could not insert credit card transaction`, err)
             }
         }
     },[])
+
+    return {createTransactionWithCard}
 }

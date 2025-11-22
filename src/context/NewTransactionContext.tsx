@@ -1,15 +1,15 @@
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { useSummaryStore } from "@/stores/useSummaryStore"
-import { RecurringTransaction, Transaction, type TransactionType } from "@/types/transaction"
-import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { type RecurringCreditWarning } from "@/stores/useCreditNotificationStore"
+import { useSummaryStore } from "@/stores/useSummaryStore"
+import { RecurringTransaction, Transaction, type TransactionType } from "@/types/Transactions"
 import {
     InstallmentFormValues,
     validateInstallmentForm,
 } from "@/utils/installments"
 import { showToast } from "@/utils/toast"
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export type NewTransaction = {
     type?: TransactionType,

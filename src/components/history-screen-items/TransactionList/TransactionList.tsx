@@ -1,6 +1,6 @@
 import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import { useSummaryStore } from "@/stores/useSummaryStore";
-import { SearchFilters, Transaction } from "@/types/transaction";
+import { SearchFilters, Transaction } from "@/types/Transactions";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";

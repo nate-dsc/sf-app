@@ -11,7 +11,7 @@ import SegmentedControlCompact from "@/components/recurrence-modal-items/Segment
 import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useStyle } from "@/context/StyleContext"
 import { SCOption } from "@/types/components"
-import { Transaction, TransactionTypeFilter } from "@/types/transaction"
+import { Transaction, TransactionTypeFilter } from "@/types/Transactions"
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
 import { useHeaderHeight } from "@react-navigation/elements"

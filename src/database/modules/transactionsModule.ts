@@ -6,8 +6,8 @@ import {
     fetchPaginatedFilteredTransactions,
     fetchTransactionsFromMonth,
     insertTransaction,
-} from "@/database/repositories/transactionRepository"
-import { SearchFilters, type Transaction } from "@/types/transaction"
+} from "@/database/repositories/TransactionRepository"
+import { SearchFilters, type Transaction } from "@/types/Transactions"
 
 export function useTransactionsModule(database: SQLiteDatabase) {
 

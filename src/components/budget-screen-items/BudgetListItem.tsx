@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Text, View } from "react-native"
 
 import { useStyle } from "@/context/StyleContext"
-import { BudgetMonthlyPerformance } from "@/types/transaction"
+import { BudgetMonthlyPerformance } from "@/types/Transactions"
 
 type BudgetListItemProps = {
     performance: BudgetMonthlyPerformance

@@ -1,7 +1,7 @@
 import type { CardSnapshot } from "@/types/database"
 import type { SQLiteDatabase } from "expo-sqlite"
 
-import type { RecurringTransaction } from "@/types/transaction"
+import type { RecurringTransaction } from "@/types/Transactions"
 
 type InstallmentBlueprintRow = RecurringTransaction & {
     due_day: number | null

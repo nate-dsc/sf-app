@@ -1,7 +1,7 @@
 import { AppIcon } from "@/components/AppIcon"
 import { useStyle } from "@/context/StyleContext"
 import { FONT_SIZE, FONT_WEIGHT } from "@/styles/fonts"
-import { CCard } from "@/types/transaction"
+import { CCard } from "@/types/Transactions"
 import { Text, TouchableOpacity, View } from "react-native"
 
 type CCListItemProps = {

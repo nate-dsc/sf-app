@@ -1,4 +1,4 @@
-import { CCard } from "@/types/transaction"
+import { CCard } from "@/types/Transactions"
 import React from "react"
 import { Pressable, ScrollView, View } from "react-native"
 import CreditCardView from "./CreditCardView"

@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react"
 
 import type { CustomTheme } from "@/types/theme"
 
-import { deleteCardDB, fetchCard, fetchCards, insertCard, updateCardDB, updateCardLimitUsed } from "@/database/repositories/cardRepository"
+import { deleteCardDB, fetchCard, fetchCards, insertCard, updateCardDB, updateCardLimitUsed } from "@/database/repositories/CreditCardRepository"
 import { CCard, CCardDB, NewCard, UpdateCardInput } from "@/types/CreditCards"
 import { getColorFromID } from "@/utils/CardUtils"
 

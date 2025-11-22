@@ -8,7 +8,7 @@ import GroupView from "@/components/grouped-list-components/GroupView"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { CCard } from "@/types/transaction"
+import { CCard } from "@/types/Transactions"
 import {
     derivePurchaseDayForCard,
     getAllowedPurchaseDays,

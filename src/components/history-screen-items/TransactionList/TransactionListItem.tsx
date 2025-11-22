@@ -1,7 +1,7 @@
 import { TileStyles } from "@/components/home-screen-items/TileStyles";
 import { FontStyles } from "@/components/styles/FontStyles";
 import { useStyle } from "@/context/StyleContext";
-import { Transaction } from "@/types/transaction";
+import { Transaction } from "@/types/Transactions";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
 import { Ionicons } from "@expo/vector-icons";

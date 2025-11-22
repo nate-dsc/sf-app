@@ -2,7 +2,7 @@ import assert from "node:assert/strict"
 import { afterEach, beforeEach, describe, it } from "node:test"
 
 import { initializeAppDatabase } from "../../src/database/bootstrap"
-import { computeDueDate, getCardStatementForDate, getCardStatementHistory, resolveCycleBoundaries, updateCardRecord } from "../../src/database/repositories/cardRepository"
+import { computeDueDate, getCardStatementForDate, getCardStatementHistory, resolveCycleBoundaries, updateCardRecord } from "../../src/database/repositories/CreditCardRepository"
 import { TestSQLiteDatabase } from "../utils/createTestDatabase"
 
 let database: TestSQLiteDatabase

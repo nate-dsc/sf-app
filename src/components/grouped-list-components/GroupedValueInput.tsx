@@ -1,10 +1,10 @@
 
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
-import { type TransactionType } from "@/types/transaction"
+import { type TransactionType } from "@/types/Transactions"
+import { formatCurrency } from "@/utils/currencyUtils"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { InputAccessoryView, Keyboard, Platform, Text, TextInput, TouchableOpacity, View } from "react-native"
-import { formatCurrency } from "@/utils/currencyUtils"
 
 export type GroupedComponentsProps = {
     separator: "opaque" | "translucent" | "vibrant" | "none",

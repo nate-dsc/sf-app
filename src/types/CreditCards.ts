@@ -1,3 +1,5 @@
+import { RecurringTransaction } from "./Transactions"
+
 export type CCard = {
     id: number,
     name: string,
@@ -37,4 +39,10 @@ export type UpdateCardInput = {
     closingDay?: number,
     dueDay?: number,
     ignoreWeekends?: boolean,
+}
+
+export type InstallmentPurchase = {
+    transaction: RecurringTransaction,
+    installmentCounts: number,
+    purchaseDay: number,
 }

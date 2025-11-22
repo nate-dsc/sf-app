@@ -2,7 +2,7 @@ import React from "react"
 import { Pressable, ScrollView, View } from "react-native"
 
 import { useStyle } from "@/context/StyleContext"
-import { CCard } from "@/types/transaction"
+import { CCard } from "@/types/Transactions"
 import CreditCardView from "./CreditCardView"
 
 type CreditCardPickerProps = {

@@ -1,4 +1,4 @@
-import { CCard, InstallmentOccurrence, InstallmentSchedule, InstallmentScheduleWithStatus } from "@/types/transaction"
+import { CCard, InstallmentOccurrence, InstallmentSchedule, InstallmentScheduleWithStatus } from "@/types/Transactions"
 
 const MAX_DAY = 31
 const MIN_DAY = 1

@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { FlatList, View } from "react-native"
 
-import { RecurringTransaction } from "@/types/transaction"
+import { RecurringTransaction } from "@/types/Transactions"
 import TransactionListItem from "./RecurringTransactionListItem"
 
 type RecurringTransactionListProps = {

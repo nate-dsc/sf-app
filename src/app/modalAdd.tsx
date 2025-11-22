@@ -12,7 +12,7 @@ import { useStyle } from "@/context/StyleContext";
 import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
-import { CCard, type TransactionType } from "@/types/transaction";
+import { CCard, type TransactionType } from "@/types/Transactions";
 import { trackAnalyticsEvent } from "@/utils/analytics";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";

@@ -2,7 +2,7 @@ import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-i
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { CCard } from "@/types/transaction"
+import { CCard } from "@/types/Transactions"
 import { getIDfromColor } from "@/utils/CardUtils"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"

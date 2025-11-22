@@ -3,7 +3,7 @@ import TransactionModal from "@/components/history-screen-items/TransactionList/
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { CardPurchaseTypeFilter, SearchFilters, Transaction } from "@/types/transaction"
+import { CardPurchaseTypeFilter, SearchFilters, Transaction } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useLocalSearchParams, useNavigation } from "expo-router"
 import { useEffect, useMemo, useState } from "react"

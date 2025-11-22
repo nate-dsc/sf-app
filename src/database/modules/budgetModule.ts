@@ -7,7 +7,7 @@ import {
     fetchMonthlyCategoryDistribution,
     fetchMonthlyOutflowTotals,
     fetchTotalBetween,
-} from "@/database/repositories/transactionRepository"
+} from "@/database/repositories/TransactionRepository"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import {
     BudgetMonthlyPerformance,
@@ -15,7 +15,7 @@ import {
     CategoryDistributionFilters,
     MonthlyCategoryAggregate,
     Summary
-} from "@/types/transaction"
+} from "@/types/Transactions"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { getMonthBoundaries } from "@/utils/DateUtils"
 

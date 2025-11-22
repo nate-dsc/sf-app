@@ -1,5 +1,5 @@
 import { useStyle } from "@/context/StyleContext"
-import { TransactionTypeFilter } from "@/types/transaction"
+import { TransactionTypeFilter } from "@/types/Transactions"
 import { getCategoriesByType } from "@/utils/CategoryUtils"
 import React, { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"

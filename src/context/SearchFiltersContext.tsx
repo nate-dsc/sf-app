@@ -1,4 +1,4 @@
-import { SearchFilters } from "@/types/transaction"
+import { SearchFilters } from "@/types/Transactions"
 import { createContext, ReactNode, useContext, useMemo, useState } from "react"
 
 type SearchFiltersContextType = {

@@ -1,4 +1,4 @@
-import { CategoryDistributionFilters, MonthlyCategoryAggregate, type TransactionType } from "@/types/transaction"
+import { CategoryDistributionFilters, MonthlyCategoryAggregate, type TransactionType } from "@/types/Transactions"
 import { create } from "zustand"
 
 export type DistributionCategory = {
