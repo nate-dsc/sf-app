@@ -1,6 +1,7 @@
 import { useStyle } from "@/context/StyleContext"
 import { Platform, Text, TextInput, TextInputProps, View } from "react-native"
 
+import { FONT_SIZE } from "@/styles/fonts"
 import DoneACView from "../DoneACView"
 import { GroupedComponentsProps } from "./GroupedValueInput"
 
@@ -11,9 +12,9 @@ type GTextInputProps = GroupedComponentsProps & TextInputProps & {
     fieldFlex?: number
 }
 
-export default function GTextInput({separator, label, acViewKey, labelFlex, fieldFlex, ...rest}: GTextInputProps) {
+export default function GTextInput({separator, label, acViewKey, labelFlex = 1, fieldFlex = 3, ...rest}: GTextInputProps) {
 
-    const {theme, layout} = useStyle()
+    const {theme} = useStyle()
 
     const separatorTypes = [
         {separator: "opaque", color: theme.separator.opaque},
@@ -27,17 +28,16 @@ export default function GTextInput({separator, label, acViewKey, labelFlex, fiel
             <View 
                 style={{
                     flexDirection: "row",
+                    minHeight: 51,
                     justifyContent: "space-between",
-                    paddingTop: layout.grouped.pdText.top,
-                    paddingBottom: layout.grouped.pdText.bottom,
-                    gap: layout.grouped.gap
-                    }}
+                    alignItems: "center",
+                    gap: 8
+                }}
             >
                 <Text 
                     style={{
-                        flex: labelFlex ? labelFlex : 1,
-                        lineHeight: layout.grouped.text.lh,
-                        fontSize: layout.grouped.text.fs,
+                        flex: labelFlex,
+                        fontSize: FONT_SIZE.BODY,
                         color: theme.text.label
                     }}
                     numberOfLines={1}
@@ -47,9 +47,8 @@ export default function GTextInput({separator, label, acViewKey, labelFlex, fiel
                 </Text>
                 <TextInput 
                     style={{
-                        flex: fieldFlex ? fieldFlex : 3,
-                        lineHeight: layout.grouped.text.lh,
-                        fontSize: layout.grouped.text.fs,
+                        flex: fieldFlex,
+                        fontSize: FONT_SIZE.BODY,
                         color: theme.text.label
                     }}
                     placeholderTextColor={theme.text.secondaryLabel}

@@ -1,6 +1,7 @@
 
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
+import { FONT_SIZE } from "@/styles/fonts"
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker"
 import React from "react"
 import { Text, View } from "react-native"
@@ -12,10 +13,12 @@ export type GroupedComponentsProps = {
 type GDateInputProps = GroupedComponentsProps & {
     label: string,
     value: Date,
-    onDateChange: (value: Date) => void
+    onDateChange: (value: Date) => void,
+    labelFlex?: number,
+    fieldFlex?: number
 }
 
-export default function GDateInput({separator, label, value, onDateChange}: GDateInputProps) {
+export default function GDateInput({separator, label, value, onDateChange, labelFlex = 1, fieldFlex = 1}: GDateInputProps) {
 
     const {theme} = useStyle()
 
@@ -36,28 +39,42 @@ export default function GDateInput({separator, label, value, onDateChange}: GDat
 
     return(
         <View>
-            <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8}}>
-                <View style={{paddingTop: 15, paddingBottom: 14}}>
-                    <Text 
-                        style={{
-                            lineHeight: 22,
-                            fontSize: 17,
-                            color: theme.text.label
-                        }}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
-                        {label}
-                    </Text>
+            <View
+                style={{
+                    flexDirection: "row",
+                    minHeight: 51,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 8
+                }}
+            >
+                <Text 
+                    style={{
+                        flex: labelFlex,
+                        fontSize: FONT_SIZE.BODY,
+                        color: theme.text.label
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {label}
+                </Text>
+                <View
+                    style={{
+                        flex: fieldFlex,
+                        flexDirection: "row",
+                        justifyContent: "flex-end"
+                    }}
+                >
+                    <DateTimePicker
+                        value={value}
+                        themeVariant={theme.themeName === 'light' ? 'light' : 'dark'}
+                        locale={i18n.language}
+                        onChange={handleDateChange}
+                        display={"compact"}
+                    />
                 </View>
                 
-                <DateTimePicker
-                    value={value}
-                    themeVariant={theme.themeName === 'light' ? 'light' : 'dark'}
-                    locale={i18n.language}
-                    onChange={handleDateChange}
-                    display={"compact"}
-                />
             </View>
             <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
 
