@@ -4,7 +4,7 @@ import { InstallmentPurchase } from "@/types/CreditCards"
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback } from "react"
 
-export function useCreditCardInstallmentsModule(database: SQLiteDatabase) {
+export function useCCInstallmentsModule(database: SQLiteDatabase) {
     const { getCard } = useCreditCardModule(database)
 
     const createInstallmentPurchase = useCallback(async (data: InstallmentPurchase) => {

@@ -1,6 +1,6 @@
 import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-items/CreditCardForm"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { NewCard } from "@/types/Transactions"
+import { CCard, NewCard } from "@/types/CreditCards"
 import { useRouter } from "expo-router"
 import { useCallback } from "react"
 import { useTranslation } from "react-i18next"
@@ -8,24 +8,24 @@ import { useTranslation } from "react-i18next"
 export default function AddCardModal() {
     const { t } = useTranslation()
     const router = useRouter()
-    const { createCard, getCards } = useTransactionDatabase()
+    const { createCard, getAllCards } = useTransactionDatabase()
 
     const handleValidate = useCallback(async (values: CreditCardFormValues) => {
-        const cards = await getCards()
+        const cards = await getAllCards()
         const normalizedName = values.name.trim().toLowerCase()
 
-        const duplicatedName = cards.some((card) => card.name.trim().toLowerCase() === normalizedName)
+        const duplicatedName = cards.some((card: CCard) => card.name.trim().toLowerCase() === normalizedName)
         if (duplicatedName) {
             return t("credit.errors.duplicateName", { defaultValue: "Já existe um cartão com este nome." })
         }
 
-        const duplicatedLimit = cards.some((card) => card.maxLimit === values.maxLimit)
+        const duplicatedLimit = cards.some((card: CCard) => card.maxLimit === values.maxLimit)
         if (duplicatedLimit) {
             return t("credit.errors.duplicateLimit", { defaultValue: "Já existe um cartão com este limite." })
         }
 
         return null
-    }, [getCards, t])
+    }, [getAllCards, t])
 
     const handleSubmit = useCallback(async (values: CreditCardFormValues) => {
         const newCard: NewCard = {

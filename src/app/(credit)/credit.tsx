@@ -4,7 +4,7 @@ import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { CCard } from "@/types/Transactions"
+import { CCard } from "@/types/CreditCards"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
 import { useCallback, useEffect, useRef, useState } from "react"
@@ -27,7 +27,7 @@ export default function CreditScreen() {
     const { t } = useTranslation()
     const headerHeight = useHeaderHeight()
 
-    const { getCards } = useTransactionDatabase()
+    const { getAllCards } = useTransactionDatabase()
     const [cards, setCards] = useState<CCard[]>([])
     const [selectedCard, setSelectedCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
@@ -37,14 +37,14 @@ export default function CreditScreen() {
     const loadCards = useCallback(async () => {
         try {
             setLoading(true)
-            const result = await getCards()
+            const result = await getAllCards()
             setCards(result)
         } catch (error) {
             console.log("Erro ao carregar cartões:", error)
         } finally {
             setLoading(false)
         }
-    }, [getCards])
+    }, [getAllCards])
 
     useEffect(() => {
         loadCards()

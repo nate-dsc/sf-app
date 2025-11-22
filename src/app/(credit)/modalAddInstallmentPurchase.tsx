@@ -8,7 +8,7 @@ import GroupView from "@/components/grouped-list-components/GroupView"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { CCard } from "@/types/Transactions"
+import { CCard } from "@/types/CreditCards"
 import {
     derivePurchaseDayForCard,
     getAllowedPurchaseDays,
@@ -35,7 +35,7 @@ export default function AddInstallmentPurchaseModal() {
         saveInstallmentPurchase,
         isInstallmentValid,
     } = useNewTransaction()
-    const { getCards } = useTransactionDatabase()
+    const { getAllCards } = useTransactionDatabase()
 
     const [cards, setCards] = useState<CCard[]>([])
     const [cardsLoading, setCardsLoading] = useState(true)
@@ -82,7 +82,7 @@ export default function AddInstallmentPurchaseModal() {
         async function loadCards() {
             setCardsLoading(true)
             try {
-                const response = await getCards()
+                const response = await getAllCards()
 
                 if (isMounted) {
                     setCards(response)
