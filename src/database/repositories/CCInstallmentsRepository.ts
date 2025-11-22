@@ -1,4 +1,4 @@
-import { RecurringTransaction } from "@/types/Transactions"
+import { RecurringTransaction, Transaction } from "@/types/Transactions"
 import { SQLiteDatabase } from "expo-sqlite"
 
 type InstallmentRecurringRow = RecurringTransaction & {
@@ -27,25 +27,13 @@ export async function fetchActiveInstallments(database: SQLiteDatabase) {
     )
 }
 
-export async function insertInstallmentOccurrence(
-    database: SQLiteDatabase,
-    payload: RecurringTransaction & { date: string },
-    cardId: number,
-) {
+export async function insertInstallmentOccurrence(database: SQLiteDatabase, data: Transaction, idRecurring: number, cardId: number) {
     await database.runAsync(
         "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [
-            payload.value,
-            payload.description,
-            Number(payload.category),
-            payload.date,
-            payload.id,
-            cardId,
-            payload.type ?? (payload.value >= 0 ? "in" : "out"),
-        ],
+        [data.value, data.description, data.category, data.date, idRecurring, cardId, data.type],
     )
 }
 
-export async function updateInstallmentLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
-    await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, recurringId])
+export async function updateInstallmentLastProcessed(database: SQLiteDatabase, installmentId: number, processedDate: string) {
+    await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, installmentId])
 }
