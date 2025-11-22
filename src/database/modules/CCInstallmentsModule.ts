@@ -1,14 +1,10 @@
 import { useCreditCardModule } from "@/database/modules/CreditCardModule"
 import {
-    fetchInstallmentRecurringTransactions,
-    insertInstallmentOccurrence,
-    insertInstallmentPurchase,
-    updateInstallmentLastProcessed,
+    fetchActiveInstallments,
+    insertInstallmentPurchase
 } from "@/database/repositories/CCInstallmentsRepository"
-import { fetchRecurringTransactionsCount } from "@/database/repositories/transactionRepository"
 import { InstallmentPurchase } from "@/types/CreditCards"
 import type { SQLiteDatabase } from "expo-sqlite"
-import { formatDateTimeForSQLite } from "@/utils/InstallmentUtils"
 import { useCallback } from "react"
 import { RRule } from "rrule"
 
@@ -21,7 +17,7 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                 const card = await getCard(data.transaction.card_id)
                 if (!card) return
                 const availableLimit = card.maxLimit - card.limitUsed
-                const limitToBeUsed = Math.abs(data.transaction.value * data.installmentCounts)
+                const limitToBeUsed = Math.abs(data.transaction.value * data.installmentCount)
                 if (availableLimit >= limitToBeUsed) {
                     await insertInstallmentPurchase(database, data.transaction, data.transaction.card_id, limitToBeUsed)
                 }
@@ -29,10 +25,48 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                 console.error(`[CC Installments Module] Could not insert installment purchase`, err)
             }
         }
-    }, [database, getCard])
+    }, [])
 
-    const createAndSyncInstallmentPurchases = useCallback(async () => {
-        console.log("Syncing installment purchases")
+    const createAndSyncInstallments = useCallback(async () => {
+        console.log("[CC Installments Module] Syncing installments")
+
+        const endOfDay = new Date()
+        endOfDay.setHours(23, 59, 59)
+        const endOfDayISOsliced = endOfDay.toISOString().slice(0,16)
+        const endOfDayISO = new Date(`${endOfDayISOsliced}Z`)
+
+        try {
+            const allActiveInstallments = await fetchActiveInstallments(database)
+
+            if(allActiveInstallments.length === 0) {
+                console.log("[CC Installments Module] There are no active installments")
+                return
+            }
+
+            for(const installment of allActiveInstallments) {
+                const rruleOptions = RRule.parseString(installment.rrule)
+                rruleOptions.dtstart = new Date(`${installment.date_start}Z`)
+                const rrule = new RRule(rruleOptions)
+
+                const startDateForCheck = installment.date_last_processed ?
+                    new Date(`${installment.date_last_processed}Z`) :
+                    new Date(`${installment.date_start}Z`)
+                const pendingOccurrences = rrule.between(startDateForCheck, endOfDayISO, true)
+
+                for(const occurrence in pendingOccurrences) {
+                    console.log(occurrence)
+                }
+            }
+            console.log("[CC Installments Module] Syncing installments complete")
+        } catch (err) {
+            console.error("[CC Installments Module] Could not sync pending installments")
+            throw err
+        }
+    },[])
+
+    /* const createAndSyncInstallmentPurchases = useCallback(async () => {
+        console.log("[CC Installments Module] Syncing installment purchases")
+
         const endOfDay = new Date()
         endOfDay.setHours(23, 59, 59, 0)
         const endOfDayTimestamp = endOfDay.getTime()
@@ -112,7 +146,7 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                         await insertInstallmentOccurrence(
                             database,
                             { ...blueprint, date: dueDateStr },
-                            blueprint.card_id,
+                            blueprint.card_id!,
                         )
 
                         await updateInstallmentLastProcessed(database, blueprint.id, dueDateStr)
@@ -128,7 +162,7 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
             throw error
         }
     }, [database])
-
-    return { createInstallmentPurchase, createAndSyncInstallmentPurchases }
+ */
+    return { createInstallmentPurchase, createAndSyncInstallments }
 
 }

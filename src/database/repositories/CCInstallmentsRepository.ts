@@ -21,12 +21,9 @@ export async function insertInstallmentPurchase(
     })
 }
 
-export async function fetchInstallmentRecurringTransactions(database: SQLiteDatabase) {
-    return database.getAllAsync<InstallmentRecurringRow>(
-        `SELECT tr.*, c.due_day, c.ignore_weekends
-         FROM transactions_recurring tr
-         JOIN cards c ON c.id = tr.card_id
-         WHERE tr.is_installment = 1`,
+export async function fetchActiveInstallments(database: SQLiteDatabase) {
+    return database.getAllAsync<RecurringTransaction>(
+        "SELECT * FROM transactions_recurring WHERE is_installment = 1",
     )
 }
 

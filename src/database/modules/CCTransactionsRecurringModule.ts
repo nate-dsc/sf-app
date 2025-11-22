@@ -8,7 +8,7 @@ import { insertCardTransactionRecurring } from "@/database/repositories/CCTransa
 export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
     const { getCard } = useCreditCardModule(database)
 
-    const createTransactionRecurringWithCard = useCallback(async (data: RecurringTransaction) => {
+    const createRecurringTransactionWithCard = useCallback(async (data: RecurringTransaction) => {
         if(data.card_id) {
             try {
                 const card = await getCard(data.card_id)
@@ -23,5 +23,5 @@ export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
         }
     },[])
 
-    return {createTransactionRecurringWithCard}
+    return {createRecurringTransactionWithCard}
 }
