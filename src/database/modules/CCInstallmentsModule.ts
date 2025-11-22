@@ -1,4 +1,3 @@
-import { useStyle } from "@/context/StyleContext"
 import { useCreditCardModule } from "@/database/modules/CreditCardModule"
 import { insertInstallmentPurchase } from "@/database/repositories/CCInstallmentsRepository"
 import { InstallmentPurchase } from "@/types/CreditCards"
@@ -6,8 +5,7 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback } from "react"
 
 export function useCreditCardTransactionsModule(database: SQLiteDatabase) {
-    const { theme } = useStyle()
-    const { getCard } = useCreditCardModule(database, theme)
+    const { getCard } = useCreditCardModule(database)
 
     const createInstallmentPurchase = useCallback(async (data: InstallmentPurchase) => {
 

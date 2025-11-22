@@ -3,7 +3,6 @@ import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/Transactions"
-import { getIDfromColor } from "@/utils/CardUtils"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -98,7 +97,7 @@ export default function EditCreditCardModal() {
 
         await updateCard(card.id, {
             name: values.name,
-            color: getIDfromColor(values.color, theme),
+            color: values.color,
             maxLimit: values.maxLimit,
             closingDay: values.closingDay,
             dueDay: values.dueDay,
@@ -106,7 +105,7 @@ export default function EditCreditCardModal() {
         })
 
         router.back()
-    }, [card, router, theme, updateCard])
+    }, [card, router, updateCard])
 
     if (loading) {
         return (

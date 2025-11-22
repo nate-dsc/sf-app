@@ -7,6 +7,7 @@ import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import SimpleColorPicker from "@/components/pickers/SimpleColorPicker"
 import { useStyle } from "@/context/StyleContext"
+import { getColorFromID, getIDfromColor } from "@/utils/CardUtils"
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { Alert, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
@@ -15,7 +16,7 @@ import { useRouter } from "expo-router"
 
 export type CreditCardFormValues = {
     name: string
-    color: string
+    color: number
     maxLimit: number
     closingDay: number
     dueDay: number
@@ -64,8 +65,9 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
 
     const resolvedInitialClosingDay = initialValues?.closingDay ?? computeDefaultClosingDay()
     const resolvedInitialDueDay = initialValues?.dueDay ?? computeDefaultDueDay(resolvedInitialClosingDay)
+    const defaultColorId = getIDfromColor(colors.gray1, theme)
 
-    const [selectedColor, setSelectedColor] = useState(initialValues?.color ?? colors.gray1)
+    const [selectedColor, setSelectedColor] = useState(initialValues?.color ?? defaultColorId)
     const [name, setName] = useState(initialValues?.name ?? "")
     const [ignoreWeekends, setIgnoreWeekends] = useState(initialValues?.ignoreWeekends ?? true)
     const [closingDayModalVisible, setClosingDayModalVisible] = useState(false)
@@ -160,7 +162,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
             }}
         >
             <View style={{ flexDirection: "row", justifyContent: "center" }}>
-                <CreditCardView color={selectedColor} name={name} />
+                <CreditCardView color={getColorFromID(selectedColor, theme)} name={name} />
             </View>
 
             <View
@@ -206,7 +208,11 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                 />
             </View>
 
-            <SimpleColorPicker colors={colorOptions} selectedColor={selectedColor} onSelect={setSelectedColor} />
+            <SimpleColorPicker
+                colors={colorOptions}
+                selectedColor={getColorFromID(selectedColor, theme)}
+                onSelect={(code) => setSelectedColor(getIDfromColor(code, theme))}
+            />
 
             <TouchableOpacity
                 onPress={() => router.push("/(credit)/creditHelp")}
