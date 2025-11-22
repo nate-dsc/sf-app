@@ -1,4 +1,6 @@
+import { useStyle } from "@/context/StyleContext"
 import { CCard } from "@/types/Transactions"
+import { getColorFromID } from "@/utils/CardUtils"
 import React from "react"
 import { Pressable, ScrollView, View } from "react-native"
 import CreditCardView from "./CreditCardView"
@@ -9,6 +11,7 @@ type CreditCardCarouselProps = {
 }
 
 export default function CreditCardCarousel({ cards, onSelectCard }: CreditCardCarouselProps) {
+    const { theme } = useStyle()
 
     return (
         <ScrollView horizontal contentContainerStyle={{}} showsHorizontalScrollIndicator={false}>
@@ -27,7 +30,7 @@ export default function CreditCardCarousel({ cards, onSelectCard }: CreditCardCa
                         ]}
                     >
                         <View pointerEvents="none">
-                            <CreditCardView color={card.color} name={card.name} />
+                            <CreditCardView color={getColorFromID(card.color, theme)} name={card.name} />
                         </View>
                     </Pressable>
                 )

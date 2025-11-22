@@ -1,4 +1,3 @@
-import { useStyle } from "@/context/StyleContext"
 import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useMemo } from "react"
 
@@ -10,13 +9,12 @@ import { useTransactionsModule } from "./modules/TransactionsModule"
 import { useDatabase } from "./useDatabase"
 
 export function useTransactionDatabase() {
-    const { theme } = useStyle()
     const { database } = useDatabase()
     const { notifyRecurringChargeSkipped } = useRecurringCreditLimitNotification()
 
     const transactions = useTransactionsModule(database)
     const recurring = useRecurringTransactionsModule(database, notifyRecurringChargeSkipped)
-    const creditCards = useCreditCardModule(database, theme)
+    const creditCards = useCreditCardModule(database)
     const creditCardTransactions = useCreditCardTransactionsModule(database)
     const budgets = useBudgetsModule(database)
 

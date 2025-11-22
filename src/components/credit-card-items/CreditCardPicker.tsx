@@ -3,6 +3,7 @@ import { Pressable, ScrollView, View } from "react-native"
 
 import { useStyle } from "@/context/StyleContext"
 import { CCard } from "@/types/Transactions"
+import { getColorFromID } from "@/utils/CardUtils"
 import CreditCardView from "./CreditCardView"
 
 type CreditCardPickerProps = {
@@ -50,7 +51,7 @@ export default function CreditCardPicker({ cards, selectedCard, onSelectCard, on
                         ]}
                     >
                         <View pointerEvents="none">
-                            <CreditCardView color={card.color} name={card.name} />
+                            <CreditCardView color={getColorFromID(card.color, theme)} name={card.name} />
                         </View>
                     </Pressable>
                 )
