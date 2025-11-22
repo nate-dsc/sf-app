@@ -5,7 +5,7 @@ export type CCard = {
     name: string,
     maxLimit: number,
     limitUsed: number,
-    color: string,
+    color: number,
     closingDay: number,
     dueDay: number,
     ignoreWeekends: boolean

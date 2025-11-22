@@ -2,13 +2,11 @@ import { Transaction } from "@/types/Transactions";
 import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback } from "react";
 
-import { useStyle } from "@/context/StyleContext";
 import { useCreditCardModule } from "@/database/modules/CreditCardModule";
 import { insertCardTransaction } from "@/database/repositories/CCTransactionsRepository";
 
 export function useCCTransactionsModule(database: SQLiteDatabase) {
-    const { theme } = useStyle()
-    const { getCard } = useCreditCardModule(database, theme)
+    const { getCard } = useCreditCardModule(database)
 
     const createTransactionWithCard = useCallback(async (data: Transaction) => {
         if(data.card_id) {

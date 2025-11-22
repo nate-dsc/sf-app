@@ -1,13 +1,10 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 
-import type { CustomTheme } from "@/types/theme"
-
 import { deleteCardDB, fetchCard, fetchCards, insertCard, updateCardDB, updateCardLimitUsed } from "@/database/repositories/CreditCardRepository"
 import { CCard, CCardDB, NewCard, UpdateCardInput } from "@/types/CreditCards"
-import { getColorFromID } from "@/utils/CardUtils"
 
-export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme) {
+export function useCreditCardModule(database: SQLiteDatabase) {
 
     const createCard = useCallback(async function createCard(data: NewCard) {
         try {
@@ -23,11 +20,11 @@ export function useCreditCardModule(database: SQLiteDatabase, theme: CustomTheme
         name: card.name,
         maxLimit: card.max_limit,
         limitUsed: card.limit_used,
-        color: getColorFromID(card.color, theme),
+        color: card.color,
         closingDay: card.closing_day,
         dueDay: card.due_day,
         ignoreWeekends: card.ignore_weekends === 1,
-    }), [theme])
+    }), [])
 
     const getCard = useCallback(async (cardId: number): Promise<CCard | null> => {
         try {

@@ -2,13 +2,11 @@ import { RecurringTransaction } from "@/types/Transactions";
 import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback } from "react";
 
-import { useStyle } from "@/context/StyleContext";
 import { useCreditCardModule } from "@/database/modules/CreditCardModule";
 import { insertCardTransactionRecurring } from "@/database/repositories/CCTransactionsRecurringRepository";
 
 export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
-    const { theme } = useStyle()
-    const { getCard } = useCreditCardModule(database, theme)
+    const { getCard } = useCreditCardModule(database)
 
     const createTransactionRecurringWithCard = useCallback(async (data: RecurringTransaction) => {
         if(data.card_id) {
