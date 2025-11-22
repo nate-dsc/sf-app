@@ -30,6 +30,9 @@ export function formatAsRecurringTransaction(data: NewTransaction): RecurringTra
 }
 
 export function formatAsInstallmentPurchase(data: NewTransaction): InstallmentPurchase {
+
+    const installmentRRULE = `FREQ=MONTHLY;INTERVAL=1;COUNT=${data.installmentsCount}`
+
     return {
         transaction: {
             id: 0,
@@ -37,7 +40,7 @@ export function formatAsInstallmentPurchase(data: NewTransaction): InstallmentPu
             description: data.description || "",
             category: data.category!,
             date_start: data.date?.toISOString().slice(0, 16)!,
-            rrule: data.rrule!,
+            rrule: installmentRRULE,
             date_last_processed: null,
             card_id: data.cardId!,
             type: "out",
