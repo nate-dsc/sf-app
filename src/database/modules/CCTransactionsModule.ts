@@ -23,5 +23,5 @@ export function useCCTransactionsModule(database: SQLiteDatabase) {
         }
     },[])
 
-    return {createTransactionWithCard}
+    return { createTransactionWithCard }
 }

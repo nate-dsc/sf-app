@@ -10,25 +10,6 @@ export type MonthlyCategoryDistributionRow = {
 
 export type MonthlyTotalRow = { monthKey: string; totalValue: number | null }
 
-export async function insertTransactionWithCard(
-    database: SQLiteDatabase,
-    data: Pick<Transaction, "value" | "description" | "category" | "date" | "type"> &
-        Partial<Pick<Transaction, "id_recurring" | "card_id">>,
-    cardId: number,
-) {
-    await database.runAsync(
-        "INSERT INTO transactions (value, description, category, date, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
-        [
-            data.value,
-            data.description,
-            Number(data.category),
-            data.date,
-            cardId,
-            data.type ?? (data.value >= 0 ? "in" : "out"),
-        ],
-    )
-}
-
 export async function insertTransaction(database: SQLiteDatabase, data: Transaction) {
     const statement = await database.prepareAsync(
         "INSERT INTO transactions (value, description, category, date, type) VALUES ($value, $description, $category, $date, $type)"
@@ -49,6 +30,10 @@ export async function insertTransaction(database: SQLiteDatabase, data: Transact
 
 export async function deleteTransaction(database: SQLiteDatabase, id: number) {
     await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
+}
+
+export async function getTransactionByID(database: SQLiteDatabase, id: number) {
+    return await database.getFirstAsync<Transaction>("SELECT * FROM transactions WHERE id = ?", [id])
 }
 
 export async function fetchTransactionsFromMonth(database: SQLiteDatabase, YMString: string, orderBy: "day" | "id") {

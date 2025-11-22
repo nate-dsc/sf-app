@@ -1,4 +1,4 @@
-import { RecurringTransaction } from "@/types/Transactions";
+import { RecurringTransaction, Transaction } from "@/types/Transactions";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function insertCardTransactionRecurring(database: SQLiteDatabase, data: RecurringTransaction, cardId: number) {
@@ -11,4 +11,21 @@ export async function insertCardTransactionRecurring(database: SQLiteDatabase, d
         )
         await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
     })
+}
+
+export async function fetchRecurringTransactionsWithCard(database: SQLiteDatabase) {
+    return database.getAllAsync<RecurringTransaction>(
+        "SELECT * FROM transactions_recurring WHERE is_installment = 0 AND card_id IS NOT NULL"
+    )
+}
+
+export async function insertCardTransactionRecurringOcurrence(database: SQLiteDatabase, data: Transaction, idRecurring: number, cardId: number) {
+    await database.runAsync(
+        "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [data.value, data.description, data.category, data.date, idRecurring, cardId, data.type],
+    )
+}
+
+export async function updateRecurringTransactionsWithCardLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
+    await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, recurringId])
 }

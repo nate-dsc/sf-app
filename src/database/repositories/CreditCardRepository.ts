@@ -97,6 +97,10 @@ export async function updateCardLimitUsed(database: SQLiteDatabase, cardId: numb
     await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
 }
 
+export async function freeCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
+    await database.runAsync("UPDATE cards SET limit_used = limit_used - ? WHERE id = ?", [limitAdjustment, cardId])
+}
+
 export async function fetchCardInstallmentSnapshot(database: SQLiteDatabase, cardId: number) {
     return database.getFirstAsync<CardInstallmentSnapshot>(
         "SELECT max_limit, limit_used, closing_day, due_day, ignore_weekends FROM cards WHERE id = ?",

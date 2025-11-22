@@ -1,4 +1,3 @@
-import { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
 import { useMemo } from "react"
 
 import { useBudgetsModule } from "./modules/BudgetModule"
@@ -12,10 +11,9 @@ import { useDatabase } from "./useDatabase"
 
 export function useTransactionDatabase() {
     const { database } = useDatabase()
-    const { notifyRecurringChargeSkipped } = useRecurringCreditLimitNotification()
 
     const transactions = useTransactionsModule(database)
-    const recurring = useRecurringTransactionsModule(database, notifyRecurringChargeSkipped)
+    const recurring = useRecurringTransactionsModule(database)
     const creditCards = useCreditCardModule(database)
     const creditCardTransactions = useCCTransactionsModule(database)
     const creditCardTransactionsRecurring = useCCTransactionsRecurringModule(database)

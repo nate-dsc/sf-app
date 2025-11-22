@@ -22,7 +22,7 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const {theme, preference} = useStyle()
 
-    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncInstallments } = useTransactionDatabase();
+    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncRecurringTransactionsWithCard, createAndSyncInstallments } = useTransactionDatabase();
     const loadSummaryData = useSummaryStore((state) => state.loadData);
     const summaryRefreshKey = useSummaryStore((state) => state.refreshKey);
     const loadDistributionData = useDistributionStore((state) => state.loadData);
@@ -43,6 +43,7 @@ function RootLayoutNav() {
             try {
                 await Promise.all([
                     createAndSyncRecurringTransactions(),
+                    createAndSyncRecurringTransactionsWithCard(),
                     createAndSyncInstallments(),
                 ])
             } catch (error) {

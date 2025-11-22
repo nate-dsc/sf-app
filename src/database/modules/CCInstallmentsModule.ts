@@ -58,6 +58,11 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                     new Date(`${installment.date_start}Z`)
                 const pendingOccurrences = rrule.between(startDateForCheck, endOfDayISO, true)
 
+                if(pendingOccurrences.length === 0) {
+                    console.log("[CC Installments Module] There are no pending installment occurrences")
+                    return
+                }
+
                 for(const occurrence of pendingOccurrences) {
                     //console.log(occurrence)
 
@@ -85,16 +90,17 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                         type: "out"
                     }
 
-                    await insertInstallmentOccurrence(database, installmentTransaction, installment.id, installment.card_id!)
+                    await database.withTransactionAsync(async () => {
 
-                    await updateInstallmentLastProcessed(database, installment.id, localEndOfDayISO)
+                        await insertInstallmentOccurrence(database, installmentTransaction, installment.id, installment.card_id!)
+                        await updateInstallmentLastProcessed(database, installment.id, localEndOfDayISO)
 
-
+                    })
                 }
             }
             console.log("[CC Installments Module] Installments syncing complete")
         } catch (err) {
-            console.error("[CC Installments Module] Could not sync pending installments")
+            console.error("[CC Installments Module] Could not sync pending installments", err)
             throw err
         }
     },[])

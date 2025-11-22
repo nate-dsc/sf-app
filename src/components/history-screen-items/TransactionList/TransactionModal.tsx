@@ -31,11 +31,11 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     const category = findCategoryByID(transaction!.category, transaction.type)
 
-    const { deleteTransaction, getRRULE } = useTransactionDatabase()
+    const { removeTransaction, getRRULE } = useTransactionDatabase()
 
     const handleDeletion = async (id: number) => {
         try {
-            await deleteTransaction(transaction!.id);
+            await removeTransaction(transaction!.id);
             onBackgroundPress(); // Só volta se salvar com sucesso
             triggerRefresh()
         } catch (error) {

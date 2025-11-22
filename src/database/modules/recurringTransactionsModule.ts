@@ -2,31 +2,22 @@ import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
-import { updateCardLimitUsed } from "@/database/repositories/CreditCardRepository"
 import {
-    fetchActiveRecurringTransactions,
-    fetchCardSnapshot,
     fetchRecurringRule,
+    fetchRecurringTransactions,
     fetchRecurringTransactionsByType,
-    insertRecurringOccurrence,
+    insertRecurringOcurrence,
     insertRecurringTransaction,
     removeRecurringTransaction,
     removeRecurringTransactionCascade,
-    updateRecurringLastProcessed,
+    updateRecurringLastProcessed
 } from "@/database/repositories/RecurringTransactionRepository"
-import type { useRecurringCreditLimitNotification } from "@/hooks/useRecurringCreditLimitNotification"
-import { CardSnapshot } from "@/types/database"
-import { RecurringTransaction } from "@/types/Transactions"
+import { RecurringTransaction, Transaction } from "@/types/Transactions"
 import { localToUTC } from "@/utils/DateUtils"
 
-export type NotifyRecurringChargeSkipped = ReturnType<
-    typeof useRecurringCreditLimitNotification
->["notifyRecurringChargeSkipped"]
 
-export function useRecurringTransactionsModule(
-    database: SQLiteDatabase,
-    notifyRecurringChargeSkipped: NotifyRecurringChargeSkipped,
-) {
+export function useRecurringTransactionsModule(database: SQLiteDatabase) {
+
     const createRecurringTransaction = useCallback(async (data: RecurringTransaction) => {
         try {
             await insertRecurringTransaction(database, data)
@@ -68,103 +59,75 @@ export function useRecurringTransactionsModule(
     }, [database])
 
     const createAndSyncRecurringTransactions = useCallback(async () => {
-        console.log("Syncing recurring transactions")
-        const newEndOfDay = new Date()
-        newEndOfDay.setHours(23, 59, 59)
-        const newEndOfDayStr = newEndOfDay.toISOString().slice(0, 16)
+        console.log("[Recurring Transactions Module] Syncing recurring transactions...")
+
+        const endOfDay = new Date()
+        endOfDay.setHours(23, 59, 59)
+        const endOfDayISOsliced = endOfDay.toISOString().slice(0,16)
+        const endOfDayISO = new Date(`${endOfDayISOsliced}Z`)
 
         try {
-            const allRecurringTransactions = await fetchActiveRecurringTransactions(database)
+            const allRecurringTransactions = await fetchRecurringTransactions(database)
 
             if (allRecurringTransactions.length === 0) {
-                console.log("Não há transações recorrentes")
+                console.log("[Recurring Transactions Module] There are no recurring transactions")
                 return
             }
 
-            for (const blueprint of allRecurringTransactions) {
-                const rruleOptions = RRule.parseString(blueprint.rrule)
-                rruleOptions.dtstart = new Date(`${blueprint.date_start}Z`)
+            for (const recurringTransaction of allRecurringTransactions) {
+                const rruleOptions = RRule.parseString(recurringTransaction.rrule)
+                rruleOptions.dtstart = new Date(`${recurringTransaction.date_start}Z`)
                 const rrule = new RRule(rruleOptions)
 
-                const startDateForCheck = blueprint.date_last_processed ? new Date(`${blueprint.date_last_processed}Z`) : new Date(`${blueprint.date_start}Z`)
-                const pendingOccurrences = rrule.between(startDateForCheck, newEndOfDay, true)
+                const startDateForCheck = recurringTransaction.date_last_processed ?
+                    new Date(`${recurringTransaction.date_last_processed}Z`) :
+                    new Date(`${recurringTransaction.date_start}Z`)
+                const pendingOccurrences = rrule.between(startDateForCheck, endOfDayISO, true)
 
-                if (pendingOccurrences.length > 0) {
-                    let cardSnapshot: CardSnapshot | null = null
-                    if (blueprint.card_id) {
-                        cardSnapshot = await fetchCardSnapshot(database, blueprint.card_id)
+                if(pendingOccurrences.length === 0) {
+                    console.log("[Recurring Transactions Module] There are no pending recurring transaction occurrences")
+                    return
+                }
 
-                        if (!cardSnapshot) {
-                            console.warn(`Card ${blueprint.card_id} not found for recurrence ${blueprint.id}`)
-                            continue
-                        }
+                for(const occurrence of pendingOccurrences) {
+                    console.log(occurrence)
+
+                    const local = new Date(
+                        occurrence.getTime() - occurrence.getTimezoneOffset() * 60000
+                    )
+
+                    local.setHours(0,0,0)
+                    const localStartOfDayISO = local.toISOString().slice(0,16)
+
+                    local.setHours(23,59,59)
+                    const localEndOfDayISO = local.toISOString().slice(0,16)
+
+                    console.log(localStartOfDayISO)
+                    console.log(localEndOfDayISO)
+
+                    const generatedTransaction: Transaction = {
+                        id: 0,
+                        value: recurringTransaction.value,
+                        description: recurringTransaction.description,
+                        category: recurringTransaction.category,
+                        date: localStartOfDayISO,
+                        id_recurring: recurringTransaction.id,
+                        card_id: recurringTransaction.card_id,
+                        type: recurringTransaction.type
                     }
 
                     await database.withTransactionAsync(async () => {
-                        let processedAny = false
-                        let availableLimit = cardSnapshot ? cardSnapshot.max_limit - cardSnapshot.limit_used : null
-                        const computedType = blueprint.type ?? (blueprint.value >= 0 ? "in" : "out")
-
-                        for (const occurrence of pendingOccurrences) {
-                            occurrence.setHours(0, 0, 0)
-
-                            const shouldCheckLimit = Boolean(blueprint.card_id && availableLimit !== null && computedType === "out")
-                            const requiredAmount = Math.abs(blueprint.value)
-
-                            if (shouldCheckLimit && availableLimit !== null && requiredAmount > availableLimit) {
-                                notifyRecurringChargeSkipped({
-                                    cardId: blueprint.card_id!,
-                                    cardName: cardSnapshot?.name ?? null,
-                                    attemptedAmount: requiredAmount,
-                                    availableLimit,
-                                })
-                                break
-                            }
-
-                            await insertRecurringOccurrence(database, {
-                                value: blueprint.value,
-                                description: blueprint.description,
-                                category: blueprint.category,
-                                date: occurrence.toISOString().slice(0, 16),
-                                recurringId: blueprint.id!,
-                                cardId: blueprint.card_id ?? null,
-                                type: computedType,
-                            })
-
-                            processedAny = true
-
-                            if (blueprint.card_id) {
-                                const limitAdjustment = blueprint.value < 0 ? Math.abs(blueprint.value) : -Math.abs(blueprint.value)
-
-                                if (limitAdjustment !== 0) {
-                                    await updateCardLimitUsed(database, blueprint.card_id, limitAdjustment)
-
-                                    if (availableLimit !== null) {
-                                        if (limitAdjustment > 0) {
-                                            availableLimit -= limitAdjustment
-                                        } else {
-                                            availableLimit += Math.abs(limitAdjustment)
-                                        }
-                                    }
-                                }
-                            }
-
-                            console.log(`Recurring transaction created ${blueprint.id} on day ${occurrence.toISOString().slice(0, 16)}`)
-                        }
-
-                        if (processedAny) {
-                            await updateRecurringLastProcessed(database, blueprint.id!, newEndOfDayStr)
-                        }
+                        await insertRecurringOcurrence(database, generatedTransaction, recurringTransaction.id)
+                        await updateRecurringLastProcessed(database, recurringTransaction.id, localEndOfDayISO)
                     })
                 }
             }
-
-            console.log("Syncing complete")
+            console.log("[Recurring Transactions Module] Recurring transactions syncing complete")
         } catch (error) {
-            console.error("Fatal error during recurring transactions syncing:", error)
+            console.error("[Recurring Transactions Module] Could not sync recurring transactions", error)
             throw error
         }
-    }, [database, notifyRecurringChargeSkipped])
+    }, [])
 
     const getRRULE = useCallback(async (id: number): Promise<string> => {
         try {
