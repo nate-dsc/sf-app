@@ -43,6 +43,5 @@ export type UpdateCardInput = {
 
 export type InstallmentPurchase = {
     transaction: RecurringTransaction,
-    installmentCounts: number,
-    purchaseDay: number,
+    installmentCount: number,
 }
