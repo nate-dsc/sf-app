@@ -3,7 +3,6 @@ import { useStyle } from "@/context/StyleContext"
 import { GroupedComponentsProps, IconName } from "@/types/components"
 import { Ionicons } from "@expo/vector-icons"
 import React from "react"
-import { useTranslation } from "react-i18next"
 import { Text, TouchableWithoutFeedback, View } from "react-native"
 
 type GRedirProps = GroupedComponentsProps & {
@@ -16,7 +15,6 @@ type GRedirProps = GroupedComponentsProps & {
 export default function GRedir({separator, label, icon, onPress, overrideChevron = "default"}: GRedirProps) {
 
     const {theme, layout} = useStyle()
-    const {t} = useTranslation()
 
     const separatorTypes = [
         {separator: "opaque", color: theme.separator.opaque},

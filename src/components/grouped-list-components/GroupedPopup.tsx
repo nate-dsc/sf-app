@@ -1,5 +1,6 @@
 
 import { useStyle } from "@/context/StyleContext"
+import { FONT_SIZE } from "@/styles/fonts"
 import { GroupedComponentsProps } from "@/types/components"
 import { Ionicons } from "@expo/vector-icons"
 import React from "react"
@@ -9,10 +10,12 @@ import { Text, TouchableWithoutFeedback, View } from "react-native"
 type GPopupProps = GroupedComponentsProps & {
     label: string,
     displayValue?: string,
-    onPress: () => void
+    onPress: () => void,
+    labelFlex?: number,
+    fieldFlex?: number
 }
 
-export default function GPopup({separator, label, displayValue, onPress}: GPopupProps) {
+export default function GPopup({separator, label, displayValue, onPress, labelFlex = 1, fieldFlex = 1}: GPopupProps) {
 
     const {theme} = useStyle()
     const {t} = useTranslation()
@@ -26,20 +29,27 @@ export default function GPopup({separator, label, displayValue, onPress}: GPopup
 
     return(
         <View>
-            <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8}}>
-                <View style={{paddingTop: 15, paddingBottom: 14}}>
-                    <Text 
-                        style={{
-                            lineHeight: 22,
-                            fontSize: 17,
-                            color: theme.text.label
-                        }}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
-                        {label}
-                    </Text>
-                </View>
+            <View
+                style={{
+                    flexDirection: "row",
+                    minHeight: 51,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 8
+                }}
+            >
+                
+                <Text 
+                    style={{
+                        flex: labelFlex,
+                        fontSize: FONT_SIZE.BODY,
+                        color: theme.text.label
+                    }}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
+                    {label}
+                </Text>
                 
                 <TouchableWithoutFeedback
                     style={{
@@ -61,8 +71,7 @@ export default function GPopup({separator, label, displayValue, onPress}: GPopup
                         >
                             <Text 
                                 style={{
-                                    lineHeight: 22,
-                                    fontSize: 17,
+                                    fontSize: FONT_SIZE.BODY,
                                     color: theme.text.label
                                 }}
                             >
@@ -81,8 +90,7 @@ export default function GPopup({separator, label, displayValue, onPress}: GPopup
                         >
                             <Text 
                                 style={{
-                                    lineHeight: 22,
-                                    fontSize: 17,
+                                    fontSize: FONT_SIZE.BODY,
                                     color: theme.text.secondaryLabel
                                 }}
                             >
