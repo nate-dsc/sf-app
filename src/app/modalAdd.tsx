@@ -7,14 +7,15 @@ import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
 import GroupView from "@/components/grouped-list-components/GroupView";
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact";
-import { InsufficientCreditLimitError, useNewTransaction } from "@/context/NewTransactionContext";
+import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useStyle } from "@/context/StyleContext";
 import { useTransactionDatabase } from "@/database/useTransactionDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
 import { CCard } from "@/types/CreditCards";
 import type { TransactionType } from "@/types/Transactions";
-import { trackAnalyticsEvent } from "@/utils/analytics";
+import { findCategoryByID } from "@/utils/CategoryUtils";
+import { describeRRule } from "@/utils/RRULEUtils";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -27,7 +28,7 @@ export default function AddModal() {
 
     const router = useRouter()
     const {t} = useTranslation()
-    const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid, ensureCardLimit} = useNewTransaction()
+    const {newTransaction, updateNewTransaction, setNewTransaction, saveAsTransaction, isValidAsTransaction} = useNewTransaction()
     const { getAllCards } = useTransactionDatabase()
 
     const [newDate, setNewDate] = useState<Date>(new Date())
@@ -44,82 +45,17 @@ export default function AddModal() {
         {label: t("modalAdd.outflow"), value: "out"}
     ], [t])
 
+    const [useCreditCard, setUseCreditCard] = useState(false)
+
     useEffect(() => {
         // Limpa para garantir que não estamos editando uma transação antiga
-        setNewTransaction({ type: "out", date: newDate, useCreditCard: false }); // Define um valor inicial
+        setNewTransaction({ type: "out", date: newDate }); // Define um valor inicial
 
         return () => {
             // Limpa ao sair da tela para não sujar a próxima abertura do modal
             setNewTransaction({});
       }
     }, []);
-
-
-    useEffect(() => {
-        let isSubscribed = true
-
-        if (!newTransaction.useCreditCard || !newTransaction.cardId || !newTransaction.value || newTransaction.value <= 0) {
-            if (isSubscribed) {
-                setCardLimitError(null)
-                lastReportedLimitErrorRef.current = null
-            }
-            return
-        }
-
-        ensureCardLimit()
-            .then(() => {
-                if (!isSubscribed) {
-                    return
-                }
-
-                setCardLimitError(null)
-                lastReportedLimitErrorRef.current = null
-            })
-            .catch((error) => {
-                if (!isSubscribed) {
-                    return
-                }
-
-                if (error instanceof InsufficientCreditLimitError) {
-                    const formattedAvailable = new Intl.NumberFormat(i18n.language, {
-                        style: "currency",
-                        currency: i18n.language === "pt-BR" ? "BRL" : "USD",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }).format(error.availableLimit / 100)
-
-                    setCardLimitError(
-                        t("modalAdd.creditLimitInlineError", {
-                            defaultValue: "Limite insuficiente. Disponível: {{value}}.",
-                            value: formattedAvailable,
-                        })
-                    )
-
-                    const signature = `${error.cardId}-${error.requiredAmount}`
-                    if (lastReportedLimitErrorRef.current !== signature) {
-                        trackAnalyticsEvent("credit_limit_validation_failed", {
-                            cardId: error.cardId,
-                            requestedAmount: error.requiredAmount,
-                            availableLimit: error.availableLimit,
-                            source: "modal_add:auto_check",
-                        })
-                        lastReportedLimitErrorRef.current = signature
-                    }
-                } else if (error instanceof Error && error.message === "CARD_NOT_FOUND") {
-                    setCardLimitError(
-                        t("modalAdd.cardNotFoundInline", {
-                            defaultValue: "Não foi possível encontrar o cartão selecionado.",
-                        })
-                    )
-                } else {
-                    console.error("Falha ao validar limite do cartão", error)
-                }
-            })
-
-        return () => {
-            isSubscribed = false
-        }
-    }, [ensureCardLimit, newTransaction.useCreditCard, newTransaction.cardId, newTransaction.value, t])
 
 
     const handleToggleCredit = async (value: boolean) => {
@@ -142,8 +78,8 @@ export default function AddModal() {
                 const hasSelectedCard = !!newTransaction.cardId && cards.some((card) => card.id === newTransaction.cardId)
                 const defaultCardId = hasSelectedCard ? newTransaction.cardId : cards[0]?.id
 
+                setUseCreditCard(true)
                 updateNewTransaction({
-                    useCreditCard: true,
                     cardId: defaultCardId ?? undefined,
                     type: "out"
                 })
@@ -155,102 +91,21 @@ export default function AddModal() {
             }
 
         } else {
-            updateNewTransaction({ useCreditCard: false, cardId: undefined })
+            setUseCreditCard(false)
+            updateNewTransaction({ cardId: undefined })
             setCardLimitError(null)
             lastReportedLimitErrorRef.current = null
         }
     }
 
     const handleConfirm = async () => {
-        if (newTransaction.useCreditCard) {
-            try {
-                await ensureCardLimit()
-                setCardLimitError(null)
-                lastReportedLimitErrorRef.current = null
-            } catch (error) {
-                if (error instanceof InsufficientCreditLimitError) {
-                    const formattedAvailable = new Intl.NumberFormat(i18n.language, {
-                        style: "currency",
-                        currency: i18n.language === "pt-BR" ? "BRL" : "USD",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }).format(error.availableLimit / 100)
-
-                    setCardLimitError(
-                        t("modalAdd.creditLimitInlineError", {
-                            defaultValue: "Limite insuficiente. Disponível: {{value}}.",
-                            value: formattedAvailable,
-                        })
-                    )
-
-                    const signature = `${error.cardId}-${error.requiredAmount}`
-                    if (lastReportedLimitErrorRef.current !== signature) {
-                        trackAnalyticsEvent("credit_limit_validation_failed", {
-                            cardId: error.cardId,
-                            requestedAmount: error.requiredAmount,
-                            availableLimit: error.availableLimit,
-                            source: "modal_add:submit",
-                        })
-                        lastReportedLimitErrorRef.current = signature
-                    }
-                    return
-                }
-
-                if (error instanceof Error && error.message === "CARD_NOT_FOUND") {
-                    Alert.alert(
-                        t("modalAdd.cardNotFoundTitle", { defaultValue: "Cartão não encontrado" }),
-                        t("modalAdd.cardNotFoundMessage", { defaultValue: "O cartão selecionado não pôde ser localizado. Tente novamente." })
-                    )
-                    return
-                }
-
-                console.error("Falha ao validar limite do cartão antes de salvar.", error)
-                return
-            }
-        }
-
         try {
-            await saveTransaction();
+
+            await saveAsTransaction();
             router.back(); // Só volta se salvar com sucesso
+
         } catch (error) {
-            if (error instanceof InsufficientCreditLimitError) {
-                const formattedAvailable = new Intl.NumberFormat(i18n.language, {
-                    style: "currency",
-                    currency: i18n.language === "pt-BR" ? "BRL" : "USD",
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                }).format(error.availableLimit / 100)
-
-                setCardLimitError(
-                    t("modalAdd.creditLimitInlineError", {
-                        defaultValue: "Limite insuficiente. Disponível: {{value}}.",
-                        value: formattedAvailable,
-                    })
-                )
-
-                const signature = `${error.cardId}-${error.requiredAmount}`
-                if (lastReportedLimitErrorRef.current !== signature) {
-                    trackAnalyticsEvent("credit_limit_validation_failed", {
-                        cardId: error.cardId,
-                        requestedAmount: error.requiredAmount,
-                        availableLimit: error.availableLimit,
-                        source: "modal_add:save_error",
-                    })
-                    lastReportedLimitErrorRef.current = signature
-                }
-                return
-            }
-
-            if (error instanceof Error) {
-                if (error.message === "CARD_NOT_FOUND") {
-                    Alert.alert(
-                        t("modalAdd.cardNotFoundTitle", { defaultValue: "Cartão não encontrado" }),
-                        t("modalAdd.cardNotFoundMessage", { defaultValue: "O cartão selecionado não pôde ser localizado. Tente novamente." })
-                    )
-                    return
-                }
-            }
-
+           
             console.log("Falha ao salvar. Tente novamente.", error);
         }
     }
@@ -295,9 +150,9 @@ export default function AddModal() {
                         type: optionValue,
                         category: undefined
                     })
-                    if(optionValue === "in") { updateNewTransaction({useCreditCard: false})}
+                    if(optionValue === "in") { setUseCreditCard(false)}
                 }}
-                disabledOptions={newTransaction.useCreditCard ? ["in" as TransactionType] : []}
+                disabledOptions={useCreditCard ? ["in" as TransactionType] : []}
             />
 
             <GroupView>   
@@ -328,7 +183,9 @@ export default function AddModal() {
                 <GPopup
                     separator={"translucent"}
                     label={t("modalAdd.category")}
-                    displayValue={newTransaction.category?.label}
+                    displayValue={
+                        newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
+                    }
                     onPress={() => {router.push("/modalCategoryPicker")}}
                 />
                 <GPopup
@@ -339,25 +196,25 @@ export default function AddModal() {
                 />
             </GroupView>
 
-            {newTransaction.rruleDescription ?
+            {newTransaction.rrule ?
                 <View style={{paddingHorizontal: layout.margin.contentArea}}>
                     <Text
                         style={{fontSize: 15, lineHeight: 20, color: theme.text.secondaryLabel}}
                     >
-                        {newTransaction.rruleDescription?.replace(/\n/g, " ")}
+                        {describeRRule(newTransaction.rrule, t).replace(/\n/g, " ")}
                     </Text>
                 </View>
             : null}
 
             <GroupView>
                 <GSwitch
-                    separator={newTransaction.useCreditCard ? "translucent" : "none"}
+                    separator={useCreditCard ? "translucent" : "none"}
                     label={t("modalAdd.useCredit")}
-                    value={!!newTransaction.useCreditCard}
+                    value={useCreditCard}
                     onValueChange={handleToggleCredit}
                     disabled={newTransaction.type === "in"}
                 />
-                {newTransaction.useCreditCard ? (
+                {useCreditCard ? (
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>
                         {cardsLoading ? (
                             <Text style={{ color: theme.text.secondaryLabel }}>
@@ -407,7 +264,7 @@ export default function AddModal() {
             <CancelSaveButtons
                 cancelAction={() => {router.back()}}
                 primaryAction={handleConfirm}
-                isPrimaryActive={isValid}
+                isPrimaryActive={isValidAsTransaction}
             />
         </ScrollView>
     )

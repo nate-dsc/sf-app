@@ -8,7 +8,6 @@ import Stepper from '@/components/recurrence-modal-items/Stepper';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useStyle } from '@/context/StyleContext';
 import { SCOption } from '@/types/components';
-import { describeRRule } from '@/utils/RRULEUtils';
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -27,7 +26,7 @@ export default function ModalRecurring() {
 
     const {t} = useTranslation()
     const router = useRouter()
-    const {newTransaction, updateNewTransaction, setNewTransaction, saveTransaction, isValid} = useNewTransaction()
+    const {newTransaction, updateNewTransaction} = useNewTransaction()
     const paddingTop = useHeaderHeight() + 10
     const insets = useSafeAreaInsets()
     const {theme, layout} = useStyle()
@@ -414,8 +413,7 @@ export default function ModalRecurring() {
     const handleConfirm = () => {
         const splitStr = rruleString.split("\n")[1]
         const finalStr = splitStr.replace("RRULE:", "")
-        const rruleDescription = describeRRule(rruleString, t)
-        updateNewTransaction({rrule: finalStr, rruleDescription: rruleDescription})
+        updateNewTransaction({rrule: finalStr})
         router.back()
     }
 
