@@ -9,15 +9,12 @@ import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
 import { useTransactionDatabase } from "@/database/useTransactionDatabase"
 import { CCard } from "@/types/CreditCards"
-import {
-    InstallmentFormValues,
-    validateInstallmentForm,
-} from "@/utils/InstallmentUtils"
+import { findCategoryByID } from "@/utils/CategoryUtils"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Alert, ScrollView, Text, View } from "react-native"
+import { ScrollView, Text, View } from "react-native"
 
 export default function AddInstallmentPurchaseModal() {
     const router = useRouter()
@@ -31,8 +28,8 @@ export default function AddInstallmentPurchaseModal() {
         newTransaction,
         updateNewTransaction,
         setNewTransaction,
-        saveInstallmentPurchase,
-        isInstallmentValid,
+        saveAsInstallmentPurchase,
+        isValidAsInstallmentPurchase,
     } = useNewTransaction()
     const { getAllCards } = useTransactionDatabase()
 
@@ -57,7 +54,6 @@ export default function AddInstallmentPurchaseModal() {
             category: undefined,
             cardId: undefined,
             installmentsCount: undefined,
-            purchaseDay: today.getDate(),
             date: today,
         })
 
@@ -142,94 +138,18 @@ export default function AddInstallmentPurchaseModal() {
         updateNewTransaction({ installmentsCount: parsed })
     }
 
-    const formValues: InstallmentFormValues = useMemo(() => ({
-        installmentValue: newTransaction.value,
-        description: newTransaction.description,
-        categoryId: newTransaction.category?.id ?? null,
-        installmentsCount: newTransaction.installmentsCount,
-        purchaseDay: newTransaction.purchaseDay,
-        cardId: newTransaction.cardId,
-    }), [
-        newTransaction.cardId,
-        newTransaction.category?.id,
-        newTransaction.description,
-        newTransaction.installmentsCount,
-        newTransaction.purchaseDay,
-        newTransaction.value,
-    ])
 
-    const validation = useMemo(() => validateInstallmentForm(formValues), [formValues])
-
-    const resolveErrorMessage = (key?: string, fallback?: string) => {
-        if (!key) {
-            return undefined
-        }
-
-        return t(key, { defaultValue: fallback })
-    }
-
-    const valueError = touched.value
-        ? resolveErrorMessage(validation.errors.installmentValue, t("installmentModal.validation.valueRequired", { defaultValue: "Informe o valor da parcela." }))
-        : undefined
-
-    const installmentsError = touched.installments
-        ? resolveErrorMessage(validation.errors.installmentsCount, t("installmentModal.validation.installmentsRequired", { defaultValue: "Informe o número de parcelas." }))
-        : undefined
-
-    const descriptionError = touched.description
-        ? resolveErrorMessage(validation.errors.description, t("installmentModal.validation.descriptionRequired", { defaultValue: "Informe uma descrição." }))
-        : undefined
-
-    const categoryError = touched.category
-        ? resolveErrorMessage(validation.errors.category, t("installmentModal.validation.categoryRequired", { defaultValue: "Selecione uma categoria." }))
-        : undefined
-
-    const purchaseDayError = touched.purchaseDay
-        ? resolveErrorMessage(validation.errors.purchaseDay, t("installmentModal.validation.purchaseDayRequired", { defaultValue: "Selecione o dia da compra." }))
-        : undefined
-
-    const cardError = touched.card
-        ? resolveErrorMessage(validation.errors.card, t("installmentModal.validation.cardRequired", { defaultValue: "Selecione um cartão." }))
-        : undefined
-
-    const markAllTouched = () => {
-        setTouched({
-            value: true,
-            installments: true,
-            description: true,
-            category: true,
-            purchaseDay: true,
-            card: true,
-        })
-    }
+    
 
     const handleSave = async () => {
-        if (!validation.isValid) {
-            markAllTouched()
+        if (!isValidAsInstallmentPurchase) {
             return
         }
 
         try {
-            await saveInstallmentPurchase()
+            await saveAsInstallmentPurchase()
             router.back()
         } catch (error) {
-            if (error instanceof Error) {
-                if (error.message === "INSUFFICIENT_CREDIT_LIMIT") {
-                    Alert.alert(
-                        t("modalAdd.creditLimitErrorTitle", { defaultValue: "Limite insuficiente" }),
-                        t("modalAdd.creditLimitErrorMessage", { defaultValue: "O cartão selecionado não possui limite disponível para esta compra." })
-                    )
-                    return
-                }
-
-                if (error.message === "CARD_NOT_FOUND") {
-                    Alert.alert(
-                        t("modalAdd.cardNotFoundTitle", { defaultValue: "Cartão não encontrado" }),
-                        t("modalAdd.cardNotFoundMessage", { defaultValue: "O cartão selecionado não pôde ser localizado. Tente novamente." })
-                    )
-                    return
-                }
-            }
 
             console.error("Falha ao salvar compra parcelada.", error)
         }
@@ -267,6 +187,8 @@ export default function AddInstallmentPurchaseModal() {
                     }}
                     valueInCents={newTransaction.value}
                     transactionType="out"
+                    labelFlex={3}
+                    fieldFlex={2}
                 />
                 <GTextInput
                     separator="translucent"
@@ -277,6 +199,8 @@ export default function AddInstallmentPurchaseModal() {
                     keyboardType="number-pad"
                     inputMode="numeric"
                     maxLength={3}
+                    labelFlex={3}
+                    fieldFlex={2}
                 />
                 <GTextInput
                     separator="translucent"
@@ -292,7 +216,9 @@ export default function AddInstallmentPurchaseModal() {
                 <GPopup
                     separator="translucent"
                     label={t("modalAddInstallment.category")}
-                    displayValue={newTransaction.category?.label}
+                    displayValue={
+                        newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
+                    }
                     onPress={() => {
                         setTouched((prev) => ({ ...prev, category: true }))
                         updateNewTransaction({ type: "out" })
@@ -306,7 +232,7 @@ export default function AddInstallmentPurchaseModal() {
                     onDateChange={(date) => {
                         setTouched((prev) => ({ ...prev, purchaseDay: true }))
                         setNewDate(date)
-                        updateNewTransaction({ date, purchaseDay: date.getDate() })
+                        updateNewTransaction({ date })
                     }}
                 />
             </GroupView>
@@ -334,14 +260,13 @@ export default function AddInstallmentPurchaseModal() {
                             }}
                         />
                     )}
-                    {renderErrorText(cardError)}
                 </View>
             </GroupView>
 
             <CancelSaveButtons
                 cancelAction={() => router.back()}
                 primaryAction={handleSave}
-                isPrimaryActive={isInstallmentValid && !cardsLoading}
+                isPrimaryActive={isValidAsInstallmentPurchase && !cardsLoading}
             />
         </ScrollView>
     )

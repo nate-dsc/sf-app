@@ -1,6 +1,6 @@
 import { AppIcon } from "@/components/AppIcon"
-import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { HeaderConfigProvider, getHeaderScreenOptions, resolveHeaderConfig } from "@/context/HeaderConfigContext"
+import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
 import { initializeDatabase } from "@/database/useDatabase"
@@ -22,7 +22,7 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const {theme, preference} = useStyle()
 
-    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncInstallmentPurchases } = useTransactionDatabase();
+    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncInstallments } = useTransactionDatabase();
     const loadSummaryData = useSummaryStore((state) => state.loadData);
     const summaryRefreshKey = useSummaryStore((state) => state.refreshKey);
     const loadDistributionData = useDistributionStore((state) => state.loadData);
@@ -43,7 +43,7 @@ function RootLayoutNav() {
             try {
                 await Promise.all([
                     createAndSyncRecurringTransactions(),
-                    createAndSyncInstallmentPurchases(),
+                    createAndSyncInstallments(),
                 ])
             } catch (error) {
                 console.error("Falha ao sincronizar transações pendentes", error)
