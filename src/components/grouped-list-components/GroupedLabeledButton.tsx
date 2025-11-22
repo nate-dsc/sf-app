@@ -1,5 +1,6 @@
 
 import { useStyle } from "@/context/StyleContext"
+import { FONT_SIZE } from "@/styles/fonts"
 import { GroupedComponentsProps } from "@/types/components"
 import React, { ReactNode } from "react"
 import { Text, TouchableWithoutFeedback, View } from "react-native"
@@ -76,7 +77,7 @@ export default function GLabeledButton({separator, label, onPress, buttonLabel, 
                 >
                     <Text 
                         style={{
-                            fontSize: 17,
+                            fontSize: FONT_SIZE.BODY,
                             color: theme.text.label
                         }}
                         numberOfLines={1}
