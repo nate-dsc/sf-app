@@ -1,5 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
-import { HeaderConfigProvider, getHeaderScreenOptions, resolveHeaderConfig } from "@/context/HeaderConfigContext"
+import { HeaderConfigProvider, resolveHeaderConfig } from "@/context/HeaderConfigContext"
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
@@ -69,7 +69,13 @@ function RootLayoutNav() {
                     <StatusBar style={'light'}/>
                     <HeaderConfigProvider value={currentHeaderConfig}>
                         <Stack
-                            screenOptions={({ route }) => getHeaderScreenOptions(theme, route.name)}
+                            screenOptions={{
+                                headerTitleAlign: "center",
+                                headerShadowVisible: false,
+                                headerTransparent: true,
+                                headerBackButtonDisplayMode: "minimal",
+                                headerBackButtonMenuEnabled: false,
+                            }}
                         >
                         {/* Tabs */}
                         <Stack.Screen
@@ -86,6 +92,9 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: "Start",
+                                headerTransparent: true,
+                                headerLargeTitleShadowVisible: true,
+                                headerLargeTitle: true
                             }}
                         />
                         <Stack.Screen
@@ -134,13 +143,13 @@ function RootLayoutNav() {
                             }}
                         />
                         <Stack.Screen
-                            name="(budget)/budgetEdit"
+                            name="(budget)/modalAddBudget"
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.planning.budget"),
                                 presentation: "formSheet",
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg
+                                    backgroundColor: theme.background.secondaryBg
                                 }
                             }}
                         />
@@ -226,7 +235,7 @@ function RootLayoutNav() {
                                 title: t("nav.credit.new"),
                                 presentation: "formSheet",
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg
+                                    backgroundColor: theme.background.secondaryBg
                                 }
                             }}
                         />
@@ -252,15 +261,16 @@ function RootLayoutNav() {
                                 },
                             }}
                         />
-                        {/* Modais de nova transação*/}
+                        {/* MODAIS DE NOVA TRANSAÇÃO */}
                         <Stack.Screen
                             name="modalAdd"
                             options={{
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.newTransaction"),
                                 presentation: "formSheet",
+                                sheetGrabberVisible: true,
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg
+                                    backgroundColor: theme.background.secondaryBg
                                 }
                             }}
                         />
@@ -272,7 +282,7 @@ function RootLayoutNav() {
                                 title: t("nav.recurring"),
                                 presentation: "formSheet",
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg,
+                                    backgroundColor: theme.background.secondaryBg,
                                 }
                             }}
                         />
@@ -284,7 +294,7 @@ function RootLayoutNav() {
                                 title: t("nav.categories"),
                                 presentation: "formSheet",
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg,
+                                    backgroundColor: theme.background.secondaryBg,
                                 }
                             }}
                         />
@@ -324,6 +334,7 @@ function RootLayoutNav() {
 export default function RootLayout()
 {
     return(
+        <SafeAreaProvider>
         <SQLiteProvider databaseName={"sf-app.db"} onInit={initializeDatabase}>
             <SearchFiltersProvider>
                 <StyleProvider>
@@ -331,5 +342,6 @@ export default function RootLayout()
                 </StyleProvider>
             </SearchFiltersProvider>
         </SQLiteProvider>
+        </SafeAreaProvider>
     )
 }

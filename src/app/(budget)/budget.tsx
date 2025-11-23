@@ -122,7 +122,7 @@ export default function BudgetScreen() {
                 <MainActionButton
                     label={buttonLabel}
                     color={storedBudget ? theme.colors.blue : theme.colors.green}
-                    onPress={() => router.push("/(budget)/budgetEdit")}
+                    onPress={() => router.push("/(budget)/modalAddBudget")}
                 />
             </View>
         </View>

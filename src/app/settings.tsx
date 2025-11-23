@@ -15,6 +15,7 @@ import { useRouter } from "expo-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ScrollView, Text } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function SettingsScreen() {
 
@@ -23,6 +24,7 @@ export default function SettingsScreen() {
     const router = useRouter()
     const {theme, layout, preference, setPreference} = useStyle()
     const headerHeight = useHeaderHeight()
+    const insets = useSafeAreaInsets()
 
     const [category, setCategory] = useState("")
     const [selectedTheme, setSelectedTheme] = useState(preference)
@@ -67,11 +69,13 @@ export default function SettingsScreen() {
 
     return(
         <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
             contentContainerStyle={{
-                paddingTop: headerHeight + layout.margin.contentArea,
+                paddingTop: layout.margin.contentArea,
                 paddingHorizontal: layout.margin.contentArea,
                 paddingBottom: 120,
                 gap: layout.margin.sectionGap,
+                backgroundColor: theme.background.group.bg
             }}
         >
 

@@ -16,7 +16,7 @@ export default function GroupView({ children, forceHorizontalPadding = false, bg
             style={{
                 paddingHorizontal: forceHorizontalPadding ? 16 : 0,
                 borderRadius: 26,
-                backgroundColor: bgType === "overBackground" ? theme.background.group.secondaryBg : theme.fill.secondary,
+                backgroundColor: bgType === "overBackground" ? theme.background.group.secondaryBg : theme.background.group.elevated.secondaryBg,
                 overflow: "hidden"
             }}
         >
@@ -24,3 +24,5 @@ export default function GroupView({ children, forceHorizontalPadding = false, bg
         </View>
     )
 }
+
+//theme.fill.secondary

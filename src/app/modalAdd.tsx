@@ -41,6 +41,8 @@ export default function AddModal() {
     const [cardLimitError, setCardLimitError] = useState<string | null>(null)
     const lastReportedLimitErrorRef = useRef<string | null>(null)
 
+    const headerHeight = useHeaderHeight()
+
     const flowOptions = useMemo<SCOption<TransactionType>[]>(() => [
         {label: t("modalAdd.inflow"), value: "in"},
         {label: t("modalAdd.outflow"), value: "out"}
@@ -136,9 +138,10 @@ export default function AddModal() {
     
     return(
         <ScrollView
+            //contentInsetAdjustmentBehavior="automatic"
             contentContainerStyle={{
                 flex: 1,
-                paddingTop: useHeaderHeight() + layout.margin.contentArea,
+                paddingTop: layout.margin.contentArea + headerHeight,
                 paddingHorizontal: layout.margin.contentArea,
                 gap: layout.margin.sectionGap
             }}
@@ -158,14 +161,14 @@ export default function AddModal() {
 
             <GroupView>   
                 <GValueInput
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     label={t("modalAdd.value")}
                     acViewKey={"lim"}
                     onChangeNumValue={(numValue) => updateNewTransaction({value: numValue})}
                     transactionType={newTransaction.type || "out"}
                 />
                 <GTextInput
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     label={t("modalAdd.description")}
                     value={newTransaction.description}
                     onChangeText={(description: string) => updateNewTransaction({ description: description })}
@@ -217,7 +220,7 @@ export default function AddModal() {
                     value={useCreditCard}
                     onValueChange={handleToggleCredit}
                     disabled={newTransaction.type === "in"}
-                    separator={useCreditCard ? "translucent" : "none"}
+                    separator={useCreditCard ? "vibrant" : "none"}
                 />
                 {useCreditCard ? (
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>
@@ -271,7 +274,6 @@ export default function AddModal() {
                     <LabeledButton
                         label={t("buttons.cancel")}
                         onPress={() => {router.back()}}
-                        disabled={false}
                     />
                 </View>
                 <View style={{flex: 1}}>
