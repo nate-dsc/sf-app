@@ -47,9 +47,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         limit_used INT NOT NULL,
         closing_day INT NOT NULL,
         due_day INT NOT NULL,
-        ignore_weekends INTEGER NOT NULL DEFAULT 1,
-        created_at TEXT NOT NULL DEFAULT (datetime('now')),
-        updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+        ignore_weekends INTEGER NOT NULL DEFAULT 1
     );`
     
     const createTransactionsRecurringTableStatement = `CREATE TABLE IF NOT EXISTS transactions_recurring (
@@ -63,7 +61,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         card_id INTEGER,
         is_installment INTEGER NOT NULL DEFAULT 0,
         type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
-        created_at TEXT NOT NULL DEFAULT (datetime('now')),
         FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
         FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL
         );`
@@ -78,8 +75,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
         id_recurring INTEGER,
         card_id INTEGER,
         type TEXT NOT NULL DEFAULT 'out' CHECK (type IN ('in','out')),
-        created_at TEXT NOT NULL DEFAULT (datetime('now')),
-        updated_at TEXT NOT NULL DEFAULT (datetime('now')),
         FOREIGN KEY (category) REFERENCES categories(id) ON DELETE RESTRICT,
         FOREIGN KEY (id_recurring) REFERENCES transactions_recurring(id) ON DELETE SET NULL,
         FOREIGN KEY (card_id) REFERENCES cards(id) ON DELETE SET NULL

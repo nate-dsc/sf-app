@@ -1,6 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/Transactions"
 import { findCategoryByID } from "@/utils/CategoryUtils"
@@ -29,7 +29,7 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
 
     const category = findCategoryByID(transaction.category, transaction.type)
 
-    const { deleteRecurringTransaction, deleteRecurringTransactionCascade } = useTransactionDatabase()
+    const { deleteRecurringTransaction, deleteRecurringTransactionCascade } = useDatabase()
 
     const showAlert = () => {
         Alert.alert(

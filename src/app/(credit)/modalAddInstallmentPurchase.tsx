@@ -7,7 +7,7 @@ import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { CCard } from "@/types/CreditCards"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -31,7 +31,7 @@ export default function AddInstallmentPurchaseModal() {
         saveAsInstallmentPurchase,
         isValidAsInstallmentPurchase,
     } = useNewTransaction()
-    const { getAllCards } = useTransactionDatabase()
+    const { getAllCards } = useDatabase()
 
     const [cards, setCards] = useState<CCard[]>([])
     const [cardsLoading, setCardsLoading] = useState(true)

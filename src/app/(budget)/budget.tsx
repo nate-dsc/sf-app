@@ -1,7 +1,7 @@
 import { AppIcon } from "@/components/AppIcon"
 import BottomButton from "@/components/buttons/BottomButton"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { BudgetMonthlyPerformance } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -30,7 +30,7 @@ export default function BudgetScreen() {
     //Stores
     const storedBudget = useBudgetStore((state) => state.budget)
     //Database hooks
-    const { getBudgetMonthlyPerformance } = useTransactionDatabase()
+    const { getBudgetMonthlyPerformance } = useDatabase()
     //States
     const [monthlyPerformance, setMonthlyPerformance] = useState<BudgetMonthlyPerformance[]>([])
     const [loadingPerformance, setLoadingPerformance] = useState(false)

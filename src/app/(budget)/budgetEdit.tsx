@@ -6,7 +6,7 @@ import GroupView from "@/components/grouped-list-components/GroupView"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { SCOption } from "@/types/components"
@@ -27,7 +27,7 @@ export default function BudgetEditScreen() {
     const { t } = useTranslation()
     const insets = useSafeAreaInsets()
 
-    const { getSummaryFromDB } = useTransactionDatabase()
+    const { getSummaryFromDB } = useDatabase()
     const loadSummaryData = useSummaryStore((state) => state.loadData)
     const triggerRefresh = useSummaryStore.getState().triggerRefresh
 

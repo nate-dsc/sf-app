@@ -61,7 +61,7 @@ export async function fetchLastInsertedRecurringId(database: SQLiteDatabase) {
 
 export async function insertRecurringOcurrence(database: SQLiteDatabase, data: Transaction, idRecurring: number) {
     await database.runAsync(
-        "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?)",
+        "INSERT INTO transactions (value, description, category, date, id_recurring, card_id, type) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [data.value, data.description, data.category, data.date, idRecurring, null, data.type],
     )
 }

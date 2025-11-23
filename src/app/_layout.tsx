@@ -3,8 +3,7 @@ import { HeaderConfigProvider, getHeaderScreenOptions, resolveHeaderConfig } fro
 import { NewTransactionProvider } from "@/context/NewTransactionContext"
 import { SearchFiltersProvider } from "@/context/SearchFiltersContext"
 import { StyleProvider, useStyle } from "@/context/StyleContext"
-import { initializeDatabase } from "@/database/useDatabase"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { initializeDatabase, useDatabase } from "@/database/useDatabase"
 import "@/i18n"
 import { useDistributionStore } from "@/stores/useDistributionStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
@@ -22,7 +21,7 @@ function RootLayoutNav() {
     const {t} = useTranslation()
     const {theme, preference} = useStyle()
 
-    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncRecurringTransactionsWithCard, createAndSyncInstallments } = useTransactionDatabase();
+    const { getSummaryFromDB, getMonthlyCategoryDistribution, createAndSyncRecurringTransactions, createAndSyncRecurringTransactionsWithCard, createAndSyncInstallments } = useDatabase();
     const loadSummaryData = useSummaryStore((state) => state.loadData);
     const summaryRefreshKey = useSummaryStore((state) => state.refreshKey);
     const loadDistributionData = useDistributionStore((state) => state.loadData);

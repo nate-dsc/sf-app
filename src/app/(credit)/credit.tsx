@@ -3,7 +3,7 @@ import CCList from "@/components/credit-card-items/CreditCardList/CreditCardList
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { CCard } from "@/types/CreditCards"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
@@ -27,7 +27,7 @@ export default function CreditScreen() {
     const { t } = useTranslation()
     const headerHeight = useHeaderHeight()
 
-    const { getAllCards } = useTransactionDatabase()
+    const { getAllCards } = useDatabase()
     const [cards, setCards] = useState<CCard[]>([])
     const [selectedCard, setSelectedCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)

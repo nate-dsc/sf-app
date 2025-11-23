@@ -1,8 +1,7 @@
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
-import { useSummaryStore } from "@/stores/useSummaryStore"
+import { useDatabase } from "@/database/useDatabase"
 import { type TransactionType } from "@/types/Transactions"
 import { formatAsInstallmentPurchase, formatAsRecurringTransaction, formatAsTransaction } from "@/utils/NewTransactionUtils"
-import { createContext, ReactNode, useContext, useMemo, useState } from "react"
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react"
 
 export type NewTransaction = {
     type?: TransactionType,
@@ -31,16 +30,58 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
     const [newTransaction, setNewTransaction] = useState<NewTransaction>({})
 
     const {
+        getCard,
         createTransaction,
         createRecurringTransaction,
+        createAndSyncRecurringTransactions,
         createTransactionWithCard,
         createRecurringTransactionWithCard,
+        createAndSyncRecurringTransactionsWithCard,
         createInstallmentPurchase,
-        getSummaryFromDB,
-    } = useTransactionDatabase();
+        createAndSyncInstallments
+    } = useDatabase();
 
-    const loadSummaryData = useSummaryStore((state) => state.loadData);
-    const triggerRefresh = useSummaryStore.getState().triggerRefresh
+    const [isCheckingLimit, setIsCheckingLimit] = useState(false)
+    const [hasLimitError, setHasLimitError] = useState(false)
+
+    useEffect(() => {
+        const { cardId, value, installmentsCount } = newTransaction
+
+        if (!cardId || !value) {
+            setHasLimitError(false)
+            return
+        }
+
+        let cancelled = false
+
+        const loadCard = async () => {
+            setIsCheckingLimit(true)
+            try {
+                const card = await getCard(cardId)
+                if (cancelled) return
+
+                if (card) {
+                    const availableLimit = card.maxLimit - card.limitUsed
+                    if(installmentsCount) {
+                        setHasLimitError(Math.abs(value) * installmentsCount > availableLimit)
+                    } else {
+                        setHasLimitError(Math.abs(value) > availableLimit)
+                    }
+                } else {
+                    setHasLimitError(true) // cartão não encontrado = trata como inválido
+                }
+            } finally {
+                if (!cancelled) setIsCheckingLimit(false)
+            }
+        }
+
+        void loadCard()
+
+        return () => {
+            cancelled = true
+        }
+    }, [newTransaction])
+
 
     const updateNewTransaction = (updates: Partial<NewTransaction>) => {
         setNewTransaction(prevTransaction => ({
@@ -57,7 +98,9 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
 
         if (cardId) {
-            //testar se tem limite
+            if (isCheckingLimit) return false
+
+            if (hasLimitError) return false
         }
 
         return true
@@ -71,7 +114,9 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         }
 
         if (cardId) {
-            //testar se tem limite
+            if (isCheckingLimit) return false
+
+            if (hasLimitError) return false
         }
 
         return true
@@ -91,8 +136,10 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
                 if(usesCreditCard) {
                     await createRecurringTransactionWithCard(recurringTransaction)
+                    await createAndSyncRecurringTransactionsWithCard()
                 } else {
                     await createRecurringTransaction(recurringTransaction)
+                    await createAndSyncRecurringTransactions()
                 }
             } catch(err) {
                 console.error("[New Transaction Context] Could not save recurring transaction", err)
@@ -124,10 +171,8 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
         const installmentPurchase = formatAsInstallmentPurchase(newTransaction)
         
         try {
-
             await createInstallmentPurchase(installmentPurchase)
-            await loadSummaryData({ getSummaryFromDB })
-            triggerRefresh()
+            await createAndSyncInstallments()
             setNewTransaction({})
         } catch (error) {
 

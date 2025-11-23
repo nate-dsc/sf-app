@@ -1,6 +1,6 @@
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { Transaction } from "@/types/Transactions"
 import { findCategoryByID } from "@/utils/CategoryUtils"
@@ -31,7 +31,7 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     const category = findCategoryByID(transaction!.category, transaction.type)
 
-    const { removeTransaction, getRRULE } = useTransactionDatabase()
+    const { removeTransaction, getRRULE } = useDatabase()
 
     const handleDeletion = async (id: number) => {
         try {

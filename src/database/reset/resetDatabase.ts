@@ -16,11 +16,9 @@ export async function resetDatabase(database: SQLiteDatabase) {
 }
 
 export async function dropAll(database: SQLiteDatabase) {
-    const tables = await database.getAllAsync<{ name: string }>(
-        "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-    )
 
-    for (const table of tables) {
-        await database.execAsync(`DROP TABLE IF EXISTS ${quoteIdentifier(table.name)}`)
-    }
+    await database.execAsync("DROP TABLE IF EXISTS transactions")
+    await database.execAsync("DROP TABLE IF EXISTS transactions_recurring")
+    await database.execAsync("DROP TABLE IF EXISTS cards")
+    await database.execAsync("DROP TABLE IF EXISTS categories")
 }

@@ -153,7 +153,7 @@ Handles the entire multi-step transaction creation process.
 - Perform validation, generation, syncing
 - Use repository functions only
 - Refresh Zustand stores when required
-- Accessed via `useTransactionDatabase.ts`
+- Accessed via `useDatabase.ts`
 
 ### Instructions
 - Avoid adding internal helper clutter → move pure helpers to utils

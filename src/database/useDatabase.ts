@@ -1,58 +1,37 @@
-import type { SQLiteDatabase } from "expo-sqlite"
+import { useMemo } from "react"
+
 import { useSQLiteContext } from "expo-sqlite"
-import { useCallback, useMemo } from "react"
+import { useBudgetsModule } from "./modules/BudgetModule"
+import { useCCInstallmentsModule } from "./modules/CCInstallmentsModule"
+import { useCCTransactionsModule } from "./modules/CCTransactionsModule"
+import { useCCTransactionsRecurringModule } from "./modules/CCTransactionsRecurringModule"
+import { useCreditCardModule } from "./modules/CreditCardModule"
+import { useRecurringTransactionsModule } from "./modules/RecurringTransactionsModule"
+import { useTransactionsModule } from "./modules/TransactionsModule"
 
 export { initializeDatabase } from "@/database/initializeDatabase"
 
-export type DatabaseHelpers = {
-    database: SQLiteDatabase
-    ready: Promise<void>
-    listTables: () => Promise<{ name: string }[]>
-    getTableRowCount: (table: string) => Promise<number>
-    resetData: () => Promise<void>
-}
-
-export function useDatabase(): DatabaseHelpers {
+export function useDatabase() {
     const database = useSQLiteContext()
-    const ready = useMemo(() => Promise.resolve(), [])
+    
+    const transactions = useTransactionsModule(database)
+    const recurring = useRecurringTransactionsModule(database)
+    const creditCards = useCreditCardModule(database)
+    const creditCardTransactions = useCCTransactionsModule(database)
+    const creditCardTransactionsRecurring = useCCTransactionsRecurringModule(database)
+    const creditCardInstallments = useCCInstallmentsModule(database)
+    const budgets = useBudgetsModule(database)
 
-    const listTables = useCallback(async () => {
-        await ready
-        return database.getAllAsync<{ name: string }>(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
-        )
-    }, [database, ready])
-
-    const getTableRowCount = useCallback(async (table: string) => {
-        await ready
-        const quoted = `"${table.replace(/"/g, '""')}"`
-        const result = await database.getFirstAsync<{ total: number }>(
-            `SELECT COUNT(*) as total FROM ${quoted}`
-        )
-
-        return result?.total ?? 0
-    }, [database, ready])
-
-    const resetData = useCallback(async () => {
-        await ready
-
-        await database.withTransactionAsync(async () => {
-            const tables = await database.getAllAsync<{ name: string }>(
-                "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT IN ('migrations')"
-            )
-
-            for (const table of tables) {
-                const quoted = `"${table.name.replace(/"/g, '""')}"`
-                await database.execAsync(`DELETE FROM ${quoted}`)
-            }
-        })
-    }, [database, ready])
-
-    return useMemo(() => ({
-        database,
-        ready,
-        listTables,
-        getTableRowCount,
-        resetData,
-    }), [database, getTableRowCount, listTables, ready, resetData])
+    return useMemo(
+        () => ({
+            ...transactions,
+            ...recurring,
+            ...creditCards,
+            ...creditCardTransactions,
+            ...creditCardTransactionsRecurring,
+            ...creditCardInstallments,
+            ...budgets,
+        }),
+        [budgets, creditCardInstallments, creditCardTransactionsRecurring, creditCardTransactions, creditCards, recurring, transactions],
+    )
 }

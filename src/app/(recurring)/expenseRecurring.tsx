@@ -9,7 +9,7 @@ import RecurringCategoryBreakdownChart from "@/components/recurring-screens-item
 import RecurringTransactionList from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionList"
 import RecurringTransactionModal from "@/components/recurring-screens-items/RecurringTransactionList/RecurringTransactionModal"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -19,7 +19,7 @@ import { ActivityIndicator, Modal, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function ExpenseRecurringScreen() {
-    const { getRecurringSummaryThisMonth } = useTransactionDatabase()
+    const { getRecurringSummaryThisMonth } = useDatabase()
     const [loading, setLoading] = useState(true)
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
     const [totalRecurringExpenses, setTotalRecurringExpenses] = useState<number>(0)

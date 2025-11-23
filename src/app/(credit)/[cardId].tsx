@@ -1,11 +1,13 @@
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { CCard } from "@/types/CreditCards"
+import { useHeaderHeight } from "@react-navigation/elements"
 import { useLocalSearchParams } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Text, View } from "react-native"
+
 
 function formatCurrency(value: number) {
     return new Intl.NumberFormat("pt-BR", {
@@ -17,8 +19,9 @@ function formatCurrency(value: number) {
 
 export default function CreditCardDetailsScreen() {
     const { theme, layout } = useStyle()
+    const headerHeight = useHeaderHeight()
     const { cardId } = useLocalSearchParams<{ cardId?: string }>()
-    const { getCard } = useTransactionDatabase()
+    const { getCard } = useDatabase()
     const [card, setCard] = useState<CCard | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -82,7 +85,7 @@ export default function CreditCardDetailsScreen() {
             style={{
                 flex: 1,
                 backgroundColor: theme.background.bg,
-                paddingTop: layout.margin.contentArea,
+                paddingTop: headerHeight + layout.margin.contentArea,
                 paddingHorizontal: layout.margin.contentArea,
                 gap: layout.margin.sectionGap,
             }}
@@ -120,14 +123,14 @@ export default function CreditCardDetailsScreen() {
                     <View style={{ gap: 4 }}>
                         <Text style={[FontStyles.caption1, { color: theme.text.secondaryLabel }]}>Limite disponível</Text>
                         <Text style={[FontStyles.title2, { color: theme.text.label }]}>
-                            {formatCurrency(Math.max(availableLimit, 0))}
+                            {formatCurrency(Math.max(availableLimit/100, 0))}
                         </Text>
                     </View>
 
                     <View
                         style={{
                             borderTopWidth: layout.border.thin,
-                            borderColor: theme.separator.fill,
+                            borderColor: theme.separator.translucent,
                             paddingTop: layout.margin.innerSectionGap,
                             gap: layout.margin.innerSectionGap,
                         }}
@@ -135,13 +138,13 @@ export default function CreditCardDetailsScreen() {
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                             <Text style={{ color: theme.text.secondaryLabel }}>Limite total</Text>
                             <Text style={[FontStyles.numBody, { color: theme.text.label }]}>
-                                {formatCurrency(card.maxLimit)}
+                                {formatCurrency(card.maxLimit/100)}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                             <Text style={{ color: theme.text.secondaryLabel }}>Utilizado</Text>
                             <Text style={[FontStyles.numBody, { color: theme.text.label }]}>
-                                {formatCurrency(card.limitUsed)}
+                                {formatCurrency(card.limitUsed/100)}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>

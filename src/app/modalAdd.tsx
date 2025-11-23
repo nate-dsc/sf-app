@@ -9,7 +9,7 @@ import GroupView from "@/components/grouped-list-components/GroupView";
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact";
 import { useNewTransaction } from "@/context/NewTransactionContext";
 import { useStyle } from "@/context/StyleContext";
-import { useTransactionDatabase } from "@/database/useTransactionDatabase";
+import { useDatabase } from "@/database/useDatabase";
 import i18n from "@/i18n";
 import { SCOption } from "@/types/components";
 import { CCard } from "@/types/CreditCards";
@@ -29,7 +29,7 @@ export default function AddModal() {
     const router = useRouter()
     const {t} = useTranslation()
     const {newTransaction, updateNewTransaction, setNewTransaction, saveAsTransaction, isValidAsTransaction} = useNewTransaction()
-    const { getAllCards } = useTransactionDatabase()
+    const { getAllCards } = useDatabase()
 
     const [newDate, setNewDate] = useState<Date>(new Date())
     const [cards, setCards] = useState<CCard[]>([])

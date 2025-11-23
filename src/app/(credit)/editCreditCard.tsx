@@ -1,7 +1,7 @@
 import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-items/CreditCardForm"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { CCard } from "@/types/Transactions"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
@@ -13,7 +13,7 @@ export default function EditCreditCardModal() {
     const { t } = useTranslation()
     const router = useRouter()
     const { cardId } = useLocalSearchParams<{ cardId?: string | string[] }>()
-    const { getCard, getCards, updateCard } = useTransactionDatabase()
+    const { getCard, getCards, updateCard } = useDatabase()
 
     const resolvedCardId = useMemo(() => {
         if (!cardId) {

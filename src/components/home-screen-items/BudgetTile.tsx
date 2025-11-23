@@ -92,6 +92,10 @@ export default function BudgetTile() {
         }
     }, [budget, formatCurrency, t])
 
+    const tileHeaderLabelKey = useMemo(
+        () => (shouldShowBalance ? "tiles.budgetEstimatedBalance" : "tiles.budgetExpensesVsBudget"),
+        [shouldShowBalance],
+    )
 
     if (loading && !data) {
         return <ActivityIndicator size="large" />
@@ -100,11 +104,6 @@ export default function BudgetTile() {
     if (error) {
         return <Text>{error}</Text>
     }
-
-    const tileHeaderLabelKey = useMemo(
-        () => (shouldShowBalance ? "tiles.budgetEstimatedBalance" : "tiles.budgetExpensesVsBudget"),
-        [shouldShowBalance],
-    )
 
     return (
         <View style={{ gap: 6 }}>

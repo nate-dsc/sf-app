@@ -1,17 +1,7 @@
 import { RecurringTransaction, Transaction } from "@/types/Transactions"
 import { SQLiteDatabase } from "expo-sqlite"
 
-type InstallmentRecurringRow = RecurringTransaction & {
-    due_day: number | null
-    ignore_weekends: number | null
-}
-
-export async function insertInstallmentPurchase(
-    database: SQLiteDatabase,
-    data: RecurringTransaction,
-    cardId: number,
-    limitAdjustment: number,
-) {
+export async function insertInstallmentPurchase(database: SQLiteDatabase, data: RecurringTransaction, cardId: number, limitAdjustment: number) {
     await database.withTransactionAsync(async () => {
         await database.runAsync(
             "INSERT INTO transactions_recurring (value, description, category, date_start, rrule, date_last_processed, card_id, type, is_installment) VALUES (?,?,?,?,?,?,?,?,?)",

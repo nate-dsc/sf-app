@@ -1,4 +1,4 @@
-import { useTransactionDatabase } from "@/database/useTransactionDatabase";
+import { useDatabase } from "@/database/useDatabase";
 import { useSummaryStore } from "@/stores/useSummaryStore";
 import { SearchFilters, Transaction } from "@/types/Transactions";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -16,7 +16,7 @@ const PAGE_SIZE = 15
 export default function TransactionList({filters, onItemPress}: TransactionListProps) {
     const tabBarHeight = useBottomTabBarHeight()
 
-    const {getPaginatedFilteredTransactions} = useTransactionDatabase()
+    const {getPaginatedFilteredTransactions} = useDatabase()
 
     const [data, setData] = useState<Transaction[]>([])
     const [page, setPage] = useState(0)

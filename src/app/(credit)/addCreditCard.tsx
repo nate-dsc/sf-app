@@ -1,5 +1,5 @@
 import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-items/CreditCardForm"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { CCard, NewCard } from "@/types/CreditCards"
 import { useRouter } from "expo-router"
 import { useCallback } from "react"
@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next"
 export default function AddCardModal() {
     const { t } = useTranslation()
     const router = useRouter()
-    const { createCard, getAllCards } = useTransactionDatabase()
+    const { createCard, getAllCards } = useDatabase()
 
     const handleValidate = useCallback(async (values: CreditCardFormValues) => {
         const cards = await getAllCards()

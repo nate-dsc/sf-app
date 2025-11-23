@@ -2,7 +2,7 @@ import { AppIcon } from "@/components/AppIcon"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
-import { useTransactionDatabase } from "@/database/useTransactionDatabase"
+import { useDatabase } from "@/database/useDatabase"
 import { DistributionCategory, useDistributionStore } from "@/stores/useDistributionStore"
 import { type TransactionType } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -319,7 +319,7 @@ export default function DistributionScreen() {
     const headerHeight = useHeaderHeight()
     const { theme } = useStyle()
     const { t, i18n } = useTranslation()
-    const { getMonthlyCategoryDistribution } = useTransactionDatabase()
+    const { getMonthlyCategoryDistribution } = useDatabase()
 
     const data = useDistributionStore((state) => state.data)
     const loading = useDistributionStore((state) => state.loading)
