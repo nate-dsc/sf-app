@@ -1,3 +1,4 @@
+import { AppIcon } from "@/components/AppIcon"
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { FontStyles } from "@/components/styles/FontStyles"
@@ -114,8 +115,15 @@ export default function SettingsDatabaseScreen() {
                         <GRedir
                             key={table.name}
                             separator={index === tables.length - 1 ? "none" : "translucent"}
-                            icon="grid-outline"
-                            label={`${table.name} (${table.count})`}
+                            leadingIcon={
+                                <AppIcon
+                                    name={"square.grid.2x2"}
+                                    androidName={"grid-view"}
+                                    size={29}
+                                    tintColor={theme.text.label}
+                                />
+                            }
+                            leadingLabel={`${table.name} (${table.count})`}
                             onPress={() =>
                                 router.push({
                                     pathname: "/settingsDatabaseTable",

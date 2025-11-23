@@ -202,7 +202,7 @@ export default function AddInstallmentPurchaseModal() {
                 />
                 <GPopup
                     separator="translucent"
-                    label={t("modalAddInstallment.category")}
+                    leadingLabel={t("modalAddInstallment.category")}
                     displayValue={
                         newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
                     }
@@ -213,7 +213,7 @@ export default function AddInstallmentPurchaseModal() {
                 />
                 <GDateInput
                     separator="none"
-                    label={t("modalAddInstallment.date")}
+                    leadingLabel={t("modalAddInstallment.date")}
                     value={newDate}
                     onDateChange={(date) => {
                         setNewDate(date)

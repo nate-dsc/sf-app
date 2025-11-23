@@ -391,7 +391,7 @@ export default function ModalRecurring() {
                     >
                         <GDateInput 
                             separator={"none"}
-                            label={t("modalRecurring.enddate")}
+                            leadingLabel={t("modalRecurring.enddate")}
                             value={until}
                             onDateChange={onDateChange}
                         />

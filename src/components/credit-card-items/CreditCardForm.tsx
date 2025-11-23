@@ -191,19 +191,19 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                 />
                 <GPopup
                     separator={"translucent"}
-                    label={t("credit.closingDay", { defaultValue: "Fechamento" })}
+                    leadingLabel={t("credit.closingDay", { defaultValue: "Fechamento" })}
                     displayValue={selectedClosingDay === 0 ? undefined : selectedClosingDay.toString()}
                     onPress={() => setClosingDayModalVisible(true)}
                 />
                 <GPopup
                     separator={"translucent"}
-                    label={t("credit.dueDay", { defaultValue: "Vencimento" })}
+                    leadingLabel={t("credit.dueDay", { defaultValue: "Vencimento" })}
                     displayValue={selectedDueDay === 0 ? undefined : selectedDueDay.toString()}
                     onPress={() => setDueDayModalVisible(true)}
                 />
                 <GSwitch
                     separator={"none"}
-                    label={t("credit.ignoreWeekends", { defaultValue: "Ignorar fins de semana" })}
+                    leadingLabel={t("credit.ignoreWeekends", { defaultValue: "Ignorar fins de semana" })}
                     value={ignoreWeekends}
                     onValueChange={setIgnoreWeekends}
                 />

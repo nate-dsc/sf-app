@@ -140,7 +140,7 @@ export default function SettingsDatabaseTableScreen() {
                                 {t("settings.database.noColumns", { defaultValue: "Nenhuma coluna encontrada." })}
                             </Text>
                         ) : (
-                            <GroupView style={{ paddingVertical: 4 }}>
+                            <GroupView>
                                 {columns.map((column, index) => {
                                     const details: string[] = []
 
@@ -193,7 +193,7 @@ export default function SettingsDatabaseTableScreen() {
                                 {t("settings.database.noRows", { defaultValue: "Nenhum registro encontrado." })}
                             </Text>
                         ) : (
-                            <GroupView style={{ paddingVertical: 4 }}>
+                            <GroupView>
                                 {rows.map((row, index) => (
                                     <View
                                         key={`row-${index}`}
