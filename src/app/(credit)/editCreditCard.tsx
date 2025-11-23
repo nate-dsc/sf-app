@@ -2,7 +2,7 @@ import CreditCardForm, { CreditCardFormValues } from "@/components/credit-card-i
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
-import { CCard } from "@/types/Transactions"
+import { CCard } from "@/types/CreditCards"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -13,7 +13,7 @@ export default function EditCreditCardModal() {
     const { t } = useTranslation()
     const router = useRouter()
     const { cardId } = useLocalSearchParams<{ cardId?: string | string[] }>()
-    const { getCard, getCards, updateCard } = useDatabase()
+    const { getCard, getAllCards, updateCard } = useDatabase()
 
     const resolvedCardId = useMemo(() => {
         if (!cardId) {
@@ -74,7 +74,7 @@ export default function EditCreditCardModal() {
             return null
         }
 
-        const cards = await getCards()
+        const cards = await getAllCards()
         const normalizedName = values.name.trim().toLowerCase()
 
         const duplicatedName = cards.some((existingCard) => existingCard.id !== card.id && existingCard.name.trim().toLowerCase() === normalizedName)
@@ -88,7 +88,7 @@ export default function EditCreditCardModal() {
         }
 
         return null
-    }, [card, getCards, t])
+    }, [card, getAllCards, t])
 
     const handleSubmit = useCallback(async (values: CreditCardFormValues) => {
         if (!card) {

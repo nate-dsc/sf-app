@@ -1,37 +1,44 @@
-import GButton from "@/components/grouped-list-components/GroupedLabeledButton";
-import GroupView from "@/components/grouped-list-components/GroupView";
-import { SStyles } from "@/components/styles/ScreenStyles";
-import { useStyle } from "@/context/StyleContext";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useRouter } from "expo-router";
-import { useCallback, useState } from "react";
-import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
+import GButton from "@/components/grouped-list-components/GroupedLabeledButton"
+import GroupView from "@/components/grouped-list-components/GroupView"
+import { useStyle } from "@/context/StyleContext"
+import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
+import { useCallback, useState } from "react"
+import { LayoutChangeEvent, StyleSheet, Text, View } from "react-native"
 
 export default function MeasuresScreen() {
     
     const paddingTop = useHeaderHeight() + 10
 
-    const [componentHeight, setComponentHeight] = useState(0);
+    const [componentHeight, setComponentHeight] = useState(0)
 
     const router = useRouter()
 
     const onLayout = (event: LayoutChangeEvent) => {
-        const { height } = event.nativeEvent.layout;
-        setComponentHeight(height);
-    };
+        const { height } = event.nativeEvent.layout
+        setComponentHeight(height)
+    }
 
-    const [pickedDays, setPickedDays] = useState<number | number[]>(7);
+    const [pickedDays, setPickedDays] = useState<number | number[]>(7)
 
     // The handler function's parameter is typed to match the child's output
     const handleSelectionChange = useCallback((days: number | number[]) => {
-        console.log('Selection changed:', days);
-        setPickedDays(days);
-    },[]);
+        console.log('Selection changed:', days)
+        setPickedDays(days)
+    },[])
 
     const {theme, layout} = useStyle()
 
     return(
-        <View style={[{paddingTop: paddingTop, marginTop: 4}, SStyles.mainContainer]}>
+        <View
+            style={{
+                paddingTop: paddingTop,
+                marginTop: 4,
+                flex: 1,
+                padding: 16,
+                gap: 12
+            }}
+        >
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
                 <GroupView>
@@ -74,7 +81,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: "red"
   },
-});
+})
 
 /**
  * 
