@@ -22,7 +22,9 @@ export default function EmptyView({icon, title, subtitle}: EmptyViewProps) {
                 paddingHorizontal: 16
             }}
         >
+            
             {icon}
+            
             <View style={{gap: 4}}>
                 <Text
                     style={{

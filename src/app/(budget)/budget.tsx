@@ -106,7 +106,7 @@ export default function BudgetScreen() {
                 <EmptyView
                     icon={
                         <AppIcon
-                            name={"chart.pie.fill"}
+                            name={"dollarsign.gauge.chart.leftthird.topthird.rightthird"}
                             androidName={"pie-chart"}
                             size={70}
                             tintColor={theme.colors.indigo}

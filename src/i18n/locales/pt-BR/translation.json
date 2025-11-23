@@ -138,7 +138,7 @@
     "budget": {
         "empty": {
             "title": "Defina seu orçamento",
-            "description": "Registre um valor como meta de gastos e veja seu progresso ao longo do período que você definir."
+            "description": "Registre um valor como meta de gastos mensal e veja seu desempenho ao longo dos meses."
         },
         "tile": {
             "noBudget": "Nenhum orçamento configurado ainda.",
@@ -183,6 +183,24 @@
         }
     },
     "recurring": {
+        "income": {
+            "empty": {
+                "title": "Receitas recorrentes",
+                "description": "Veja todas as suas receitas recorrentes e o total estimado para o mês"
+            },
+            "allTransactions": "Todas as receitas recorrentes",
+            "newTransaction": "Adicionar nova transação",
+            "showDistribution": "Mostrar distribuição"
+        },
+        "expenses": {
+            "empty": {
+                "title": "Despesas recorrentes",
+                "description": "Veja todas as suas despesas recorrentes e o total estimado para o mês"
+            },
+            "allTransactions": "Todas as despesas recorrentes",
+            "newTransaction": "Adicionar nova transação",
+            "showDistribution": "Mostrar distribuição"
+        },
         "categoryBreakdown": {
             "incomeTitle": "Principais categorias de receitas recorrentes",
             "expenseTitle": "Principais categorias de despesas recorrentes",
