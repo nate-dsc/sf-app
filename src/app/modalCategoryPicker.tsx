@@ -1,7 +1,7 @@
 import GSelectionList from "@/components/grouped-list-components/GroupedSelectionList"
 import { useNewTransaction } from "@/context/NewTransactionContext"
 import { useStyle } from "@/context/StyleContext"
-import { GSListItem } from "@/types/components"
+import { GSListItem } from "@/types/Components"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useState } from "react"

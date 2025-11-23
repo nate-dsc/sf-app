@@ -1,7 +1,7 @@
 
 import { useStyle } from "@/context/StyleContext"
 import { FONT_SIZE } from "@/styles/Fonts"
-import { GroupedComponentsProps } from "@/types/components"
+import { GroupedComponentsProps } from "@/types/Components"
 import React, { ReactNode } from "react"
 import { Text, TouchableWithoutFeedback, View } from "react-native"
 import { AppIcon } from "../AppIcon"

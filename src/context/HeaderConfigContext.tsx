@@ -28,7 +28,7 @@ const headerConfigByRoute: Record<string, Partial<HeaderConfig>> = {
     retirement: { headerBackgroundColor: "cyan" },
     "(credit)/credit": { headerBackgroundColor: "brown" },
     "(credit)/[cardId]": { headerBackgroundColor: "brown" },
-    "(credit)/addCreditCard": { headerBackgroundColor: undefined },
+    "(credit)/modalAddCreditCard": { headerBackgroundColor: undefined },
     "(credit)/modalAddInstallmentPurchase": { headerBackgroundColor: undefined },
     "(credit)/cardPurchases": { headerBackgroundColor: undefined },
     modalAdd: { headerBackgroundColor: undefined },

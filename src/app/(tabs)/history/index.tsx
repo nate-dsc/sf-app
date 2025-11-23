@@ -10,7 +10,7 @@ import TransactionModal from "@/components/history-screen-items/TransactionList/
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useStyle } from "@/context/StyleContext"
-import { SCOption } from "@/types/components"
+import { SCOption } from "@/types/Components"
 import { Transaction, TransactionTypeFilter } from "@/types/Transactions"
 
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"

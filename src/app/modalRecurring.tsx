@@ -8,7 +8,7 @@ import SegmentedControlCompact from '@/components/recurrence-modal-items/Segment
 import Stepper from '@/components/recurrence-modal-items/Stepper';
 import { useNewTransaction } from '@/context/NewTransactionContext';
 import { useStyle } from '@/context/StyleContext';
-import { SCOption } from '@/types/components';
+import { SCOption } from '@/types/Components';
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';

@@ -85,7 +85,7 @@ export default function PlanningScreen() {
                                     />
                                 }
                                 color={theme.colors.green}
-                                onPress={() => router.push("/(credit)/addCreditCard")}
+                                onPress={() => router.push("/(credit)/modalAddCreditCard")}
                             />
                         </View>
                         <View style={{flex:1}}>

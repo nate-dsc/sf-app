@@ -221,7 +221,7 @@ function RootLayoutNav() {
                             }}
                         />
                         <Stack.Screen
-                            name="(credit)/addCreditCard"
+                            name="(credit)/modalAddCreditCard"
                             options={{
                                 title: t("nav.credit.new"),
                                 presentation: "formSheet",

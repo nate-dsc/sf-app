@@ -1,5 +1,5 @@
 import { useStyle } from "@/context/StyleContext";
-import { SCOption } from "@/types/components";
+import { SCOption } from "@/types/Components";
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 

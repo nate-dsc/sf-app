@@ -1,7 +1,7 @@
 import GroupView from "@/components/grouped-list-components/GroupView"
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import { useStyle } from "@/context/StyleContext"
-import { GSListItem } from "@/types/components"
+import { GSListItem } from "@/types/Components"
 import { Ionicons } from "@expo/vector-icons"
 import React from "react"
 import { View } from "react-native"

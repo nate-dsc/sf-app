@@ -1,6 +1,6 @@
 import { useSearchFilters } from "@/context/SearchFiltersContext"
 import { useStyle } from "@/context/StyleContext"
-import { SCOption } from "@/types/components"
+import { SCOption } from "@/types/Components"
 import { FilterOrderBy, FilterSortBy } from "@/types/Transactions"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
