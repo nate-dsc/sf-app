@@ -138,13 +138,27 @@ export default function SettingsScreen() {
                 />
                 <GRedir
                     separator="translucent"
-                    icon="sync-outline"
+                    leadingIcon={
+                        <AppIcon
+                            name={"arrow.triangle.2.circlepath"}
+                            androidName={"sync"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
                     leadingLabel="Modal recorrência"
                     onPress={() => { router.push("/modalRecurring") }}
                 />
                 <GRedir
                     separator="none"
-                    icon="list-outline"
+                    leadingIcon={
+                        <AppIcon
+                            name={"list.bullet"}
+                            androidName={"format-list-bulleted"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
                     leadingLabel="Modal categorias"
                     onPress={() => { router.push("/modalCategoryPicker") }}
                 />
@@ -156,8 +170,15 @@ export default function SettingsScreen() {
             <GroupView>
                 <GRedir
                     separator="none"
-                    icon="grid-outline"
-                    label={t("settings.database.inspectTables", { defaultValue: "Visualizar tabelas" })}
+                    leadingIcon={
+                        <AppIcon
+                            name={"square.grid.2x2"}
+                            androidName={"grid-view"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel={t("settings.database.inspectTables", { defaultValue: "Visualizar tabelas" })}
                     onPress={() => {
                         router.push("/settingsDatabase")
                     }}
@@ -167,38 +188,80 @@ export default function SettingsScreen() {
             <GroupView>
                 <GRedir
                     separator="translucent"
-                    icon="trash-outline"
-                    label="Resetar Banco de Dados"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Banco de Dados"
                     onPress={resetDatabaseDB}
                 />
                 <GRedir
                     separator="translucent"
-                    icon="trash-outline"
-                    label="Resetar Transações"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Transações"
                     onPress={resetTransactionsDB}
                 />
                 <GRedir
                     separator="translucent"
-                    icon="trash-outline"
-                    label="Resetar Transações Recorrentes"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Transações Recorrentes"
                     onPress={resetRecurringTransactionsDB}
                 />
                 <GRedir
                     separator="translucent"
-                    icon="trash-outline"
-                    label="Resetar Transações Recorrentes em Cascata"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Transações Recorrentes em Cascata"
                     onPress={resetRecurringTransactionsCascadeDB}
                 />
                 <GRedir
                     separator="translucent"
-                    icon="trash-outline"
-                    label="Resetar Cartões"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Cartões"
                     onPress={resetCreditCardsDB}
                 />
                 <GRedir
                     separator="none"
-                    icon="trash-outline"
-                    label="Resetar Orçamentos"
+                    leadingIcon={
+                        <AppIcon
+                            name={"trash"}
+                            androidName={"delete-outline"}
+                            size={29}
+                            tintColor={theme.text.label}
+                        />
+                    }
+                    leadingLabel="Resetar Orçamentos"
                     onPress={resetBudgetsDB}
                 />
             </GroupView>
