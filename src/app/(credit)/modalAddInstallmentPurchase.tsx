@@ -1,3 +1,5 @@
+import LabeledButton from "@/components/buttons/LabeledButton"
+import PrimaryButton from "@/components/buttons/PrimaryButton"
 import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
 import GDateInput from "@/components/grouped-list-components/GroupedDateInput"
 import GPopup from "@/components/grouped-list-components/GroupedPopup"
@@ -245,12 +247,23 @@ export default function AddInstallmentPurchaseModal() {
                     )}
                 </View>
             </GroupView>
-
-            <CancelSaveButtons
-                cancelAction={() => router.back()}
-                primaryAction={handleSave}
-                isPrimaryActive={isValidAsInstallmentPurchase && !cardsLoading}
-            />
+            
+            <View style={{ flexDirection: "row", gap: 16 }}>
+                <View style={{flex: 1}}>
+                    <LabeledButton
+                        label={t("buttons.cancel")}
+                        onPress={() => router.back()}
+                        disabled={false}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <PrimaryButton
+                        label={t("buttons.save")}
+                        onPress={handleSave}
+                        disabled={!(isValidAsInstallmentPurchase && !cardsLoading)}
+                    />
+                </View>
+            </View>
         </ScrollView>
     )
 }

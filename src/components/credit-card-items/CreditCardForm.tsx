@@ -1,4 +1,3 @@
-import CancelSaveButtons from "@/components/buttons/CancelSaveCombo"
 import CreditCardView from "@/components/credit-card-items/CreditCardView"
 import DayPickerModal from "@/components/credit-card-items/DayPickerModal"
 import GPopup from "@/components/grouped-list-components/GroupedPopup"
@@ -8,11 +7,13 @@ import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import SimpleColorPicker from "@/components/pickers/SimpleColorPicker"
 import { useStyle } from "@/context/StyleContext"
 import { getColorFromID, getIDfromColor } from "@/utils/CardUtils"
-import { useTranslation } from "react-i18next"
-import { useState } from "react"
-import { Alert, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { Alert, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import LabeledButton from "../buttons/LabeledButton"
+import PrimaryButton from "../buttons/PrimaryButton"
 
 export type CreditCardFormValues = {
     name: string
@@ -227,8 +228,21 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                 <Text style={{ color: colors.red, textAlign: "center" }}>{errorMessage}</Text>
             ) : null}
 
-            <View>
-                <CancelSaveButtons cancelAction={onCancel} primaryAction={handleSave} isPrimaryActive={isPrimaryActive} />
+            <View style={{ flexDirection: "row", gap: 16 }}>
+                <View style={{flex: 1}}>
+                    <LabeledButton
+                        label={t("buttons.cancel")}
+                        onPress={onCancel}
+                        disabled={false}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <PrimaryButton
+                        label={t("buttons.save")}
+                        onPress={handleSave}
+                        disabled={!isPrimaryActive}
+                    />
+                </View>
             </View>
 
             <Modal

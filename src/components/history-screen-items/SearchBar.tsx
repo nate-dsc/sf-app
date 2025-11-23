@@ -11,6 +11,7 @@ export default function SearchBar({...rest}: TextInputProps) {
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
+            height: 48,
             backgroundColor: theme.fill.tertiary,
             borderRadius: 100, 
             paddingLeft: 11,
@@ -23,8 +24,6 @@ export default function SearchBar({...rest}: TextInputProps) {
                 style={{
                     flex: 1,
                     fontSize: 17,
-                    lineHeight: 20,
-                    paddingVertical: 14,
                     color: theme.text.label
                 }}
                 placeholder="Search"

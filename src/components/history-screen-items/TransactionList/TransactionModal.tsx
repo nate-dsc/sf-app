@@ -1,7 +1,10 @@
-import { FontStyles } from "@/components/styles/FontStyles"
+//import { FontStyles } from "@/components/styles/FontStyles"
+import DestructiveButton from "@/components/buttons/DestructiveButton"
+import PrimaryButton from "@/components/buttons/PrimaryButton"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { Transaction } from "@/types/Transactions"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDate } from "@/utils/DateUtils"
@@ -10,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
+import { Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native"
 
 type TransactionModalProps = {
     transaction: Transaction | null,
@@ -23,15 +26,14 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
 
     const {t} = useTranslation()
     const {theme} = useStyle()
+    const {triggerRefresh} = useSummaryStore()
+    const {removeTransaction, getRRULE} = useDatabase()
+
     const value = transaction!.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
-    const {triggerRefresh} = useSummaryStore()
-
-    const [rruleDescription, setRruleDescription] = useState<string | null>(null)
-
     const category = findCategoryByID(transaction!.category, transaction.type)
 
-    const { removeTransaction, getRRULE } = useDatabase()
+    const [rruleDescription, setRruleDescription] = useState<string | null>(null)
 
     const handleDeletion = async (id: number) => {
         try {
@@ -104,28 +106,33 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                     </View>
                     
                     <Text 
-                        style={[
-                            {textAlign: "right", color: theme.text.label},
-                            FontStyles.numLargeTitle
-                        ]}
+                        style={{
+                            textAlign: "right",
+                            color: theme.text.label,
+                            fontVariant: ["tabular-nums"],
+                            fontSize: FONT_SIZE.LARGE_TITLE
+                        }}
                     >
                         {valueStr}
                     </Text>
 
                     <View style={{paddingBottom: 14}}>
                         <Text
-                            style={[
-                                {textAlign: "left", color: theme.text.secondaryLabel, paddingBottom: 6},
-                                FontStyles.subhead
-                            ]}
+                            style={{
+                                textAlign: "left",
+                                color: theme.text.secondaryLabel,
+                                paddingBottom: 6,
+                                fontSize: FONT_SIZE.SUBHEAD
+                            }}
                         >
                             Sobre essa transação:
                         </Text>
                         <Text 
-                            style={[
-                                {textAlign: "justify", color: theme.text.secondaryLabel},
-                                FontStyles.subhead
-                            ]}
+                            style={{
+                                textAlign: "justify",
+                                color: theme.text.secondaryLabel,
+                                fontSize: FONT_SIZE.SUBHEAD
+                            }}
                         >
                             {transaction.description || ""}
                         </Text>
@@ -134,16 +141,19 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                     {rruleDescription ?
                         <View style={{paddingBottom: 14}}>
                             <Text
-                                style={[
-                                    {textAlign: "left", color: theme.text.secondaryLabel, paddingBottom: 6},
-                                    FontStyles.subhead
-                                ]}
+                                style={{
+                                    textAlign: "left",
+                                    color: theme.text.secondaryLabel,
+                                    paddingBottom: 6,
+                                    fontSize: FONT_SIZE.SUBHEAD
+                                }}
                             >Essa transação é recorrente com frequência:</Text>
                             <Text 
-                                style={[
-                                    {textAlign: "justify", color: theme.text.secondaryLabel},
-                                    FontStyles.subhead
-                                ]}
+                                style={{
+                                    textAlign: "justify",
+                                    color: theme.text.secondaryLabel,
+                                    fontSize: FONT_SIZE.SUBHEAD
+                                }}
                             >{rruleDescription || ""}</Text>
                         </View> :
                         null
@@ -154,38 +164,22 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                 <View 
                     style={{
                         flexDirection: "row",
-                        alignItems: "center",
                         gap: 16,
+                        marginTop: 30
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={() => handleDeletion(transaction.id)}
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 100,
-                            paddingVertical: 13,
-                            backgroundColor: theme.fill.secondary
-                        }}
-                    >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.red}]}>Apagar</Text>
-                    </TouchableOpacity>
-
-                    
-                    <TouchableOpacity
-                        onPress={onBackgroundPress}
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 100,
-                            paddingVertical: 13,
-                            backgroundColor: theme.colors.blue
-                        }}
-                    >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Fechar</Text>
-                    </TouchableOpacity>
+                    <View style={{flex: 1}}>
+                        <DestructiveButton
+                            onPress={() => handleDeletion(transaction.id)}
+                            label={"Apagar"}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <PrimaryButton
+                            label={"Fechar"}
+                            onPress={onBackgroundPress}
+                        />
+                    </View>
                 </View>
             </View>
             </TouchableWithoutFeedback>

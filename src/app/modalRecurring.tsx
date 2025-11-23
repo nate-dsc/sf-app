@@ -1,4 +1,5 @@
-import CancelSaveButtons from '@/components/buttons/CancelSaveCombo';
+import LabeledButton from '@/components/buttons/LabeledButton';
+import PrimaryButton from '@/components/buttons/PrimaryButton';
 import GDateInput from '@/components/grouped-list-components/GroupedDateInput';
 import GSelectionList from '@/components/grouped-list-components/GroupedSelectionList';
 import DayPicker from '@/components/recurrence-modal-items/DayPicker';
@@ -465,11 +466,21 @@ export default function ModalRecurring() {
             {renderMonthlySelector()}
             {renderEndConditionSelector()}
 
-            <CancelSaveButtons 
-                cancelAction={() => {router.back()}}
-                primaryAction={handleConfirm}
-                isPrimaryActive={true}
-            />
+            
+            <View style={{ flexDirection: "row", gap: 16 }}>
+                <View style={{flex: 1}}>
+                    <LabeledButton
+                        label={t("buttons.cancel")}
+                        onPress={() => {router.back()}}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <PrimaryButton
+                        label={t("buttons.save")}
+                        onPress={handleConfirm}
+                    />
+                </View>
+            </View>
         </ScrollView>
     )
 };

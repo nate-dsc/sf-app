@@ -1,3 +1,5 @@
+import DestructiveButton from "@/components/buttons/DestructiveButton"
+import PrimaryButton from "@/components/buttons/PrimaryButton"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
@@ -9,7 +11,7 @@ import { describeRRule } from "@/utils/RRULEUtils"
 import { Ionicons } from "@expo/vector-icons"
 import { BlurView } from "expo-blur"
 import { useTranslation } from "react-i18next"
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native"
+import { Alert, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native"
 
 type RecurringTransactionModalProps = {
     transaction: RecurringTransaction | null,
@@ -182,38 +184,22 @@ export default function RecurringTransactionModal({transaction, onBackgroundPres
                 <View 
                     style={{
                         flexDirection: "row",
-                        alignItems: "center",
                         gap: 16,
+                        marginTop: 30
                     }}
                 >
-                    <TouchableOpacity
-                        onPress={showAlert}
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 100,
-                            paddingVertical: 13,
-                            backgroundColor: theme.fill.secondary
-                        }}
-                    >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.red}]}>Apagar</Text>
-                    </TouchableOpacity>
-
-                    
-                    <TouchableOpacity
-                        onPress={onBackgroundPress}
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            borderRadius: 100,
-                            paddingVertical: 13,
-                            backgroundColor: theme.colors.blue
-                        }}
-                    >
-                        <Text style={[FontStyles.body, {fontWeight: "500", color: theme.colors.white}]}>Fechar</Text>
-                    </TouchableOpacity>
+                    <View style={{flex: 1}}>
+                        <DestructiveButton
+                            onPress={showAlert}
+                            label={"Apagar"}
+                        />
+                    </View>
+                    <View style={{flex: 1}}>
+                        <PrimaryButton
+                            label={"Fechar"}
+                            onPress={onBackgroundPress}
+                        />
+                    </View>
                 </View>
             </View>
             </TouchableWithoutFeedback>
