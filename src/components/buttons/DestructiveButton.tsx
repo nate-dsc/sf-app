@@ -41,6 +41,7 @@ export default function DestructiveButton({label, onPress, disabled = false, bac
         >
             <Text
                 style={{
+                    textAlign: "center",
                     fontSize: FONT_SIZE.BODY,
                     fontWeight: FONT_WEIGHT.MEDIUM,
                     color: labelColor
