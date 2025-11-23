@@ -3,19 +3,17 @@ import LabeledButton from "@/components/buttons/LabeledButton"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import GroupView from "@/components/grouped-list-components/GroupView"
-import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
-import { FONT_SIZE } from "@/styles/Fonts"
 import { SCOption } from "@/types/Components"
 import { BudgetPeriod } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Alert, ScrollView, Text, View } from "react-native"
+import { Alert, ScrollView, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const allowedPeriods: BudgetPeriod[] = ["weekly", "monthly"]
@@ -142,35 +140,6 @@ export default function BudgetEditScreen() {
                 }}
                 keyboardShouldPersistTaps="handled"
             >
-                {storedBudget ? (
-                    <DestructiveButton
-                        label={t("budget.form.removeButton")}
-                        onPress={handleRemove}
-                        disabled={submitting}
-                    />
-                ) : null}
-
-                {formError ? (
-                    <Text style={{ fontSize: FONT_SIZE.FOOTNOTE, color: theme.colors.red }}>{formError}</Text>
-                ) : null}
-
-                <View style={{ marginTop: 30, gap: layout.margin.innerSectionGap }}>
-                    <Text
-                        style={{
-                            fontSize: 17,
-                            paddingHorizontal: layout.margin.contentArea,
-                            color: theme.text.label,
-                        }}
-                    >
-                        {t("budget.form.period")}
-                    </Text>
-                    <SegmentedControlCompact
-                        options={frequencyOptions}
-                        selectedValue={period}
-                        onChange={(value) => setPeriod(value as BudgetPeriod)}
-                    />
-                </View>
-
                 <GroupView>
                     <GValueInput
                         separator="none"
@@ -192,11 +161,19 @@ export default function BudgetEditScreen() {
                 <View style={{ marginTop: 30, gap: 10 }}>
                     <View style={{ flexDirection: "row", gap: 16 }}>
                         <View style={{flex: 1}}>
-                            <LabeledButton
-                                label={t("buttons.cancel")}
-                                onPress={handleClose}
-                                disabled={submitting}
-                            />
+                            {storedBudget ? (
+                                <DestructiveButton
+                                    label={t("buttons.delete")}
+                                    onPress={handleRemove}
+                                    disabled={submitting}
+                                />
+                            ) : (
+                                <LabeledButton
+                                    label={t("buttons.cancel")}
+                                    onPress={handleClose}
+                                    disabled={submitting}
+                                />
+                            )}
                         </View>
                         <View style={{flex: 1}}>
                             <PrimaryButton
