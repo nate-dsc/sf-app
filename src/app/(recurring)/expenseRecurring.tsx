@@ -20,21 +20,29 @@ import { ActivityIndicator, Modal, View } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function ExpenseRecurringScreen() {
+    //Style hooks
+    const headerHeight = useHeaderHeight()
+    const insets = useSafeAreaInsets()
+    const {theme, layout} = useStyle()
+    //Translation
+    const {t} = useTranslation()
+    //Stores
+    const refreshKey = useSummaryStore((state) => state.refreshKey)
+    //Database hooks
     const { getRecurringSummaryThisMonth } = useDatabase()
+    //Router
+    const router = useRouter()
+    //States
     const [loading, setLoading] = useState(true)
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
     const [totalRecurringExpenses, setTotalRecurringExpenses] = useState<number>(0)
-    const [rTModalVisible, setRTModalVisible] = useState(false)
     const [selectedRT, setSelectedRT] = useState<RecurringTransaction | null>(null)
-    const [chartModalVisible, setChartModalVisible] = useState(false)
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
-    const headerHeight = useHeaderHeight()
-    const insets = useSafeAreaInsets()
-    const router = useRouter()
-    const {theme, layout} = useStyle()
-    const refreshKey = useSummaryStore((state) => state.refreshKey)
+    //Modal visibility states
+    const [rTModalVisible, setRTModalVisible] = useState(false)
+    const [chartModalVisible, setChartModalVisible] = useState(false)
+    //Ref for first loading
     const hasLoadedRef = useRef(false)
-    const {t} = useTranslation()
 
     const loadData = useCallback(async (options?: { showLoading?: boolean }) => {
         const shouldShowLoading = options?.showLoading ?? !hasLoadedRef.current
@@ -69,13 +77,13 @@ export default function ExpenseRecurringScreen() {
         setSelectedRT(null)
     }
 
-    const handleDeleteSuccess = useCallback(() => {
-        void loadData({ showLoading: false })
-    }, [loadData])
-
     const handleChartModalClose = () => {
         setChartModalVisible(false)
     }
+
+    const handleDeleteSuccess = useCallback(() => {
+        void loadData({ showLoading: false })
+    }, [loadData])
 
     const handleEmptyStateNewTransaction = () => {
         router.push("/modalAdd")
