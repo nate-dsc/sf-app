@@ -110,7 +110,10 @@ export default function SettingsDatabaseScreen() {
                     {t("settings.database.noTables", { defaultValue: "Nenhuma tabela encontrada." })}
                 </Text>
             ) : (
-                <GroupView>
+                <GroupView
+                    forceHorizontalPadding={true}
+                    bgType="overBackground"
+                >
                     {tables.map((table, index) => (
                         <GRedir
                             key={table.name}

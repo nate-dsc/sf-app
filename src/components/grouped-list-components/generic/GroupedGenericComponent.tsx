@@ -1,4 +1,3 @@
-
 import { useStyle } from "@/context/StyleContext"
 import { FONT_SIZE } from "@/styles/Fonts"
 import { SeparatorTypes } from "@/types/Components"

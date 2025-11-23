@@ -115,7 +115,7 @@ const opaqueSeparator = "#C6C6C8FF"
 const opaqueSeparatorDark = "#38383AFF"
 
 const vibrantSeparator = "#E6E6E6"
-const vibrantSeparatorDark = "#1A1A1A"
+const vibrantSeparatorDark = "#363638"
 
 const primaryFill = "rgba(120,120,120,0.2)"
 const primaryFillDark =  "rgba(120,120,128,0.36)"

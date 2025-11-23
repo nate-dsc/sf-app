@@ -140,7 +140,10 @@ export default function SettingsDatabaseTableScreen() {
                                 {t("settings.database.noColumns", { defaultValue: "Nenhuma coluna encontrada." })}
                             </Text>
                         ) : (
-                            <GroupView>
+                            <GroupView
+                                forceHorizontalPadding={true}
+                                bgType="overBackground"
+                            >
                                 {columns.map((column, index) => {
                                     const details: string[] = []
 
@@ -193,7 +196,10 @@ export default function SettingsDatabaseTableScreen() {
                                 {t("settings.database.noRows", { defaultValue: "Nenhum registro encontrado." })}
                             </Text>
                         ) : (
-                            <GroupView>
+                            <GroupView
+                                forceHorizontalPadding={true}
+                                bgType="overBackground"
+                            >
                                 {rows.map((row, index) => (
                                     <View
                                         key={`row-${index}`}

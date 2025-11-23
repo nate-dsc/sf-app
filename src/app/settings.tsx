@@ -33,9 +33,6 @@ export default function SettingsScreen() {
     const hasBudget = !!budget
     const effectiveBudgetTileMode = hasBudget ? budgetTileMode : "estimatedBalance"
 
-
-    const paddingTop = useHeaderHeight() + 10
-
     const themeOptions: SCOption<ThemePreference>[] = [
         {label: t("settings.theme.system"), value: "system"},
         {label: t("settings.theme.light"), value: "light"},
@@ -80,9 +77,11 @@ export default function SettingsScreen() {
 
             <Text style={[{color: theme.text.label}, FontStyles.title2]}> Debug </Text>
 
-            <GroupView>
+            <GroupView
+                bgType="overBackground"
+            >
                 <GRedir
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     leadingIcon={
                         <AppIcon
                             name={"hammer.fill"}
@@ -109,9 +108,11 @@ export default function SettingsScreen() {
                 />
             </GroupView>
 
-            <GroupView>
+            <GroupView
+                bgType="overBackground"
+            >
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"lines.measurement.horizontal"}
@@ -124,7 +125,7 @@ export default function SettingsScreen() {
                     onPress={() => { router.push("/measures") }}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"plus.circle"}
@@ -137,7 +138,7 @@ export default function SettingsScreen() {
                     onPress={() => { router.push("/modalAdd") }}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"arrow.triangle.2.circlepath"}
@@ -167,7 +168,9 @@ export default function SettingsScreen() {
             <Text style={[{color: theme.text.label}, FontStyles.headline]}>
                 {t("settings.database.sectionTitle", { defaultValue: "Banco de dados" })}
             </Text>
-            <GroupView>
+            <GroupView
+                bgType="overBackground"
+            >
                 <GRedir
                     separator="none"
                     leadingIcon={
@@ -185,9 +188,11 @@ export default function SettingsScreen() {
                 />
             </GroupView>
 
-            <GroupView>
+            <GroupView
+                bgType="overBackground"
+            >
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"trash"}
@@ -200,7 +205,7 @@ export default function SettingsScreen() {
                     onPress={resetDatabaseDB}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"trash"}
@@ -213,7 +218,7 @@ export default function SettingsScreen() {
                     onPress={resetTransactionsDB}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"trash"}
@@ -226,7 +231,7 @@ export default function SettingsScreen() {
                     onPress={resetRecurringTransactionsDB}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"trash"}
@@ -239,7 +244,7 @@ export default function SettingsScreen() {
                     onPress={resetRecurringTransactionsCascadeDB}
                 />
                 <GRedir
-                    separator="translucent"
+                    separator="vibrant"
                     leadingIcon={
                         <AppIcon
                             name={"trash"}
