@@ -1,4 +1,5 @@
 import { useStyle } from "@/context/StyleContext";
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts";
 import { Text, TouchableOpacity } from "react-native";
 
 type PrimaryButtonProps = {
@@ -19,15 +20,17 @@ export default function PrimaryButton({label, onPress, disabled = false}: Primar
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 100,
+                minHeight: 48,
+                paddingHorizontal: 16,
                 paddingVertical: 13,
+
                 backgroundColor: disabled ? theme.buttons.primary.bgDisabled : theme.buttons.primary.bg
             }}
         >
             <Text
                 style={{
-                    lineHeight: 22,
-                    fontSize: 17,
-                    fontWeight: "500",
+                    fontSize: FONT_SIZE.BODY,
+                    fontWeight: FONT_WEIGHT.MEDIUM,
                     color: disabled ? theme.buttons.primary.labelDisabled : theme.buttons.primary.label
                 }}
             >

@@ -165,7 +165,6 @@ export default function TransactionModal({transaction, onBackgroundPress}: Trans
                     style={{
                         flexDirection: "row",
                         gap: 16,
-                        marginTop: 30
                     }}
                 >
                     <View style={{flex: 1}}>

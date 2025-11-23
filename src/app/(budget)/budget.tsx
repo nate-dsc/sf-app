@@ -1,5 +1,5 @@
 import { AppIcon } from "@/components/AppIcon"
-import BottomButton from "@/components/buttons/BottomButton"
+import MainActionButton from "@/components/buttons/MainActionButton"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
@@ -118,11 +118,13 @@ export default function BudgetScreen() {
                 
             )}
 
-            <BottomButton
-                label={buttonLabel}
-                color={storedBudget ? theme.colors.blue : theme.colors.green}
-                onPress={() => router.push("/(budget)/budgetEdit")}
-            />
+            <View style={{paddingHorizontal: 18}}>
+                <MainActionButton
+                    label={buttonLabel}
+                    color={storedBudget ? theme.colors.blue : theme.colors.green}
+                    onPress={() => router.push("/(budget)/budgetEdit")}
+                />
+            </View>
         </View>
     )
 }

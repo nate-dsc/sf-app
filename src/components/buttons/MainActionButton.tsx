@@ -1,16 +1,17 @@
 import { useStyle } from "@/context/StyleContext"
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts"
 import { Text, TouchableOpacity, View } from "react-native"
 
-type BottomButtonProps = {
+type MainActionButtonProps = {
     label: string,
     onPress?: () => void,
     color?: string,
     labelColor?: string,
 }
 
-export default function BottomButton({label, onPress, color, labelColor}: BottomButtonProps) {
-
+export default function MainActionButton({label, onPress, color, labelColor}: MainActionButtonProps) {
     const {theme, layout} = useStyle()
+    //distance from each side of the screen: 34
 
     return(
         <TouchableOpacity
@@ -18,11 +19,12 @@ export default function BottomButton({label, onPress, color, labelColor}: Bottom
             style={{
                 justifyContent: "center",
                 alignItems: "center",
-                padding: 8,
-                marginHorizontal: 18,
                 borderRadius: layout.radius.round,
-                backgroundColor: color ?? theme.colors.blue,
-                minHeight: 52
+                minHeight: 52,
+                paddingHorizontal: 20,
+                paddingVertical: 6,
+
+                backgroundColor: color ?? theme.colors.blue
             }}
         >
             <View
@@ -33,8 +35,8 @@ export default function BottomButton({label, onPress, color, labelColor}: Bottom
             >
                 <Text
                     style={{
-                        fontSize: 17,
-                        fontWeight: "500",
+                        fontSize: FONT_SIZE.BODY,
+                        fontWeight: FONT_WEIGHT.MEDIUM,
                         color: labelColor ?? theme.colors.white,
                         textAlign: "center"
                     }}

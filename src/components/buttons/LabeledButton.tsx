@@ -1,4 +1,5 @@
 import { useStyle } from "@/context/StyleContext";
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts";
 import { Text, TouchableOpacity } from "react-native";
 
 type LabeledButtonProps = {
@@ -20,14 +21,17 @@ export default function LabeledButton({label, onPress, disabled = false, tinted 
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 100,
-                backgroundColor: theme.fill.tertiary,
-                minHeight: 48
+                minHeight: 48,
+                paddingHorizontal: 16,
+                paddingVertical: 13,
+
+                backgroundColor: theme.fill.tertiary
             }}
         >
                 <Text
                     style={{
-                        fontSize: 17,
-                        fontWeight: "500",
+                        fontSize: FONT_SIZE.BODY,
+                        fontWeight: FONT_WEIGHT.MEDIUM,
                         color: disabled ? theme.text.tertiaryLabel : tinted ? theme.colors.blue : theme.text.label
                     }}
                 >

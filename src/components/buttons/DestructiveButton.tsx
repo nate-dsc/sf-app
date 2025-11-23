@@ -1,4 +1,5 @@
 import { useStyle } from "@/context/StyleContext";
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts";
 import { Text, TouchableOpacity, TouchableOpacityProps } from "react-native";
 
 type DestructiveButtonProps = TouchableOpacityProps & {
@@ -28,19 +29,20 @@ export default function DestructiveButton({label, onPress, disabled = false, bac
             onPress={onPress}
             disabled={disabled}
             style={{
-                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
                 borderRadius: 100,
+                minHeight: 48,
+                paddingHorizontal: 16,
                 paddingVertical: 13,
+
                 backgroundColor: backgroundColor
             }}
         >
             <Text
                 style={{
-                    lineHeight: 22,
-                    fontSize: 17,
-                    fontWeight: "500",
+                    fontSize: FONT_SIZE.BODY,
+                    fontWeight: FONT_WEIGHT.MEDIUM,
                     color: labelColor
                 }}
             >

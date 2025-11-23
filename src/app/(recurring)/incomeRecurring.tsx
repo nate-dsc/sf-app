@@ -1,7 +1,7 @@
 import { AppIcon } from "@/components/AppIcon"
 import BlurredListView from "@/components/BlurredListView"
 import BlurredModalView from "@/components/BlurredModalView"
-import LabeledButton from "@/components/buttons/LabeledButton"
+import MainActionButton from "@/components/buttons/MainActionButton"
 import PrimaryButton from "@/components/buttons/PrimaryButton"
 import EmptyView from "@/components/EmptyView"
 import MonthlyRecurringSummaryDisplay from "@/components/recurring-screens-items/MonthlySummaryDisplay"
@@ -134,12 +134,6 @@ export default function IncomeRecurringScreen() {
                     <MonthlyRecurringSummaryDisplay
                         monthlyTotal={totalRecurringIncome}
                     />
-
-                    <LabeledButton
-                        label={t("recurring.income.showDistribution")}
-                        onPress={() => setChartModalVisible(true)}
-                        tinted={false}
-                    />
                     
                     <BlurredListView
                         title={t("recurring.income.allTransactions")}
@@ -149,6 +143,15 @@ export default function IncomeRecurringScreen() {
                             onItemPress={handleItemPress}
                         />
                     </BlurredListView>
+
+                    <View style={{paddingHorizontal: 18}}>
+                        <MainActionButton
+                            label={t("recurring.income.showDistribution")}
+                            color={theme.colors.green}
+                            onPress={() => setChartModalVisible(true)}
+                        />
+                    </View>
+                    
 
                 </View>
             ) : (
@@ -190,6 +193,7 @@ export default function IncomeRecurringScreen() {
                     <PrimaryButton label={t("buttons.return")} onPress={handleChartModalClose}/>
                 </BlurredModalView>
             </Modal>
+
         </View>
     )
 }
