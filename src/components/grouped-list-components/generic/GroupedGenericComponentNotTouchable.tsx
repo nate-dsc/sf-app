@@ -5,7 +5,7 @@ import { SeparatorTypes } from "@/types/components"
 import React, { ReactNode } from "react"
 import { Text, View } from "react-native"
 
-type GroupedGenericComponentNotTouchableProps = {
+export type GroupedGenericComponentNotTouchableProps = {
     leadingIcon?: ReactNode,
     leadingLabel?: string,
     trailingLabel?: string,

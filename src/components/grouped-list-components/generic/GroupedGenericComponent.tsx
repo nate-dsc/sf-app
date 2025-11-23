@@ -11,11 +11,12 @@ export type GroupedGenericComponentProps = {
     onPress: () => void,
     disabled?: boolean,
     trailingLabel?: string,
+    trailingItem?: ReactNode,
     trailingIcon?: ReactNode,
     separator: SeparatorTypes
 }
 
-export default function GroupedGenericComponent({leadingIcon, leadingLabel, onPress, disabled, trailingLabel, trailingIcon, separator}: GroupedGenericComponentProps) {
+export default function GroupedGenericComponent({leadingIcon, leadingLabel, onPress, disabled, trailingLabel, trailingItem, trailingIcon, separator}: GroupedGenericComponentProps) {
 
     const {theme} = useStyle()
 
@@ -76,7 +77,8 @@ export default function GroupedGenericComponent({leadingIcon, leadingLabel, onPr
                                     flexDirection: "row",
                                     justifyContent: "flex-start",
                                     alignItems: "center",
-                                    minHeight: 51
+                                    minHeight: 51,
+                                    paddingVertical: 8
                                 }}
                             >
                                 <Text 
@@ -119,6 +121,16 @@ export default function GroupedGenericComponent({leadingIcon, leadingLabel, onPr
                                 >
                                     {trailingLabel}
                                 </Text>
+                            </View>
+                            : null}
+                            {trailingItem ?
+                            <View
+                                style={{
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {trailingItem}
                             </View>
                             : null}
                             {trailingIcon ?

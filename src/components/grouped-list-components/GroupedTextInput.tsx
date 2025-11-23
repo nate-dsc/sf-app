@@ -24,7 +24,11 @@ export default function GTextInput({separator, label, acViewKey, labelFlex = 1, 
     ]
     
     return(
-        <View>
+        <View
+            style={{
+                paddingHorizontal: 16
+            }}
+        >
             <View 
                 style={{
                     flexDirection: "row",

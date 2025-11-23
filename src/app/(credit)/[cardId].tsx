@@ -119,7 +119,7 @@ export default function CreditCardDetailsScreen() {
             ) : null}
 
             {card ? (
-                <GroupView style={{ gap: layout.margin.innerSectionGap, paddingVertical: layout.margin.contentArea }}>
+                <GroupView>
                     <View style={{ gap: 4 }}>
                         <Text style={[FontStyles.caption1, { color: theme.text.secondaryLabel }]}>Limite disponível</Text>
                         <Text style={[FontStyles.title2, { color: theme.text.label }]}>

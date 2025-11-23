@@ -1,4 +1,5 @@
-import GButton from "@/components/grouped-list-components/GroupedLabeledButton"
+import { AppIcon } from "@/components/AppIcon"
+import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import { useStyle } from "@/context/StyleContext"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -42,13 +43,18 @@ export default function MeasuresScreen() {
 
             <View onLayout={onLayout} style={styles.measuredComponent}>
                 <GroupView>
-                    <GButton
-                        separator={"none"}
-                        label={"Teste"}
-                        onPress={() => {console.log("botao apertado")}}
-                        buttonLabel="Label"
-                        buttonIcon="chevron-forward"
-                        isAccented={false}
+                    <GRedir
+                        separator="none"
+                        leadingIcon={
+                            <AppIcon
+                                name={"trash"}
+                                androidName={"delete-outline"}
+                                size={29}
+                                tintColor={theme.text.label}
+                            />
+                        }
+                        leadingLabel="Resetar Transações "
+                        onPress={() => {}}
                     />
                 </GroupView>
             </View>

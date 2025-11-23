@@ -173,25 +173,29 @@ export default function AddModal() {
                     maxLength={20}
                 />
                 <GDateInput
-                    separator="translucent"
-                    label={t("modalAdd.date")}
+                    separator="none"
+                    leadingLabel={t("modalAdd.date")}
                     value={newDate}
                     onDateChange={(date) => {
                         updateNewTransaction({ date: date })
                         setNewDate(date)
                     }}
                 />
+            </GroupView>
+            <GroupView>
                 <GPopup
-                    separator={"translucent"}
-                    label={t("modalAdd.category")}
+                    separator={"none"}
+                    leadingLabel={t("modalAdd.category")}
                     displayValue={
                         newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
                     }
                     onPress={() => {router.push("/modalCategoryPicker")}}
                 />
+            </GroupView>
+            <GroupView>
                 <GPopup
                     separator={"none"}
-                    label={t("modalAdd.recurring")}
+                    leadingLabel={t("modalAdd.recurring")}
                     displayValue={newTransaction.rrule ? t("modalAdd.Yes") : t("modalAdd.No")}
                     onPress={() => {router.push("/modalRecurring")}}
                 />
@@ -209,11 +213,11 @@ export default function AddModal() {
 
             <GroupView>
                 <GSwitch
-                    separator={useCreditCard ? "translucent" : "none"}
-                    label={t("modalAdd.useCredit")}
+                    leadingLabel={t("modalAdd.useCredit")}
                     value={useCreditCard}
                     onValueChange={handleToggleCredit}
                     disabled={newTransaction.type === "in"}
+                    separator={useCreditCard ? "translucent" : "none"}
                 />
                 {useCreditCard ? (
                     <View style={{ paddingTop: 12, paddingBottom: 16 }}>

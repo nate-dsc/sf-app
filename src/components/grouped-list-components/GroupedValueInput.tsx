@@ -128,7 +128,11 @@ export default function GValueInput({separator, label, acViewKey, onChangeNumVal
     }, [currency, isFocused, locale, parseRawTextToNumber, textValue, transactionType])
 
     return(
-        <View>
+        <View
+            style={{
+                paddingHorizontal: 16
+            }}
+        >
             <View style={{flexDirection: "row", justifyContent: "space-between", paddingTop: 15, paddingBottom: 14, gap: 8}}>
                 <Text 
                     style={{

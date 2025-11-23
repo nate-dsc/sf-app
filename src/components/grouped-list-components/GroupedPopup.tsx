@@ -1,108 +1,74 @@
-
 import { useStyle } from "@/context/StyleContext"
 import { FONT_SIZE } from "@/styles/Fonts"
-import { GroupedComponentsProps } from "@/types/components"
-import { Ionicons } from "@expo/vector-icons"
 import React from "react"
 import { useTranslation } from "react-i18next"
-import { Text, TouchableWithoutFeedback, View } from "react-native"
+import { Text, View } from "react-native"
+import { AppIcon } from "../AppIcon"
+import GroupedGenericComponent, { GroupedGenericComponentProps } from "./generic/GroupedGenericComponent"
 
-type GPopupProps = GroupedComponentsProps & {
-    label: string,
+type GPopupProps = GroupedGenericComponentProps & {
     displayValue?: string,
-    onPress: () => void,
-    labelFlex?: number,
-    fieldFlex?: number
 }
 
-export default function GPopup({separator, label, displayValue, onPress, labelFlex = 1, fieldFlex = 1}: GPopupProps) {
+export default function GPopup({displayValue, ...rest}: GPopupProps) {
 
     const {theme} = useStyle()
     const {t} = useTranslation()
 
-    const separatorTypes = [
-        {separator: "opaque", color: theme.separator.opaque},
-        {separator: "translucent", color: theme.separator.translucent},
-        {separator: "vibrant", color: theme.separator.vibrant},
-        {separator: "translucent", color: "transparent"}
-    ]
-
     return(
-        <View>
-            <View
-                style={{
-                    flexDirection: "row",
-                    minHeight: 51,
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: 8
-                }}
-            >
-                
-                <Text 
-                    style={{
-                        flex: labelFlex,
-                        fontSize: FONT_SIZE.BODY,
-                        color: theme.text.label
-                    }}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                >
-                    {label}
-                </Text>
-                
-                <TouchableWithoutFeedback
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                        alignItems: "center",
-                        gap: 8
-                    }}
-                    onPress={onPress}
-                >
-                    {displayValue ? (
-                        <View
+        <GroupedGenericComponent
+            trailingItem={
+                displayValue ? (
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                            minHeight: 51,
+                            maxWidth: 100,
+                        }}
+                    >
+                        <Text 
                             style={{
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                                alignItems: "center",
-                                gap: 8
+                                textAlign: "right",
+                                fontSize: FONT_SIZE.BODY,
+                                color: theme.text.label
                             }}
                         >
-                            <Text 
-                                style={{
-                                    fontSize: FONT_SIZE.BODY,
-                                    color: theme.text.label
-                                }}
-                            >
-                                {displayValue}
-                            </Text>
-                            <Ionicons name="chevron-expand" size={18} color={theme.text.label}/>
-                        </View>
-                    ) : (
-                        <View
+                            {displayValue}
+                        </Text>
+                    </View>
+                ) : ( 
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "flex-end",
+                            alignItems: "center",
+                            minHeight: 51,
+                            maxWidth: 100,
+                        }}
+                    >
+                        <Text 
                             style={{
-                                flexDirection: "row",
-                                justifyContent: "flex-end",
-                                alignItems: "center",
-                                gap: 8
+                                textAlign: "right",
+                                fontSize: FONT_SIZE.BODY,
+                                color: theme.text.secondaryLabel
                             }}
                         >
-                            <Text 
-                                style={{
-                                    fontSize: FONT_SIZE.BODY,
-                                    color: theme.text.secondaryLabel
-                                }}
-                            >
-                                {displayValue || t("modalAdd.select")}
-                            </Text>
-                            <Ionicons name="chevron-expand" size={18} color={theme.text.secondaryLabel}/>
-                        </View>
-                    )}
-                </TouchableWithoutFeedback>
-            </View>
-            <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
-
-        </View>
+                            {displayValue || t("modalAdd.select")}
+                        </Text>
+                    </View>
+                )
+            }
+            trailingIcon={
+                <AppIcon
+                    name={"chevron.up.chevron.down"}
+                    androidName={"unfold-more"}
+                    size={18}
+                    tintColor={theme.text.secondaryLabel}
+                />
+            }
+            {...rest}
+        />
     )
 }

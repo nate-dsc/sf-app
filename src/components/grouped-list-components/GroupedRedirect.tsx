@@ -19,7 +19,7 @@ export default function GRedir({overrideChevron = "default", ...rest}: GRedirPro
                     name={"checkmark"}
                     androidName={"check"}
                     size={20}
-                    tintColor={theme.text.secondaryLabel}
+                    tintColor={theme.colors.blue}
                 />
             )
         return (

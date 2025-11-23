@@ -1,48 +1,27 @@
 
-import { useStyle } from "@/context/StyleContext"
-import { GroupedComponentsProps } from "@/types/components"
 import React from "react"
-import { Switch, Text, View } from "react-native"
+import { Switch } from "react-native"
+import GroupedGenericComponentNotTouchable, { GroupedGenericComponentNotTouchableProps } from "./generic/GroupedGenericComponentNotTouchable"
 
-type GSwitchProps = GroupedComponentsProps & {
-    label: string,
+type GSwitchProps = GroupedGenericComponentNotTouchableProps & {
     value: boolean,
     onValueChange: (value: boolean) => void,
     disabled?: boolean
 }
 
-export default function GSwitch({separator, label, value, onValueChange, disabled = false}: GSwitchProps) {
-
-    const {theme} = useStyle()
-
-    const separatorTypes = [
-        {separator: "opaque", color: theme.separator.opaque},
-        {separator: "translucent", color: theme.separator.translucent},
-        {separator: "vibrant", color: theme.separator.vibrant},
-        {separator: "translucent", color: "transparent"}
-    ]
+export default function GSwitch({value, onValueChange, disabled = false, ...rest}: GSwitchProps) {
 
     return(
-        <View>
-            <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8}}>
-                <View style={{paddingTop: 15, paddingBottom: 14}}>
-                    <Text 
-                        style={{
-                            lineHeight: 22,
-                            fontSize: 17,
-                            color: theme.text.label
-                        }}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
-                        {label}
-                    </Text>
-                </View>
-                
-                <Switch style={{alignSelf: "center"}} value={value} onValueChange={onValueChange} disabled={disabled}/>
-            </View>
-            <View style={{height: 1, backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent"}}/>
-
-        </View>
+        <GroupedGenericComponentNotTouchable
+            trailingItem={
+                <Switch
+                    style={{alignSelf: "center"}}
+                    value={value}
+                    onValueChange={onValueChange}
+                    disabled={disabled}
+                />
+            }
+            {...rest}
+        />
     )
 }
