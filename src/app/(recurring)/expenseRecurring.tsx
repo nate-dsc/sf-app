@@ -13,6 +13,7 @@ import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Modal, View } from "react-native"
@@ -29,6 +30,7 @@ export default function ExpenseRecurringScreen() {
     const [categoryTotals, setCategoryTotals] = useState<Record<number, number>>({})
     const headerHeight = useHeaderHeight()
     const insets = useSafeAreaInsets()
+    const router = useRouter()
     const {theme, layout} = useStyle()
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     const hasLoadedRef = useRef(false)
@@ -75,6 +77,10 @@ export default function ExpenseRecurringScreen() {
         setChartModalVisible(false)
     }
 
+    const handleEmptyStateNewTransaction = () => {
+        router.push("/modalAdd")
+    }
+
     useEffect(() => {
         void loadData()
     }, [loadData, refreshKey])
@@ -118,14 +124,6 @@ export default function ExpenseRecurringScreen() {
                         />
                     </BlurredListView>
 
-                    <View style={{paddingHorizontal: 18}}>
-                        <MainActionButton
-                            label={t("recurring.expenses.showDistribution")}
-                            color={theme.colors.red}
-                            onPress={() => setChartModalVisible(true)}
-                        />
-                    </View>
-
                 </View>
             ) : (
                 <EmptyView
@@ -141,6 +139,14 @@ export default function ExpenseRecurringScreen() {
                     subtitle={t("recurring.expenses.empty.description")}
                 />
             )}
+
+            <View style={{paddingHorizontal: 18}}>
+                <MainActionButton
+                    label={totalRecurringExpenses != 0 ?  t("recurring.expenses.showDistribution") : t("recurring.expenses.newTransaction")}
+                    color={theme.colors.red}
+                    onPress={totalRecurringExpenses != 0 ? () => setChartModalVisible(true) : handleEmptyStateNewTransaction}
+                />
+            </View>
 
             <Modal
                 animationType={"fade"}

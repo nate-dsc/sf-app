@@ -13,6 +13,7 @@ import { useDatabase } from "@/database/useDatabase"
 import { useSummaryStore } from "@/stores/useSummaryStore"
 import { RecurringTransaction } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
 import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Modal, View } from "react-native"
@@ -29,6 +30,8 @@ export default function IncomeRecurringScreen() {
     const refreshKey = useSummaryStore((state) => state.refreshKey)
     //Database hooks
     const { getRecurringSummaryThisMonth } = useDatabase()
+    //Router
+    const router = useRouter()
     //States
     const [loading, setLoading] = useState(true)
     const [recurringTransactions, setRecurringTransactions] = useState<RecurringTransaction[]>([])
@@ -99,6 +102,9 @@ export default function IncomeRecurringScreen() {
         void loadData({ showLoading: false })
     }, [loadData])
 
+    const handleEmptyStateNewTransaction = () => {
+        router.push("/modalAdd")
+    }
 
     useEffect(() => {
         void loadData()
@@ -144,15 +150,6 @@ export default function IncomeRecurringScreen() {
                         />
                     </BlurredListView>
 
-                    <View style={{paddingHorizontal: 18}}>
-                        <MainActionButton
-                            label={t("recurring.income.showDistribution")}
-                            color={theme.colors.green}
-                            onPress={() => setChartModalVisible(true)}
-                        />
-                    </View>
-                    
-
                 </View>
             ) : (
                 <EmptyView
@@ -168,6 +165,14 @@ export default function IncomeRecurringScreen() {
                     subtitle={t("recurring.income.empty.description")}
                 />
             )}
+
+            <View style={{paddingHorizontal: 18}}>
+                <MainActionButton
+                    label={totalRecurringIncome != 0 ? t("recurring.income.showDistribution") : t("recurring.income.newTransaction")}
+                    color={theme.colors.green}
+                    onPress={totalRecurringIncome != 0 ? () => setChartModalVisible(true) : handleEmptyStateNewTransaction}
+                />
+            </View>
 
             <Modal
                 animationType={"fade"}
