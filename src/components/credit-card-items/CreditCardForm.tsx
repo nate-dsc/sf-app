@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next"
 import { Alert, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import LabeledButton from "../buttons/LabeledButton"
 import PrimaryButton from "../buttons/PrimaryButton"
+import GroupView from "../grouped-list-components/GroupView"
 
 export type CreditCardFormValues = {
     name: string
@@ -166,13 +167,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                 <CreditCardView color={getColorFromID(selectedColor, theme)} name={name} />
             </View>
 
-            <View
-                style={{
-                    paddingHorizontal: layout.margin.contentArea,
-                    borderRadius: layout.radius.groupedView,
-                    backgroundColor: theme.fill.secondary,
-                }}
-            >
+            <GroupView>
                 <GTextInput
                     separator={"translucent"}
                     label={t("credit.name", { defaultValue: "Nome" })}
@@ -207,7 +202,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                     value={ignoreWeekends}
                     onValueChange={setIgnoreWeekends}
                 />
-            </View>
+            </GroupView>
 
             <SimpleColorPicker
                 colors={colorOptions}
