@@ -4,11 +4,11 @@ import PrimaryButton from "@/components/buttons/PrimaryButton"
 import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
-import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
 import { useBudgetStore } from "@/stores/useBudgetStore"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { FONT_SIZE } from "@/styles/fonts"
 import { SCOption } from "@/types/components"
 import { BudgetPeriod } from "@/types/Transactions"
 import { useHeaderHeight } from "@react-navigation/elements"
@@ -151,7 +151,7 @@ export default function BudgetEditScreen() {
                 ) : null}
 
                 {formError ? (
-                    <Text style={[FontStyles.footnote, { color: theme.colors.red }]}>{formError}</Text>
+                    <Text style={{ fontSize: FONT_SIZE.FOOTNOTE, color: theme.colors.red }}>{formError}</Text>
                 ) : null}
 
                 <View style={{ marginTop: 30, gap: layout.margin.innerSectionGap }}>

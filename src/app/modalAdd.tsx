@@ -1,26 +1,27 @@
-import CancelSaveButtons from "@/components/buttons/CancelSaveCombo";
-import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker";
-import GDateInput from "@/components/grouped-list-components/GroupedDateInput";
-import GPopup from "@/components/grouped-list-components/GroupedPopup";
-import GSwitch from "@/components/grouped-list-components/GroupedSwitch";
-import GTextInput from "@/components/grouped-list-components/GroupedTextInput";
-import GValueInput from "@/components/grouped-list-components/GroupedValueInput";
-import GroupView from "@/components/grouped-list-components/GroupView";
-import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact";
-import { useNewTransaction } from "@/context/NewTransactionContext";
-import { useStyle } from "@/context/StyleContext";
-import { useDatabase } from "@/database/useDatabase";
-import i18n from "@/i18n";
-import { SCOption } from "@/types/components";
-import { CCard } from "@/types/CreditCards";
-import type { TransactionType } from "@/types/Transactions";
-import { findCategoryByID } from "@/utils/CategoryUtils";
-import { describeRRule } from "@/utils/RRULEUtils";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Alert, ScrollView, Text, View } from "react-native";
+import LabeledButton from "@/components/buttons/LabeledButton"
+import PrimaryButton from "@/components/buttons/PrimaryButton"
+import CreditCardPicker from "@/components/credit-card-items/CreditCardPicker"
+import GDateInput from "@/components/grouped-list-components/GroupedDateInput"
+import GPopup from "@/components/grouped-list-components/GroupedPopup"
+import GSwitch from "@/components/grouped-list-components/GroupedSwitch"
+import GTextInput from "@/components/grouped-list-components/GroupedTextInput"
+import GValueInput from "@/components/grouped-list-components/GroupedValueInput"
+import GroupView from "@/components/grouped-list-components/GroupView"
+import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
+import { useNewTransaction } from "@/context/NewTransactionContext"
+import { useStyle } from "@/context/StyleContext"
+import { useDatabase } from "@/database/useDatabase"
+import i18n from "@/i18n"
+import { SCOption } from "@/types/components"
+import { CCard } from "@/types/CreditCards"
+import type { TransactionType } from "@/types/Transactions"
+import { findCategoryByID } from "@/utils/CategoryUtils"
+import { describeRRule } from "@/utils/RRULEUtils"
+import { useHeaderHeight } from "@react-navigation/elements"
+import { useRouter } from "expo-router"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { Alert, ScrollView, Text, View } from "react-native"
 
 
 
@@ -49,13 +50,13 @@ export default function AddModal() {
 
     useEffect(() => {
         // Limpa para garantir que não estamos editando uma transação antiga
-        setNewTransaction({ type: "out", date: newDate }); // Define um valor inicial
+        setNewTransaction({ type: "out", date: newDate }) // Define um valor inicial
 
         return () => {
             // Limpa ao sair da tela para não sujar a próxima abertura do modal
-            setNewTransaction({});
+            setNewTransaction({})
       }
-    }, []);
+    }, [])
 
 
     const handleToggleCredit = async (value: boolean) => {
@@ -101,12 +102,12 @@ export default function AddModal() {
     const handleConfirm = async () => {
         try {
 
-            await saveAsTransaction();
-            router.back(); // Só volta se salvar com sucesso
+            await saveAsTransaction()
+            router.back() // Só volta se salvar com sucesso
 
         } catch (error) {
            
-            console.log("Falha ao salvar. Tente novamente.", error);
+            console.log("Falha ao salvar. Tente novamente.", error)
         }
     }
 
@@ -261,11 +262,22 @@ export default function AddModal() {
                 ) : null}
             </GroupView>
 
-            <CancelSaveButtons
-                cancelAction={() => {router.back()}}
-                primaryAction={handleConfirm}
-                isPrimaryActive={isValidAsTransaction}
-            />
+            <View style={{ flexDirection: "row", gap: 16 }}>
+                <View style={{flex: 1}}>
+                    <LabeledButton
+                        label={t("buttons.cancel")}
+                        onPress={() => {router.back()}}
+                        disabled={false}
+                    />
+                </View>
+                <View style={{flex: 1}}>
+                    <PrimaryButton
+                        label={t("buttons.save")}
+                        onPress={handleConfirm}
+                        disabled={!isValidAsTransaction}
+                    />
+                </View>
+            </View>
         </ScrollView>
     )
 }

@@ -1,7 +1,7 @@
 
 import { useStyle } from "@/context/StyleContext"
 import i18n from "@/i18n"
-import { FONT_SIZE } from "@/styles/fonts"
+import { FONT_SIZE } from "@/styles/Fonts"
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker"
 import React from "react"
 import { Text, View } from "react-native"

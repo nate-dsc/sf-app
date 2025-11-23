@@ -1,4 +1,4 @@
-import { useStyle } from "@/context/StyleContext"
+/* import { useStyle } from "@/context/StyleContext"
 import { useTranslation } from "react-i18next"
 import { Text, TouchableOpacity, View } from "react-native"
 
@@ -57,4 +57,4 @@ export default function CancelSaveButtons({cancelAction, primaryAction, isPrimar
 
         </View>
     )
-}
+} */

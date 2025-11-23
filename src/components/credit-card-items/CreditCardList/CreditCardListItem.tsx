@@ -1,6 +1,6 @@
 import { AppIcon } from "@/components/AppIcon"
 import { useStyle } from "@/context/StyleContext"
-import { FONT_SIZE, FONT_WEIGHT } from "@/styles/fonts"
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts"
 import { CCard } from "@/types/Transactions"
 import { Text, TouchableOpacity, View } from "react-native"
 

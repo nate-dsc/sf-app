@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+/* import { StyleSheet } from "react-native"
 
 export const SStyles = StyleSheet.create({
     mainContainer: {
@@ -6,4 +6,4 @@ export const SStyles = StyleSheet.create({
         padding: 16,
         gap: 12
     }
-})
+}) */

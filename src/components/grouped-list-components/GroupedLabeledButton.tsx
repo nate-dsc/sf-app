@@ -1,6 +1,6 @@
 
 import { useStyle } from "@/context/StyleContext"
-import { FONT_SIZE } from "@/styles/fonts"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { GroupedComponentsProps } from "@/types/components"
 import React, { ReactNode } from "react"
 import { Text, TouchableWithoutFeedback, View } from "react-native"

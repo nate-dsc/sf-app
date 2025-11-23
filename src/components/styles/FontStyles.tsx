@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native"
+/* import { StyleSheet } from "react-native"
 
 export const FontStyles = StyleSheet.create({
     largeTitle: {
@@ -105,4 +105,4 @@ export const FontStyles = StyleSheet.create({
         fontSize: 11,
         lineHeight: 13
     },
-})
+}) */

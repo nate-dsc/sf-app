@@ -1,6 +1,6 @@
 
 import { useStyle } from "@/context/StyleContext"
-import { FONT_SIZE } from "@/styles/fonts"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { GroupedComponentsProps } from "@/types/components"
 import { Ionicons } from "@expo/vector-icons"
 import React from "react"

@@ -1,4 +1,4 @@
-import { light } from "@/styles/colors"
+import { light } from "@/styles/Colors"
 import { CustomTheme } from "@/types/theme"
 import React, { createContext, useContext, useMemo } from "react"
 import { TextStyle } from "react-native"

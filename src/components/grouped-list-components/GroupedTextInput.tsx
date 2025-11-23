@@ -1,7 +1,7 @@
 import { useStyle } from "@/context/StyleContext"
 import { Platform, Text, TextInput, TextInputProps, View } from "react-native"
 
-import { FONT_SIZE } from "@/styles/fonts"
+import { FONT_SIZE } from "@/styles/Fonts"
 import DoneACView from "../DoneACView"
 import { GroupedComponentsProps } from "./GroupedValueInput"
 

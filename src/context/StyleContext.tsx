@@ -1,4 +1,4 @@
-import { dark, light } from "@/styles/colors";
+import { dark, light } from "@/styles/Colors";
 import { Layout, LayoutBorderless } from "@/styles/layoutPresets";
 import { CustomLayout, CustomTheme, LayoutType, ThemePreference } from "@/types/theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";

@@ -1,4 +1,4 @@
-import { light } from "@/styles/colors"
+/* import { light } from "@/styles/colors"
 import { StyleSheet } from "react-native"
 
 export const CategorySelectionStyles = (Colors: typeof light) => StyleSheet.create({
@@ -15,4 +15,4 @@ export const CategorySelectionStyles = (Colors: typeof light) => StyleSheet.crea
         backgroundColor: Colors.menuItem.background,
         padding: 8,
     }
-})
+}) */

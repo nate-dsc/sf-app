@@ -1,4 +1,4 @@
-import { light } from "@/styles/colors"
+/* import { light } from "@/styles/colors"
 import { TextProps } from "react-native"
 
 
@@ -23,4 +23,4 @@ export const TypographyProps = (theme: typeof light) => ({
         numberOfLines: 1,
         ellipsizeMode: "tail",
     } satisfies TextProps,
-})
+}) */

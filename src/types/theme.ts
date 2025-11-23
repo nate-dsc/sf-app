@@ -1,4 +1,4 @@
-import { light } from "@/styles/colors"
+import { light } from "@/styles/Colors"
 import { Layout } from "@/styles/layoutPresets"
 
 export type ThemePreference = "system" | "light" | "dark"
