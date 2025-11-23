@@ -1,3 +1,4 @@
+import { AppIcon } from "@/components/AppIcon"
 import GRedir from "@/components/grouped-list-components/GroupedRedirect"
 import GroupView from "@/components/grouped-list-components/GroupView"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
@@ -82,14 +83,28 @@ export default function SettingsScreen() {
             <GroupView>
                 <GRedir
                     separator={"translucent"}
-                    icon={"hammer"}
-                    label={"Teste 1"}
+                    leadingIcon={
+                        <AppIcon
+                            name={"hammer.fill"}
+                            androidName={"construction"}
+                            size={29}
+                            tintColor={theme.text.label}                        
+                        />
+                    }
+                    leadingLabel={"Teste 1"}
                     onPress={() => {router.push("/experiment")}}
                 />
                 <GRedir
                     separator={"none"}
-                    icon={"hammer"}
-                    label={"Teste 2"}
+                    leadingIcon={
+                        <AppIcon
+                            name={"hammer.fill"}
+                            androidName={"construction"}
+                            size={29}
+                            tintColor={theme.text.label}                        
+                        />
+                    }
+                    leadingLabel={"Teste 2"}
                     onPress={() => {router.push("/experiment2")}}
                 />
             </GroupView>
@@ -97,26 +112,40 @@ export default function SettingsScreen() {
             <GroupView>
                 <GRedir
                     separator="translucent"
-                    icon="move-outline"
-                    label="Medir componentes"
+                    leadingIcon={
+                        <AppIcon
+                            name={"lines.measurement.horizontal"}
+                            androidName={"straighten"}
+                            size={29}
+                            tintColor={theme.text.label}                        
+                        />
+                    }
+                    leadingLabel="Medir componentes"
                     onPress={() => { router.push("/measures") }}
                 />
                 <GRedir
                     separator="translucent"
-                    icon="add-outline"
-                    label="Modal adicionar"
+                    leadingIcon={
+                        <AppIcon
+                            name={"plus.circle"}
+                            androidName={"add"}
+                            size={29}
+                            tintColor={theme.text.label}                        
+                        />
+                    }
+                    leadingLabel="Modal adicionar"
                     onPress={() => { router.push("/modalAdd") }}
                 />
                 <GRedir
                     separator="translucent"
                     icon="sync-outline"
-                    label="Modal recorrência"
+                    leadingLabel="Modal recorrência"
                     onPress={() => { router.push("/modalRecurring") }}
                 />
                 <GRedir
                     separator="none"
                     icon="list-outline"
-                    label="Modal categorias"
+                    leadingLabel="Modal categorias"
                     onPress={() => { router.push("/modalCategoryPicker") }}
                 />
             </GroupView>

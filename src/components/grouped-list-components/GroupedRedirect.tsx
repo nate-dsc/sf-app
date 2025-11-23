@@ -1,115 +1,43 @@
-
 import { useStyle } from "@/context/StyleContext"
-import { GroupedComponentsProps, IconName } from "@/types/components"
-import { Ionicons } from "@expo/vector-icons"
 import React from "react"
-import { Text, TouchableWithoutFeedback, View } from "react-native"
+import { AppIcon } from "../AppIcon"
+import GroupedGenericComponent, { GroupedGenericComponentProps } from "./generic/GroupedGenericComponent"
 
-type GRedirProps = GroupedComponentsProps & {
-    label: string,
-    icon?: IconName,
-    onPress: () => void,
+type GRedirProps = GroupedGenericComponentProps & {
     overrideChevron?: "default" | "none" | "checkmark" 
 }
 
-export default function GRedir({separator, label, icon, onPress, overrideChevron = "default"}: GRedirProps) {
+export default function GRedir({overrideChevron = "default", ...rest}: GRedirProps) {
 
-    const {theme, layout} = useStyle()
-
-    const separatorTypes = [
-        {separator: "opaque", color: theme.separator.opaque},
-        {separator: "translucent", color: theme.separator.translucent},
-        {separator: "vibrant", color: theme.separator.vibrant},
-        {separator: "translucent", color: "transparent"}
-    ]
+    const {theme} = useStyle()
 
     const RightIcon = () => {
         if (overrideChevron === "none") return null
         if (overrideChevron === "checkmark")
             return (
-                <Ionicons
-                    name="checkmark"
+                <AppIcon
+                    name={"checkmark"}
+                    androidName={"check"}
                     size={20}
-                    color={theme.colors.blue}
+                    tintColor={theme.text.secondaryLabel}
                 />
             )
         return (
-            <Ionicons
-                name="chevron-forward"
+            <AppIcon
+                name={"chevron.forward"}
+                androidName={"chevron-right"}
                 size={18}
-                color={theme.text.secondaryLabel}
+                tintColor={theme.text.secondaryLabel}
             />
         )
     }
 
     return(
-        <View>
-            <TouchableWithoutFeedback onPress={onPress} >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 8
-                    }}
-                >
-                    <View style={{flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 8}}>
-                        {icon ?
-                        <View
-                            style={{
-                                width: 32,
-                                height: 50,
-                                justifyContent: "center",
-                                alignItems: "center"
-                            }}
-                        >
-                            <Ionicons name={icon} color={theme.text.label} size={layout.icons.md} />
-                        </View>
-                        : null}
-
-                        <View style={{paddingTop: 15, paddingBottom: 14}}>
-                            <Text 
-                                style={{
-                                    lineHeight: 22,
-                                    fontSize: 17,
-                                    color: theme.text.label
-                                }}
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                            >
-                                {label}
-                            </Text>
-                        </View>
-                    </View>
-                    
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "flex-end",
-                            alignItems: "center",
-                            gap: 8
-                        }}
-                    >
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "flex-end",
-                                    alignItems: "center",
-                                    gap: 8
-                                }}
-                            >
-                                <RightIcon />
-                            </View>
-                    </View>
-                </View>
-            </TouchableWithoutFeedback>
-            <View
-                style={{
-                    height: 1,
-                    backgroundColor: separatorTypes.find(item => item.separator === separator)?.color || "transparent",
-                    marginLeft: icon ? 40 : 0
-                }}
-            />
-        </View>
+        <GroupedGenericComponent
+            {...rest}
+            trailingIcon={
+                <RightIcon />
+            }
+        />
     )
 }

@@ -1,40 +1,85 @@
-import MaskedView from "@react-native-masked-view/masked-view";
-import { LinearGradient } from "expo-linear-gradient";
-import React from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { AppIcon } from "@/components/AppIcon"
+import GroupedGenericComponent from "@/components/grouped-list-components/generic/GroupedGenericComponent"
+import { useStyle } from "@/context/StyleContext"
+import { useHeaderHeight } from "@react-navigation/elements"
+import React from "react"
+import { StyleSheet, View } from "react-native"
+
 
 const DATA = Array.from({ length: 30 }, (_, i) => `Item ${i + 1}`);
 
 export default function BlurredListExample() {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Minha Lista</Text>
+    const {theme} = useStyle()
+    const headerHeight = useHeaderHeight()
 
-      <MaskedView
-        style={styles.maskedView}
-        maskElement={
-          <LinearGradient
-            // A máscara define onde o conteúdo será visível (opaco = visível)
-            colors={["transparent", "black", "black", "transparent"]}
-            locations={[0, 0.1, 0.9, 1]}
-            style={StyleSheet.absoluteFill}
-          />
-        }
-      >
-        <FlatList
-          data={DATA}
-          keyExtractor={(item) => item}
-          style={styles.list}
-          contentContainerStyle={{ paddingVertical: 16 }}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <Text style={styles.text}>{item}</Text>
+    return (
+        <View
+            style={{
+                flex: 1,
+                paddingTop: headerHeight + 16,
+                paddingHorizontal: 16,
+            }}
+        >
+            <View
+                style={{
+                    borderRadius: 26,
+                    backgroundColor: theme.fill.secondary,
+                    overflow: "hidden"
+                }}
+            >
+                <GroupedGenericComponent
+                    onPress={()=>{}}
+                    leadingIcon={
+                        <AppIcon
+                            name={"house"}
+                            androidName={"light"}
+                            size={29}
+                            tintColor={theme.colors.red}
+                        />
+                    }
+                    leadingLabel="This is a very long text to test what happens when this component receives a large text"
+                    trailingLabel="What if I have a big trailing label too?"
+                    trailingIcon={
+                        <AppIcon
+                            name={"chevron.forward"}
+                            androidName={"light"}
+                            size={18}
+                            tintColor={theme.colors.red}
+                        />
+                    }
+                    separator={"translucent"}
+                />
+                <GroupedGenericComponent
+                    onPress={()=>{}}
+                    leadingIcon={
+                        <AppIcon
+                            name={"house"}
+                            androidName={"light"}
+                            size={29}
+                            tintColor={theme.colors.green}
+                        />
+                    }
+                    separator={"translucent"}
+                />
+                <GroupedGenericComponent
+                    onPress={()=>{}}
+                    leadingIcon={
+                        <AppIcon
+                            name={"house"}
+                            androidName={"light"}
+                            size={29}
+                            tintColor={theme.colors.blue}
+                        />
+                    }
+                    separator={"translucent"}
+                />
+                <GroupedGenericComponent
+                    onPress={()=>{}}
+                    separator={"none"}
+                />
             </View>
-          )}
-        />
-      </MaskedView>
-    </View>
-  );
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({

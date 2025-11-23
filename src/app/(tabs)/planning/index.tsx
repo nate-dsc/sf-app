@@ -2,6 +2,7 @@ import { AppIcon } from "@/components/AppIcon"
 import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { useRouter } from "expo-router"
 import { ScrollView, Text, View } from "react-native"
 
@@ -56,69 +57,103 @@ export default function PlanningScreen() {
                 </View>
 
                 <View style={{gap: 10}}>
-                    <Text style={[FontStyles.title3, {color: theme.text.label, paddingHorizontal: 32}]}> Controle </Text>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                paddingHorizontal: 16,
-                                gap: 16
-                            }}
-                        >
-                            <View style={{flex:1}}>
-                                <LinkCard
-                                    label="Orçamento"
-                                    icon={
-                                        <AppIcon
-                                            name={"chart.pie.fill"}
-                                            androidName={"pie-chart"}
-                                            size={40}
-                                            tintColor={theme.colors.white}
-                                        />
-                                    }
-                                    color={theme.colors.indigo}
-                                    onPress={() => router.push("/budget")}
-                                />
-                            </View>
-                            <View style={{flex:1}}>
-                                <LinkCard 
-                                    label="Cartões de Crédito"
-                                    icon={
-                                        <AppIcon
-                                            name={"creditcard.fill"}
-                                            androidName={"credit-card"}
-                                            size={40}
-                                            tintColor={theme.colors.white}
-                                        />
-                                    }
-                                    color={theme.colors.pink}
-                                    onPress={() => router.push("/credit")}
-                                />
-                            </View>
+                    <Text
+                        style={{
+                            fontSize: FONT_SIZE.TITLE3,
+                            color: theme.text.label,
+                            paddingHorizontal: 32
+                        }}
+                    >
+                        Cartões de crédito
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            paddingHorizontal: 16,
+                            gap: 16
+                        }}
+                    >
+                        <View style={{ flex: 1 }}>
+                            <LinkCard
+                                label={"Adicionar cartão"}
+                                icon={
+                                    <AppIcon
+                                        name={"plus.circle"}
+                                        androidName={"add-card"}
+                                        size={40}
+                                        tintColor={theme.colors.white}
+                                    />
+                                }
+                                color={theme.colors.green}
+                                onPress={() => router.push("/(credit)/addCreditCard")}
+                            />
                         </View>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                paddingHorizontal: 16,
-                                gap: 16
-                            }}
-                        >
-                            <View style={{flex:1}}>
-                                <LinkCard
-                                    label="Distribuição"
-                                    icon={
-                                        <AppIcon
-                                            name={"chart.bar.doc.horizontal.fill"}
-                                            androidName={"leaderboard"}
-                                            size={40}
-                                            tintColor={theme.colors.white}
-                                        />
-                                    }
-                                    color={theme.colors.purple}
-                                    onPress={() => router.push("/distribution")}
-                                />
-                            </View>
-                            <View style={{flex:1}}/>
+                        <View style={{flex:1}}>
+                            <LinkCard 
+                                label="Carteira"
+                                icon={
+                                    <AppIcon
+                                        name={"creditcard.fill"}
+                                        androidName={"credit-card"}
+                                        size={40}
+                                        tintColor={theme.colors.white}
+                                    />
+                                }
+                                color={theme.colors.mint}
+                                onPress={() => router.push("/credit")}
+                            />
                         </View>
+                    </View>
+                </View>
+
+                <View style={{gap: 10}}>
+                    <Text
+                        style={{
+                            fontSize: FONT_SIZE.TITLE3,
+                            color: theme.text.label,
+                            paddingHorizontal: 32
+                        }}
+                    >
+                        Controle
+                    </Text>
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            paddingHorizontal: 16,
+                            gap: 16
+                        }}
+                    >
+                        <View style={{flex:1}}>
+                            <LinkCard
+                                label="Distribuição"
+                                icon={
+                                    <AppIcon
+                                        name={"chart.bar.doc.horizontal.fill"}
+                                        androidName={"leaderboard"}
+                                        size={40}
+                                        tintColor={theme.colors.white}
+                                    />
+                                }
+                                color={theme.colors.purple}
+                                onPress={() => router.push("/distribution")}
+                            />
+                        </View>
+                        <View style={{flex:1}}>
+                            <LinkCard
+                                label="Orçamento"
+                                icon={
+                                    <AppIcon
+                                        name={"dollarsign.gauge.chart.leftthird.topthird.rightthird"}
+                                        androidName={"pie-chart"}
+                                        size={40}
+                                        tintColor={theme.colors.white}
+                                    />
+                                }
+                                color={theme.colors.indigo}
+                                onPress={() => router.push("/budget")}
+                            />
+                        </View>
+                    </View>
                 </View>
 
                 <View style={{gap: 10}}>
@@ -141,7 +176,7 @@ export default function PlanningScreen() {
                                             tintColor={theme.colors.white}
                                         />
                                     }
-                                    color={theme.colors.orange}
+                                    color={theme.colors.gray1}
                                     onPress={() => router.push("/planPurchase")}
                                 />
                             </View>
@@ -156,7 +191,7 @@ export default function PlanningScreen() {
                                             tintColor={theme.colors.white}
                                         />
                                     }
-                                    color={theme.colors.indigo}
+                                    color={theme.colors.gray1}
                                     onPress={() => router.push("/next12Months")}
                                 />
                             </View>
@@ -179,7 +214,7 @@ export default function PlanningScreen() {
                                             tintColor={theme.colors.white}
                                         />
                                     }
-                                    color={theme.colors.cyan}
+                                    color={theme.colors.gray1}
                                     onPress={() => router.push("/retirement")}
                                 />
                             </View>

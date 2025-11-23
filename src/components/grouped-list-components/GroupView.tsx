@@ -1,27 +1,23 @@
-import { useStyle } from "@/context/StyleContext";
-import { ReactNode } from "react";
-import { View, ViewStyle } from "react-native";
+import { useStyle } from "@/context/StyleContext"
+import { ReactNode } from "react"
+import { View } from "react-native"
 
 type GroupViewProps = {
-  children?: ReactNode;
-  style?: ViewStyle | ViewStyle[];
-};
+    children?: ReactNode
+}
 
-export default function GroupView({ children, style }: GroupViewProps) {
-  const { theme, layout } = useStyle();
+export default function GroupView({ children }: GroupViewProps) {
+    const { theme } = useStyle();
 
-  return (
-    <View
-      style={[
-        {
-          paddingHorizontal: layout.margin.contentArea,
-          borderRadius: layout.radius.groupedView,
-          backgroundColor: theme.fill.secondary,
-        },
-        style, // permite sobrescrever estilos
-      ]}
-    >
-      {children}
-    </View>
-  );
+    return (
+        <View
+            style={{
+                borderRadius: 26,
+                backgroundColor: theme.fill.secondary,
+                overflow: "hidden"
+            }}
+        >
+            {children}
+        </View>
+    )
 }
