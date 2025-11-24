@@ -1,8 +1,10 @@
 import { useStyle } from "@/context/StyleContext"
+import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts"
 import { Ionicons } from "@expo/vector-icons"
 import type { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import React, { ReactElement, cloneElement, isValidElement, useMemo, useState } from "react"
 import { Pressable, Text, View } from "react-native"
+import { AppIcon } from "../AppIcon"
 
 type NavigationAction = {
     key: string
@@ -21,9 +23,9 @@ const DEFAULT_ACTIONS: NavigationAction[] = [
     { key: "installment", label: "Installment purchase", description: "Schedule a split payment" },
 ]
 
-const TAB_HORIZONTAL_PADDING = 12
-const TAB_VERTICAL_PADDING = 10
-const BORDER_RADIUS = 20
+const TAB_HORIZONTAL_PADDING = 4
+const TAB_VERTICAL_PADDING = 4
+const BORDER_RADIUS = 100
 
 export default function NewTabBar({
     state,
@@ -132,13 +134,12 @@ export default function NewTabBar({
                                 onLongPress={onLongPress}
                                 style={{
                                     flex: 1,
-                                    flexDirection: "row",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    gap: 8,
+                                    gap: 0,
                                     paddingVertical: TAB_VERTICAL_PADDING,
                                     paddingHorizontal: TAB_HORIZONTAL_PADDING,
-                                    borderRadius: 14,
+                                    borderRadius: 1000,
                                     borderCurve: "continuous",
                                     backgroundColor: focused ? theme.colors.blue : undefined,
                                 }}
@@ -146,8 +147,8 @@ export default function NewTabBar({
                                 {resolvedIcon()}
                                 <Text
                                     style={{
-                                        fontSize: 13,
-                                        fontWeight: "600",
+                                        fontSize: FONT_SIZE.FOOTNOTE,
+                                        fontWeight: FONT_WEIGHT.SEMIBOLD,
                                         color: iconColor,
                                     }}
                                     numberOfLines={1}
@@ -169,9 +170,9 @@ export default function NewTabBar({
                             borderCurve: "continuous",
                             alignItems: "center",
                             justifyContent: "center",
-                            backgroundColor: theme.navigation.tabBarBackground,
+                            backgroundColor: theme.colors.green,
                             borderWidth: 1,
-                            borderColor: theme.navigation.tabBarBorder,
+                            borderColor: "rgba(59, 218, 99, 1)",
                             shadowColor: "#1f1f1f",
                             shadowOffset: { width: 0, height: 12 },
                             shadowOpacity: 0.15,
@@ -183,7 +184,11 @@ export default function NewTabBar({
                         accessibilityRole="button"
                         accessibilityLabel="Open creation menu"
                     >
-                        <Ionicons name="add" size={28} color={theme.navigation.tabBarForeground} />
+                        <AppIcon
+                            name={"plus"}
+                            androidName={"add"}
+                            tintColor={theme.colors.white}
+                        />
                     </Pressable>
 
                     {isMenuOpen && (
