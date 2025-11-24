@@ -2,7 +2,7 @@ import { AppIcon } from "@/components/AppIcon";
 import { useStyle } from "@/context/StyleContext";
 import { Stack, useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 
 export default function HomeLayout() {
 
@@ -15,20 +15,21 @@ export default function HomeLayout() {
             screenOptions={{
                 headerTitleAlign: "center",
                 headerShadowVisible: false,
-                headerStyle: { backgroundColor: theme.navigation.headerBackground },
-                headerTitleStyle: { fontSize: 22, fontWeight: "600", color: theme.navigation.headerText },
+                headerTransparent: true,
+                //headerStyle: { backgroundColor: theme.navigation.headerBackground },
+                headerTitleStyle: { fontSize: 22, fontWeight: "600" },
                 headerRight: () => (
-                    <TouchableOpacity
-                        style={{width: 44, height: 44, paddingLeft: 4}}
+                    <Pressable
+                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
                         onPress={() => router.push("/settings")}
                     >
                         <AppIcon
                             name={"gear"}
                             androidName={"settings"}
-                            size={36}
-                            tintColor={"rgba(255,255,255,0.7)"}
+                            size={30}
+                            tintColor={theme.text.label}
                         />
-                    </TouchableOpacity>
+                    </Pressable>
                 )
             }}
         >

@@ -169,7 +169,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
 
             <GroupView>
                 <GTextInput
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     label={t("credit.name", { defaultValue: "Nome" })}
                     value={name}
                     onChangeText={setName}
@@ -177,7 +177,7 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                     maxLength={20}
                 />
                 <GValueInput
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     label={t("credit.limit", { defaultValue: "Limite" })}
                     acViewKey={"credit-card-limit"}
                     onChangeNumValue={setMaxLimit}
@@ -185,13 +185,13 @@ export default function CreditCardForm({ initialValues, onSubmit, onCancel, onVa
                     valueInCents={maxLimit}
                 />
                 <GPopup
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     leadingLabel={t("credit.closingDay", { defaultValue: "Fechamento" })}
                     displayValue={selectedClosingDay === 0 ? undefined : selectedClosingDay.toString()}
                     onPress={() => setClosingDayModalVisible(true)}
                 />
                 <GPopup
-                    separator={"translucent"}
+                    separator={"vibrant"}
                     leadingLabel={t("credit.dueDay", { defaultValue: "Vencimento" })}
                     displayValue={selectedDueDay === 0 ? undefined : selectedDueDay.toString()}
                     onPress={() => setDueDayModalVisible(true)}

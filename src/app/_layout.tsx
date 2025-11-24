@@ -13,7 +13,7 @@ import { SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { TouchableOpacity } from "react-native"
+import { Pressable } from "react-native"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 
 
@@ -66,7 +66,7 @@ function RootLayoutNav() {
         <NewTransactionProvider>
             <NavigationThemeProvider value={theme.navigationTheme}>
                 <SafeAreaProvider>
-                    <StatusBar style={'light'}/>
+                    <StatusBar style={'auto'}/>
                     <HeaderConfigProvider value={currentHeaderConfig}>
                         <Stack
                             screenOptions={{
@@ -150,7 +150,20 @@ function RootLayoutNav() {
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.secondaryBg
-                                }
+                                },
+                                headerRight: () => (
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
+                                        onPress={() => router.back()}
+                                    >
+                                        <AppIcon
+                                            name={"xmark"}
+                                            androidName={"close"}
+                                            size={25}
+                                            tintColor={theme.colors.red}
+                                        />
+                                    </Pressable>
+                                )
                             }}
                         />
                         <Stack.Screen
@@ -198,17 +211,17 @@ function RootLayoutNav() {
                                 headerBackButtonMenuEnabled: false,
                                 headerBackTitle: t("nav.planning.index"),
                                 headerRight: () => (
-                                    <TouchableOpacity
-                                        style={{paddingLeft: 7}}
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
                                         onPress={() => router.push("/(credit)/creditHelp")}
                                     >
                                         <AppIcon
-                                            name={"questionmark"}
+                                            name={"questionmark.circle"}
                                             androidName={"help-outline"}
-                                            size={22}
-                                            tintColor={"rgba(255,255,255,0.7)"}
+                                            size={25}
+                                            tintColor={theme.colors.red}
                                         />
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 )
                             }}
                         />
@@ -236,7 +249,20 @@ function RootLayoutNav() {
                                 presentation: "formSheet",
                                 contentStyle: {
                                     backgroundColor: theme.background.secondaryBg
-                                }
+                                },
+                                headerRight: () => (
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
+                                        onPress={() => router.back()}
+                                    >
+                                        <AppIcon
+                                            name={"xmark"}
+                                            androidName={"close"}
+                                            size={25}
+                                            tintColor={theme.colors.red}
+                                        />
+                                    </Pressable>
+                                )
                             }}
                         />
                         <Stack.Screen
@@ -246,8 +272,21 @@ function RootLayoutNav() {
                                 title: t("nav.credit.installmentPurchase", { defaultValue: "Compra parcelada" }),
                                 presentation: "formSheet",
                                 contentStyle: {
-                                    backgroundColor: theme.background.group.secondaryBg,
+                                    backgroundColor: theme.background.secondaryBg
                                 },
+                                headerRight: () => (
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
+                                        onPress={() => router.back()}
+                                    >
+                                        <AppIcon
+                                            name={"xmark"}
+                                            androidName={"close"}
+                                            size={25}
+                                            tintColor={theme.colors.red}
+                                        />
+                                    </Pressable>
+                                )
                             }}
                         />
                         <Stack.Screen
@@ -271,7 +310,20 @@ function RootLayoutNav() {
                                 sheetGrabberVisible: true,
                                 contentStyle: {
                                     backgroundColor: theme.background.secondaryBg
-                                }
+                                },
+                                headerRight: () => (
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
+                                        onPress={() => router.back()}
+                                    >
+                                        <AppIcon
+                                            name={"xmark"}
+                                            androidName={"close"}
+                                            size={25}
+                                            tintColor={theme.colors.red}
+                                        />
+                                    </Pressable>
+                                )
                             }}
                         />
                         <Stack.Screen

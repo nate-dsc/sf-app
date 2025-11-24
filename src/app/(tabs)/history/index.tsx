@@ -65,7 +65,7 @@ export default function TransactionHistoryScreen() {
     const {theme} = useStyle()
 
     return(
-        <View style={{flex: 1, paddingTop: 10}}>
+        <View style={{flex: 1, paddingTop: headerHeight}}>
             <View style={{
                 marginHorizontal: 16,
                 marginBottom: 10,

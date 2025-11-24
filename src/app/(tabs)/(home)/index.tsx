@@ -15,9 +15,15 @@ export default function HomeScreen() {
 
     return(
         <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
             showsVerticalScrollIndicator={false}
             style={{flex: 1}}
-            contentContainerStyle={{ paddingHorizontal: 16, gap: 12, paddingBottom: 130, paddingTop: 10}}
+            contentContainerStyle={{
+                paddingHorizontal: 16,
+                gap: 12,
+                paddingBottom: 130,
+                paddingTop: 10
+            }}
         >
             
             <BudgetTile />

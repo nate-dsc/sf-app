@@ -12,7 +12,13 @@ export default function PlanningScreen() {
     const {theme} = useStyle()
 
     return(
-            <ScrollView contentContainerStyle={{paddingTop: 10, paddingBottom: 120, gap: 16}}>
+            <ScrollView
+                contentInsetAdjustmentBehavior="automatic"
+                contentContainerStyle={{
+                    paddingBottom: 120,
+                    gap: 16
+                }}
+            >
                 <View style={{gap: 10}}>
                     <Text style={[FontStyles.title3, {color: theme.text.label, paddingHorizontal: 32}]}> Recorrentes </Text>
 

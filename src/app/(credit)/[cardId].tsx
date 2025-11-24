@@ -84,7 +84,7 @@ export default function CreditCardDetailsScreen() {
         <View
             style={{
                 flex: 1,
-                backgroundColor: theme.background.bg,
+                backgroundColor: theme.background.group.bg,
                 paddingTop: headerHeight + layout.margin.contentArea,
                 paddingHorizontal: layout.margin.contentArea,
                 gap: layout.margin.sectionGap,
@@ -119,7 +119,10 @@ export default function CreditCardDetailsScreen() {
             ) : null}
 
             {card ? (
-                <GroupView>
+                <GroupView
+                    forceHorizontalPadding={true}
+                    bgType="overBackground"
+                >
                     <View style={{ gap: 4 }}>
                         <Text style={[FontStyles.caption1, { color: theme.text.secondaryLabel }]}>Limite disponível</Text>
                         <Text style={[FontStyles.title2, { color: theme.text.label }]}>

@@ -168,7 +168,7 @@ export default function AddInstallmentPurchaseModal() {
         >
             <GroupView>
                 <GValueInput
-                    separator="translucent"
+                    separator="vibrant"
                     label={t("modalAddInstallment.value")}
                     acViewKey="installmentValue"
                     onChangeNumValue={(value) => {
@@ -181,7 +181,7 @@ export default function AddInstallmentPurchaseModal() {
                     fieldFlex={2}
                 />
                 <GTextInput
-                    separator="translucent"
+                    separator="vibrant"
                     label={t("modalAddInstallment.count")}
                     acViewKey="installments"
                     onChangeText={handleInstallmentsChange}
@@ -193,7 +193,7 @@ export default function AddInstallmentPurchaseModal() {
                     fieldFlex={2}
                 />
                 <GTextInput
-                    separator="translucent"
+                    separator="vibrant"
                     label={t("modalAddInstallment.description")}
                     acViewKey="description"
                     onChangeText={(text) => updateNewTransaction({ description: text })}
@@ -201,7 +201,7 @@ export default function AddInstallmentPurchaseModal() {
                     maxLength={40}
                 />
                 <GPopup
-                    separator="translucent"
+                    separator="vibrant"
                     leadingLabel={t("modalAddInstallment.category")}
                     displayValue={
                         newTransaction.category ? t(findCategoryByID(newTransaction.category).translationKey) : undefined
