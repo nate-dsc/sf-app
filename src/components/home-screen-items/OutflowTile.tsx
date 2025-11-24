@@ -1,15 +1,14 @@
 import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
-import { FontStyles } from "../styles/FontStyles"
-import { TileStyles } from "./TileStyles"
+import BaseView from "../BaseView"
 
 export default function OutflowTile() {
     const { data, loading, error } = useSummaryStore()
     const { theme } = useStyle()
     const { t } = useTranslation()
-    const tileStyles = TileStyles(theme)
 
     if (loading && !data) {
         return <ActivityIndicator size="large" />;
@@ -25,27 +24,29 @@ export default function OutflowTile() {
     return(
         <View style={{gap: 6}}>
             <View style={{paddingHorizontal: 16}}>
-                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                <Text
+                    style={{
+                        fontSize: FONT_SIZE.TITLE3,
+                        color: theme.text.label
+                    }}
+                >
                     {t("tiles.expenses")}
                 </Text>
             </View>
-            <View 
-                style={{
-                    backgroundColor: theme.background.elevated.bg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    padding: 15
-                }}
-            >
+            <BaseView>
                 <Text
-                    style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}
+                    style={{
+                        textAlign: "right",
+                        fontSize: FONT_SIZE.TITLE3,
+                        fontVariant: ["tabular-nums"],
+                        color: theme.text.label
+                    }}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                 >
                     {outflowStr}
                 </Text>
-            </View>
+            </BaseView>
         </View>
     )
 }

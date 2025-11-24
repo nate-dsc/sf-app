@@ -18,7 +18,7 @@ export default function BlurredModalView({ onBackgroundPress, children, style }:
             style={{
                 flex: 1,
                 justifyContent: "center",
-                alignItems: "center",
+                alignItems: "stretch",
                 paddingHorizontal: layout.margin.transparentModal,
             }}
             onPress={onBackgroundPress}
@@ -31,12 +31,9 @@ export default function BlurredModalView({ onBackgroundPress, children, style }:
             <TouchableWithoutFeedback>
                 <View
                     style={{
-                        rowGap: layout.margin.innerSectionGap,
-                        backgroundColor: theme.background.group.secondaryBg,
-                        borderWidth: layout.border.thin,
-                        borderColor: theme.background.tertiaryBg,
-                        padding: layout.spacing.md,
-                        borderRadius: layout.radius.modal,
+                        backgroundColor: theme.background.secondaryBg,
+                        padding: 16,
+                        borderRadius: 34,
                         borderCurve: "continuous",
                         shadowColor: "#000",
                         shadowOpacity: 0.2,

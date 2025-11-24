@@ -1,5 +1,5 @@
 // RecurringTransactionList.tsx
-import { CCard } from "@/types/Transactions"
+import { CCard } from "@/types/CreditCards"
 import { View } from "react-native"
 import CCListItem from "./CreditCardListItem"
 

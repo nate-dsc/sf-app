@@ -4,6 +4,7 @@ import LinkCard from "@/components/planning-screen-items/LinkCard"
 import { FontStyles } from "@/components/styles/FontStyles"
 import { useStyle } from "@/context/StyleContext"
 import { useDatabase } from "@/database/useDatabase"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { CCard } from "@/types/CreditCards"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useNavigation, useRouter } from "expo-router"
@@ -165,19 +166,18 @@ export default function CreditScreen() {
 
             <View>
                 <Text
-                    style={[
-                        FontStyles.title3,
-                        { color: theme.text.label, paddingHorizontal: layout.margin.contentArea },
-                    ]}
+                    style={{
+                        fontSize: FONT_SIZE.TITLE3,
+                        color: theme.text.label,
+                        paddingHorizontal: layout.margin.contentArea 
+                    }}
                 >
                     Carteira
                 </Text>
             </View>
             <View
                 style={{
-                    position: "relative",
-                    minHeight: 200,
-                    justifyContent: cards.length === 0 ? "center" : undefined,
+                    
                 }}
             >
                 {cards.length === 0 && !shouldShowInlineLoader ? (

@@ -307,11 +307,10 @@ function RootLayoutNav() {
                                 headerBackButtonDisplayMode: "minimal",
                                 title: t("nav.newTransaction"),
                                 presentation: "formSheet",
-                                sheetGrabberVisible: true,
                                 contentStyle: {
                                     backgroundColor: theme.background.secondaryBg
                                 },
-                                headerRight: () => (
+                                headerLeft: () => (
                                     <Pressable
                                         style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
                                         onPress={() => router.back()}
@@ -321,6 +320,18 @@ function RootLayoutNav() {
                                             androidName={"close"}
                                             size={25}
                                             tintColor={theme.colors.red}
+                                        />
+                                    </Pressable>
+                                ),
+                                headerRight: () => (
+                                    <Pressable
+                                        style={{width: 36, height: 36, justifyContent: "center", alignItems: "center"}}
+                                    >
+                                        <AppIcon
+                                            name={"checkmark"}
+                                            androidName={"close"}
+                                            size={25}
+                                            tintColor={theme.text.secondaryLabel}
                                         />
                                     </Pressable>
                                 )

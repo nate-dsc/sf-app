@@ -1,3 +1,4 @@
+import BaseView from "@/components/BaseView"
 import DateButton from "@/components/history-screen-items/Date/DateButton"
 import DateModal from "@/components/history-screen-items/Date/DateModal"
 import FilterButton from "@/components/history-screen-items/Filter/FilterButton"
@@ -9,7 +10,6 @@ import TransactionList from "@/components/history-screen-items/TransactionList/T
 import TransactionModal from "@/components/history-screen-items/TransactionList/TransactionModal"
 import SegmentedControlCompact from "@/components/recurrence-modal-items/SegmentedControlCompact"
 import { useSearchFilters } from "@/context/SearchFiltersContext"
-import { useStyle } from "@/context/StyleContext"
 import { SCOption } from "@/types/Components"
 import { Transaction, TransactionTypeFilter } from "@/types/Transactions"
 
@@ -62,31 +62,28 @@ export default function TransactionHistoryScreen() {
         setOrderModalVisible(false)
     }
 
-    const {theme} = useStyle()
-
     return(
         <View style={{flex: 1, paddingTop: headerHeight}}>
-            <View style={{
-                marginHorizontal: 16,
-                marginBottom: 10,
-                padding: 5,
-                borderRadius: 30,
-                borderWidth: 1,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                borderCurve: "continuous",
-                backgroundColor: theme.background.group.secondaryBg,
-                borderColor: theme.background.group.tertiaryBg,
-            }}>
-                <View style={{
-                    paddingBottom: 12,
-                }}>
-                        <SegmentedControlCompact 
-                            options={typeOptions}
-                            selectedValue={filters.type}
-                            onChange={(typeOption) => updateFilters({type: typeOption})}
-                        />
-                    </View>
+            <View
+                style={{
+                    marginHorizontal: 16,
+                    gap: 16,
+                    marginBottom: 16
+                }}
+            >
+
+            <SegmentedControlCompact 
+                options={typeOptions}
+                selectedValue={filters.type}
+                onChange={(typeOption) => updateFilters({type: typeOption})}
+            />
+            <BaseView
+                style={{
+                    paddingHorizontal: 6,
+                    paddingVertical: 6,
+                    borderRadius: 32
+                }}
+            >
 
                 <View style={{flexDirection: "row", gap: 6}}>
                     <View style={{flex: 1}}>
@@ -113,8 +110,8 @@ export default function TransactionHistoryScreen() {
                     />
                 </View>
                 
+            </BaseView>
             </View>
-            
            
             <View style={{flex: 1}}>
                 <TransactionList filters={filters} onItemPress={handleItemPress}/>

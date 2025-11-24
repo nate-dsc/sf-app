@@ -1,12 +1,12 @@
 import { useStyle } from "@/context/StyleContext"
 import { useSummaryStore } from "@/stores/useSummaryStore"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { findCategoryByID } from "@/utils/CategoryUtils"
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils"
 import { Ionicons } from "@expo/vector-icons"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View } from "react-native"
-import { FontStyles } from "../styles/FontStyles"
-import { TileStyles } from "./TileStyles"
+import BaseView from "../BaseView"
 
 
 export default function LastTransactionTile() {
@@ -14,7 +14,6 @@ export default function LastTransactionTile() {
     const { data, loading, error } = useSummaryStore()
     const { theme } = useStyle()
     const { t } = useTranslation()
-    const tileStyles = TileStyles(theme)
 
     if (loading && !data) {
         return <ActivityIndicator size="large" />;
@@ -42,38 +41,45 @@ export default function LastTransactionTile() {
     return(
         <View style={{gap: 6}}>
             <View style={{paddingHorizontal: 16}}>
-                <Text style={[FontStyles.title3,{ color: theme.text.label}]}>
+                <Text
+                    style={{
+                        fontSize: FONT_SIZE.TITLE3,
+                        color: theme.text.label
+                    }}
+                >
                     {t("tiles.lastTransaction")}
                 </Text>
             </View>
-            <View 
-                style={{
-                    backgroundColor: theme.background.group.secondaryBg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    borderCurve: "continuous"
-                }}
-            >
+            <BaseView>
                 <View
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingTop: 7
                     }}
                 >
                     <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
                     <Text 
-                        style={{fontSize: 15, lineHeight: 25, color: theme.text.secondaryLabel}}
+                        style={{
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            color: theme.text.secondaryLabel
+                        }}
                     >
                         {timestampedYMDtoLocaleDateWithoutYear(transaction.date.slice(0,16)) || ""}
                     </Text>
                 </View>
 
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}>{valueStr}</Text>
+                <View>
+                    <Text
+                        style={{
+                            textAlign: "right",
+                            fontSize: FONT_SIZE.TITLE1,
+                            fontVariant: ["tabular-nums"],
+                            color: theme.text.label
+                        }}
+                    >
+                        {valueStr}
+                    </Text>
                 </View>
 
                 <View
@@ -81,22 +87,22 @@ export default function LastTransactionTile() {
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingBottom: 7
                     }}
                 >
                     <Text 
-                        style={[
-                            {textAlign: "justify", fontStyle: "italic", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
+                        style={{
+                            textAlign: "justify",
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            fontStyle: "italic",
+                            color: theme.text.secondaryLabel
+                        }}
                         numberOfLines={1}
                         ellipsizeMode="tail"
                     >
                         Sobre: {transaction.description || ""}
                     </Text>
                 </View>
-            </View>
+            </BaseView>
         </View>
     )
 

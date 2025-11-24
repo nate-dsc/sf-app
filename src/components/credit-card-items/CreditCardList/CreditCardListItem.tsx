@@ -1,7 +1,8 @@
 import { AppIcon } from "@/components/AppIcon"
 import { useStyle } from "@/context/StyleContext"
 import { FONT_SIZE, FONT_WEIGHT } from "@/styles/Fonts"
-import { CCard } from "@/types/Transactions"
+import { CCard } from "@/types/CreditCards"
+import { getColorFromID } from "@/utils/CardUtils"
 import { Text, TouchableOpacity, View } from "react-native"
 
 type CCListItemProps = {
@@ -14,6 +15,8 @@ export default function CCListItem({item, onItemPress}: CCListItemProps) {
     const {theme, layout} = useStyle()
     const {color, name} = item
 
+    const bgColor = getColorFromID(item.color, theme)
+
     return(
         <View>
             <TouchableOpacity
@@ -21,7 +24,7 @@ export default function CCListItem({item, onItemPress}: CCListItemProps) {
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    backgroundColor: color,
+                    backgroundColor: bgColor,
                     borderRadius: layout.radius.sm,
                     borderCurve: "continuous",
                     padding: layout.spacingBl.md

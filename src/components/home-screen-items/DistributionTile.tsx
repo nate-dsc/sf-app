@@ -1,10 +1,9 @@
 import { useStyle } from "@/context/StyleContext"
 import { DistributionCategory, useDistributionStore } from "@/stores/useDistributionStore"
+import { FONT_SIZE } from "@/styles/Fonts"
 import { useTranslation } from "react-i18next"
 import { ActivityIndicator, Text, View, ViewStyle } from "react-native"
-import { FontStyles } from "../styles/FontStyles"
-
-
+import BaseView from "../BaseView"
 
 type DistributionProps = {
     style?: ViewStyle
@@ -32,8 +31,23 @@ export default function DistributionTile({ style }: DistributionProps) {
         return (
             <View style={{ gap: 10 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" }}>
-                    <Text style={[FontStyles.subhead, { color: theme.text.label }]}>{title}</Text>
-                    <Text style={[FontStyles.numCallout, { color: theme.text.label }]}>{formatCurrency(total)}</Text>
+                    <Text
+                        style={{
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            color: theme.text.label
+                        }}
+                    >
+                        {title}
+                    </Text>
+                    <Text
+                        style={{
+                            fontSize: FONT_SIZE.CALLOUT,
+                            fontVariant: ["tabular-nums"],
+                            color: theme.text.label
+                        }}
+                    >
+                        {formatCurrency(total)}
+                    </Text>
                 </View>
 
                 {items.length === 0 ? (
@@ -60,7 +74,12 @@ export default function DistributionTile({ style }: DistributionProps) {
                                             />
                                             <Text style={{ color: theme.text.label }}>{entry.name}</Text>
                                         </View>
-                                        <Text style={[FontStyles.caption1, { color: theme.text.secondaryLabel }]}>
+                                        <Text
+                                            style={{
+                                                fontSize: FONT_SIZE.CAPTION1,
+                                                color: theme.text.secondaryLabel
+                                            }}
+                                        >
                                             {formatCurrency(entry.value)}
                                         </Text>
                                     </View>
@@ -93,17 +112,17 @@ export default function DistributionTile({ style }: DistributionProps) {
     return (
         <View style={[{ gap: 6 }, style]}>
             <View style={{ paddingHorizontal: 16 }}>
-                <Text style={[FontStyles.title3, { color: theme.text.label }]}>
+                <Text
+                    style={{
+                        fontSize: FONT_SIZE.TITLE3,
+                        color: theme.text.label
+                    }}
+                >
                     {t("tiles.distribution")}
                 </Text>
             </View>
-            <View
+            <BaseView
                 style={{
-                    backgroundColor: theme.background.elevated.bg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    padding: 16,
                     gap: 16,
                 }}
             >
@@ -118,7 +137,7 @@ export default function DistributionTile({ style }: DistributionProps) {
                         {renderSection(t("tiles.income"), data?.inflowTotal ?? 0, data?.inflow ?? [])}
                     </View>
                 )}
-            </View>
+            </BaseView>
         </View>
     )
 }

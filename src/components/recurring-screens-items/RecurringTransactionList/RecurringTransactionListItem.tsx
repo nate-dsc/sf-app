@@ -1,5 +1,6 @@
-import { FontStyles } from "@/components/styles/FontStyles";
+import BaseView from "@/components/BaseView";
 import { useStyle } from "@/context/StyleContext";
+import { FONT_SIZE } from "@/styles/Fonts";
 import { RecurringTransaction } from "@/types/Transactions";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
@@ -21,35 +22,36 @@ export default function RecurringTransactionListItem({item, onItemPress}: Transa
 
     return(
         <Pressable onPress={() => onItemPress(item)}>
-            <View 
-                style={{
-                    backgroundColor: theme.background.group.secondaryBg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    borderCurve: "continuous",
-                    //marginBottom: 12
-                }}
-            >
+            <BaseView>
                 <View
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingTop: 7
+                        alignItems: "center"
                     }}
                 >
                     <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
                     <Text 
-                        style={{fontSize: 15, lineHeight: 25, color: theme.text.secondaryLabel}}
+                        style={{
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            color: theme.text.secondaryLabel
+                        }}
                     >
                         {timestampedYMDtoLocaleDateWithoutYear(item.date_start) || ""}
                     </Text>
                 </View>
 
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}>{valueStr}</Text>
+                <View>
+                    <Text
+                        style={{
+                            textAlign: "right",
+                            fontSize: FONT_SIZE.TITLE1,
+                            fontVariant: ["tabular-nums"],
+                            color: theme.text.label
+                        }}
+                    >
+                        {valueStr}
+                    </Text>
                 </View>
 
                 <View
@@ -57,25 +59,22 @@ export default function RecurringTransactionListItem({item, onItemPress}: Transa
                         flexDirection: "row",
                         justifyContent: "space-between",
                         alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingBottom: 7
                     }}
                 >
                     <Text 
-                        style={[
-                            {textAlign: "justify", fontStyle: "italic", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
+                        style={{
+                            textAlign: "justify",
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            fontStyle: "italic",
+                            color: theme.text.secondaryLabel
+                        }}
                         numberOfLines={1}
                         ellipsizeMode="tail"
                     >
                         Sobre: {item.description || ""}
                     </Text>
                 </View>
-                
-                
-
-            </View>
+            </BaseView>
         </Pressable>
     )
 }

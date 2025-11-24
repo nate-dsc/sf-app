@@ -58,7 +58,7 @@ export function CategoryPickerCompact({ type, onChangeSelected, initialSelected 
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{}}
         >
-            <View style={{gap: 12, backgroundColor: theme.background.group.secondaryBg}}>
+            <View style={{gap: 12, backgroundColor: theme.background.secondaryBg}}>
             {rows.map((row, rowIndex) => (
                 <View style={{flexDirection: "row", gap: 6}} key={rowIndex.toString()}>
                     {row.map(cat => {
@@ -67,7 +67,7 @@ export function CategoryPickerCompact({ type, onChangeSelected, initialSelected 
                     return (
                         <TouchableOpacity
                             key={cat.id}
-                            style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 100, backgroundColor: isSelected ? theme.colors.blue : theme.fill.secondary}}
+                            style={{paddingHorizontal: 12, paddingVertical: 6, borderRadius: 100, backgroundColor: isSelected ? theme.colors.blue : theme.background.tertiaryBg}}
                             onPress={() => toggleCategory(cat.id)}
                             activeOpacity={0.8}
                         >

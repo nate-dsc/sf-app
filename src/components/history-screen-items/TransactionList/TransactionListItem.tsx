@@ -1,6 +1,6 @@
-import { TileStyles } from "@/components/home-screen-items/TileStyles";
-import { FontStyles } from "@/components/styles/FontStyles";
+import BaseView from "@/components/BaseView";
 import { useStyle } from "@/context/StyleContext";
+import { FONT_SIZE } from "@/styles/Fonts";
 import { Transaction } from "@/types/Transactions";
 import { findCategoryByID } from "@/utils/CategoryUtils";
 import { timestampedYMDtoLocaleDateWithoutYear } from "@/utils/DateUtils";
@@ -14,7 +14,6 @@ type TransactionListItemProps = {
 
 export default function TransactionListItem({item, onItemPress}: TransactionListItemProps) {
     const {theme} = useStyle()
-    const tileStyles = TileStyles(theme)
     const value = item.value/100
     const valueStr = value.toLocaleString("pt-BR", {style: "currency", currency: "BRL", currencySign: "standard"})
 
@@ -23,13 +22,8 @@ export default function TransactionListItem({item, onItemPress}: TransactionList
 
     return(
         <Pressable onPress={() => onItemPress(item)}>
-            <View 
+            <BaseView 
                 style={{
-                    backgroundColor: theme.background.group.secondaryBg,
-                    borderWidth: 1,
-                    borderColor: theme.background.tertiaryBg,
-                    borderRadius: 24,
-                    borderCurve: "continuous",
                     marginBottom: 12
                 }}
             >
@@ -37,37 +31,47 @@ export default function TransactionListItem({item, onItemPress}: TransactionList
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingTop: 7
+                        alignItems: "center"
                     }}
                 >
                     <Ionicons size={25} name={category.iconName} color={value > 0 ? theme.colors.green : theme.colors.red}/>
                     <Text 
-                        style={{fontSize: 15, lineHeight: 25, color: theme.text.secondaryLabel}}
+                        style={{
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            color: theme.text.secondaryLabel
+                        }}
                     >
                         {timestampedYMDtoLocaleDateWithoutYear(item.date) || ""}
                     </Text>
                 </View>
 
-                <View style={{paddingHorizontal: 15}}>
-                    <Text style={[{textAlign: "right", color: theme.text.label}, FontStyles.numTitle1]}>{valueStr}</Text>
+                <View>
+                    <Text
+                        style={{
+                            textAlign: "right",
+                            fontSize: FONT_SIZE.TITLE1,
+                            fontVariant: ["tabular-nums"],
+                            color: theme.text.label
+                        }}
+                    >
+                        {valueStr}
+                    </Text>
                 </View>
 
                 <View
                     style={{
                         flexDirection: "row",
                         justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingHorizontal: 15,
-                        paddingBottom: 7
+                        alignItems: "center"
                     }}
                 >
                     <Text 
-                        style={[
-                            {textAlign: "justify", fontStyle: "italic", color: theme.text.secondaryLabel},
-                            FontStyles.subhead
-                        ]}
+                        style={{
+                            textAlign: "justify",
+                            fontSize: FONT_SIZE.SUBHEAD,
+                            fontStyle: "italic",
+                            color: theme.text.secondaryLabel
+                        }}
                         numberOfLines={1}
                         ellipsizeMode="tail"
                     >
@@ -77,7 +81,7 @@ export default function TransactionListItem({item, onItemPress}: TransactionList
                 
                 
 
-            </View>
+            </BaseView>
         </Pressable>
     )
 }
