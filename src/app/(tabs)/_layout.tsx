@@ -1,5 +1,5 @@
 import { AppIcon } from "@/components/AppIcon";
-import NewTabBar from "@/components/navigation/NewTabBar";
+import CustomTabBar from "@/components/navigation/CustomTabBar";
 import { FontStyles } from "@/components/styles/FontStyles";
 import { useStyle } from "@/context/StyleContext";
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
@@ -23,8 +23,8 @@ export default function TabBar() {
                     headerTransparent: true,
                     headerTitleStyle: FontStyles.title2,
                 }}
-                //tabBar={(props) => <CustomTabBar {...props}/>}
-                tabBar={(props) => <NewTabBar {...props}/>}
+                tabBar={(props) => <CustomTabBar {...props}/>}
+                //tabBar={(props) => <NewTabBar {...props}/>}
             >
                     <Tabs.Screen
                         name="(home)"
