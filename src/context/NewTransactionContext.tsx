@@ -137,9 +137,13 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
                 if(usesCreditCard) {
                     await createRecurringTransactionWithCard(recurringTransaction)
                     await createAndSyncRecurringTransactionsWithCard()
+
+                    console.log("[New Transaction Context] Recurring transaction with card successfully saved")
                 } else {
                     await createRecurringTransaction(recurringTransaction)
                     await createAndSyncRecurringTransactions()
+
+                    console.log("[New Transaction Context] Recurring transaction successfully saved")
                 }
             } catch(err) {
                 console.error("[New Transaction Context] Could not save recurring transaction", err)
@@ -151,16 +155,21 @@ export const NewTransactionProvider = ({children}: {children: ReactNode}) => {
 
                 if(usesCreditCard) {
                     await createTransactionWithCard(transaction)
+
+                    console.log("[New Transaction Context] Transaction with card successfully saved")
                 } else {
                     await createTransaction(transaction)
+
+                    console.log("[New Transaction Context] Transaction successfully saved")
                 }
             } catch(err) {
+                
                 console.error("[New Transaction Context] Could not save transaction", err)
                 throw err
             }
         }
         
-        console.log("[New Transaction Context] Transaction successfully saved")
+        console.log("[New Transaction Context] Exited transaction flow")
     }
 
     const saveAsInstallmentPurchase = async () => {

@@ -14,6 +14,7 @@ import {
 } from "@/database/repositories/RecurringTransactionRepository"
 import { RecurringTransaction, Transaction } from "@/types/Transactions"
 import { localToUTC } from "@/utils/DateUtils"
+import { formatDateToDBString, formatUTCtoRecurrenceDate, prepareOccurrenceDateDBString, shouldProcessAgain } from "@/utils/RecurrenceDateUtils"
 
 
 export function useRecurringTransactionsModule(database: SQLiteDatabase) {
@@ -59,58 +60,64 @@ export function useRecurringTransactionsModule(database: SQLiteDatabase) {
     }, [database])
 
     const createAndSyncRecurringTransactions = useCallback(async () => {
-        console.log("[Recurring Transactions Module] Syncing recurring transactions...")
+        console.log("[RT Module] Syncing recurring transactions...")
 
-        const endOfDay = new Date()
-        endOfDay.setHours(23, 59, 59)
-        const endOfDayISOsliced = endOfDay.toISOString().slice(0,16)
-        const endOfDayISO = new Date(`${endOfDayISOsliced}Z`)
+        const now = new Date()
+        const nowDB = formatDateToDBString(now)
+
+        const today = formatUTCtoRecurrenceDate(now)
 
         try {
             const allRecurringTransactions = await fetchRecurringTransactions(database)
 
             if (allRecurringTransactions.length === 0) {
-                console.log("[Recurring Transactions Module] There are no recurring transactions")
+                console.log("[RT Module] There are no recurring transactions")
                 return
             }
 
             for (const recurringTransaction of allRecurringTransactions) {
                 const rruleOptions = RRule.parseString(recurringTransaction.rrule)
-                rruleOptions.dtstart = new Date(`${recurringTransaction.date_start}Z`)
+                rruleOptions.dtstart = formatUTCtoRecurrenceDate(recurringTransaction.date_start)
                 const rrule = new RRule(rruleOptions)
 
+                console.log("[RT Module] Processing recurrence:", rrule.toString().split('\n').at(-1))
+
+                if(recurringTransaction.date_last_processed) {
+                    const lastProcessedDate = new Date(`${recurringTransaction.date_last_processed}Z`)
+                    if(!shouldProcessAgain(lastProcessedDate, now)) {
+                        console.log("[RT Module] Should not process again")
+                        continue
+                    }
+                }
+
                 const startDateForCheck = recurringTransaction.date_last_processed ?
-                    new Date(`${recurringTransaction.date_last_processed}Z`) :
-                    new Date(`${recurringTransaction.date_start}Z`)
-                const pendingOccurrences = rrule.between(startDateForCheck, endOfDayISO, true)
+                formatUTCtoRecurrenceDate(recurringTransaction.date_last_processed) :
+                formatUTCtoRecurrenceDate(recurringTransaction.date_start)
+
+                console.log("[RT Module] date_start:", recurringTransaction.date_start)
+                console.log("[RT Module] date_last_processed:", recurringTransaction.date_last_processed)
+                console.log("[RT Module] startDateForCheck:", startDateForCheck)
+                console.log("[RT Module] today:", today)
+
+                const pendingOccurrences = rrule.between(startDateForCheck, today, true)
 
                 if(pendingOccurrences.length === 0) {
-                    console.log("[Recurring Transactions Module] There are no pending recurring transaction occurrences")
+                    console.log("[RT Module] There are no pending recurring transaction occurrences")
                     return
                 }
 
                 for(const occurrence of pendingOccurrences) {
-                    console.log(occurrence)
-
-                    const local = new Date(
-                        occurrence.getTime() - occurrence.getTimezoneOffset() * 60000
-                    )
-
-                    local.setHours(0,0,0)
-                    const localStartOfDayISO = local.toISOString().slice(0,16)
-
-                    local.setHours(23,59,59)
-                    const localEndOfDayISO = local.toISOString().slice(0,16)
-
-                    console.log(localStartOfDayISO)
-                    console.log(localEndOfDayISO)
+                    console.log("[RT Module] Pending occurrence:", occurrence)
+                    
+                    const generatedDate = prepareOccurrenceDateDBString(occurrence)
+                    console.log("[RT Module] Generated date:", generatedDate)
 
                     const generatedTransaction: Transaction = {
                         id: 0,
                         value: recurringTransaction.value,
                         description: recurringTransaction.description,
                         category: recurringTransaction.category,
-                        date: localStartOfDayISO,
+                        date: generatedDate,
                         id_recurring: recurringTransaction.id,
                         card_id: recurringTransaction.card_id,
                         type: recurringTransaction.type
@@ -118,13 +125,13 @@ export function useRecurringTransactionsModule(database: SQLiteDatabase) {
 
                     await database.withTransactionAsync(async () => {
                         await insertRecurringOcurrence(database, generatedTransaction, recurringTransaction.id)
-                        await updateRecurringLastProcessed(database, recurringTransaction.id, localEndOfDayISO)
+                        await updateRecurringLastProcessed(database, recurringTransaction.id, nowDB)
                     })
                 }
             }
-            console.log("[Recurring Transactions Module] Recurring transactions syncing complete")
+            console.log("[RT Module] Recurring transactions syncing complete")
         } catch (error) {
-            console.error("[Recurring Transactions Module] Could not sync recurring transactions", error)
+            console.error("[RT Module] Could not sync recurring transactions", error)
             throw error
         }
     }, [])
