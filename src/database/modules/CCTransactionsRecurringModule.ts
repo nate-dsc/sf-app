@@ -3,7 +3,7 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback } from "react";
 
 import { useCreditCardModule } from "@/database/modules/CreditCardModule";
-import { fetchRecurringTransactionsWithCard, insertCardTransactionRecurring, insertCardTransactionRecurringOcurrence, updateRecurringTransactionsWithCardLastProcessed } from "@/database/repositories/CCTransactionsRecurringRepository";
+import { deleteRecurringTransactionWithCardCascade, fetchRecurringTransactionsWithCard, insertCardTransactionRecurring, insertCardTransactionRecurringOcurrence, updateRecurringTransactionsWithCardLastProcessed } from "@/database/repositories/CCTransactionsRecurringRepository";
 import { formatDateToDBString, formatUTCtoRecurrenceDate, prepareOccurrenceDateDBString, shouldProcessAgain } from "@/utils/RecurrenceDateUtils";
 import { RRule } from "rrule";
 import { updateCardLimitUsed } from "../repositories/CreditCardRepository";
@@ -119,6 +119,14 @@ export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
             console.error("[CC RT Module] Could not sync recurring transactions with card", err)
             throw err
         }
+    },[])
+
+    const removeRecurringTransactionWithCardCascade = useCallback(async (idRecurring: number) =>{
+        console.log("[CC RT Module] Deleting all recurring transactions with card and cascading...")
+
+        await deleteRecurringTransactionWithCardCascade(database, idRecurring)
+
+        console.log("[CC RT Module] Deleted all recurring transactions with card and cascade...")
     },[])
 
     return { createRecurringTransactionWithCard, createAndSyncRecurringTransactionsWithCard }

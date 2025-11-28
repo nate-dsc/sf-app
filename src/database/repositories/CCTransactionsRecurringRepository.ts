@@ -26,6 +26,19 @@ export async function insertCardTransactionRecurringOcurrence(database: SQLiteDa
     )
 }
 
-export async function updateRecurringTransactionsWithCardLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
-    await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, recurringId])
+export async function updateRecurringTransactionsWithCardLastProcessed(database: SQLiteDatabase, idRecurring: number, processedDate: string) {
+    await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, idRecurring])
+}
+
+export async function deleteRecurringTransactionWithCard(database: SQLiteDatabase, idRecurring: number) {
+    await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [idRecurring])
+}
+
+export async function deleteRecurringTransactionWithCardCascade(database: SQLiteDatabase, idRecurring: number) {
+    await database.withTransactionAsync(async () => {
+        
+        await database.runAsync("DELETE FROM transactions WHERE id_recurring = ?", [idRecurring])
+        await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [idRecurring])
+
+    })
 }
