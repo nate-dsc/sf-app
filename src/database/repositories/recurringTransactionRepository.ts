@@ -26,11 +26,11 @@ export async function insertRecurringTransaction(database: SQLiteDatabase, data:
     }
 }
 
-export async function removeRecurringTransaction(database: SQLiteDatabase, id: number) {
+export async function deleteRecurringTransaction(database: SQLiteDatabase, id: number) {
     await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
 }
 
-export async function removeRecurringTransactionCascade(database: SQLiteDatabase, id: number) {
+export async function deleteRecurringTransactionCascade(database: SQLiteDatabase, id: number) {
     await database.withTransactionAsync?.(async () => {
         await database.runAsync("DELETE FROM transactions WHERE id_recurring = ?", [id])
         await database.runAsync("DELETE FROM transactions_recurring WHERE id = ?", [id])
@@ -66,7 +66,7 @@ export async function insertRecurringOcurrence(database: SQLiteDatabase, data: T
     )
 }
 
-export async function updateRecurringLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
+export async function setRecurringLastProcessed(database: SQLiteDatabase, recurringId: number, processedDate: string) {
     await database.runAsync(
         "UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?",
         [processedDate, recurringId],

@@ -1,7 +1,7 @@
 import type { SQLiteDatabase } from "expo-sqlite"
 import { useCallback, useMemo } from "react"
 
-import { deleteCardDB, fetchCard, fetchCards, insertCard, updateCardDB, updateCardLimitUsed } from "@/database/repositories/CreditCardRepository"
+import { deleteCardDB, fetchCard, fetchCards, insertCard, setInCard, setCardLimitUsed as updateCardLimitUsed } from "@/database/repositories/CreditCardRepository"
 import { CCard, CCardDB, NewCard, UpdateCardInput } from "@/types/CreditCards"
 
 export function useCreditCardModule(database: SQLiteDatabase) {
@@ -54,14 +54,14 @@ export function useCreditCardModule(database: SQLiteDatabase) {
 
     const updateCard = useCallback(async (cardId: number, updates: UpdateCardInput) => {
         try {
-            await updateCardDB(database, cardId, updates)
+            await setInCard(database, cardId, updates)
         } catch (error) {
             console.error(`[Credit Card Module] Could not update card of id: ${cardId}`, error)
             throw error
         }
     }, [database])
 
-    const deleteCard = useCallback(async (id: number) => {
+    const removeCard = useCallback(async (id: number) => {
         try {
             await deleteCardDB(database, id)
         } catch (error) {
@@ -75,14 +75,14 @@ export function useCreditCardModule(database: SQLiteDatabase) {
         getCard,
         getAllCards,
         updateCard,
-        deleteCard,
+        removeCard,
         updateCardLimitUsed,
     }), [
         createCard,
         getCard,
         getAllCards,
         updateCard,
-        deleteCard,
+        removeCard,
     ])
 }
 

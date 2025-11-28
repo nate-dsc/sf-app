@@ -24,6 +24,6 @@ export async function insertInstallmentOccurrence(database: SQLiteDatabase, data
     )
 }
 
-export async function updateInstallmentLastProcessed(database: SQLiteDatabase, installmentId: number, processedDate: string) {
+export async function setInstallmentLastProcessed(database: SQLiteDatabase, installmentId: number, processedDate: string) {
     await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, installmentId])
 }

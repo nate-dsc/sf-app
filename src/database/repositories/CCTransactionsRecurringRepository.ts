@@ -26,7 +26,7 @@ export async function insertCardTransactionRecurringOcurrence(database: SQLiteDa
     )
 }
 
-export async function updateRecurringTransactionsWithCardLastProcessed(database: SQLiteDatabase, idRecurring: number, processedDate: string) {
+export async function setRecurringTransactionsWithCardLastProcessed(database: SQLiteDatabase, idRecurring: number, processedDate: string) {
     await database.runAsync("UPDATE transactions_recurring SET date_last_processed = ? WHERE id = ?", [processedDate, idRecurring])
 }
 

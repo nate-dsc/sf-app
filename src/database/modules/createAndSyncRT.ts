@@ -2,7 +2,7 @@ import { Transaction } from "@/types/Transactions"
 import { formatDateToDBString, formatUTCtoRecurrenceDate, prepareOccurrenceDateDBString, shouldProcessAgain } from "@/utils/RecurrenceDateUtils"
 import { SQLiteDatabase } from "expo-sqlite"
 import { RRule } from "rrule"
-import { fetchRecurringTransactions, insertRecurringOcurrence, updateRecurringLastProcessed } from "../repositories/RecurringTransactionRepository"
+import { fetchRecurringTransactions, insertRecurringOcurrence, setRecurringLastProcessed } from "../repositories/RecurringTransactionRepository"
 
 export async function createAndSyncRecurringTransactionsCore(database: SQLiteDatabase, now: Date = new Date()) {
         console.log("[RT Module] Syncing recurring transactions...")
@@ -69,7 +69,7 @@ export async function createAndSyncRecurringTransactionsCore(database: SQLiteDat
 
                     await database.withTransactionAsync(async () => {
                         await insertRecurringOcurrence(database, generatedTransaction, recurringTransaction.id)
-                        await updateRecurringLastProcessed(database, recurringTransaction.id, nowDB)
+                        await setRecurringLastProcessed(database, recurringTransaction.id, nowDB)
                     })
                 }
             }

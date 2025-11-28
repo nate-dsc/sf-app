@@ -24,7 +24,7 @@ export async function insertCard(database: SQLiteDatabase, data: NewCard) {
     )
 }
 
-export async function updateCardDB(database: SQLiteDatabase, cardId: number, input: UpdateCardInput) {
+export async function setInCard(database: SQLiteDatabase, cardId: number, input: UpdateCardInput) {
     const fields: string[] = []
     const values: any[] = []
 
@@ -93,7 +93,7 @@ export async function fetchCards(database: SQLiteDatabase): Promise<CCardDB[]> {
     )
 }
 
-export async function updateCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
+export async function setCardLimitUsed(database: SQLiteDatabase, cardId: number, limitAdjustment: number) {
     await database.runAsync("UPDATE cards SET limit_used = limit_used + ? WHERE id = ?", [limitAdjustment, cardId])
 }
 

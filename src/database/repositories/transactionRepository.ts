@@ -32,7 +32,7 @@ export async function deleteTransaction(database: SQLiteDatabase, id: number) {
     await database.runAsync("DELETE FROM transactions WHERE id = ?", [id])
 }
 
-export async function getTransactionByID(database: SQLiteDatabase, id: number) {
+export async function fetchTransactionByID(database: SQLiteDatabase, id: number) {
     return await database.getFirstAsync<Transaction>("SELECT * FROM transactions WHERE id = ?", [id])
 }
 

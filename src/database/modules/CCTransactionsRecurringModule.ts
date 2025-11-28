@@ -3,10 +3,10 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { useCallback } from "react";
 
 import { useCreditCardModule } from "@/database/modules/CreditCardModule";
-import { deleteRecurringTransactionWithCardCascade, fetchRecurringTransactionsWithCard, insertCardTransactionRecurring, insertCardTransactionRecurringOcurrence, updateRecurringTransactionsWithCardLastProcessed } from "@/database/repositories/CCTransactionsRecurringRepository";
+import { deleteRecurringTransactionWithCardCascade, fetchRecurringTransactionsWithCard, insertCardTransactionRecurring, insertCardTransactionRecurringOcurrence, setRecurringTransactionsWithCardLastProcessed } from "@/database/repositories/CCTransactionsRecurringRepository";
 import { formatDateToDBString, formatUTCtoRecurrenceDate, prepareOccurrenceDateDBString, shouldProcessAgain } from "@/utils/RecurrenceDateUtils";
 import { RRule } from "rrule";
-import { updateCardLimitUsed } from "../repositories/CreditCardRepository";
+import { setCardLimitUsed } from "../repositories/CreditCardRepository";
 
 export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
     const { getCard } = useCreditCardModule(database)
@@ -102,8 +102,8 @@ export function useCCTransactionsRecurringModule(database: SQLiteDatabase) {
                         
                         await database.withTransactionAsync(async () => {
                             await insertCardTransactionRecurringOcurrence(database, generatedTransaction, recurringTransaction.id, card.id)
-                            await updateCardLimitUsed(database, card.id, recurringTransaction.value)
-                            await updateRecurringTransactionsWithCardLastProcessed(database, recurringTransaction.id, nowDB)
+                            await setCardLimitUsed(database, card.id, recurringTransaction.value)
+                            await setRecurringTransactionsWithCardLastProcessed(database, recurringTransaction.id, nowDB)
                         })
 
                     } else {

@@ -3,7 +3,7 @@ import {
     fetchActiveInstallments,
     insertInstallmentOccurrence,
     insertInstallmentPurchase,
-    updateInstallmentLastProcessed
+    setInstallmentLastProcessed
 } from "@/database/repositories/CCInstallmentsRepository"
 import { InstallmentPurchase } from "@/types/CreditCards"
 import { Transaction } from "@/types/Transactions"
@@ -101,7 +101,7 @@ export function useCCInstallmentsModule(database: SQLiteDatabase) {
                     await database.withTransactionAsync(async () => {
 
                         await insertInstallmentOccurrence(database, installmentTransaction, installment.id, installment.card_id!)
-                        await updateInstallmentLastProcessed(database, installment.id, nowDB)
+                        await setInstallmentLastProcessed(database, installment.id, nowDB)
 
                     })
                 }

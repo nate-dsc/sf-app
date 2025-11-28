@@ -5,8 +5,8 @@ import {
     deleteTransaction,
     deleteTransaction as deleteTransactionRepository,
     fetchPaginatedFilteredTransactions,
+    fetchTransactionByID,
     fetchTransactionsFromMonth,
-    getTransactionByID,
     insertTransaction,
 } from "@/database/repositories/TransactionRepository"
 import { SearchFilters, type Transaction } from "@/types/Transactions"
@@ -26,7 +26,7 @@ export function useTransactionsModule(database: SQLiteDatabase) {
 
     const removeTransaction = useCallback(async (id: number) => {
         try {
-            const transaction = await getTransactionByID(database, id)
+            const transaction = await fetchTransactionByID(database, id)
 
             if(!transaction) {
                 console.log("[Transactions Module] Could not find transaction to delete")

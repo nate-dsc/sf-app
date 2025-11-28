@@ -3,14 +3,14 @@ import { useCallback, useMemo } from "react"
 import { RRule } from "rrule"
 
 import {
+    deleteRecurringTransaction,
+    deleteRecurringTransactionCascade,
     fetchRecurringRule,
     fetchRecurringTransactions,
     fetchRecurringTransactionsByType,
     insertRecurringOcurrence,
     insertRecurringTransaction,
-    removeRecurringTransaction,
-    removeRecurringTransactionCascade,
-    updateRecurringLastProcessed
+    setRecurringLastProcessed
 } from "@/database/repositories/RecurringTransactionRepository"
 import { RecurringTransaction, Transaction } from "@/types/Transactions"
 import { localToUTC } from "@/utils/DateUtils"
@@ -41,18 +41,18 @@ export function useRecurringTransactionsModule(database: SQLiteDatabase) {
         }
     }, [database])
 
-    const deleteRecurringTransaction = useCallback(async (id: number) => {
+    const removeRecurringTransaction = useCallback(async (id: number) => {
         try {
-            await removeRecurringTransaction(database, id)
+            await deleteRecurringTransaction(database, id)
         } catch (error) {
             console.error("Could not delete recurring transaction", error)
             throw error
         }
     }, [database])
 
-    const deleteRecurringTransactionCascade = useCallback(async (id: number) => {
+    const removeRecurringTransactionCascade = useCallback(async (id: number) => {
         try {
-            await removeRecurringTransactionCascade(database, id)
+            await deleteRecurringTransactionCascade(database, id)
         } catch (error) {
             console.error("Could not delete recurring transaction cascade", error)
             throw error
@@ -125,7 +125,7 @@ export function useRecurringTransactionsModule(database: SQLiteDatabase) {
 
                     await database.withTransactionAsync(async () => {
                         await insertRecurringOcurrence(database, generatedTransaction, recurringTransaction.id)
-                        await updateRecurringLastProcessed(database, recurringTransaction.id, nowDB)
+                        await setRecurringLastProcessed(database, recurringTransaction.id, nowDB)
                     })
                 }
             }
@@ -193,16 +193,16 @@ export function useRecurringTransactionsModule(database: SQLiteDatabase) {
     return useMemo(() => ({
         createRecurringTransaction,
         createRecurringTransactionWithCard,
-        deleteRecurringTransaction,
-        deleteRecurringTransactionCascade,
+        removeRecurringTransaction,
+        removeRecurringTransactionCascade,
         createAndSyncRecurringTransactions,
         getRRULE,
         getRecurringSummaryThisMonth,
     }), [
         createRecurringTransaction,
         createRecurringTransactionWithCard,
-        deleteRecurringTransaction,
-        deleteRecurringTransactionCascade,
+        removeRecurringTransaction,
+        removeRecurringTransactionCascade,
         createAndSyncRecurringTransactions,
         getRRULE,
         getRecurringSummaryThisMonth,
